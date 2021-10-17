@@ -1,7 +1,7 @@
 # Notes
 Greetings! 
 
-This is Yiming Yu, a college student at [UIUC](https://illinois.edu/) interested Math, Physics and CS.  Here is a collection of notes I take. Hopefully, it will be well-structured and include my thoughts on the knowledge. It's my pleasure if it helps you! :smile: Most of the content will be written in Chinese, since this is the language I'm most familiar with. I will, if possible, update the English version. The terms used in my notes will appear in English in their definitions, which are sometimes fully written in English. Some terms in English don't have proper translation to Chinese, in which case I will translate it myself. If there's an official or better translation, I will substitute it for mine.
+This is Yiming Yu, a college student at [UIUC](https://illinois.edu/) interested in Math, Physics and CS.  Here is a collection of notes I take. Hopefully, it will be well-structured and include my thoughts on the knowledge. It's my pleasure if it helps you! :smile: Most of the content will be written in Chinese, since this is the language I'm most familiar with. I will, if possible, update the English version. The terms used in my notes will appear in English in their definitions, which are sometimes fully written in English. Some terms in English don't have proper translation to Chinese, in which case I will translate it myself. If there's an official or better translation, I will substitute it for mine.
 
 The following is the table of contents (still under construction, the links are invalid):
 
