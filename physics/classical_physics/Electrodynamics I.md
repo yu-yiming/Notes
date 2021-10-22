@@ -1219,7 +1219,7 @@ $$
 
 ## 静磁场概览
 
-让我们回忆一下电动力学研究的问题，即一个测试电荷 $Q$ 在一系列源电荷 $q_i$ 的作用下的运动规律。在前面几章静电场的学习中，我们大概了解了源电荷均为静止时，其激发的场的性质。接下来的两章中，我们将探索特定分布的 $q_i$ 在匀速直线运动状态下， $Q$ 收到的影响，而这就是 **静磁场（Magetostatics）** 主要研究的内容。
+让我们回忆一下电动力学研究的问题，即一个测试电荷 $Q$ 在一系列源电荷 $q_i$ 的作用下的运动规律。在前面几章静电场的学习中，我们大概了解了源电荷均为静止时，其激发的场的性质。接下来的两章中，我们将探索特定分布的 $q_i$ 在匀速直线运动状态下， $Q$ 收到的影响，而这就是 **静磁场（Magnetostatics）** 主要研究的内容。
 
 ### 洛伦兹力
 
@@ -1229,7 +1229,7 @@ $$
 
 ​                 <img src="graphs/ed1_5-1.png" alt="ed1_5-1" style="zoom:50%;" />              <img src="graphs/ed1_5-2.png" alt="ed1_5-2" style="zoom:50%;" />
 
-右图清晰地解释了两条通电导线磁力的示意图。需要注意 **磁感应强度（Magnetic Field）** 是为了描述矢量 $\mathbf{v}$ 和 $\mathbf{F}$ 而“捏造出来的矢量。事实上，它是一个 **伪矢量（Pseudovector）**，其表现为，将其它设定进行镜像变换后，$\mathbf{B}$ 并不一定是原来的镜像变换，如下图所示：
+右图清晰地解释了两条通电导线磁力的示意图。需要注意 **磁场强度（Magnetic Field）** 是为了描述矢量 $\mathbf{v}$ 和 $\mathbf{F}$ 而“捏造出来的矢量。事实上，它是一个 **伪矢量（Pseudovector）**，其表现为，将其它设定进行镜像变换后，$\mathbf{B}$ 并不一定是原来的镜像变换，如下图所示：
 
 <img src="graphs/ed1_5-3.png" alt="ed1_5-3" style="zoom:10%;" />
 
@@ -1314,7 +1314,7 @@ $$
 > $$
 > (y - R\omega t)^2 + (z - R)^2 = R^2
 > $$
-> 因此它的轨迹是一个以 $(0, R\omega t, R)$ 为圆心，半径为 $R$ 的圆。由于 $y = R\omega t = \dfrac{E}{B}t$ 随时间变化而移动，因此可以理解为这个圆沿着 $\hat{\mathbf{y}}$ 以 $\dfrac{E}{B}$ 的速度移动。示意图如下：
+> 因此它的轨迹是一个以 $(0, R\omega t, R)$ 为圆心，半径为 $R$ 的圆。由于 $y = R\omega t = \dfrac{E}{B}t$ 随时间变化而移动，因此可以理解为这个圆沿着 $\hat{\mathbf{y}}$ 以 $\dfrac{E}{B}$ 的速度滚动。示意图如下：
 >
 > <img src="graphs/ed1_5-5.png" alt="ed1_5-4" style="zoom:50%;" />
 
@@ -1389,7 +1389,7 @@ $$
 $$
 \nabla \cdot \mathbf{J} = 0
 $$
-**毕奥·萨伐尔定律（Biot-Savart Law）** 定义静磁场的磁感应强度 $\mathbf{B}$ 为：
+**毕奥·萨伐尔定律（Biot-Savart Law）** 定义静磁场的磁场强度 $\mathbf{B}$ 为：
 $$
 \mathbf{B}(\mathbf{r}) = \frac{\mu_0}{4\pi}\int\frac{\mathbf{I}\times\boldsymbol{\mathscr{r}}}{\mathscr{r}^2} = \frac{\mu_0I}{4\pi}\int\frac{d\mathbf{l}'\times\unit{\rcur}}{\rcur^2}
 $$
@@ -1397,5 +1397,124 @@ $$
 $$
 \mu_0 = 4\pi\times 10^{-7}\ \text{N}/\text{A}^2
 $$
-这是因为这个值使用来定义电流单位安培的（真空中两条恒定电流通过的长直导线，其相互之间的磁场力就是 $1\times 10^{-7}\ \text{N}$），随后再用来定义电荷单位库仑，以及真空介电率。磁感应强度本身的单位则是 **特斯拉（Tesla, $\text{T}$）**，其等价于 $\text{N}/(\text{A}\cdot\text{m})$。
+这是因为这个值使用来定义电流单位安培的（真空中两条恒定电流通过的长直导线，其相互之间的磁场力就是 $1\times 10^{-7}\ \text{N}$），随后再用来定义电荷单位库仑，以及真空介电率。磁场强度本身的单位则是 **特斯拉（Tesla, $\text{T}$）**，其等价于 $\text{N}/(\text{A}\cdot\text{m})$。
+
+> **例**：求距离通恒定电流的无限长直导线为 $s$ 处的磁场强度。图示如下：
+>
+> <img src="graphs/ed1_5-8.png" alt="ed1_5-8" style="zoom:50%;" />
+
+> **解**：通过上图，我们发现 $d\mathbf{l}'\times\boldsymbol{\mathscr{r}}$ 方向指向纸页外，且满足 $dl'\sin\alpha = dl'\cos\theta$。由于 $l' = s\tan\theta$，我们有 $dl' = s\sec^2\theta\,d\theta$。另外，由 $\mathscr{r}\cos\theta = s$，有 $\dfrac{1}{\mathscr{r}^2} = \dfrac{\cos^2\theta}{s^2}$，此时我们就可以约化毕奥·萨伐尔公式了：
+> $$
+> \begin{align*}
+> B &= \frac{\mu_0 I}{4\pi}\int_{\theta_1}^{\theta}\frac{\cos^2\theta}{s^2}s\sec^2\cos\theta\,d\theta \\
+> &= \frac{\mu_0I}{4\pi s}\int_{\theta_1}^{\theta_2}\cos\theta\,d\theta \\
+> &= \frac{\mu_0I}{4\pi s}(\sin\theta_2 - \sin\theta_1)
+> \end{align*}
+> $$
+> 而这仅是一小段电线产生的磁场强度。当取无限长的导线段时，$\theta_1 = -\pi/2, \theta_2 = \pi/2$，我们得到：
+> $$
+> B = \frac{\mu_0I}{2\pi s}
+> $$
+> 它的方向是 $\unit{\phi}$。
+
+根据上面这个例子的结论，我们就可以解释本章开头，两条通电直导线相互作用的现象了。假设它们相距 $d$，这样一条导线对另一条的作用力就是（根据洛伦兹力公式）：
+$$
+F = I_2\left(\frac{\mu_0I_1}{2\pi s}\right)\int\,dl \nonumber
+$$
+对于一小段电线的作用力则是：
+$$
+f = \frac{\mu_0}{2\pi} \frac{I_1I_2}{d}
+$$
+我们可以将此和库仑定律进行对比，有高度的相似性。
+
+### 静磁场的散度和旋度
+
+根据我们前面对于无限长直导线产生的磁场强度的结论，对于一个半径 $s$ 的磁场环路积分是：
+$$
+\oint \mathbf{B}\cdot d\,\mathbf{l} = \oint\frac{\mu_0I}{2\pi s}\,dl = \mu_0I
+$$
+有意思地是，这个积分和 $s$ 无关。这个结论和电场 $\mathbf{E}$ 的通量类似。如果存在多段电线时，不难得到下面这个和高斯定律类似的结论：
+$$
+\oint\mathbf{B}\cdot\,d\mathbf{l} = \mu_0I_\text{enc}
+$$
+环路中包含的总电流 $I_\text{enc}$ 也可以通过电流密度得到：
+$$
+I_\text{enc} = \int\mathbf{J}\cdot\,d\mathbf{a}
+$$
+根据斯托克斯定理，我们有：
+$$
+\int(\nabla\times\mathbf{B})\cdot\,d\mathbf{a} = \oint\mathbf{B}\cdot\,d\mathbf{l} = \mu_0I_\text{enc} = \mu_0\int\mathbf{J}\cdot\,d\mathbf{a}\nonumber
+$$
+拆掉最两侧的积分号后，我们就得到了：
+$$
+\nabla\times\mathbf{B} = \mu_0\mathbf{J}
+$$
+简单回顾，我们对于无限长直导线的磁场推出了这样的结论，但实际上它对任意磁场都有效。下面我们将通过毕奥·萨伐尔定律再次得到这个结论。
+
+#### 安培定律
+
+首先我们考察磁场的散度：
+$$
+\begin{align*}
+	\nabla\cdot\mathbf{B} &= \frac{\mu_0}{4\pi}\int\nabla\cdot\left(\mathbf{J}\times\frac{\unit{\mathscr{r}}}{\rcur^2}\right)\,d\tau' \\
+	&= \frac{\mu_0}{4\pi}\int\frac{\unit{\mathscr{r}}}{\rcur^2}\cdot(\nabla\times\mathbf{J})\,d\tau' - \frac{\mu_0}{4\pi}\int\mathbf{J}\cdot\left(\nabla\times\frac{\unit{\mathscr{r}}}{\rcur^2}\right)\,d\tau'
+\end{align*}
+$$
+上面第一项中 $\nabla\times\mathbf{J} = 0$，第二项中那个旋度为 $\mathbf{0}$。因此我们得到了：
+$$
+\marginbox{\nabla\cdot\mathbf{J} = 0}
+$$
+ 这说明磁场的散度是 0。接下来考察磁场的旋度：
+$$
+\begin{align*}
+\nabla\times\mathbf{B} &= \frac{\mu_0}{4\pi}\int\nabla\times\left(\mathbf{J}\times\frac{\unit{\mathscr{r}}}{\rcur^2}\right)\,d\tau' \\
+&= \frac{\mu_0}{4\pi}\int\mathbf{J}\left(\nabla\cdot\frac{\unit{\rcur}}{\rcur^2}\right)\,d\tau' - \frac{\mu_0}{4\pi}\int(\mathbf{J}\cdot\nabla)\frac{\unit{\rcur}}{\rcur^2}\,d\tau
+\end{align*}
+$$
+其中的第一项可以进一步化简：
+$$
+\begin{align*}
+\frac{\mu_0}{4\pi}\int\mathbf{J}\left(\nabla\cdot\frac{\unit{\rcur}}{\rcur^2}\right)\,d\tau &=
+\frac{\mu_0}{4\pi}\int\mathbf{J}(\mathbf{r'})4\pi\delta^3(\mathbf{r} - \mathbf{r}')\,d\tau' \\
+&= \mu_0\mathbf{J}(\mathbf{r})
+\end{align*}
+$$
+第二项在复杂的变形之后会变为 $0$，参考下面的过程。首先将 $\nabla$ 替换为 $\nabla'$：
+$$
+-(\mathbf{J}\cdot\nabla)\frac{\unit{\rcur}}{\rcur^2} = (\mathbf{J}\cdot\nabla')\frac{\unit{\rcur}}{\rcur^2}\nonumber
+$$
+对于直角坐标系中的一个坐标，比如 $x$，我们有：
+$$
+(\mathbf{J}\cdot\nabla')\frac{x - x'}{\rcur^3} = \nabla'\cdot\frac{x - x'}{\rcur^3}\mathbf{J} - \frac{x - x'}{\rcur^3}(\nabla'\cdot\mathbf{J})\nonumber
+$$
+静磁场中，电流密度的散度为 0，因此右式的第二项为为 0。第一项则可以根据散度定理得到：
+$$
+\int_\mathcal{V}\nabla'\cdot\frac{x - x'}{\rcur^3}\mathbf{J}\,d\tau' = \oint_\mathcal{S}\frac{x - x'}{\rcur^3}\mathbf{J}\cdot d\mathbf{a}'\nonumber = 0
+$$
+这样我们就得到了 **安培定律（Ampere's Law)**：
+$$
+\marginbox{\nabla\times\mathbf{B} = \mu_0 \mathbf{J}}
+$$
+它的积分形式我们之前在无限长直导线的例子中见到过了，也即：
+$$
+\marginbox{\oint\mathbf{B}\cdot d\mathbf{l} = \mu_0I_\text{enc}}
+$$
+这个定律对于所有的静磁场（恒定电流产生的磁场）都成立。
+
+#### 和静电场的比较
+
+现在我们已经得到了静电磁学最重要的几个公式，它们也是麦克斯韦方程的在局限下的形式：
+
+- 静电学：
+  - $\nabla\cdot\mathbf{E} = \dfrac{\rho}{\epsilon_0}$ （高斯定律）
+  - $\nabla\times\mathbf{E} = \mathbf{0}$。静电场是无旋场。
+  - $\mathbf{E} \to \mathbf{0}$，当场点距离场源很远时。
+  - $\mathbf{E} = \dfrac{1}{4\pi\epsilon_0}\dfrac{\rho(\mathbf{r}')}{\rcur^2}\hat{\rcur}\,d\tau'$（库仑定律）
+- 静磁学：
+  - $\nabla\cdot\mathbf{B} = 0$。静磁场是无源场。
+  - $\nabla\times\mathbf{E} = \mu_0\mathbf{J}$（安培定律）
+  - $\mathbf{B} \to \mathbf{0}$，当场点距离场源很远时。
+  - $\mathbf{B}$ 
+- 电磁场力：
+  - $\mathbf{F} = Q(\mathbf{E} + \mathbf{v}\times\mathbf{B})$（洛伦兹力）
 
