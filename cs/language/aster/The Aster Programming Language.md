@@ -18,15 +18,15 @@ We will have to be familiar with the following terms and concepts before moving 
 
 - A *source file* is a file that contains **Aster** *source code* to be *compiled* into a file of a *target language*, e.g. **C++**.
 - A *module* is a collection of source files managed by a *header file* that contains *declarations* of *identifiers* as well as specifications of their visibility to other modules.
-- **Aster** preserves ceratin permutations of characters, called *keywords*, to structure the source code. Some other patterns of character sequences are recognized as *literals* that represent *objects* of *integers*, *strings*, etc.
-- All other words are *identifiers* that can be bound to **Aster** *entities*, including *objects*, *types*, *classes*, *templates*, *namespaces*, *macros*, *labels*, and *argument packs*. 
+- **Aster** preserves certain permutations of characters, called *keywords*, to structure the source code. Some other patterns of character sequences are recognized as *literals* that represent *objects* of *integers*, *strings*, etc.
+- All other words are *identifiers* that can be bound to **Aster** *entities*, including *objects*, *types*, *classes*, *templates*, *namespaces*, *macros*, *labels*, and *parameter packs*. 
 - The action of introducing *identifiers* is known as a *declaration*. The process of binding them to *entities* is called a *definition*. An identifier can only be bound to one entity within the same *scope level*, which rule is called the *One Definition Rule (ODR)*.
 - Objects that are bound to identifiers are called *variables*. As a convention, we also call the identifiers they bound to variables. This could cause ambiguity sometimes, especially when we talk about the *constness* of variables, in which case we actually refer to the identifier, not the object.
 - A *scope* is either a *file scope*, restricted to a source file, or *block scope*, usually confined within a pair of braces, `{}`. Identifiers defined in a scope could be "redefined" in another scope, and cannot be referred to at outside of the scope where their definitions lie.
-- Objects are *evaluable* entities that can be resolved to bound *values*. Some of them are known as *callables*, which can run *subroutines* if one or more *arguments* are provided.
+- Objects are *evaluable* entities that can be resolved to bound *values*. Some of them are known as *invokables*, which can run *subroutines* if one or more *arguments* are provided.
 - There is a special subroutine called *main function* that is by default configured as the entry of every program.
 - A *subroutine* consists of commands, called *statements*, that are executed in sequence after compilation to executable files. Each statement involves *operations* that perform calculations or modifications on objects. The operations together with the operands are called *expressions*. An expression is also evaluable, just like an object.
-- All *objects* and *expressions* are associated with a *storage type*, which reveals the underlying structure of the values they are evaluated to. A *type*, on the other hand, is an *alias* of a storage type that can concretize the same value with different meanings. *Member functions* are callables that are connected with bound *types*.
+- All *objects* and *expressions* are associated with a *storage type*, which reveals the underlying structure of the values they are evaluated to. A *type*, on the other hand, is an *alias* of a storage type that can concretize the same value with different meanings. *Member functions* are invokables that are connected with bound *types*.
 - A *type class* or simply *class* claims properties of an unknown group of *types*. A type *satisfies* a class if all claimed properties are met, and we also call it an *instance* of the class.
 
 Besides, it should be helpful if I introduce the grammar to define a variable in **Aster**:
@@ -41,23 +41,41 @@ That's it. If you are familiar with **C++**, you can treat it as the auto type d
 
 Finally, let's get to know the abbreviations of some terms, which will be frequently used in illustration of grammar. Note that `@` appears when the following name should be interpreted via some structures, some of which names are listed below:
 
-| **Abbreviation** | **Meaning** | **Abbreviation** | **Meaning** | **Abbreviation** | **Meaning** |
-| ---------------- | ----------- | ---------------- | ----------- | ---------------- | ----------- |
-| `@id`            | identifier  | `@expr`          | expression  | `@stmt`          | statement   |
-| `@qual`          | qualifier   | `@spec`          | specifier   | `@mod`           | modifier    |
-| `@attr`          | attribute   | `@patt`          | pattern     | `@cls`           | clause      |
-| `@list`          | list        | `?`              | optional    | `!`              | strict      |
-| `@ent`           | entity      |                  |             |                  |             |
+| **Abbreviation** | **Meaning**                        | **Abbreviation** | **Meaning**               | **Abbreviation** | **Meaning**               |
+| ---------------- | ---------------------------------- | ---------------- | ------------------------- | ---------------- | ------------------------- |
+| `@src`           | source file                        | `@modul`         | module                    | `@head`          | header file               |
+| `@key`           | keyword                            | `@lit`           | literal                   | `@id`            | identifier                |
+| `@decl`          | declaration                        | `@def`           | definition                | `@spec`          | specification             |
+| `@stmt`          | statement                          | `@expr`          | expression                | `@cls`           | clause                    |
+| `@block`         | block                              | `@var`           | variable                  | `@val`           | value                     |
+| `@qual`          | qualifier                          | `@spcf`          | specifier                 | `@mod`           | modifier                  |
+| `@ctrl`          | control                            | `@conj`          | conjunction               | `@sym`           | symbol                    |
+| `@ent`           | entity                             | `@obj`           | object                    | `@type`          | type                      |
+| `@class`         | type class                         | `@tmpl`          | template                  | `@ns`            | namespace                 |
+| `@macro`         | macro                              | `@lbl`           | label                     | `@parpack`       | parameter pack            |
+| `@func`          | function                           | `@clos`          | closure                   | `@invok`         | invokable                 |
+| `@keyval`        | colon separated pair               | `@bind`          | equal sign separated pair | `@match`         | Left arrow separated pair |
+| `@seq`           | space separated sequence           | `@list`          | comma separated sequence  | `@proj`          | arrow separated sequence  |
+| `@scoped`        | double colon separated sequence    | `@lval`          | left value                | `rval`           | right value               |
+|                  |                                    |                  |                           |                  |                           |
+| `@attr`          | attribute                          | `@patt`          | pattern                   |                  |                           |
+| `@cstr`          | `&` or `|` separated types/classes |                  |                           |                  |                           |
+| `?`              | optional                           | `*`              | match none or once        | `**`             | match once or more        |
+| `<>`             | syntactic brackets                 | `<or>`           | one or two of             | `<!or>`          | only one of               |
+| `()`             | syntactic brackets for optional    |                  |                           |                  |                           |
 
 Some of the terms above needs further specification for syntax, let's view some of the most frequetly used:
 
 - `@id`: Identifiers or scope-specified identifiers. e.g. `name`, `ns::ms::ks::name`. This could be any valid identifiers.
 - `@type-id`: Identifiers or scope-specified identifiers that have *type semantics*. e.g. `MyType`, `ns::MyType`. Note that identifiers for *templates* are also put into this category.
 - `@class-id`: Identifiers or scope-specified identifiers that have *class semantics*. e.g. `trait`, `ns::trait`.
-- `@list`: All structures containing comma-separated entities are called `@list`.
-- `@arr-list`: Lists that enclosed by a pair of brackets. e.g. `[10, a, c + d]`.
-- `@tup-list`: Lists that enclosed by a pair of parentheses. e.g. `(1, "abc", secret)`.
-- `@patt`: Patterns are like value expressions, but each element could be a `@cstr-chain` or `@id : @cstr-chain`, which is also known as `@patt-pair`.
+- `@decl`: Declaration of entities differ a lot depending on specific circumstance, but `auto` is usually an available `@decl-key` for most declarations.
+- `@arr-list`: Comma separated sequence enclosed by a pair of brackets. e.g. `[10, a, c + d]`.
+- `@tup-list`: Comma separated sequence enclosed by a pair of parentheses. e.g. `(1, "abc", secret)`.
+- `@link-proj`: Arrow separated sequence enclosed by a pair of brackets. e.g. `[1 -> 2 -> a -> e + f + g]`.
+- `@attr`: Comma separated identifiers or name bindings enclosed by a pair of double-brackets. The syntax is `[[<@id <!or> @bind>-list]]`.  e.g. `[[name = "my attribute", std::run_once]]`.
+- `@patt`: Key-value pairs whose left-hand side is an expression of identifiers, and right-hand side is an expression. The syntax is `@id-expr : @expr`. e.g. `i : int`, `(i, { name, id }) : (int, std::serializable)`.
+- `@cstr`: Expressions that contains conjunctions and disjunctions of types and type classes. The syntax is `*<@type-id <!or> @class-id>(& or |)`. e.g. `int | ([char], bool) | std::convertible_to<int>`.
 
 ## A Crash Course of Aster
 
@@ -65,7 +83,7 @@ Some of the terms above needs further specification for syntax, let's view some 
 
 I wound like to start with the *statements* in **Aster**. It's rather similar to **C++**:
 
-- Labeled Statements: A label structure followed by `:` or `=>`, and a statement.
+- Labeled Statements: An identifier or pattern structure followed by `:` or `=>`, and a statement.
 
   - `@id : @stmt`: A target for jump statements.
   - `?@attr @patt => @stmt`: A case in the switch or match statement.
@@ -96,7 +114,7 @@ I wound like to start with the *statements* in **Aster**. It's rather similar to
 
 - Compound Statements: A collection of statements put inside a block.
 
-  - `{ ?@stmt... }`: 
+  - `{ *@stmt }`: 
 
   ```cpp
   auto main = () -> do {
@@ -136,7 +154,6 @@ I wound like to start with the *statements* in **Aster**. It's rather similar to
 
   - `?@attr while (@expr) @stmt`: Loop the `<stmt>` as long as the `@expr` is evauated *non-false* each time the control flow reaches the start of the loop.
   - `?@attr loop @stmt`: Loop the `@stmt` unconditionally.
-  - `?@attr loop @stmt when (@expr)`: Same as the while loop.
   - `?@attr for (@patt in @expr) @stmt`: The *range-for* loop. Iterate over elements in a range that match the given pattern.
 
   ```cpp
@@ -157,13 +174,13 @@ I wound like to start with the *statements* in **Aster**. It's rather similar to
   - `break ?@id;`: Break the loop specified by the given label; break the most inner loop if no label is provided.
   - `continue ?@id;`: Go to the next iteration of the loop specified by the given label; iterate over the most inner loop if no label is provided.
   - `return ?@expr;`: Return from the current do expression with an optional return value.
-  - `return ?@expr for @id;`: Return a value from a labeled `do` expression.
+  - `return ?@expr from @id;`: Return a value from a labeled `do` expression.
 
   ```cpp
   auto main = () -> do {
-      [[@name: outer]]
+      [[name = "outer"]]
       while (true) {
-       	[[@name: inner]]
+       	[[name = "inner"]]
           while (true) {
            	auto i : int;
               input &i;
@@ -177,7 +194,7 @@ I wound like to start with the *statements* in **Aster**. It's rather similar to
 
 - Declaration Statements:
 
-  - `@decl`: Declaration of identifiers.
+  - `@decl`: Declaration of identifiers. See [declarations](# Declarations) for details.
 
 
 
@@ -189,10 +206,16 @@ All expressions can be categorized into types as follows:
 
 - Value expressions: Expressions that are themselves values. This includes all *literals* and *variables*. No operation is involved.
 - Function Application Expressions: Expressions that make function calls. 
-- Infix Operation Expressions: 
-- Subscript Expressions:
-- Borrow Expressions: 
-- Member Access Expressions:
+  - `@func-id @arg-seq`: Left-associative operation that **cannot** be overloaded. A explicit equivalent is the `$` operator, which **can** be overloaded.
+- Infix Operation Expressions: Call an Invokable that has no less than 2 parameters can through their infix version.
+  - `@expr @op @expr`:  A syntax sugar for `operator @op @expr @expr` or `(@op) @expr @expr`.
+  - `@expr <@func-id> @expr`: A syntax sugar for `@func-id @expr @expr`.
+- Subscript Expressions: Call the overloaded `operator []` function.
+  - `@expr[@expr]`: A syntax sugar for `@expr.operator [] @expr`. Usually implemented as dereferencing after offsetting.
+- Borrow Expressions: Borrow the ownership of an object.
+  - `&@expr`:  The `@expr` **must** be evaluated to be an *lvalue*. Unary operation **cannot** be overloaded.
+- Member Access Expressions: Access the inside of an object.
+  - `@expr.@id`: A syntax sugar for `@expr.prototype::@id`, so this is not exactly an operation, so it **cannot** be overloaded.
 - Let Expressions: Temporary identifier binding in a sub-expression.
   - `let @patt <- @expr ?,... in @expr`: The `@expr` after `in` keyword will be evaluated with the augmented context configured by a list of temporary binding.
 - Do Expressions: A *subroutine* structure.
@@ -205,46 +228,46 @@ All expressions can be categorized into types as follows:
 **Aster** has a couple of *clauses* that work as syntax sugar.
 
 - Where Clauses: Add temporary variables to the context.
-  - `where @id = @expr ?,...`: This has a similar effect with let expressions, but they're used in different places. Where clauses are used after any expressions, but they have to qualify the outmost expression and appear only once in a statement. 
-  - `where @patt <- @expr ?,...`: 
-  - `where @func-decl ?,...`: Declare, but doesn't define some identifiers.
+  - `where @where-item-list`: Declare variables that appears in a statement. It's similar to let expressions, but the where clauses **must** qualify the outmost expression in a statement and only appear **once** in that statement. The followings are cases of `@where-item`:
+    - `@bind`: Define a variable **without** the declaration specifier.
+    - `@match`: Define variables that match certain patterns **without** the declaration specifier.
+    - `@func-decl`: Declare a variable but not necessarily define it, **without** the declaration specifier.
 - When Clauses: Add conditions to statements to be executed.
   - `when (@expr)`: Only if the `@expr` is evaluated `true` will the preceding statement be executed.
 - Requires Clauses: Add constraints to statements to be successfully compiled.
   - `requires (@static-expr)`: Only if the `@static-expr` is evaluated `true` will the preceding statement pass the compilation.
-  - `requires (@func-decl ?,...) @stmt`: Only when the `@stmt` has no semantic error as well as grammatic and syntactic error will the preceding statement pass the compilation. Often used inside a type class declaration with a where clause.
+  - `requires (@func-decl) @stmt`: Only when the `@stmt` has no semantic error as well as grammatic and syntactic error will the preceding statement pass the compilation. Often used inside a type class declaration with a where clause.
 
 
 
 ### Declarations
 
-**Aster** has a concise grammar for *declarations*, unlike the bizzare one in **C++**. Declarations of entities are almost homogeneous across different *entity categories*, like *objects*, *types* and *classes*. Within each category, the declaration grammar is **identical**.
+**Aster** has a concise grammar for *declarations*, unlike the bizarre ones in **C++**. Declarations of identifiers are almost homogeneous across different *entity categories*, like *objects*, *types* and *classes*. Within each category, the declaration grammar is **identical**.
 
 - Object Declarations:
 
-  - `@decl-key @id : @type-id|@class-id;`: Declare a variable unbound to any object, but its type is specified. The `@decl-key` could be any of `auto`, `const`, and `mutable`.
+  - `@decl-key @id : @type-id <!or> @class-id;`: Declare a variable unbound to any object, but its type is specified. The `@decl-key` could be any of `auto`, `const`, and `mutable`.
   - `@decl-key @id = @expr;`: Declare a variable bound to a value obtained from the `@expr`. The type of the variable will be the same as the storage type of the *right-hand side (RHS)* of the equation.
-  - `@decl-key @id : @type-id|@class-id = @expr;`: The combination of the two cases above.
+  - `@decl-key @id : @type-id <!or> @class-id = @expr;`: The combination of the two cases above.
   - `@decl-key @patt <- @expr;`: Declare one or more variables embedded in a pattern trying to match the RHS. The statement won't complie on match failures.
-  - `@decl-key @patt : @type-id|@class-id = @expr;`: Add explicit type specification for the pattern matching declaration.
+  - `@decl-key @patt : @type-id <!or> @class-id <- @expr;`: Add explicit type specification for the pattern matching declaration.
 
   ```cpp
   // Definition of the main function
-  auto main = () -> {
+  auto main = () -> do {
       auto x : int;
       auto y = 10;
       auto z : [char] = "abc";
       auto [first, rest...] <- z;
-      auto [second, last] : [char] = [rest...];
+      auto [second, last] : [char] <- [rest...];
   }
   ```
 
 - Type Declarations:
 
-  - `type @id : @class-id;`: Declare a type alias unbound to any type, but the type class it conforms to is specified.
-  - `type @id = ?@type-mod @type-id;`: Declare a type alias bound to a type. The `@type-mod` could be any of `?` and `!`.
-  - `type @id : @class-id = @type-id;`: The combination of the previous two grammar.
-  - `@id ?: ?@class-op-list
+  - `@type-decl-key @id : @class-id;`: Declare a type alias unbound to any type, but the type class it conforms to is specified. The `@type-decl-key` could be either of `auto`, `type`.
+  - `@type-decl-key @id = ?@type-mod @type-id;`: Declare a type alias bound to a type. The `@type-mod` could be any of `?` and `!`.
+  - `@type-decl-key @id : @class-id = @type-id;`: The combination of the previous two grammar.
 
   ```cpp
   type mytup_t : std::eq;
@@ -252,9 +275,9 @@ All expressions can be categorized into types as follows:
   type mytup2_t : std::ord = (int, [char])
   ```
 
-- Template Delcarations:
+- Template Declarations:
 
-  - `@decl-key @id<<id> ?: ?@class-op-list ?,...> = <static-expr>`: Declare a template variable with a static value.
+  - `@decl-key @id<@id ?: ?@class-op-list ?,...> = <static-expr>`: Declare a template variable with a static value.
   - `@decl-key @id<<id> ?: ?@class-op-list ?,...>`: Declare a template variable.
   - `@decl-key 
 
@@ -271,13 +294,11 @@ All expressions can be categorized into types as follows:
 
 ### Functions
 
-**Aster** *functions* are identifiers that bound to *closure objects*, which are essentially objects of types that *overload* the `()` operator (called "functors" in **C++**, but well, this is not a proper name). The RHS of a function declarations are as follows:
+**Aster** *functions* are identifiers that bound to *closure objects*, which are essentially objects of types that *overload* the `$` operator (called "functors" in **C++**, but well, this is not a proper name). A function declarations is as follows:
 
-- `[@id = @expr ?,...] (?@func-decl ?,...) -> @expr`: This closure object has several *members* declared in the *capture list*, specified by a pair of brackets. The *parameter list* are specified by a pair of  
+- `[*@bind] (*@decl) -> @expr`: This closure object has several *members* declared in the *capture list*, specified by a pair of brackets. The *parameter list* are specified by a pair of  
 
-```cpp
-[](a) -> [](b) -> [](c) -> [](d) -> a + b + c + d
-```
+
 
 
 
