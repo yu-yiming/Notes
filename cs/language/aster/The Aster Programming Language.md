@@ -279,7 +279,6 @@ All expressions can be categorized into types as follows:
 
   - `@decl-key @id<@id ?: ?@class-op-list ?,...> = <static-expr>`: Declare a template variable with a static value.
   - `@decl-key @id<<id> ?: ?@class-op-list ?,...>`: Declare a template variable.
-  - `@decl-key 
 
 - Type Class Declarations:
 
