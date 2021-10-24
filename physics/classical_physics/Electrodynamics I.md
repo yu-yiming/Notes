@@ -1503,7 +1503,7 @@ $$
 
 #### 和静电场的比较
 
-现在我们已经得到了静电磁学最重要的几个公式，它们也是麦克斯韦方程的在局限下的形式：
+现在我们已经得到了静电磁学最重要的几个公式，它们也是麦克斯韦方程的在一定局限下的形式：
 
 - 静电学：
   - $\nabla\cdot\mathbf{E} = \dfrac{\rho}{\epsilon_0}$ （高斯定律）
@@ -1514,7 +1514,48 @@ $$
   - $\nabla\cdot\mathbf{B} = 0$。静磁场是无源场。
   - $\nabla\times\mathbf{E} = \mu_0\mathbf{J}$（安培定律）
   - $\mathbf{B} \to \mathbf{0}$，当场点距离场源很远时。
-  - $\mathbf{B}$ 
+  - $\mathbf{B} = \dfrac{\mu_0}{4\pi}{\displaystyle\int}\dfrac{\mathbf{J}\times\unit{\rcur}}{\rcur^2}\,d\tau'$ （毕奥·萨伐尔定律）
 - 电磁场力：
   - $\mathbf{F} = Q(\mathbf{E} + \mathbf{v}\times\mathbf{B})$（洛伦兹力）
+
+电磁学研究的早期，物理学家倾向于认为磁力也源于类似于电荷的 **磁核（Magnetic Charge）**，或 **磁单极子（Magnetic Monopole）**，并给出了和库仑定律极为相似的公式。当时是安培首先提出磁场源于运动的一系列电荷。事实上，直到现在都没有实验能证实磁单极子的存在，但一些基本的物理理论中着实需要它们。本篇中我们假定 *不存在* 磁单极子，也即所有磁场都是无源的，只有运动的电荷才能产生并受磁场影响。
+
+现实中，磁场力相比电场力要小得多；通常只有在测试电荷接近光速的情况下两者才相当。不过，对于一整个电流来说，产生效果的主要是磁力。
+
+### 磁矢势
+
+正如我们通过静电场无旋引入了电势 $V$ 使得电场是它的负梯度，由静磁场无源我们也可以引入 **磁矢势（Magnetic Vector Potential）** 使得其旋度为磁场：
+$$
+\label{magnetic-vector-poential}
+\marginbox{\mathbf{B} = \nabla\times\mathbf{A}}
+$$
+将其代入安培定律：
+$$
+\nabla\times\mathbf{B} = \nabla\times(\nabla\times\mathbf{A}) = \nabla(\nabla\cdot\mathbf{A}) - \nabla^2\mathbf{A} = \mu_0\mathbf{J}
+$$
+此处我们断定：
+$$
+\label{divergence-of-magnetic-vector-potential}
+\marginbox{\nabla\cdot \mathbf{A} = 0}
+$$
+这是因为对于任意使得 $(\ref{magnetic-vector-poential})$ 成立的 $\mathbf{A}$，$\mathbf{A} + \nabla f$ 同样也能使其成立，其中 $f$ 是任意的标量场。假设 $\nabla\cdot\mathbf{A} \ne 0$，下面证明我们总能找到 $f$ 使得 $\mathbf{A}_0 = \mathbf{A} + \nabla f$ 是无源场，并让 $\mathbf{A}_0$ 成为我们想要的磁矢势：
+$$
+\begin{align*}
+	&\nabla\cdot(\mathbf{A} + \nabla f) = \nabla\cdot\mathbf{A} + \nabla^2f = 0 \\
+	\implies &\nabla^2 f = -\nabla\cdot\mathbf{A} \quad \text{（泊松方程）} \\
+	\implies &f = \frac{1}{4\pi}\int\frac{\nabla\cdot\mathbf{A}}{\rcur}\,d\tau' \quad \text{（若在无穷远处 $\nabla\cdot\mathbf{A} \to 0$）}
+\end{align*}
+$$
+上面给出了满足在无穷远处 $\nabla\cdot\mathbf{A} \to 0$ 的解；但即使是其它情况，我们也总能找到泊松方程的解。综上，我们可以认为 $(\ref{divergence-of-magnetic-vector-potential})$ 成立。因而，我们可以得到磁矢势的拉普拉斯：
+$$
+\label{laplacian-of-magnetic-vector-potential}
+\marginbox{\nabla^2\mathbf{A} = \mu_0\mathbf{J}}
+$$
+这仍然是一个泊松方程。如果在无穷远处 $\mathbf{J} \to \mathbf{0}$，我们可以得到下面的解：
+$$
+\mathbf{A}(\mathbf{r}) = \frac{\mu_0}{4\pi}\int\frac{\mathbf{J}(\mathbf{r}')}{\rcur}\,d\tau' = \frac{\mu_0I}{4\pi}\int\frac{1}{\rcur}\,d\mathbf{l}' = \frac{\mu_0}{4\pi}\int\frac{\mathbf{K}}{\rcur}\,da'
+$$
+
+
+#### 边界条件
 
