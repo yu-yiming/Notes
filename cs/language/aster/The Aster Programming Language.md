@@ -56,7 +56,7 @@ Finally, let's get to know the abbreviations of some terms, which will be freque
 | `@func`          | function                           | `@clos`          | closure                   | `@invok`         | invokable                 |
 | `@keyval`        | colon separated pair               | `@bind`          | equal sign separated pair | `@match`         | Left arrow separated pair |
 | `@seq`           | space separated sequence           | `@list`          | comma separated sequence  | `@proj`          | arrow separated sequence  |
-| `@scoped`        | double colon separated sequence    | `@lval`          | left value                | `rval`           | right value               |
+| `@scoped`        | double colon separated sequence    | `@lval`          | left value                | `@rval`          | right value               |
 |                  |                                    |                  |                           |                  |                           |
 | `@attr`          | attribute                          | `@patt`          | pattern                   |                  |                           |
 | `@cstr`          | `&` or `|` separated types/classes |                  |                           |                  |                           |
@@ -299,6 +299,12 @@ All expressions can be categorized into types as follows:
 - `[*@bind] (*@decl) -> @expr`: This closure object has several *members* declared in the *capture list*, specified by a pair of brackets. The *parameter list* are specified by a pair of  
 
 
+## Aster Core
+### Evaluables and Invokables
+There are two important categories in **Aster**, *evaluables* and *invokables*. We will spare some space to talk about them.
+- *Evaluables* are any code segment that can be evaluated to a *value*. In **Aster**, evaluables includes *expressions* and *constraints*.
+- *Invokables* are any code segment that can be followed by a `@seq`, i.e. it can be viewed as a function. In **Aster**, invokables includes *functions*, objects that overload `operator $`, and *templates*.
 
+#### Evaluation of Expressions
 
 

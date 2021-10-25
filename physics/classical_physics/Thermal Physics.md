@@ -91,9 +91,9 @@ $$
 
 开始时气体拥有较高的内能（因为温度更高），随后内能逐渐变小；活塞则刚好相反。平衡点应该恰好是两者斜率相等的时候，也即 $\dfrac{\partial S_\text{gas}}{\partial U_\text{gas}} = \dfrac{\partial S_\text{piston}}{\partial U_\text{piston}}$。我们发现这个偏导数和常识中定义的温度性质类似，因此在热力学中如下定义 **温度（Temperature）**：
 $$
-\frac{1}{T} = \frac{dS}{dU}
+\frac{1}{T} = \left(\frac{dS}{dU}\right)_{V, N}
 $$
-需要注意，这个定义假设系统的体积不变。温度的单位是 **开尔文（$\text{K}$）**。除了开尔文外，常用的温度单位还有 **摄氏度（Celsius）** 和 **华氏度（Fahrenheit）**。开尔文和摄氏度都是根据水的 **三相点（Triple Point）** 来定义的；华氏度是根据水的凝固点和沸点定义的，我们不具体展开。
+需要注意，这个定义假设系统的体积和分子数量不变。温度的单位是 **开尔文（$\text{K}$）**。除了开尔文外，常用的温度单位还有 **摄氏度（Celsius）** 和 **华氏度（Fahrenheit）**。开尔文和摄氏度都是根据水的 **三相点（Triple Point）** 来定义的；华氏度是根据水的凝固点和沸点定义的，我们不具体展开。
 
 此前我们通过 $U-S$ 曲线定义了温度。如果我们将 $S$ 换作 $T$，新的曲线可以定义另一个物理量，**热容（Heat Capacity）**：
 $$
@@ -103,7 +103,11 @@ $$
 $$
 c_V = \frac{C_V}{m} = \frac{1}{m}\frac{\Delta U}{\Delta T}
 $$
-下面是一些气体的比热容，我们还额外给出了单位物质的量的气体的热容：
+类似地，我们也可以定义单位物质的量的热容，即 **摩尔热容（Molar Heat Capacity）**：
+$$
+c_m = \frac{C}{n} = \frac{1}{n}\frac{\Delta U}{\Delta T}
+$$
+下面是一些气体的比热容和摩尔热容：
 
 |      | 原子质量 | 比热容（$\text{kJ}/(\text{kg}\cdot\text{K})$） | 摩尔热容（$\text{J}/(\text{mol}\cdot\text{K})$） |
 | ---- | -------- | ---------------------------------------------- | ------------------------------------------------ |
@@ -117,4 +121,50 @@ $$
 
 稀有气体的摩尔热容居然惊人地保持一致！这实际上和这些物质的分子结构有关。稀有气体微观上毫无例外地都是单原子分子，因此它们的宏观性质相似。
 
-在一些情况下，系统的温度并不和内能变化成正比，这是因为遇到了相态变化，比如水在凝固点和沸点时，一定程度内减少或增加内能都不会改变温度。这是因为变化的内能用于形成和破坏分子之间的作用力。
+在一些情况下，系统的温度并不和内能变化成正比，这是因为遇到了相态变化，比如水在凝固点和沸点时，一定程度内减少或增加内能都不会改变温度。这是因为变化的内能用于形成和破坏分子之间的作用力。此时，我们用 **潜热（Latent Heat）** 来描述内能变化的效率：
+$$
+\label{latent-heat}
+L_v = \frac{\Delta Q_\text{liquid $\to$ gas}}{m_\text{liquid}} \qquad L_f = \frac{\Delta Q_\text{solid $\to$ liquid}}{m_\text{solid}}
+$$
+上面的 $L_v, L_f$ 分别对应了单位质量液体汽化为气体以及单位质量固体熔化为液体所需要的热量。下表列举了一些物质的熔点沸点以及潜热：
+
+| 物质 | 熔点（$\text{K}$） | 熔化热（$\text{kJ}/\text{kg}$） | 沸点（$\text{K}$） | 汽化热（$\text{kJ}/\text{kg}$） |
+| ---- | ------------------ | ------------------------------- | ------------------ | ------------------------------- |
+| 铜   | 1356               | 205                             | 2839               | 4726                            |
+| 金   | 1336               | 62.8                            | 3081               | 1701                            |
+| 铅   | 600                | 24.7                            | 2023               | 858                             |
+| 汞   | 234                | 11.3                            | 630                | 296                             |
+| 氮气 | 63                 | 25.7                            | 77.35              | 199                             |
+| 氧气 | 54.4               | 13.8                            | 90.2               | 213                             |
+| 水   | 273.15             | 333.5                           | 373.15             | 2257                            |
+
+类似地，气体液化为液体、液体凝固为固体时，单位质量释放的热量和 $(\ref{latent-heat})$ 给出的相等。
+
+此前我们假设系统的体积不变。如果体积会发生变化，我们就需要利用热力学第一定律 $(\ref{first-law-thermodynamics})$ 的公式了：
+$$
+\Delta U = W_\text{net} + Q = -\int p\,dV + Q
+$$
+有了上面的公式，我们可以通过物体变化的温度得到其内能和熵的变化：
+$$
+\Delta U = \int_{T_i}^{T_f} C_V\,dT \qquad \Delta S = \int_{T_i}^{T_f}\frac{C_V}{T}\,dT
+$$
+现在考察两个系统（拥有不同的体积、内能）进行混合时能够达到怎样的平衡状态。我们可以根据热力学第一和第二定律列出下面的式子：
+$$
+\begin{align*}
+	&U_1 + U_2 = U_\text{tot} \quad \text{is constant} \\
+	&S_1 + S_2 = S_\text{tot} \quad \text{is maximized}
+\end{align*}
+$$
+由于 $U_\text{tot}$ 是常数，我们可以将 $U_2$ 写成 $U_\text{tot} - U_1$。由于 $S$ 是关于 $U$ 的函数，为了得到 $S$ 的最大值，我们应该令它的导数为 $0$：
+$$
+\begin{align}
+\frac{\partial S}{\partial U_1} &= \frac{\partial S_1}{\partial U_1} + \frac{\partial S_2}{\partial U_1} \nonumber \\
+&= \frac{\partial S_1}{\partial U_1} + \frac{\partial S_2}{\partial U_2}\frac{\partial U_2}{\partial U_1} \nonumber\\
+&= \frac{\partial S_1}{\partial U_1} - \frac{\partial S_2}{\partial U_2} = 0 \nonumber\\
+&\implies \frac{\partial S_1}{\partial U_1} = \frac{\partial S_2}{\partial U_2}
+\end{align}
+$$
+根据温度的定义，我们就得到了平衡时，两个系统需要满足：
+$$
+T_1 = T_2
+$$
