@@ -317,27 +317,44 @@ add 1 2 + 3       // ((add 1) 2) + 2 => (1 + 2) + 2
 bar $ fst (1, 2)  // bar $ (fst (1, 2)) => bar $ 1 => bar 1
 ```
 
-The precedences and associativities of operators differ. The following is a complete table of operators in **Aster**:
+The precedence and associativity of operators differ. The following is a complete table of operators in **Aster**:
 
-| Operator Name or Category                | Symbol       | Precedence | Associativity | Overloadable       |
-| ---------------------------------------- | ------------ | ---------- | ------------- | ------------------ |
-| Implicit Function Application            | space        | 1          | Left          | -                  |
-| Function Composition                     | `<.>`        | 2          | Right         | -                  |
-| Subscript Operation                      | `[]`         | 3          | -             | :heavy_check_mark: |
-| Prefixed Unary Operation                 | e.g. `&`     | 4          | -             | -                  |
-| Suffixed Unary Operation                 | e.g. `!`     | 5          | -             | -                  |
-| Infixed Power                            | `<^>`        | 6          | Left          | -                  |
-| Infixed Multiplication/Division          | `*` and `/`  | 7          | Left          | :heavy_check_mark: |
-| Other Non-Assignment Built-in Infixed Op | e.g. `+`     | 8          | Left          | :heavy_check_mark: |
-| Infixed Function                         | e.g. `<add>` | 9          | Left          | :heavy_check_mark: |
-| Assignment Operation                     | e.g. `=`     | 10         | Right         | :heavy_check_mark: |
+| Operator Name or Category                    | Symbol       | Precedence | Associativity | Overloadable       |
+| -------------------------------------------- | ------------ | ---------- | ------------- | ------------------ |
+| Implicit Function Application (Infixed Only) | space        | 10         | Left          | -                  |
+| Function Composition                         | `<.>`        | 20         | Right         | -                  |
+| Subscript Operation                          | `[]`         | 30         | -             | :heavy_check_mark: |
+| Prefixed Unary Operation                     | e.g. `&`     | 40         | -             | -                  |
+| Suffixed Unary Operation                     | e.g. `!`     | 50         | -             | -                  |
+| Infixed Power                                | `<^>`        | 60         | Left          | -                  |
+| Infixed Multiplication/Division              | `*` and `/`  | 70         | Left          | :heavy_check_mark: |
+| Infixed List Concatenation                   | `#`          | 80         | Right         | :heavy_check_mark: |
+| Other Non-Assignment Built-in Infixed Op     | e.g. `+`     | 90         | Left          | :heavy_check_mark: |
+| Infixed Function                             | e.g. `<add>` | 100        | Left          | :heavy_check_mark: |
+| Assignment Operation                         | e.g. `=`     | 110        | Right         | :heavy_check_mark: |
 
-Aside from these operations, we have other important symbols that have precedences. Special note that they are **not** operators, so they don't necessarily produce a value. Also, of course, none of them could be overloaded.
+Aside from these operations, we have other important symbols that have precedence. Special note that they are **not** operators, so they don't necessarily produce a value. Also, of course, none of them could be overloaded.
 
 | Symbol Name or Category | Symbol       | Precedence | Associativity |
 | ----------------------- | ------------ | ---------- | ------------- |
 | Scope/Member Accessor   | `::` and `.` | 0          | Left          |
-| Class Combinator        | `&` and `|`  | 10         | Left          |
-| All Other Symbols       | e.g. `->`    | 11         | -             |
-|                         |              |            |               |
+| Right Arrow             | `->`         | 970        | Right         |
+| Class Combinator        | `&` and `|`  | 980        | Left          |
+| All Other Symbols       |              | 990        | -             |
 
+#### Operators
+
+All the operators can be called like a function, which can take the form of `operator @` or `(@)`, where `@` is an the operator. Here are some examples:
+
+```cpp
+auto add_1 = operator +;
+auto add_2 = (+);
+auto res = operator + 1 2;
+```
+
+Here the reserved word `operator` is a built-in invokable that seems to take an operator and returns a function that execute the very operation. In fact, the `operator @` as a whole will be recognized as something like an identifier. The compiler will treat it as the prefix version of the operation. 
+
+Like in **Haskell**, binary operators in **Aster** can be written in the form of `(@ x)` or `(x @)` , which are called the *operator sections*. Their definitions are as follows:
+
+- `(@ x) = y -> y @ x` 
+- `(x @) = y -> x @ y`, which is identical to the partial application of `@`, i.e. `(@) x`.
