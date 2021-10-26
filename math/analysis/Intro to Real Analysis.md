@@ -69,7 +69,7 @@ $$
 > - $A(m)$：假设 $A(m)$ 成立，即 $k + m = l + m \implies k = l$ 成立。
 > - $A(m + 1)$：已知 $k + m + 1 = l + m + 1$ 此时有 $S(k + m) = S(l + m)$，根据公理 **B1** 有 $k + m = l + m$，根据 $A(m)$ 则有 $k = l$，得证。
 
-定义满足消去律的非空交换半群 $S$ 的 **Grothendieck 群（Grothendieck Group）**为最小的包含 $S$ 的交换群。一个交换群 $(S, +)$ 需要满足二元运算 $+$ 的结合律、交换律，并有唯一的单位元 $0$ 使得对任意 $a \in S$ 都有 $e + a = a + e = a$，并存在任意 $a \in S$ 的唯一逆元 $b$ 使得 $a + b = b + a = e$。
+定义满足消去律的非空交换半群 $S$ 的 **Grothendieck 群（Grothendieck Group）**为最小的包含 $S$ 的交换群，记为 $G(S)$。一个交换群 $(S, +)$ 需要满足二元运算 $+$ 的结合律、交换律，并有唯一的单位元 $0$ 使得对任意 $a \in S$ 都有 $e + a = a + e = a$，并存在任意 $a \in S$ 的唯一逆元 $b$ 使得 $a + b = b + a = e$。
 
 下面证明 Grothendieck 群的存在性：
 
@@ -87,16 +87,24 @@ $$
 >
 > 首先，定义 $G$ 上的二元运算 $+$ 为 $[(a, b)] + [(c, d)] = [(a + c, b + d)]$。显然这个运算满足结合律和交换律。随后，定义单位元 $[(a, a)] = 0$，这里的 $a \in S$ 是任取的，因为任意 $a, b \in S$ 都有 $(a, a) \sim (b, b)$，同时 $[(a, a)] + [(b, c)] = [(a + b, a + c)] = [(b, c)]$。最后定义 $[(a, b)]$ 的逆元 $[(b, a)]$，因为 $[(a + b, b + a)] = 0$。这样我们就得到 $G$ 是一个交换群。
 >
-> 为了证明 $S \subset G$，只需考虑 $\{[(0, a)]\mid a \in S\}$ ，显然它和 $S$ 能够形成一个双射 $(0, a) \mapsto a$。假设存在 $H$ 使得 $S \subset H$，$\notprovedyet$。
+> 为了证明 Grothendieck 群是最小的包含 $S$ 的交换群，我们只需要尝试构造 $G$ 可能的子群，比如 $H = \{[(a, 2a)]\}$ 也包含 $S$（存在对应 `a \mapsto [(a, 2a)]`）且构成一个群（仍使用 $G$ 中的运算），且显然是 $G$ 的子集，因此我们有 $S \subseteq H \subseteq G$。下面我们证明 $H = G$：对任意的 $[(m, n)] \in G$，都有：
+> $$
+> [(m, n)] + [(2n, n)] + [(m, 2m)] = [(2m + 2n, 2m + 2n)]\nonumber
+> $$
+> 式中 $[(2n, n)] = -[(n, 2n)] \in H, [(m, 2m)] \in H, [(2m + 2n, 2m + 2n)] = 0 \in H$，因此 $[(m, n)] \in H$。这样就得到了 $G \subseteq H$，故 $G = H$。就此得证。
 
-我们对 Grothendieck 的一个重要的应用是将自然数集扩充为整数集：$(\N, +)$  的 Grothendieck 群满足下面条件时，就等价于 $\Z$：
+上面的定义也可以叙述为以下引理：
+
+> **Grothendieck 引理**：如果交换半群 $(S, +)$ 满足消去律，则存在一个最小的包含 $S$ 的交换群 $G(S)$。
+
+我们对 Grothendieck 的一个重要的应用是将自然数集扩充为整数集：$(\N, +)$  的 Grothendieck 群满足下面条件时，就等价于 $\Z$（后文中我们会数次用到下面的构造）：
 $$
 (a, b) =
 \left.\begin{cases}
 	((b - a), +) & \text{若 $a < b$} \\
 	((a - b), -) & \text{若 $a > b$} \\
 	0 & \text{若 $a = b$}
-\end{cases} \right\} \in (\N, \{+\})\cup (\N, \{-\})\cup \{0\}\nonumber 
+\end{cases} \right\} \in (\N, \{+\})\cup (\N, \{-\})\cup \{0\}\nonumber
 $$
 注意其中的 $0$ 是 Grothendieck 群中的单位元。
 
@@ -104,9 +112,108 @@ $$
 $$
 \frac{p}{q} = [(p, q)] = \{(pr, qr) \mid r \in \N\}, p, q \in \N
 $$
-为了标记方便，我们以后将半群 $S$ 的 Grothendieck 群写成 $G(S)$。
+这就是我们熟悉的有理数的分数形式。不过在研究它之前，我们似乎有一个重要的缺失步骤：证明 $(\N, \cdot)$ 满足消去律。为了证明这一点，我们首先引入几个记号：
 
+> **定义**：对于 $a, b \in \N$，如果存在 $k \in \N$ 使得 $a + k = b$ 成立，我们记 $a < b$。
 
+> **备注**：对于任意的 $a, b, \in \N$，要么 $a < b$，要么 $b < a$，要么 $a = b$。
 
+下面我们尝试证明消去律的逆否命题，即对于 $m, n, n' \in \N$，若 $n \ne n'$，则 $nm \ne n'm$。
 
+> **证**：不失一般性，我们假设 $n < n'$，此时让我们证明 $B(m): nm < n'm$。对 $m$ 使用数学归纳法：
+>
+> - $B(1)$：此时 $n < n'$，显然成立。
+> - $B(m)$：假设 $B(m)$ 成立，即 $nm < n'm$ 成立。
+> - $B(m + 1)$：此时有 $n(m + 1) = nm + n < n'm + n' = n'(m + 1)$，因此 $B(m + 1)$ 成立。
+>
+> 这样就证明了原命题的成立。
+
+现在我们可以正式定义有理数集为：
+$$
+\Q^+ = G(\N, \cdot) \qquad \Q = G(\Z\backslash\{0\}, \cdot)
+$$
+$\Q$ 也可以定义为 $G(\Q^+, +)$，不过此时这里的 $+$ 要特别定义出来：
+$$
+\frac{p}{q} + \frac{p'}{q'} = \frac{pq' + qp'}{qq'}
+$$
+有理数集有一系列性质：
+
+- $\Q$ 是一个有全序关系的 **域（Field）**，$\frac{p}{q} < \frac{p'}{q'}$ 等价于 $pq' < qp'$。其中域的公理如下：
+
+  - $(\Q, +)$ 是一个交换群。
+  - $(\Q\backslash \{0\}, \cdot)$ 是一个交换群。
+  - $+, \cdot$ 满足分配律，即 $a\cdot(b + c) = a\cdot b + a\cdot c$。
+
+- $\Q$ 在序有关的规律如下：
+
+  - $\forall\ a, b, c \quad a < b \implies a + c < b + c$ 
+  - $\forall\ a, b, c$ 且 $c > 0 \quad a < b \implies ac < bc$。
+  - $\forall\ a < b$ 或 $b < a$ 或 $a = b$。
+
+- $\Q$ 不是 **完备的（Complete）**。有序域的完备性定义如下：
+
+  > **定义**： 设 $F$ 是一个有序域，且 $ b\in F$，$A \subseteq F$，则我们称 $b$ 是 $A$ 的 **上界（Upper Bound）** 当且仅当对任意 $a \in A$ 都有 $a \le b$，记作 $A \le b$。当 $b$ 是 $A$ 所有上界中最小的那个时（即 $A \le b$ 且 $A \le b' \implies b \le b'$），我们称 $b$ 是 $A$ 的上确界，记作 $b = \sup{A}$。
+
+  > **定义**： 一个 **完备的（Complete）** 有序域要求其任意有上界的子集（$\exists\ b', A \le b'$）都有上确界，即 $\exists\ b = \sup{A}$。
+
+  作为例子，$\{x \in \Q\mid x^2 < 2\}$ 不存在上确界。
+
+由于有理数集的不完备，我们不难发现有理数之间存在大量的“漏洞”。一个理应有解的方程在有理数中并不能找到解，事实上 **有理数零点定理** 叙述了以下的事实：
+
+> **定理**：方程 $\sum_{n=0}^n c_ks^k = 0$ 有有理数解 $\frac{p}{q}$ 当且仅当 $q \mid c_0$ 且 $p \mid c_n$。
+
+通过这个定理我们可以证明许多数是否是有理数，比如 $2 + \sqrt{17}$，设其为 $x$ 则可以得到式子 $(x - 2)^2 = 17 \implies x^2 - 4x - 13 = 0$。如果它是一个有理数，分母只可能是 $1$，分子可以是 $1$ 或 $13$。显然任一种情况均不满足，故 $2 + \sqrt{17}$ 不是有理数。
+
+### 实数集
+
+我们可以直接给出一个事实，实数集 $\R$ 是最小的包含 $\Q$ 的完备集。下面将一步步构建 $\R$。
+
+> **定义**：**戴德金分割（Dedekind Cut）** 是有理数集 $\Q$ 的一个子集 $A$，使得：
+>
+> - $\forall\ a \in A, b < a \implies b \in A$。
+> - $\forall\ a\in A, \exists\ a' \in A$ 使得 $a < a'$。
+
+比如 $A_\sqrt{2} = \{x \in \Q\mid x^2 < 2\ \text{且}\ x \le 0\}$ 就是一个戴德金分割。下面是证明：
+
+> **证明**：$x \le 0$ 以及第一个条件的情形是显然的，我们下面证明对于任意 $A_\sqrt{2}$ 中的 $\frac{p}{q} > 0$，都有 $x > \frac{p}{q}$ 使得 $x^2 < 2$ 成立。假设 $x = \frac{p}{q} + \varepsilon$，这里的 $\varepsilon > 0$ 是一个满足特定条件的小值令 $(\frac{p}{q} + \varepsilon)^2 < 2$。下面我们尝试找到 $\varepsilon$：
+> $$
+> \begin{align*}
+> \left(\frac{p}{q} + \varepsilon\right)^2 &= \frac{p^2}{q^2} + \frac{2p}{q}\varepsilon + \varepsilon^2 \\
+> &\le \frac{p^2}{q^2} + (\frac{2p}{q} + q)\varepsilon \\
+> &< 2 \\
+> \implies \varepsilon &\le \frac{2q^2 - p^2}{2pq + q^3} 
+> \end{align*}
+> $$
+> 由于 $\frac{p}{q} < 2 \implies p^2 < 2q^2$，我们总能找到一个正有理数 $\varepsilon$ 满足上面的不等式。
+
+我们将首先证明 $R = \{D \subseteq \Q\}$ （即所有戴德金分割的集合）是一个完备集。为了后文表述方便，记两个集合 $D_1 \le D_2$，如果 $D_1 \subseteq D_2$。
+
+> **证明**：令 $S \subseteq R$，$D \in R$，且对于任意 $s \in S$ 均有 $s \le D$（即 $D$ 是所有 $s$ 的上界）。将 $S$ 的上确界定义为：
+> $$
+> \sup{S} = \bigcup_{s \in S} s \nonumber
+> $$
+> 不难发现  $\sup{S} \in R$ 且 $\sup{S} \le D$ 。此外作为验证，对 $S$ 的任意上界 $D' \in R$，若对于任何 $s \in S$ 均有 $s \le D'$，则有 $\sup{S} = \bigcup s \le D '$，因此 $\sup{S}$ 确实是上确界。综上，我们得到了 $R$ 是一个完备集的结论。
+
+不过实数集并不等价于 $R$，因为对于 $\Q \in R$，其对应的是 $\R$ 中不存在的 $\infty$。因此实数集实际上的定义是：
+$$
+\R = R\backslash\Q = \{D \subset \Q\}
+$$
+如果我们借用 $R$ 完备的结论，实数集 $\R$ 的完备性是比较显然的，这里不再叙述。
+
+为了方便定义 $\R$ 上的运算，先定义 $\R^+ = \{D \in \R\mid (-\infty, 0] \subseteq D\}$，并定义 $\R^+$ 上的 $+$ 和 $\cdot$ 运算。对于 $D_1, D_2 \in \R^+$：
+$$
+\begin{align*}
+D_1 + D_2 &= \{d_1 + d_2 \mid d_1 \in D_1, d_2 \in D_2\} \\
+D_1 \cdot D_2 &= \{d_1 \cdot d_2 \mid d_1 \in D_1, d_2 \in D_2\}
+\end{align*}
+$$
+它们遵循结合律、交换律和分配律：
+
+- $D_1 + (D_2 + D_3) = (D_1 + D_2) + D_3$.
+- $D_1\cdot(D_2\cdot D_3) = (D_1\cdot D_2) \cdot D_3)$。
+- $D_1 + D_2 = D_2 + D_1$。
+- $D_1\cdot D_2 = D_2 \cdot D_1$。
+- $D_1\cdot(D_2 + D_3) = D_1\cdot D_2 + D_1\cdot D_3$。
+
+由此我们可以得到 $(\R^+, +)$ 和 $\R^+, \cdot)$ 均为满足消去律的半群。最终，我们可以得到它的 Grothendick 群，而它实际上就是我们的实数集，即 $\R = G(\R^+)$。
 

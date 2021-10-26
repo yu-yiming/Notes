@@ -418,16 +418,123 @@ $$
 $$
 第二步中我们省略了 $\hat{\mathbf{y}}$ 和 $\hat{\mathbf{z}}$ 的项，但是它们和第一项是类似的，都是对某一分量分解为球坐标系下三个分量的和。通过代入前面介绍过的公式，我们可以得到 del 算子相关的所有公式：
 $$
+\label{derivatives-spherical-coordinates}
 \begin{align}
 \nabla T &= \frac{\partial T}{\partial r}\hat{\mathbf{r}} + \frac{1}{r}\frac{\partial T}{\partial \theta}\hat{\boldsymbol{\theta}} + \frac{1}{r\sin\theta}\frac{\partial T}{\partial \phi}\hat{\boldsymbol{\phi}} \\
 \nabla \cdot \mathbf{v} &= \frac{1}{r^2}\frac{\partial}{\partial r}(r^2v_r) + \frac{1}{r\sin\theta}\frac{\partial}{\partial \theta}(\sin\theta v_\theta) + \frac{1}{r\sin\theta}\frac{\partial v_\phi}{\partial \phi} \\
-\nabla\times \mathbf{v} &= \frac{1}{r\sin\theta}\left(\frac{\partial}{\partial \theta}(\sin\theta v_\phi) - \frac{\partial v_\theta}{\partial \phi}\right)\hat{\mathbf{r}} + \frac{1}{r}\left(\frac{1}{\sin\theta}\frac{\partial v_r}{\partial \phi} - \frac{\partial }{\partial r}(rv_\phi) \right)\hat{\boldsymbol{\theta}} + \frac{1}{r}\left(\frac{\partial}{\partial r}(rv_\theta) - \frac{\partial v_r}{\partial \theta}\right)\hat{\boldsymbol{\phi}}
+\nabla\times \mathbf{v} &= \frac{1}{r\sin\theta}\left(\frac{\partial}{\partial \theta}(\sin\theta v_\phi) - \frac{\partial v_\theta}{\partial \phi}\right)\hat{\mathbf{r}} + \frac{1}{r}\left(\frac{1}{\sin\theta}\frac{\partial v_r}{\partial \phi} - \frac{\partial }{\partial r}(rv_\phi) \right)\hat{\boldsymbol{\theta}} + \frac{1}{r}\left(\frac{\partial}{\partial r}(rv_\theta) - \frac{\partial v_r}{\partial \theta}\right)\hat{\boldsymbol{\phi}} \\
+\nabla^2 T &= \frac{1}{r^2}\frac{\partial}{\partial r}\left(r^2\frac{\partial T}{\partial r}\right) + \frac{1}{r^2\sin\theta}\frac{\partial}{\partial \theta}\left(\sin\theta\frac{\partial T}{\partial \theta}\right) + \frac{1}{r^2\sin^2\theta}\frac{\partial^2 T}{\partial \phi^2}
 \end{align}
 $$
 
 #### 柱坐标系
 
+**柱坐标系（Cylindrical Coordinates）** 是对平面中极坐标系的三维扩张，它由和直角坐标系中相同含义的 $z$，和 $z$ 轴的距离 $s$ 和与球坐标系中相同含义的 $\phi$ 构成。下面是它和笛卡尔坐标系的关系：
+$$
+x = s\cos{\phi} \qquad y = s\sin{\phi} \qquad z = z
+$$
+与球坐标系类似地，柱坐标系中的单位矢量会随着 $(s, \phi, z)$ 的变化而改变；它们的表达式如下：
+$$
+\begin{align}
+\begin{split}
+	\unit{s} &= \cos\phi \unit{x} + \sin\phi \unit{y} \\
+	\unit{\phi} &= -\sin\phi\unit{x} + \cos\phi\unit{y} \\
+	\unit{z} &= \unit{z}
+\end{split}
+\end{align}
+$$
+下面是一张示意图：
 
+<img src="graphs/ed1_1-9.png" alt="ed1_1-9" style="zoom:40%;" />
+
+无穷小的位移是：
+$$
+d\mathbf{l} = ds\unit{s} + s\,d\phi\unit{\phi} + dz\unit{z}
+$$
+我们同样可以得到 $d\tau$：
+$$
+d\tau = s\,ds\,d\phi\,dz
+$$
+和球坐标系类似，我们可以得到柱坐标系下的梯度、散度、旋度的公式：
+$$
+\label{derivatives-cylindrical-coordinates}
+\begin{align}
+\nabla T &= \frac{\partial T}{\partial s}\unit{s} + \frac{1}{s}\frac{\partial T}{\partial \phi}\unit{\phi} + \frac{\partial T}{\partial z}\unit{z} \\
+\nabla\cdot \mathbf{v} &= \frac{1}{s}\frac{\partial}{\partial s}(sv_s) + \frac{1}{s}\frac{\partial v_\phi}{\partial \phi} + \frac{\partial v_z}{\partial z} \\
+\nabla\times\mathbf{v} &= \left(\frac{1}{s}\frac{\partial v_z}{\partial \phi} - \frac{\partial v_\phi}{\partial z}\right)\unit{s} + \left(\frac{\partial v_s}{\partial s} - \frac{\partial v_z}{\partial s}\right)\unit{\phi} + \frac{1}{s}\left(\frac{\partial}{\partial s}(sv_\phi) - \frac{\partial v_s}{\partial \phi}\right)\unit{z} \\
+\nabla^2T &= \frac{1}{s}\frac{\partial}{\partial s}\left(s\frac{\partial T}{\partial s}\right) + \frac{1}{s^2}\frac{\partial^2 T}{\partial \phi^2} + \frac{\partial^2 T}{\partial z^2}
+\end{align}
+$$
+
+### 狄拉克函数
+
+本节中让我们介绍一个数学工具。以一个例子作为导引：
+
+> **例**：求球坐标系中，$\mathbf{v} = \frac{1}{r^2}\unit{r}$ 的散度。
+
+> **解**：利用 $(\ref{derivatives-spherical-coordinates})$ 的散度公式，我们可以作如下计算：
+> $$
+> \nabla\cdot\mathbf{v} = \frac{1}{r^2}\frac{\partial }{\partial r}\left(r^2\frac{1}{r^2}\right) = 0 \nonumber
+> $$
+> 不过这个结论似乎违背了我们的直觉：这个矢量场的散度显然不应该是 $0$，因为根据散度定理，考虑闭合的曲面积分：
+> $$
+> \oint\mathbf{v}\cdot\,d\mathbf{a} = \int\left(\frac{1}{R^2}\unit{r}\right)\cdot(R^2\sin\theta\,d\theta\,d\phi\unit{r}) = 4\pi \nonumber
+> $$
+> 这和我们此前得到的散度并不符合（无论怎么积分，$0$ 都只能得到 $0$）。这个区别源于 $r = 0$ 这一点。当 $r \ne 0$ 时，矢量场的散度确实为 $0$，但是由于 $r = 0$ 时 $v = \infty$，我们就不能通过公式直接计算出该点的散度。一个形象的例子是质点的密度（仅当在该点时存在无穷大的密度）。
+
+#### 一维的狄拉克函数
+
+定义 **狄拉克函数（Dirac Delta Function）** 为仅在 $x = 0$ 时不为 $0$ 的函数：
+$$
+\label{dirac-function}
+\delta(x) = 
+\begin{cases}
+	0, \qquad \text{若 $x \ne 0$} \\
+	\infty, \quad\ \ \text{若 $x = 0$}
+\end{cases}
+$$
+它有一个非常重要的性质：
+$$
+\label{dirac-function-property}
+\int_{-\infty}^\infty\delta(x)\,dx = 1
+$$
+狄拉克函数并不是严格意义上的函数，而是一个函数序列的极限。我们可以通过构造一系列函数不断逼近狄拉克函数，并对它们的积分求极限。对于一个常规的连续函数 $f(x)$，它和狄拉克函数的乘积满足一个有趣的性质：
+$$
+\int_{-\infty}^\infty f(x)\delta(x)\,dx = f(0)
+$$
+这个结果是显而易见的（因为 $\delta(x)$ 在 $x \ne 0$ 的地方处处为 $0$）。如果对狄拉克函数进行平移，我们就能得到一个更加通用的结论：
+$$
+\int_{-\infty}^\infty f(x)\delta(x - a)\,dx = f(a)
+$$
+
+#### 三维的狄拉克函数
+
+我们可以通过一维的狄拉克函数轻易构造三维的版本：
+$$
+\label{3d-dirac-function}
+\delta^3(\mathbf{r}) = \delta(x)\delta(y)\delta(z)
+$$
+此时它应该满足下面的性质：
+$$
+\int\delta^3(\mathbf{r})\,d\tau = \int_{-\infty}^\infty\int_{-\infty}^\infty\int_{-\infty}^\infty\delta(x)\delta(y)\delta(z)\,dx\,dy\,dz = 1
+$$
+和一个常规函数结合后我们也可以得到下面的结论：
+$$
+\int f(\mathbf{r})\delta^3(\mathbf{r} - \mathbf{a})\,d\tau = f(\mathbf{a})
+$$
+有了以上铺垫，我们就可以给出之前遇到的矢量场的散度了：
+$$
+\nabla\cdot\left(\frac{\unit{r}}{r^2}\right) = 4\pi\delta^3(\mathbf{r})
+$$
+对于 $\rcur = \mathbf{r} - \mathbf{r}'$，上面的式子可以转化为：
+$$
+\nabla\cdot\left(\frac{\unit{\rcur}}{\rcur^2}\right) = 4\pi\delta^3(\brcur)
+$$
+由于 $\frac{1}{\rcur}$ 的梯度恰好是 $-\frac{\unit{\rcur}}{\rcur^2}$，我们可以得到：
+$$
+\nabla^2 \frac{1}{\rcur} = -4\pi\delta^3(\brcur)
+$$
+这个公式在电磁学中会非常常用。
 
 ## 静电场概述
 
@@ -1559,3 +1666,7 @@ $$
 
 #### 边界条件
 
+现在考虑一个电流密度为 $\mathbf{K}$ 的通电平面附近的磁场分布。对于平面上下的垂直方向磁场 $B_\text{above}^\bot$ 和 $B_\text{below}^\bot$由于磁场在闭合曲面上的积分恒为 $0$，如果在曲面上构造一个极薄的小盒子，我们不难得到 $B_\text{above}^\bot = B_\text{below}^\bot$。对于磁场的水平方向分量，则可以构造一个穿过曲面的环路，其方向和磁场方向平行并和曲面垂直。此时平面上下的磁场对其的环路积分为：
+$$
+\oint\mathbb{B}\cdot d\mathbf{l} = (B_\text{above}^\parallel - B_\text{below}^\parallel)l = \mu_0I_\text{enc} = \mu_0KI \implies B_\text{above}^\parallel - B_\text{below}^\parallel = \mu_0K \nonumber
+$$
