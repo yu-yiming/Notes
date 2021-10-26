@@ -307,4 +307,37 @@ There are two important categories in **Aster**, *evaluables* and *invokables*. 
 
 #### Evaluation of Expressions
 
+In **Aster**, expressions are evaluated lazily, from left to right, following the precedence rules. The followings are some examples to explain the idea:
+
+```cpp
+1 + 2 + 3         // (1 + 2) + 3
+1 + 2 * 3		  // 1 + (2 * 3)
+foo 1 2           // (foo 1) 2
+add 1 2 + 3       // ((add 1) 2) + 2 => (1 + 2) + 2
+bar $ fst (1, 2)  // bar $ (fst (1, 2)) => bar $ 1 => bar 1
+```
+
+The precedences and associativities of operators differ. The following is a complete table of operators in **Aster**:
+
+| Operator Name or Category                | Symbol       | Precedence | Associativity | Overloadable       |
+| ---------------------------------------- | ------------ | ---------- | ------------- | ------------------ |
+| Implicit Function Application            | space        | 1          | Left          | -                  |
+| Function Composition                     | `<.>`        | 2          | Right         | -                  |
+| Subscript Operation                      | `[]`         | 3          | -             | :heavy_check_mark: |
+| Prefixed Unary Operation                 | e.g. `&`     | 4          | -             | -                  |
+| Suffixed Unary Operation                 | e.g. `!`     | 5          | -             | -                  |
+| Infixed Power                            | `<^>`        | 6          | Left          | -                  |
+| Infixed Multiplication/Division          | `*` and `/`  | 7          | Left          | :heavy_check_mark: |
+| Other Non-Assignment Built-in Infixed Op | e.g. `+`     | 8          | Left          | :heavy_check_mark: |
+| Infixed Function                         | e.g. `<add>` | 9          | Left          | :heavy_check_mark: |
+| Assignment Operation                     | e.g. `=`     | 10         | Right         | :heavy_check_mark: |
+
+Aside from these operations, we have other important symbols that have precedences. Special note that they are **not** operators, so they don't necessarily produce a value. Also, of course, none of them could be overloaded.
+
+| Symbol Name or Category | Symbol       | Precedence | Associativity |
+| ----------------------- | ------------ | ---------- | ------------- |
+| Scope/Member Accessor   | `::` and `.` | 0          | Left          |
+| Class Combinator        | `&` and `|`  | 10         | Left          |
+| All Other Symbols       | e.g. `->`    | 11         | -             |
+|                         |              |            |               |
 
