@@ -326,7 +326,7 @@ The precedence and associativity of operators differ. The following is a complet
 | Subscript Operation                          | `[]`         | 30         | -             | :heavy_check_mark: |
 | Prefixed Unary Operation                     | e.g. `&`     | 40         | -             | -                  |
 | Suffixed Unary Operation                     | e.g. `!`     | 50         | -             | -                  |
-| Infixed Power                                | `<^>`        | 60         | Left          | -                  |
+| Infixed Power                                | `^`          | 60         | Left          | :heavy_check_mark: |
 | Infixed Multiplication/Division              | `*` and `/`  | 70         | Left          | :heavy_check_mark: |
 | Infixed List Concatenation                   | `#`          | 80         | Right         | :heavy_check_mark: |
 | Other Non-Assignment Built-in Infixed Op     | e.g. `+`     | 90         | Left          | :heavy_check_mark: |
@@ -358,3 +358,54 @@ Like in **Haskell**, binary operators in **Aster** can be written in the form of
 
 - `(@ x) = y -> y @ x` 
 - `(x @) = y -> x @ y`, which is identical to the partial application of `@`, i.e. `(@) x`.
+
+Functions can also be used like operators (i.e. be infixed), as long as they are enclosed by a pair of angle brackets `<>`:
+
+```cpp
+auto foo = a -> b -> a + b;
+print $ a <foo> b
+```
+
+Operators can be overloaded if the operand types don't coincide with any built-in definition (when it's defined in the file scope). Other than unary operators, function composition operator and implicit function operator, all operators (in the table [here](# Evaluation of Expressions)) are overloadable. To declare a overloaded operator, just treat it as a function declaration:
+
+```cpp
+auto operator * : int -> [char] -> [char]
+auto operator * = (n : int) -> (str : [char]) -> aux n str ""
+    where aux 0 str res = res,
+          aux n str res = aux (n - 1) str (str + res);
+print $ 3 * "abc"
+```
+
+In **Aster**, we can define customized operators. They can be composed of (and only composed of) the following characters:
+
+- `~@#$%^*-+=|<>/`: e.g. `<<+*`.
+- `!&:.?`: These must appear inside a pair of angle brackets, e.g. `<!!!>`, `++<&><=:>`.
+
+We can therefore create arbitrary sequence of symbols that represents an operator. An operator can only be bound to a two-parameter closure (yes there are counter cases, but they are all built-in operators). Since they are but special "identifier" that bound to entities, we call operators together with identifiers *general identifiers*. Later, when I mention "identifiers", operators will be included.
+
+#### Invokable Objects
+
+We already know that *closures* are invokable. There is another case where objects are invokable: when the object overloads the `operator $`.  Examples are as follows:
+
+```cpp
+auto Greeting = ();
+auto operator $ : Greeting -> ();
+auto operator $ _ = print "Hello, world!";
+auto operator $ : Greeting -> [char] -> ();
+auto operator $ _ msg = print msg;
+auto gt : Greeting = ();
+gt;
+gt "Salutations!";
+```
+
+In **C++**, lambdas are just objects with hidden classes that overloads the `operator ()`; so are closures in **Aster**. The big difference is that **Aster** closures are explicitly typed. We can always obtain the type of an operator by the `typeof` operator.
+
+```cpp
+auto add : int -> int -> int;
+auto add a b = a + b;
+auto subtract : typeof add;
+auto subtract a b = a - b;
+```
+
+#### Other Invokable Entities
+
