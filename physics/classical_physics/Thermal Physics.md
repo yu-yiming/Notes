@@ -173,7 +173,36 @@ $$
 
 ### 理想气体
 
-前面我们看到，稀有气体拥有非常美妙的热力学性质。物理学中，我们将原子间不存在相互作用且能够自由运动的气体成为 **理想气体（Ideal Gas）**。稀有气体非常接近于理想气体模型。
+前面我们看到，稀有气体拥有非常美妙的热力学性质。物理学中，我们将原子间不存在相互作用且能够自由运动的气体成为 **理想气体（Ideal Gas）**。稀有气体非常接近于理想气体模型。正如我们前面讨论过的，分子数为 $N$、体积为 $V$ 的气体的熵是 $kN\ln{V}$。事实上我们还需要加上一个和 $U, N$ 有关的补正：
+$$
+S = kN\ln{V} + f(U, N)
+$$
+以上就是理想气体的熵与 $U, N, V$ 的关系式。在平衡状态下，$S$ 达到最大值，因此有：
+$$
+\begin{align}
+\frac{dS}{dV} = 0 &\implies \left(\frac{\partial S}{\partial V}\right)_U + \left(\frac{\partial S}{\partial U}\right)_V\frac{d U}{d V} = 0 \implies \frac{kN}{V} - \frac{p}{T} = 0 \nonumber \\
+&\implies pV = NkT
+\end{align}
+$$
+我们将上式称为 **理想气体定律（Ideal Gas Law）**。
+
+下面我们探究压强的围观含义。考虑一个边长为 $L$ （$L \to 0$）的正方体箱子，其中有一个气体分子以一定速度移动。为了方便理解，我们只关心它一个方向上的分量 $v_x$。在这个分子碰撞到箱壁时会受到一个力 $F$，且由于这是弹性碰撞，初始的 $v_x$ 会变为 $-v_x$，两次碰撞之间的时间是 $\Delta t = \frac{2L}{v_x}$（每两次碰撞才能碰到一次同样的墙壁）。根据牛顿第二定律：
+$$
+F_x = \frac{dp}{dt} = \frac{2mv_x}{\frac{2L}{v_x}} = \frac{mv_x^2}{L}\nonumber
+$$
+这样，单位面积箱壁受到的力（也即压强）是：
+$$
+p_x = \frac{dF}{dA} = \frac{mv_x^2}{L^3} = \frac{mv_x^2}{V}\nonumber
+$$
+当考虑 $N$ 个分子时，它们的平均动能就是：
+$$
+p_x = N\frac{m\langle v_x^2\rangle}{V}\nonumber
+$$
+当我们考虑三个方向时，可以认为 $\langle v_x^2\rangle = \langle v_y^2\rangle = \langle v_z^2\rangle = \frac{1}{3}\langle v^2 \rangle$，因此：
+$$
+p = \frac{N}{3V}m\langle v^2\rangle = \frac{2N}{3V}\langle K_\text{trans}\rangle
+$$
+其中 $K_\text{trans}$ 是气体分子的平均平动动能。反过来，我们也可以通过压强和体积计算分子的平均动能。
 
 ## 非平衡状态
 

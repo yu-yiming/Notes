@@ -309,6 +309,7 @@ $$
 
 在一个线积分中，任取一段无穷小的路径 $d\mathbf{l}$ 都有 $dT = \nabla T \cdot d\mathbf{l}$（我们此前在 (15) 式中已经给出）。因此对于完整的线积分：
 $$
+\label{gradient-theorem}
 \int_\mathbf{a}^\mathbf{b}(\nabla T)\cdot d\mathbf{l} = T(\mathbf{b}) - T(\mathbf{a})
 $$
 这也即是 **梯度基本定理（The Fundamental Theorem for Gradients）**。其几何意义在于，空间中任意两点的“高度差”等价于连接它们的路径上每个“高度”变化的和。和微积分基本定理对比我们可以发现，它们的特征都在于，一个积分的结果只取决于边界点，和中间过程（路径）无关。物理学中，如果一个矢量场的线积分和路径无关，我们就称其为 **保守的（Conservative）**。从梯度基本定理来看，一个矢量场保守的充分条件是这个场是某个标量场的梯度。我们可以从该定理迅速得到一个推论 ：
@@ -329,6 +330,7 @@ $$
 
 **旋度基本定理（The Fundamental Theorem for Curls）** 将旋度对某曲面的通量和该曲面边界的线积分联系到了一起：
 $$
+\label{stokes-theorem}
 \underset{\mathcal{S}}{\int}(\nabla\times \mathbf{v})\cdot d\mathbf{a} = \underset{\mathcal{P}}{\oint}\mathbf{v}\cdot d\mathbf{l}
 $$
 这也被称为 **斯托克斯定理（Stokes' Theorem）**。其几何意义在于，一个曲面内旋度的总量等于其边界处一圈的变化之和。通过图片能够更好理解这一点：
@@ -536,11 +538,39 @@ $$
 $$
 这个公式在电磁学中会非常常用。
 
+### 矢量场论简介
+
+最后，让我们将前面的知识总结起来，并作为后文电磁场理论的引言。自从法拉第的实验发现后，电场和磁场就常常被联系到一起。麦克斯韦则通过数学工具（即矢量微积分）将两者用优美的数学公式联系到一起。不过这些公式虽美，也引发了一个问题：我们究竟还需要多少条件才能通过麦克斯韦方程唯一确定一个矢量场（我们显然还需要条件，因为这些方程对一切电磁场生效）？就比如想要知道一个矢量场 $\mathbf{V}$，已经有的条件是：
+$$
+\nabla\cdot\mathbf{V} = C \qquad \nabla\times\mathbf{V} = \mathbf{D} \qquad \nabla\cdot\mathbf{D} = 0 \nonumber
+$$
+第三个方程是我们之前就知道的结论。此时我们显然不能得到 $\mathbf{V}$。事实上，我们还需要一系列 **边界条件（Boundary Condition）**，比如通常包括无穷远处 $\mathbf{V} \to \mathbf{0}$。后续学习电磁场时，我们在介绍它们的微积分性质后，会给出为了求出它们需要的边界条件。
+
+此外，我们已经认识到梯度的旋度和旋度的散度恒为零了，因此在看到一个矢量场的散度或旋度为零时，我们能自然地得到一些很好的性质。下面是两个相关的定理：
+
+- **无旋场（Irrotational Field）**：一个矢量场满足下面的条件中的任何一条时，就同时满足其它条，并被称为无旋场：
+  - $\nabla\times\mathbf{F} = \mathbf{0}$ 处处成立。
+  - $\int_\mathbf{a}^\mathbf{b}\mathbf{F}\cdot\,d\mathbf{l}$ 和路径无关，只与起始点和终止点有关。
+  - $\oint\mathbf{F}\cdot\,d\mathbf{l}$ 对任意环路成立。
+  - $\mathbf{F}$ 是某个标量场的梯度，即 $\mathbf{F} = -\nabla V$（这里的负号可以简单和功与能相联系；当我们希望矢量场做功时，它的势能就会相应减少。这里的 $V$ 包含有势能的意思。作为类比，重力势能在高处更高，但是顺着重力方向向下运动时，势能就会降低转化为动能）。同时这个 $V$ 不是唯一的，因为任意常数 $C$ 都能满足 $\mathbf{F} = -\nabla(V + C)$。
+- **无源场（Solenoidal Field）**：一个矢量场满足下面的条件中的任何一条时，就同时满足其它条，并被称为无源场：
+  - $\nabla\cdot\mathbf{F} = 0$ 处处成立。
+  - $\int\mathbf{F}\cdot\,d\mathbf{a}$ 在给定边界线时，与曲面形状无关。
+  - $\oint\mathbf{F}\cdot\,d\mathbf{a} = 0$ 对任意闭合曲面成立。
+  - $\mathbf{F}$ 是某个矢量场的旋度，即 $\mathbf{F} = \nabla\times\mathbf{A}$。这个 $\mathbf{A}$ 不是唯一的，因为任意常数 $f$ 都能满足 $\mathbf{F} = \nabla\times(\mathbf{A} + \nabla f)$。
+
+此外，任意矢量场 $\mathbf{F}$ 都能表示为：
+$$
+\mathbf{F} = -\nabla V + \nabla\times \mathbf{A}
+$$
+
+
 ## 静电场概述
 
 **静电学（Electrostatics）** 研究静止源电荷的电场问题，换句话说，这是研究与时间 *无关* 的电场性质。这种情况下我们可以立刻给出源电荷对测试电荷的力。通过 **库仑定律（Coulomb's Law）** 描述，即静电荷吸引另一个电荷产生的力正比于两电荷的乘积并反比于两电荷距离的平方，公式是：
 $$
-\mathbf{F} = \frac{1}{4\pi\epsilon_0}\frac{qQ}{\mathscr{r}^2}\hat{\boldsymbol{\mathscr{r}}}
+\label{coulomb's-law}
+\marginbox{\mathbf{F} = \frac{1}{4\pi\epsilon_0}\frac{qQ}{\mathscr{r}^2}\hat{\boldsymbol{\mathscr{r}}}}
 $$
 其中 $\epsilon_0$ 是一个常数，称为 **真空介电常数（Permittivity of Free Space）**，值是 $8.85\times10^{-12}\text{C}^2\cdot\text{N}^{-1}\cdot\text{m}^{-2}$。本篇中，记源电荷的位置为 $\mathbf{r}'$，测试电荷的位置为 $\mathbf{r}$，而两者之间的矢量（从源电荷指向测试电荷）为 $\boldsymbol{\mathscr{r}} = \mathbf{r} - \mathbf{r}'$。库仑定律和叠加原理组成了静电学的全部核心内容。之后我们引入的概念和公式都是它们的数学延伸。
 
@@ -558,6 +588,7 @@ $$
 $$
 可以看到其中有一个和测试电荷无关的量，我们定义其为源电荷的 **电场强度（Electric Field）**：
 $$
+\label{coulomb's-law-sum}
 \begin{align}
 \mathbf{F} &= Q\mathbf{E} \\
 \mathbf{E} &= \frac{1}{4\pi\epsilon_0}\sum_{i=1}^n\frac{q_i}{\mathscr{r}_i^2}\hat{\boldsymbol{\mathscr{r}_i}}
@@ -577,7 +608,7 @@ $$
 > \end{align*}
 > $$
 
-当源电荷连续分布时，(4) 式中的求和符号就应该换成积分符号：
+当源电荷连续分布时，$(\ref{coulomb's-law-sum})$ 式中的求和符号就应该换成积分符号：
 $$
 \mathbf{E} = \frac{1}{4\pi\epsilon_0}\int\frac{1}{\mathscr{r}^2}\hat{\boldsymbol{\mathscr{r}}}\,dq
 $$
@@ -587,8 +618,8 @@ $$
 
 在 (b)、(c)、(d) 的情况下，$dq$ 分别可以写为 $\lambda\,dl$、$\sigma\,da$、$\rho\,d\tau$，其中 $\lambda$、$\sigma$、$\rho$ 分别是电荷的线密度、面密度和体密度。其中最常用的就是体密度。我们有时会把下面这个公式称为库仑定律：
 $$
-\label{coulomb's-law}
-\mathbf{E}(\mathbf{r}) = \frac{1}{4\pi\epsilon_0}\int\frac{\rho(\mathbf{r}')}{\mathscr{r}^2}\hat{\boldsymbol{\mathscr{r}}}\,d\tau
+\label{coulomb's-law-integral}
+\marginbox{\mathbf{E}(\mathbf{r}) = \frac{1}{4\pi\epsilon_0}\int\frac{\rho(\mathbf{r}')}{\mathscr{r}^2}\hat{\boldsymbol{\mathscr{r}}}\,d\tau}
 $$
 让我们同样通过一个例子来理解连续分布的电荷产生的电场强度：
 
@@ -624,31 +655,229 @@ $$
 $$
 当 $\mathcal{S}$ 中存在多个源电荷时，我们可以利用叠加原理得到更为通用的结论，这就是 **高斯定理（Gauss's Law）**：
 $$
+\label{gauss's-law}
 \oint \mathbf{E}\cdot d\mathbf{a} = \frac{Q_\text{enc}}{\epsilon_0}
 $$
-其中 $Q_\text{enc}$ 是曲面内所有电荷的总量。这个美妙的结论充分显示了数学的美感（以及大自然的美感）。事实上，所有满足距离平方反比的矢量场都能够得到类似的结论，我们这里不展开说明了。
+其中 $Q_\text{enc}$ 是曲面内所有电荷的总量。这个美妙的结论充分显示了数学以及大自然的美感。事实上，所有满足距离平方反比的矢量场都能够得到类似的结论，我们这里不展开说明了。
 
-现在利用散度定理，即 (42) 式，此时有：
+现在利用散度定理，即 $(\ref{divergence-theorem})$ 式，此时有：
 $$
 \int_\mathcal{V}(\nabla\cdot\mathbf{E})\,d\tau = \oint_S\mathbf{E}\cdot d\mathbf{a} = \frac{1}{\epsilon_0}\int_\mathcal{V}\rho\,d\tau
 $$
 右边这个等式就是我们之前得到的高斯定理，其中 $\rho$ 是曲面内的电荷体密度。将最左侧和最右侧的积分号去掉，我们就得到了**微分形式的高斯定理（Gauss's Law in Differential Form）**：
 $$
+\label{gauss's-law-derivative}
 \nabla\cdot \mathbf{E} = \frac{\rho}{\epsilon_0}
 $$
-这个公式是 **麦克斯韦方程组** 的一部分，且在 $\mathbf{E}$ 与 $\rho$ 和时间有关时依然有效。上面的结论其实可以从纯数学角度得到。根据和库仑定律等价的 (62) 式，我们可以在左侧乘上 del 算子得到其散度：
+这个公式是 **麦克斯韦方程组** 的一部分，且在 $\mathbf{E}$ 与 $\rho$ 和时间有关时依然有效。上面的结论其实可以从纯数学角度得到。根据库仑定律，即 $(\ref{coulomb's-law-integral})$，我们可以在左侧乘上 del 算子得到其散度：
 $$
 \nabla\cdot \mathbf{E} = \frac{1}{4\pi\epsilon_0}\int\nabla\cdot\left(\frac{\hat{\boldsymbol{\mathscr{r}}}}{\mathscr{r}^2}\right)\rho(\mathbf{r}')\,d\tau\nonumber
 $$
-我们可以利用散度定义和狄拉克函数得到：
+其中的散度是我们此前计算过的：
 $$
 \nabla\cdot\left(\frac{\hat{\boldsymbol{\mathscr{r}}}}{\mathscr{r}^2}\right) = 4\pi\delta^2(\hat{\boldsymbol{\mathscr{r}}})
 $$
 代入前面的式子我们就能轻易地得到微分形式的高斯定理。
 
+高斯定理在求解高度对称的电荷分布产生的电场时非常方便，我们可以通过构建“高斯面”来快速求解。其中高度对称可以完全归纳为下面三种：
+
+- 球对称：将高斯面设置为同心球。
+- 柱对称：将高斯面设置为同轴柱。
+- 平面对称：将高斯面设置为一个平行并包括平面的小盒子。
+
+> **例**：有一个电荷密度均匀为 $\sigma$ 的无限平面，求它产生的电场强度。
+
+> **解**：构建高斯面，如下图所示：
+>
+> <img src="graphs/ed1_2-3.png" alt="ed1_2-3" style="zoom:40%;" />
+>
+> 电场在这个盒子垂直于平面的面上的通量为 $0$。因此我们只需要考虑两个平行的平面：
+> $$
+> \int\mathbf{E}\cdot\,d\mathbf{a} = \frac{Q_\text{enc}}{\epsilon_0} \implies E\cdot2A = \frac{\sigma\cdot A}{\epsilon_0}\nonumber
+> $$
+> 因此我们不难得到：
+> $$
+> \mathbf{E} = \frac{\sigma}{2\epsilon_0}\unit{n}
+> $$
+
+不过我们也要认识到高斯定律的局限性，当我们无法保证曲面的通量是匀强电场时，就无法利用高斯定律了。
+
 #### 静电场的旋度
 
+为了得到静电场的旋度，我们可以从电场的线积分出发。为了简化说明，我们考虑单个点电荷产生的电场 $\mathbf{E}$：
+$$
+\mathbf{E} = \frac{1}{4\pi\epsilon_0}\frac{q}{r^2}\unit{r} \nonumber
+$$
+我们利用球坐标系进行求解，并将这个点电荷设置在原点，即 $\mathbf{r}' = \mathbf{0}$（因为更加方便计算）。此时计算线积分：
+$$
+\int_\mathbf{a}^\mathbf{b}\mathbf{E}\cdot\,d\mathbf{l} = \frac{1}{4\pi\epsilon_0}\int_\mathbf{a}^\mathbf{b}\frac{q}{r^2}\,dr = \frac{1}{4\pi\epsilon_0}\left(\frac{q}{r_a} - \frac{q}{r_b}\right)
+$$
+我们发现这个结果只和起始点和终止点有关（是不是有点熟悉？没错，梯度基本定理，也即 $(\ref{gradient-theorem})$），当两点重合时，这个值就是 $0$。再利用斯托克斯定理 $(\ref{stokes-theorem})$，我们得到下式：
+$$
+\nabla\times\mathbf{E} = \mathbf{0}
+$$
+当考虑多个电荷产生的电场时，利用叠加原理，就能得知任意分布的电场的旋度均为 $\mathbf{0}$。
 
+### 电势
+
+我们在矢量分析的章节中已经提到过，旋度为零的矢量场，其环路积分为零，因此电场从某点到另一点的路径积分始终相等（即与路径无关）。我们可以通过下式定义 **电势（Electric Potential）**：
+$$
+\label{electric-potential}
+\marginbox{V(\mathbf{r}) = -\int_\mathcal{O}^\mathbf{r}\mathbf{E}\cdot\,d\mathbf{l}}
+$$
+其中 $\mathcal{O}$ 是任选的参照点，在具体问题中我们会具体设置。如果 $\mathcal{O}$ 是确定的，那么 $V$ 就只和 $\mathbf{r}$，也即场点的位置有关了。两点之间的 **电势差（Electric Potential Difference）** 则可以通过上面的定义快速得到：
+$$
+\label{electric-potential-difference}
+V(\mathbf{b}) - V(\mathbf{a}) = -\int_\mathcal{O}^\mathbf{b}\mathbf{E}\cdot d\mathbf{l} + \int_\mathcal{O}^\mathbf{a}\mathbf{E}\cdot d\mathbf{l} = -\int_\mathbf{a}^\mathbf{b}\mathbf{E}\cdot d\mathbf{l}
+$$
+可以看到电势差和选取的参照点无关。事实上，如果我们改用另一个参照点 $\mathcal{O}'$，在 $\mathbf{r}$ 点的新旧势只差一个常数：
+$$
+V'(\mathbf{r}) = -\int_{\mathcal{O}'}^\mathbf{r}\mathbf{E}\cdot d\mathbf{l} = -\int_{\mathcal{O}'}^\mathcal{O}\mathbf{E}\cdot d\mathbf{l} - \int_\mathcal{O}^\mathbf{r}\mathbf{E}\cdot d\mathbf{l} = K + V(\mathbf{r})
+$$
+而两点间的电势差则保持不变。静电学中，我们习惯将 $\mathcal{O}$ 设在无穷远处，并令 $V(\mathcal{O}) = 0$。不过在一些特殊情况下，这可能会导致 $V(\mathbf{r}) = \infty$。
+
+现在回到电势差，利用梯度基本定理：
+$$
+-\int_\mathbf{a}^\mathbf{b}\mathbf{E}\cdot d\mathbf{l} = V(\mathbf{b}) - V(\mathbf{a}) = \int_\mathbf{a}^\mathbf{b}(\nabla V)\cdot d\mathbf{l}
+$$
+将两端积分去掉，就可以得到电势定义的积分形式：
+$$
+\label{electric-potential-integral}
+\marginbox{\mathbf{E} = -\nabla V}
+$$
+电势是电磁场中的重要概念，它作为一个易于分析的标量，可以唯一地确定电场；同时它惊人地满足叠加原理，即多个点电荷产生电场的电势等于它们分别产生的电势之和：
+$$
+V_\text{tot} = \sum_{i=1}^nV_i
+$$
+这比作为矢量的电场要易于处理得多。因此后文中我们常常首先确定电荷分布产生的电势，随后再确定电场（下一章将着重介绍这个思路）。
+
+#### 电荷分布的电势
+
+电势的定义式 $(\ref{electric-potential})$ 似乎通常意义不大，因为如果我们已经知道电场强度，就没必要知道电势的大小了。下面我们通过库仑定律 $(\ref{coulomb's-law})$ 来推出电荷分布的电势。微元路径积分是：
+$$
+\mathbf{E}\cdot d\mathbf{l} = \frac{1}{4\pi\epsilon_0}\frac{q}{r^2}\,dr \nonumber
+$$
+在 $\mathbf{r}$ 点的电势则是：
+$$
+V(r) = -\int_\mathcal{O}^\mathbf{r} \mathbf{E}\cdot d\mathbf{l} = -\frac{1}{4\pi\epsilon_0}\int_\infty^r\frac{q}{r'^2}\,dr' = \frac{1}{4\pi\epsilon_0}\frac{q}{r}
+$$
+注意上式中我们利用了 $V(\infty) = 0$。因此，对于给定电荷密度为 $\rho(\mathbf{r}')$ 的一个体积，其电势为：
+$$
+\label{electric-potential-calculation}
+\marginbox{V(\mathbf{r}) = \frac{1}{4\pi\epsilon_0}\int\frac{\rho(\mathbf{r}')}{\rcur}\,d\tau'}
+$$
+上面便是任意静电场的电势通解。其中的 $\rho(\mathbf{r}')\,d\tau'$ 可以被替换为 $\lambda(\mathbf{r}')\,dl'$ 或 $\sigma(\mathbf{r}')\,da'$。再次强调，这个结论是建立在 $V(\infty) = 0$ 的条件下的。
+
+#### 边界条件
+
+静电学问题中，我们通常知道电荷的分布 $\rho$，随后尝试得到电场强度 $\mathbf{E}$。除了高度对称的情况下可以使用高斯定律轻松求解，其余时候我们都得想方法得到电势 $V$，随后再通过 $\mathbf{E} = -\nabla V$ 得到电场强度。
+
+现在让我们考虑一个带电为 $\sigma$ 的平面附近的电场强度分布。我们可以构建一个高斯面方便求解。穿过上下两个面的电场之差应该满足：
+$$
+E_\text{above}^\perp - E_\text{below}^\perp = \frac{\sigma}{\epsilon_0}
+$$
+对于平行方向的电场，可以考虑一个垂直并穿过平面的环路。只有 $E_\text{above}^\parallel = E_\text{below}^\parallel$ 时才能保证环路积分为零。
+
+至于电势 $V_\text{above}$ 和 $V_\text{below}$，根据电势差公式 $(\ref{electric-potential-difference})$，当两者非常接近时，应该满足 $V_\text{above} = V_\text{below}$。电势梯度在垂直于平面方向的分量则和电场强度类似，是不连续的：
+$$
+\frac{\partial V_\text{above}}{\partial n} - \frac{\partial V_\text{below}}{\partial n} = -\frac{\sigma}{\epsilon_0}
+$$
+其中 $\frac{\partial V}{\partial n} = \nabla V\cdot\unit{n}$，被称为电势的 **正规导数（Normal Derivative）**。
+
+### 静电学中的功与能
+
+假设目前已知电场强度 $\mathbf{E}$，测试电荷为 $Q$，求将它从 $\mathbf{a}$ 点移动到 $\mathbf{b}$ 点需要做多少功呢？由于测试电荷受到的电场力为 $\mathbf{F} = Q\mathbf{E}$，我们施加的力（至少）应该大小相同方向相反，为 $-Q\mathbf{E}$。整个过程我们做的功是：
+$$
+W = \int_\mathbf{a}^\mathbf{b}\mathbf{F}\cdot d\mathbf{l} = -Q\int_\mathbf{a}^\mathbf{b}\mathbf{E}\cdot d\mathbf{l} = Q(V(\mathbf{b}) - V(\mathbf{a})) \nonumber
+$$
+为了得到电场和测试无关的做功性质，我们将 $W$ 比上 $Q$，得到：
+$$
+\frac{W}{Q} = V(\mathbf{b}) - V(\mathbf{a})
+$$
+可见电场中，电势差决定了做功需要的大小。如果考虑初始点为无穷远处（电势为 $0$），我们就得到了构建这个电荷系统所需要的能量，也即电势能：
+$$
+W = QV(\mathbf{r})
+$$
+从这个公式来看，电势就是电荷系统中单位电荷的电势能。
+
+#### 离散电荷分布的能量
+
+第一个电荷不需要任何能量，因为一开始不存在电场；第二个电荷需要克服第一个电荷的电场力，因此我们需要：
+$$
+W_2 = \frac{1}{4\pi\epsilon_0}q_2\left(\frac{q_1}{\rcur_{12}}\right) \nonumber
+$$
+第三个电荷需要同时克服两个电场力做功：
+$$
+W_3 = \frac{1}{4\pi\epsilon_0}q_3\left(\frac{q_1}{\rcur_{13}} + \frac{q_2}{\rcur_{23}}\right) \nonumber
+$$
+第四个电荷需要同时克服三个电场力做功：
+$$
+W_4 = \frac{1}{4\pi\epsilon_0}q_4\left(\frac{q_1}{\rcur_{14}} + \frac{q_2}{\rcur_{24}} + \frac{q_3}{\rcur_{34}}\right)\nonumber
+$$
+以此类推，我们最后可以得到一个通式：
+$$
+W = \frac{1}{4\pi\epsilon_0}\sum_{i=1}^n\sum_{j>i}^n\frac{q_iq_j}{\rcur{ij}}
+$$
+也可以等价写成：
+$$
+\label{electric-energy-discrete}
+W = \frac{1}{2}\sum_{i=1}^nq_i\sum_{j\ne i}^n\frac{1}{4\pi\epsilon_0}\frac{q_j}{\rcur_{ij}} = \frac{1}{2}\sum_{i=1}^nq_iV(\mathbf{r}_i)
+$$
+
+#### 连续电荷分布的能量
+
+当电荷分布连续时，我们可以将 $(\ref{electric-energy-discrete})$ 简单改成：
+$$
+\label{electric-energy-continuous}
+W = \frac{1}{2}\int\rho V\,d\tau
+$$
+下面我们尝试将其改写成 $E$ 的关系式，根据高斯定理，我们有：
+$$
+W = \frac{\epsilon_0}{2}\int(\nabla\cdot\mathbf{E})V\,d\tau \nonumber
+$$
+利用分部积分法，我们可以得到：
+$$
+W = \frac{\epsilon_0}{2}\left(-\int\mathbf{E}\cdot(\nabla V)\,d\tau + \oint V\mathbf{E}\cdot d\mathbf{a}\right) = \frac{\epsilon_0}{2}\left(\underset{\mathcal{V}}{\int}E^2\,d\tau + \underset{\mathcal{S}}{\oint}V\mathbf{E}\cdot d\mathbf{a}\right)\nonumber
+$$
+这里有一个小技巧。E 大致是 $r^{-2}$ 数量级，$V$ 是 $r^{-1}$ 数量级，而 $\mathcal{S}$ 是 $r^2$ 数量级。上面的第一个积分由于 $E^2 > 0$，无论 $\mathcal{V}$  取多大都能保证单调递增；但第二个积分由于内部总体呈 $r^{-1}$ 数量级，随着 $\mathcal{S}$ 变大，这个积分会越来越小。因此我们只需要考虑无穷远处的一个 $\mathcal{V}$ 和其边界 $\mathcal{S}$，就可以忽略第二个积分了。因此在全空间中，静电场的能量是：
+$$
+\label{electric-energy-all-space}
+W = \frac{\epsilon_0}{2}\int E^2\,d\tau
+$$
+等等，我们这里得到的似乎是一个永远为正的能量；反观 $(\ref{electric-energy-discrete})$，其结果显然可能是负数，这其中一定存在问题。让我们来好好考察以上这些公式的异同：
+
+- 静电场能量的连续形式公式 $(\ref{electric-energy-continuous})$ 似乎就和离散形式 $(\ref{electric-energy-discrete})$ 意义不同。后者明确计算每个电荷和 *除自己以外* 的电荷的电势，但前者则统统计算进来。从这种角度看，连续形式公式更加 *全面* 地描述了电场的能量，它甚至考虑了每个电荷自己的能量。离散公式则更倾向于假设电荷已经存在，而计算将它们移动成特定分布时需要的能量。不过，$(\ref{electric-energy-all-space})$ 在计算点电荷的能量时会出现尴尬的一幕：
+  $$
+  W = \frac{\epsilon_0}{2}\frac{1}{(4\pi\epsilon_0)^2}\int\left(\frac{q}{r^2}\right)^2r^2\sin\theta\,dr\,d\theta\,d\phi = \frac{q^2}{8\pi\epsilon_0}\int_0^\infty\frac{1}{r^2}\,dr = \infty
+  $$
+
+- 即使是前后有推导关系的 $(\ref{electric-energy-continuous})$ 和 $(\ref{electric-energy-all-space})$ 也在形式上有微妙的差异。前者将能量局限于 $\rho \ne 0$，也即有电荷分布的地方，而后者则在整个空间中对电场进行积分。究竟是电荷，还是电场拥有能量呢？在更大的背景下，后者是更正确的结论。事实上，电场在全空间的能量密度（单位体积的能量）是：
+  $$
+  U = \frac{\epsilon_0}{2}E^2
+  $$
+  这和 $(\ref{electric-energy-all-space})$ 相照应。
+
+- 最后，令人惊讶（但并不难接受）的是，静电场能量不满足叠加原理。考虑两个电场 $\mathbf{E}_1$ 和 $\mathbf{E}_2$ 的叠加：
+  $$
+  \begin{align}
+  W_\text{tot} &= \frac{\epsilon_0}{2}\int (\mathbf{E}_1 + \mathbf{E}_2)^2\,d\tau = \frac{\epsilon_0}{2}\int(E_1^2 + E_2^2 + 2\mathbf{E}_1\cdot\mathbf{E}_2)\,d\tau \nonumber \\
+  &= W_1 + W_2 + \epsilon_0\int\mathbf{E}_1\cdot\mathbf{E}_2\,d\tau
+  \end{align}
+  $$
+
+### 导体
+
+金属 **导体（Conductor）** 中，电子可以自由移动的。我们假设导体中存在 *无穷* 个自由电荷。此时它会有一些奇特的性质：
+
+- 在导体内 $\mathbf{E} = \mathbf{0}$。这是因为一旦存在外加电场 $\mathbf{E}_0$，导体中的电荷会进行自由移动（此时不是我们暂时研究的静电场），知道 **感应电荷（Induced Charge）** 产生的电场和外加电场中和为止。
+- 在导体内 $\rho = 0$。这是通过上一条以及高斯定律得到的。
+- 所有净电荷都分布在导体表面。这是上一条的直接结论。这似乎有些魔幻，因为显然相同电荷之间会互相排斥，因此我们只能假定它们之间有合理的距离。
+- 导体附近的电场垂直于导体表面，否则电荷会不断移动。
+- 导体表面是一个等势面，否则电荷会不断移动。
+
+#### 感应电荷
+
+当我们将一个电荷 $+q$ 靠近一个不带电的导体时，它们会相互吸引。这是因为 $+q$ 会排斥导体中的正电荷，并留下负电荷；由于剩下的负电荷和 $+q$ 更近，所以总体呈现吸引效果。
 
 ## 电势
 
