@@ -67,6 +67,7 @@ Finally, let's get to know the abbreviations of some terms, which will be freque
 Some of the terms above needs further specification for syntax, let's view some of the most frequetly used:
 
 - `@id`: Identifiers or scope-specified identifiers. e.g. `name`, `ns::ms::ks::name`. This could be any valid identifiers.
+- `@pureid`: Identifiers only.
 - `@type-id`: Identifiers or scope-specified identifiers that have *type semantics*. e.g. `MyType`, `ns::MyType`. Note that identifiers for *templates* are also put into this category.
 - `@class-id`: Identifiers or scope-specified identifiers that have *class semantics*. e.g. `trait`, `ns::trait`.
 - `@decl`: Declaration of entities differ a lot depending on specific circumstance, but `auto` is usually an available `@decl-key` for most declarations.
@@ -195,6 +196,10 @@ I wound like to start with the *statements* in **Aster**. It's rather similar to
 - Declaration Statements:
 
   - `@decl`: Declaration of identifiers. See [declarations](# Declarations) for details.
+  
+- Constraint Specification Statements:
+
+  - `@patt`: Pure declaration of identifiers
 
 
 
@@ -236,7 +241,12 @@ All expressions can be categorized into types as follows:
   - `when (@expr)`: Only if the `@expr` is evaluated `true` will the preceding statement be executed.
 - Requires Clauses: Add constraints to statements to be successfully compiled.
   - `requires (@static-expr)`: Only if the `@static-expr` is evaluated `true` will the preceding statement pass the compilation.
-  - `requires (@func-decl) @stmt`: Only when the `@stmt` has no semantic error as well as grammatic and syntactic error will the preceding statement pass the compilation. Often used inside a type class declaration with a where clause.
+  - `requires (@pure-decl-list) @stmt`: Only when the `@stmt` has no semantic error as well as grammatic and syntactic error will the preceding statement pass the compilation. Often used inside a type class declaration with a where clause.
+- With Clauses: Expand the scope of the given entities, like namespaces or compound objects.
+  - `with @ns-id`:  All identifiers within the given namespace will be injected to the context of the current statement.
+  - `with @expr`: The members in the result object will be exposed to the current statement.
+- As Clauses: Define alias of identifiers. Commonly used in import statements and with clauses.
+  - `as @pureid`: Define an alias for the preceding entity.
 
 
 
@@ -246,9 +256,9 @@ All expressions can be categorized into types as follows:
 
 - Object Declarations:
 
-  - `@decl-key @id : @type-id <!or> @class-id;`: Declare a variable unbound to any object, but its type is specified. The `@decl-key` could be any of `auto`, `const`, and `mutable`.
-  - `@decl-key @id = @expr;`: Declare a variable bound to a value obtained from the `@expr`. The type of the variable will be the same as the storage type of the *right-hand side (RHS)* of the equation.
-  - `@decl-key @id : @type-id <!or> @class-id = @expr;`: The combination of the two cases above.
+  - `@decl-key @pureid : @type-id <!or> @class-id;`: Declare a variable bound to an object of default value of type that is specified. The `@decl-key` could be any of `auto`, `const`, and `mutable`.
+  - `@decl-key @pureid = @expr;`: Declare a variable bound to a value obtained from the `@expr`. The type of the variable will be the same as the storage type of the *right-hand side (RHS)* of the equation.
+  - `@decl-key @pureid : @type-id <!or> @class-id = @expr;`: The combination of the two cases above.
   - `@decl-key @patt <- @expr;`: Declare one or more variables embedded in a pattern trying to match the RHS. The statement won't complie on match failures.
   - `@decl-key @patt : @type-id <!or> @class-id <- @expr;`: Add explicit type specification for the pattern matching declaration.
 
