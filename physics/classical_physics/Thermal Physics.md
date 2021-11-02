@@ -179,6 +179,7 @@ S = kN\ln{V} + f(U, N)
 $$
 以上就是理想气体的熵与 $U, N, V$ 的关系式。在平衡状态下，$S$ 达到最大值，因此有：
 $$
+\label{ideal-gas-law}
 \begin{align}
 \frac{dS}{dV} = 0 &\implies \left(\frac{\partial S}{\partial V}\right)_U + \left(\frac{\partial S}{\partial U}\right)_V\frac{d U}{d V} = 0 \implies \frac{kN}{V} - \frac{p}{T} = 0 \nonumber \\
 &\implies pV = NkT
@@ -200,9 +201,52 @@ p_x = N\frac{m\langle v_x^2\rangle}{V}\nonumber
 $$
 当我们考虑三个方向时，可以认为 $\langle v_x^2\rangle = \langle v_y^2\rangle = \langle v_z^2\rangle = \frac{1}{3}\langle v^2 \rangle$，因此：
 $$
-p = \frac{N}{3V}m\langle v^2\rangle = \frac{2N}{3V}\langle K_\text{trans}\rangle
+p = \frac{N}{3V}m\langle v^2\rangle = \frac{2N}{3V}\langle K\rangle_\text{trans}
 $$
-其中 $K_\text{trans}$ 是气体分子的平均平动动能。反过来，我们也可以通过压强和体积计算分子的平均动能。
+其中 $K_\text{trans}$ 是气体分子的平均平动动能。反过来，我们也可以通过压强和体积计算分子的平均动能。这里再代入理想气体方程 $(\ref{ideal-gas-law})$ 就可以得到：
+$$
+\langle K\rangle_\text{trans} = \frac{3}{2}kT
+$$
+这是一个很重要的结论，即理想气体的单个分子平均动能只和温度正相关（反之亦然），这将分子的围观性质与系统的宏观性质联系了起来。下面从这个公式出发，尝试计算常温（$T = 20^\circ C$ ）下氦原子的平均速度：
+
+> **解**：平均动能可以从温度直接得到，$20^\circ C = 293.15\ \text{K}$，因此：
+> $$
+> \langle K\rangle_\text{trans} = \frac{3}{2}\cdot 1.381\times 10^{-23}\ \text{J}/\text{K}\cdot 293.15\ \text{K} = 6.07\times 10^{-21}\ \text{J} \nonumber
+> $$
+> 氦原子的质量是 $6.64\times10^{-27}\ \text{kg}$，因此它的平均速度是：
+> $$
+> \langle v\rangle = \sqrt{\frac{2\cdot 6.07\times 10^{-21}\ \text{J}}{6.64\times 10^{-27}\ \text{kg}}} = 1352\ \text{m}/\text{s} \nonumber
+> $$
+
+我们现在可以用这个结论计算出等容状态下理想气体的摩尔热容（回忆之前我们看到的那张数据整齐的表格）：
+$$
+\begin{align*}
+c_V &= \frac{C_V}{n} = \left(\frac{dQ}{dT}\right)_V\frac{1}{n} = \frac{dU}{dT}\frac{1}{n} = \frac{3kN}{2n} = \frac{3}{2}kN_A \\ &= \frac{3}{2}\cdot 1.381\times 10^{-23}\ \text{J}/\text{K}\cdot 6.022\times 10^{23}\ \text{mol}^{-1} \\ &= 12.47\ \text{J}/(\text{mol}\cdot\text{K})
+\end{align*}
+$$
+那么如果是等压状态呢？等压状态下，我们需要考虑气体和外界之间的做功关系（参考热力学第一定律）。此时有：
+$$
+C_p = \left(\frac{dQ}{dT}\right)_p = \frac{dU}{dT} + p\frac{dV}{dT} \nonumber
+$$
+利用理想气体定律 $(\ref{ideal-gas-law})$：
+$$
+pV = NkT \implies p\frac{dV}{dT} = Nk \nonumber
+$$
+因此：
+$$
+C_p = \frac{dU}{dT} + p\frac{dV}{dT} = C_V + Nk
+$$
+比热容则满足：
+$$
+c_p = c_v + N_Ak
+$$
+因此稀有气体的摩尔热容在等容和等压下都是定值。
+
+如果是 $N$ 个分子，那么系统的平均动能就是 $\langle K\rangle_\text{total} = \frac{3}{2}NkT$。从上面这个结论出发，我们对气体的分布模型作出了一个假设，即 **均分（Equipartition）** 模型。每个分子的热量都会平均地向各个方向传递；三维空间中，“各个方向”可以被三个独特的方向概括（我们称这样独特的方向个数为 **自由度（Degree of Freedom）**，因此我们将能量进行三等分，每一份就是自由度为 $1$ 时的平均能量大小；自由度为 $N_\text{DOF}$ 时，单个分子的能量就是：
+$$
+U = \frac{N_\text{DOF}}{2}NkT
+$$
+
 
 ## 非平衡状态
 
