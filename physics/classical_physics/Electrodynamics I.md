@@ -1289,6 +1289,7 @@ $$
 $$
 这样原始就可以写为 $\mathscr{r} = r\sqrt{1 + \epsilon}$ 的形式了。根据二项式定理我们可以将其展开为多项式：
 $$
+\label{expansion-of-1-over-r}
 \begin{align}
 \frac{1}{\mathscr{r}} &= \frac{1}{r}\left(1 - \frac{1}{2}\epsilon + \frac{3}{8}\epsilon^2 - \frac{5}{16}\epsilon^3 + ... \right) \nonumber\\
 &= \frac{1}{r}\left[1 - \frac{1}{2}\left(\frac{r'}{r}\right)\left(\frac{r'}{r} - 2\cos\alpha\right) + \frac{3}{8}\left(\frac{r'}{r}\right)^2\left(\frac{r'}{r} - 2\cos\alpha\right)^2 - \frac{5}{16}\left(\frac{r'}{r}\right)^3\left(\frac{r'}{r} - 2\cos\alpha\right)^3 + ...\right] \nonumber\\
@@ -1899,3 +1900,100 @@ $$
 $$
 \oint\mathbb{B}\cdot d\mathbf{l} = (B_\text{above}^\parallel - B_\text{below}^\parallel)l = \mu_0I_\text{enc} = \mu_0KI \implies B_\text{above}^\parallel - B_\text{below}^\parallel = \mu_0K \nonumber
 $$
+总结下来，我们得到：
+$$
+\mathbf{B}_\text{above} - \mathbf{B}_\text{below} = \mu_0(\mathbf{K}\times\unit{n})
+$$
+磁矢势和电势在边界条件中类似，也是连续的（令其散度为零的情况下），即：
+$$
+\mathbf{A}_\text{above} = \mathbf{A}_\text{below}
+$$
+磁矢势的导数同样是不连续的：
+$$
+\frac{\partial \mathbf{A}_\text{above}}{\partial n} - \frac{\partial\mathbf{B}_\text{below}}{\partial n} = -\mu_0\mathbf{K}
+$$
+
+#### 多极展开
+
+回忆我们之前对 $\frac{1}{\rcur}$ 进行的展开式 $(\ref{expansion-of-1-over-r})$，我们同样可以得到远距离处磁矢势的多极展开：
+$$
+\label{multipole-expansion-vector-potential}
+\mathbf{A}(\mathbf{r}) = \frac{\mu_0I}{4\pi}\sum_{n=0}^\infty\frac{1}{r^{n+1}}\oint r'^nP_n(\cos\alpha)\,d\mathbf{l}'
+$$
+和电势的展开类似，我们将这个级数的第一项称为 **单极子**，第二项称为 **偶极子**，第三项称为 **四极子**，以此类推。不出意料的是，单极子项始终为零，这正是由于磁场的无源性，即 $\nabla\cdot \mathbf{B}$ 决定的。由此也向我们暗示了自然界中不存在磁单极子。所以磁偶极子成为了主导项：
+$$
+\mathbf{A}_\text{dip}(\mathbf{r}) = \frac{\mu_0I}{4\pi r^2}\oint r'\cos\alpha\,d\mathbf{l}' = \frac{\mu_0I}{4\pi r^2}\oint (\unit{r}\cdot\mathbf{r}')\,d\mathbf{l}'
+$$
+我们可以将 $\unit{r}$ 提出来，写成：
+$$
+\mathbf{A}_\text{dip}(\mathbf{r}) = \frac{\mu_0}{4\pi}\frac{\mathbf{m}\times\unit{r}}{r^2}
+$$
+其中 $\mathbf{m}$ 是 **磁偶极矩（Magnetic Dipole Moment）**，定义为：
+$$
+\marginbox{\mathbf{m} = I\int\,d\mathbf{a} = I\mathbf{a}}
+$$
+
+
+## 公式汇总
+
+本篇的主要内容是静电场与静磁场的性质，以及通过矢量分析和偏微分方程等数学工具得到的有趣结论。从中我们应该意识到电磁场中存在大量相似的公式和设定。下面我们将其一一总结起来并进行对比，如下表所示：
+
+| **名称（电）**                                            |                           **公式**                           | **名称（磁）**                                               |                           **公式**                           |
+| :-------------------------------------------------------- | :----------------------------------------------------------: | ------------------------------------------------------------ | :----------------------------------------------------------: |
+| 库仑定律（$\mathbf{E}$）                                  | $\displaystyle{\mathbf{E}(\mathbf{r}) = \frac{1}{4\pi\epsilon_0}\int\frac{\rho(\mathbf{r}')}{\rcur^2}\unit{\rcur}\,d\tau'}$ | 毕奥·萨伐尔定律（$\mathbf{B}$）                              | $\displaystyle{\mathbf{B}(\mathbf{r}) = \frac{\mu_0}{4\pi}\int\frac{\mathbf{J}(\mathbf{r}')}{\rcur^2}\times\unit{\rcur}\,d\tau'}$ |
+| 电荷分布                                                  |        $dq = \lambda\,dl = \sigma\,da = \rho\,d\tau$         | 电流分布                                                     | $d(\sum q_i\mathbf{v}_i) = \mathbf{I}\,dl = \mathbf{K}\,da = \mathbf{J}\,d\tau$ |
+| 电场散度                                                  | $\displaystyle \nabla\cdot \mathbf{E} = \frac{\rho}{\epsilon_0}$ | 磁场散度                                                     |                 $\nabla\cdot \mathbf{B} = 0$                 |
+| 静电场旋度                                                |            $\nabla\times\mathbf{E} = \mathbf{0}$             | 静磁场旋度                                                   |         $\nabla\times \mathbf{B} = \mu_0\mathbf{J}$          |
+| 高斯定律                                                  | $\displaystyle \oint\mathbf{E}\cdot d\mathbf{a} = \frac{Q_\text{enc}}{\epsilon_0}$ | 安培定律                                                     | $\displaystyle \oint\mathbf{B}\cdot d\mathbf{l} = \mu_0I_\text{enc}$ |
+| 静电场无旋                                                |     $\displaystyle \oint\mathbf{E}\cdot d\mathbf{l} = 0$     | 磁场无源                                                     |     $\displaystyle \oint\mathbf{B}\cdot d\mathbf{a} = 0$     |
+| 电势                                                      | $\displaystyle V(\mathbf{r}) = -\int_\mathcal{O}^\mathbf{r} \mathbf{E}\cdot d\mathbf{l}$ | 磁矢势                                                       | $\displaystyle \mathbf{A}(\mathbf{r}) = \int_\mathcal{O}^\mathbf{r}\mathbf{B}\times d\mathbf{l}$ |
+| 电场是电势的梯度                                          |                   $\mathbf{E} = -\nabla V$                   | 磁场是磁矢势的旋度                                           |            $\mathbf{B} = \nabla\times \mathbf{A}$            |
+| 库仑定律（$V$）                                           | $\displaystyle V(\mathbf{r}) = \frac{1}{4\pi\epsilon_0}\int\frac{\rho(\mathbf{r}')}{\rcur}\,d\tau'$ | 毕奥·萨伐尔定律（$\mathbf{A}$）                              | $\displaystyle \mathbf{A}(\mathbf{r}) = \frac{\mu_0}{4\pi}\int\frac{\mathbf{J}(\mathbf{r}')}{\rcur}\,d\tau'$ |
+| 泊松方程（$V$）                                           |    $\displaystyle \nabla^2 V = -\frac{\rho}{\epsilon_0}$     | 泊松方程（$\mathbf{A}$）                                     |           $\nabla^2\mathbf{A} = -\mu_0\mathbf{J}$            |
+| 边界条件（$\mathbf{E}$）                                  | $\displaystyle \mathbf{E}_\text{above} - \mathbf{E}_\text{below} = \frac{\sigma}{\epsilon_0}\unit{n}$ | 边界条件（$\mathbf{B}$）                                     | $\mathbf{B}_\text{above} - \mathbf{B}_\text{below} = \mu_0(\mathbf{K}\times\unit{n})$ |
+| 边界条件（$V$）                                           |              $V_\text{above} = V_\text{below}$               | 边界条件（$\mathbf{A}$）                                     |     $\mathbf{A}_\text{above} = \mathbf{A}_\text{below}$      |
+| 边界条件（$\displaystyle \frac{\partial V}{\partial n}$） | $\displaystyle \frac{\partial V_\text{above}}{\partial n} - \frac{\partial V_\text{below}}{\partial n} = -\frac{\sigma}{\epsilon_0}$ | 边界条件（$\displaystyle \frac{\partial \mathbf{A}}{\partial n}$） | $\displaystyle \frac{\partial \mathbf{A}_\text{above}}{\partial n} - \frac{\partial\mathbf{A}_\text{below}}{\partial n} = -\mu_0\mathbf{K}$ |
+| 电势多极展开                                              |                        简略式见后表 1                        | 磁矢势多极展开                                               |                        简略式见后表 2                        |
+| 电势多极展开                                              |                        详细式见后表 3                        | 磁矢势多极展开                                               |                        详细式见后表 4                        |
+| 电偶极矩                                                  | $\displaystyle \mathbf{p} = \int\mathbf{r}'\rho(\mathbf{r}')\,d\tau'$ | 磁偶极矩                                                     |       $\displaystyle \mathbf{m} = I\int\,d\mathbf{a}'$       |
+| 电势的偶极子项                                            | $\displaystyle V_\text{dip} = \frac{1}{4\pi\epsilon_0}\frac{\mathbf{p}\cdot\unit{r}}{r^2}$ | 磁矢势的偶极子项                                             | $\displaystyle \mathbf{A}_\text{dip} = \frac{\mu_0}{4\pi}\frac{\mathbf{m}\times\unit{r}}{r^2}$ |
+| 电场（偶极子项）                                          |                      坐标有关式见后表 5                      | 磁场（偶极子项）                                             |                      坐标有关式见后表 6                      |
+| 电场（偶极子项）                                          |                      坐标无关式见后表 7                      | 磁场（偶极子项）                                             |                      坐标无关式见后表 8                      |
+| 电偶极子受力矩                                            |        $\boldsymbol{N} = \mathbf{p}\times \mathbf{E}$        | 磁偶极子受力矩                                               |        $\boldsymbol{N} = \mathbf{m}\times\mathbf{B}$         |
+| 电偶极子受力                                              |       $\mathbf{F} = (\mathbf{p}\cdot\nabla)\mathbf{E}$       | 磁偶极子受力                                                 |       $\mathbf{F} = (\mathbf{m}\cdot\nabla)\mathbf{B}$       |
+| 极化密度                                                  |    $\displaystyle \mathbf{P} = \frac{d\mathbf{p}}{d\tau}$    | 磁化密度                                                     |    $\displaystyle \mathbf{M} = \frac{d\mathbf{m}}{d\tau}$    |
+| 电势（极化密度）                                          |                           见后表 9                           | 磁矢势（磁化密度）                                           |                          见后表 10                           |
+| 束缚电荷面密度                                            |             $\sigma_b = \mathbf{P}\cdot\unit{n}$             | 束缚电流面密度                                               |          $\mathbf{K}_b = \mathbf{M}\times\unit{n}$           |
+| 束缚电荷体密度                                            |              $\rho_b = -\nabla\cdot\mathbf{P}$               | 束缚电流体密度                                               |           $\mathbf{J}_b = \nabla\times\mathbf{M}$            |
+| 电势（极化物体）                                          |                          见后表 11                           | 磁矢势（磁化物体）                                           |                          见后表 12                           |
+| 电位移                                                    |       $\mathbf{D} = \epsilon_0\mathbf{E} + \mathbf{P}$       | 电场（$\mathbf{H}$）                                         | $\displaystyle \mathbf{H} = \frac{1}{\mu_0}\mathbf{B} - \mathbf{M}$ |
+| 电位移的散度                                              |      $\nabla\cdot \mathbf{D} = \rho_f = \rho - \rho_b$       | 电场（$\mathbf{H}$）的旋度                                   | $\nabla\times\mathbf{H} = \mathbf{J}_f = \mathbf{J} - \mathbf{J}_b$ |
+| 高斯定律（$\mathbf{D}$）                                  | $\displaystyle \oint\mathbf{D}\cdot d\mathbf{a} = Q_\text{enc}$ | 安培定律（$\mathbf{H}$）                                     | $\displaystyle \oint\mathbf{H}\cdot d\mathbf{l} = I_\text{enc}$ |
+| 边界条件（$\mathbf{D}^\perp$）                            |   $D_\text{above}^\perp - D_\text{below}^\perp = \sigma_f$   | 边界条件（$\mathbf{H}^\parallel$）                           | $\mathbf{H}_\text{above}^\parallel - \mathbf{H}_\text{below}^\parallel = \mu_0(\mathbf{K}_f \times \unit{n})$ |
+| 边界条件（$\mathbf{D}^\parallel$）                        |                          见后表 13                           | 边界条件（$\mathbf{H}^\perp$）                               |                          见后表 14                           |
+| 线性电介质                                                |          $\mathbf{P} = \epsilon_0\chi_e\mathbf{E}$           | 线性磁介质                                                   |               $\mathbf{M} = \chi_m\mathbf{H}$                |
+| 介电率                                                    |             $\epsilon = \epsilon_0(1 + \chi_e)$              | 磁导率                                                       |                  $\mu = \mu_0(1 + \chi_m)$                   |
+| 本构关系                                                  |              $\mathbf{D} = \epsilon\mathbf{E}$               | 本构关系                                                     |                 $\mathbf{B} = \mu\mathbf{H}$                 |
+| 相对介电率                                                |   $\displaystyle \epsilon_r = \frac{\epsilon}{\epsilon_0}$   | 相对磁导率                                                   |          $\displaystyle \mu_r = \frac{\mu}{\mu_0}$           |
+
+
+
+上面由于篇幅限制，有些公式没有给出。下表给出详细公式：
+
+| **编号** |                           **公式**                           |
+| -------- | :----------------------------------------------------------: |
+| 1        | $\displaystyle V(\mathbf{r}) = \frac{1}{4\pi\epsilon_0}\sum_{n=0}^\infty\frac{1}{r^{n+1}}\int r'^nP_n(\cos\alpha)\rho(\mathbf{r}')\,d\tau'$ |
+| 2        | $\displaystyle \mathbf{A}(\mathbf{r}) = \frac{\mu_0I}{4\pi}\sum_{n=0}^\infty\frac{1}{r^{n+1}}\oint r'^nP_n(\cos\alpha)\,d\mathbf{l}'$ |
+| 3        | $\displaystyle V(\mathbf{r}) = \frac{1}{4\pi\epsilon_0}\left[\frac{1}{r}\int\rho(\mathbf{r}')\,d\tau' + \frac{1}{r^2}\int r'\cos\alpha\rho(\mathbf{r}')\,d\tau' + \frac{1}{r^3}\int r'^2\frac{1}{2}\left(3\cos^2\alpha - 1\right)\rho(\mathbf{r}')\,d\tau' + ...\right]$ |
+| 4        | $\displaystyle \mathbf{A} = \frac{\mu_0I}{4\pi}\left[\frac{1}{r}\oint\,d\mathbf{l}' + \frac{1}{r^2}\oint r'\cos\alpha\,d\mathbf{l}' + \frac{1}{r^3} \oint r'^2\frac{1}{2}(3\cos^2\alpha - 1)\,d\mathbf{l}' + ...\right]$ |
+| 5        | $\displaystyle \mathbf{E}(r, \theta) = \frac{p}{4\pi\epsilon_0r^3}(2\cos\theta\unit{r} + \sin\theta\unit{\theta})$ |
+| 6        | $\displaystyle\mathbf{B}(r, \theta) = \frac{\mu_0m}{4\pi r^3}(2\cos\theta\unit{r} + \sin\theta\unit{\theta})$ |
+| 7        | $\displaystyle \mathbf{E}_\text{dip}(\mathbf{r}) = \frac{1}{4\pi\epsilon_0r^3}[3(\mathbf{p}\cdot\unit{r})\unit{r} - \mathbf{p}] - \frac{1}{3\epsilon_0}\mathbf{p}\delta^3(\mathbf{r})$ |
+| 8        | $\displaystyle\mathbf{B}_\text{dip}(\mathbf{r}) = \frac{\mu_0}{4\pi r^3}[3(\mathbf{m}\cdot\unit{r}) - \mathbf{m}] + \frac{2\mu_0}{3}\mathbf{m}\delta^3(\mathbf{r})$ |
+| 9        | $\displaystyle V(\mathbf{r}) = \frac{1}{4\pi\epsilon_0}\int\frac{\mathbf{P}(\mathbf{r}')\cdot\unit{\rcur}}{\rcur^2}\,d\tau'$ |
+| 10       | $\displaystyle \mathbf{A}(\mathbf{r}) = \frac{\mu_0}{4\pi}\int\frac{\mathbf{M}(\mathbf{r}')\times\unit{\rcur}}{\rcur^2}\,d\tau'$ |
+| 11       | $\displaystyle V(\mathbf{r}) = \frac{1}{4\pi\epsilon_0}\underset{\mathcal{S}}\oint\frac{\sigma_b}{\rcur}\,da' + \frac{1}{4\pi\epsilon_0}\underset{\mathcal{V}}{\int}\frac{\rho_b}{\rcur}\,d\tau'$ |
+| 12       | $\displaystyle \mathbf{A}(\mathbf{r}) = \frac{\mu_0}{4\pi}\underset{\mathcal{S}}{\oint}\frac{\mathbf{K}_b(\mathbf{r}')}{\rcur}\,da' + \frac{\mu_0}{4\pi}\underset{\mathcal{V}}{\int}\frac{\mathbf{J}_b(\mathbf{r}')}{\rcur}\,d\tau'$ |
+| 13       | $\mathbf{D}_\text{above}^\parallel - \mathbf{D}_\text{below}^\parallel = \mathbf{P}_\text{above}^\parallel - \mathbf{P}_\text{below}^\parallel$ |
+| 14       | $H_\text{above}^\perp - H_\text{below}^\perp = -(M_\text{above}^\perp - M_\text{below}^\perp)$ |
+
