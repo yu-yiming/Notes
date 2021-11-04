@@ -19,7 +19,7 @@ We will have to be familiar with the following terms and concepts before moving 
 - A *source file* is a file that contains **Aster** *source code* to be *compiled* into a file of a *target language*, e.g. **C++**.
 - A *module* is a collection of source files managed by a *header file* that contains *declarations* of *identifiers* as well as specifications of their visibility to other modules.
 - **Aster** preserves certain permutations of characters, called *keywords*, to structure the source code. Some other patterns of character sequences are recognized as *literals* that represent *objects* of *integers*, *strings*, etc.
-- All other words are *identifiers* that can be bound to **Aster** *entities*, including *objects*, *types*, *classes*, *templates*, *namespaces*, *macros*, *labels*, and *parameter packs*. 
+- All other words are *identifiers* that can be bound to **Aster** *entities*, including *objects*, *types*, *classes*, *templates*, *constructors*, *namespaces*, *macros*, *labels*, and *parameter packs*. 
 - The action of introducing *identifiers* is known as a *declaration*. The process of binding them to *entities* is called a *definition*. An identifier can only be bound to one entity within the same *scope level*, which rule is called the *One Definition Rule (ODR)*.
 - Objects that are bound to identifiers are called *variables*. As a convention, we also call the identifiers they bound to variables. This could cause ambiguity sometimes, especially when we talk about the *constness* of variables, in which case we actually refer to the identifier, not the object.
 - A *scope* is either a *file scope*, restricted to a source file, or *block scope*, usually confined within a pair of braces, `{}`. Identifiers defined in a scope could be "redefined" in another scope, and cannot be referred to at outside of the scope where their definitions lie.
@@ -308,8 +308,20 @@ All expressions can be categorized into types as follows:
 
 - `[*@bind] (*@decl) -> @expr`: This closure object has several *members* declared in the *capture list*, specified by a pair of brackets. The *parameter list* are specified by a pair of  
 
-
 ## Aster Core
+
+### Modules and Headers
+
+**Aster** uses *modules* to manage names in source files. 
+
+```cpp
+module MyModule;
+public type:
+	
+```
+
+
+
 ### Evaluables and Invokables
 There are two important categories in **Aster**, *evaluables* and *invokables*. We will spare some space to talk about them.
 - *Evaluables* are any code segment that can be evaluated to a *value*. In **Aster**, evaluables includes *expressions* and *constraints*.
@@ -418,4 +430,12 @@ auto subtract a b = a - b;
 ```
 
 #### Other Invokable Entities
+
+There are some other entities that have similar property to closures, like *constructors* and *templates*. They needs succeeding entites to "complete" the evaluation.
+
+Constructors are introduced at type declaration.
+
+```cpp
+auto MaybeInt = Just int | Nothing;
+```
 
