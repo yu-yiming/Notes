@@ -2,7 +2,7 @@
 
 [TOC]
 
-这篇是对 *Effective Modern C++ (Scott Meyers)* 的阅读笔记，其对 **C++11** 之后 **C++** 语言的主要编码思路做出了建设性的建议。我将严格按照原书的章节分化，整理罗列出个人在意的知识点并给出自己的心得。
+这篇是对 *Effective Modern C++ (Scott Meyers)* 的阅读笔记，其对 **C++11** 之后 **C++** 语言的主要编码思路做出了建设性的建议。我将严格按照原书的章节分化，整理罗列出个人在意的知识点并给出自己的心得。其中很多语言组织方式和代码改编自原书。
 
 ## 类别推导
 
@@ -678,7 +678,7 @@ auto cbegin(C const& c) -> decltype(std::begin(c)) {
 
 ### 只要函数不会产生异常，就为其加上 `noexcept` 声明
 
-**C++** 关于异常的处理在 **C++11** 发生了翻天覆地的变化。此前使用的是 **动态异常申明（Dynamic Exception Specification）**，即在函数参数列表后给出 `throw()` 或 `throw(...)`，括号中包含所有可能被抛出的类型；如果没有给出 `throw`，则默认可以抛出所有类型。一个函数不能抛出其声明处没有给出的类型：
+**C++** 关于异常的处理在 **C++11** 发生了翻天覆地的变化。此前使用的是 **动态异常规格（Dynamic Exception Specification）**，即在函数参数列表后给出 `throw()` 或 `throw(...)`，括号中包含所有可能被抛出的类型；如果没有给出 `throw`，则默认可以抛出所有类型。一个函数不能抛出其声明处没有给出的类型：
 
 ```cpp
 void foo(int i) throw(int, char*) {	// 老实说，这是一个挺恶心的设计
@@ -689,7 +689,7 @@ void foo(int i) throw(int, char*) {	// 老实说，这是一个挺恶心的设�
 }
 ```
 
-动态异常申明还可以出现在函数参数中，因此它非常像是函数签名的一部分（但实际上并不是，它不能出现在 `typedef` 语句中）。但是这个语法会让人非常疲于使用，一旦抛出的类型需要更新，可能会要求客户代码也要进行更改。我们发现，其实抛出什么类型的异常并不重要，重要的是是否会抛出异常。这就引出了 `noexcept` 的概念。
+动态异常规格还可以出现在函数参数中，因此它非常像是函数签名的一部分（但实际上并不是，它不能出现在 `typedef` 语句中）。但是这个语法会让人非常疲于使用，一旦抛出的类型需要更新，可能会要求客户代码也要进行更改。我们发现，其实抛出什么类型的异常并不重要，重要的是是否会抛出异常。这就引出了 `noexcept` 的概念。
 
 **C++11** 开始，可以通过 `noexcept` 来声明一个函数不会产生异常，下面的代码在语义上是一致的：
 
@@ -1124,9 +1124,147 @@ foo(std::move(sp), bar());
 
 ### 使用 `Pimpl` 习惯用法时，将特殊成员函数的定义放到实现文件中
 
+我们先简单介绍一下 `Pimpl` 的含义。`Pimpl` 即 **指向实现的指针（Pointer to Implementation）**，也即在成员中使用指针而非普通类型。可以参考下面的例子：
+
+```cpp
+class MyClass {
+public:
+    MyClass();
+    // 省略其它声明
+private:
+    std::string name;
+    std::vector<double> data;
+    SomeClass sc;
+};
+```
+
+上面的代码为了编译，我们需要引入 `<string>`、`<vector>` 以及定义了 `SomeClass` 的头文件，如果它们发生任何修改，整个文件都需要重新编译，这是比较费时的。因此 `Pimpl` 方法使用非完整类型作为成员类型：
+
+```cpp
+class MyClass {
+public:
+    MyClass();
+    ~MyClass();
+    // 省略其它声明
+private:
+    struct Impl;
+    Impl* p_impl;
+};
+```
+
+这里的 `Impl*` 就是一个非完整类型，我们不能对它进行解引用操作（包括使用任何成员或成员函数），具体的操作均放到源文件中：
+
+```cpp
+#include "myclass.h"
+#include "someclass.h"
+#include <string>
+#include <vector>
+struct MyClass::Impl {
+    std::string name;
+    std::vector<double> data;
+    SomeClass sc;
+};
+MyClass::MyClass() : p_impl(new Impl) {}
+MyClass::~MyClass() {
+    delete p_impl;
+}
+```
+
+以上就是有点意思的程序设计思路，它将对其它头文件的以来从头文件转移到了源文件。不过，这里的所有语法都是 **C++98** 的，裸指针、`new` 与 `delete` 运算符、析构函数…… 显然我们现在有能力改进它，这里正是 `std::unique_ptr` 可以大显身手的地方：
+
+```cpp
+// myclass.h
+struct MyClass {
+public:
+    MyClass();
+    // 省略其它声明
+private:
+    std::unique_ptr<Impl> p_impl;
+};
+```
+
+```cpp
+// myclass.cpp
+// 省略头文件
+struct MyClass::Impl {
+    std::string name;
+    std::vector<double> data;
+    SomeClass sc;
+};
+MyClass::MyClass() : p_impl(std::make_unique<Impl>()) {}
+```
+
+很遗憾，上面的代码不能让客户代码通过编译。它的原因比较难以想到。由于我们没有给出析构函数，编译器会为我们自动生成一个，其中 `std::unique_ptr` 对象会在析构时使用 `delete` 运算符；在此之前，通常会用 `static_assert` 语句检查指针类型是否为完整类型，此时就产生了编译期错误。因此解决方案是给出一个空的析构器定义，或在头文件中声明，并 *在源文件中* 使用 `= default` 定义以阻止编译器自动生成。
+
+类似地，编译器自动生成的移动构造和移动赋值函数也需要指针类型为完整类型，因此为了防止编译期错误，我们依然可以在头文件中写下声明，并在源文件中用 `= default` 定义它们。下面是一块详细的代码：
+
+```cpp
+// myclass.h
+class MyClass {
+public:
+    MyClass();
+    MyClass(MyClass&& other);
+    MyClass(MyClass const& other);
+    ~MyClass();
+    
+    MyClass& operator =(MyClass const& rhs);
+    MyClass& operator =(MyClass&& rhs);
+private:
+    struct Impl;
+    std::unique_ptr<Impl> p_impl;
+};
+```
+
+```cpp
+// myclass.cpp
+// 省略头文件
+struct MyClass::Impl {
+    std::string name;
+    std::vector<double> data;
+    SomeClass sc;
+};
+MyClass::MyClass() : p_impl(std::make_unique<Impl>()) {}
+MyClass::MyClass(MyClass&& other) = default;
+MyClass::MyClass(MyClass const& other) : p_impl(std::make_unique<Impl>(*other.p_impl)) {}
+MyClass::~MyClass() = default;
+
+MyClass& MyClass::operator =(MyClass&& rhs) = default;
+MyClass& MyClass::operator =(MyClass const& rhs) {
+    *p_impl = *rhs.impl;
+    return *this;
+}
+```
+
+有意思的是，如果使用 `std::shared_ptr`，就完全无需在意前面这个问题。没有编写析构函数时，编译器会自动生成移动操作。这其实也反映了两种智能指针的设计区别：`std::unique_ptr` 更加小巧高效，将删除器类型作为智能指针类型中的一部分，因此如果要利用编译器自动生成的特种函数，就要求指向的类型是完整类型；`std::shared_ptr` 相对笨重，它不将删除器类型作为智能指针类型的一部分，自动生成的特种函数中不要求指向类型是完整类型。
+
 ## 右值引用、移动语义和完美转发
 
+**右值引用（Rvalue Reference）** 是 **C++** 对左值右值体系的重要补充。过去，我们有能够绑定左值的左值引用、能够绑定左值或右值的左值常引用（不过不能通过这个引用修改值），但居然没有一个绑定右值且对其修改的引用。因此 **C++11** 引入了右值引用，它只能绑定一个右值，除此之外它和左值引用非常类似（包括它是一个左值）。我们使用 `&&` 限定符来声明一个右值引用。
+
+**移动语义（Move Semantics）** 是 **C++11** 引入的一个重要的语言特性。移动操作是对对象的一种轻量的构造模式，以替换代价高昂的复制操作。移动语义（对比值语义）使得对象能够通过移动方式进行传递（对比复制）。一些特殊的类型甚至禁止了复制操作，而只允许移动，如 `std::unique_ptr`、`std::future`、`std::thread` 等。
+
+**完美转发（Perfect Forwarding）** 是对模板编程的一个补充特性，它会将任意类型的参数原封不动地传递到其它函数中（即不会发生退化、引用消失、修饰符消失等）。
+
+上面的后两点和右值引用有着千丝万缕的关系，我们很快就会认识到这一点。
+
 ### 理解 `std::move` 和 `std::forward`
+
+从字面理解，库函数 `std::move` 用来移动对象，而 `std::forward` 用来转发对象。可惜事实上它们只是一个类型转换函数（某种程度上它们只是包装了 `static_cast`)。究竟为什么一个类型转换可以让它们产生特殊的效果呢，我们马上揭晓。
+
+首先我们看看 `std::move` 的定义：
+
+```cpp
+template<typename T>
+decltype(auto) move(T&& param) {
+    return static_cast<std::remove_reference_t<T>&&>(param);
+}
+```
+
+它将传入的参数强制类型转换为右值引用。根据引用折叠（见 [后文](# 理解引用折叠)），为防止左值引用依然是左值引用，我们在转换之前先移除了参数类型的引用。
+
+需要注意的是，并非我们使用了 `std::move` 就能保证变量被移动传递（就类似于左值引用也不一定被引用传递）。考察下面的情形：
+
+
 
 ### 区分转发引用和右值引用
 
