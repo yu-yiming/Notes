@@ -1264,9 +1264,76 @@ decltype(auto) move(T&& param) {
 
 需要注意的是，并非我们使用了 `std::move` 就能保证变量被移动传递（就类似于左值引用也不一定被引用传递）。考察下面的情形：
 
+```cpp
+int main() {
+    std::string const str_1 = "abc";
+    std::string str_2 = std::move(str_1);
+    return 0;
+}
+```
 
+我们知道 `std::string` 实现了移动构造函数，因此等式右边是一个右值引用时，理应移动构造左侧的变量…… 可惜这里情况有些微的差别。从之前给出的定义我们知道，`std::move` 并没有去除参数类型中的 `const` 修饰符，因此上面例子中，`str_2` 定义的等号右侧是 `std::string const&&` 类型的。和 `std::string const&` 类似，这是一个对常量的引用，由于移动操作默认是对非常量的引用，此处没法进行移动，因此依然调用了复制构造函数。
+
+至于 `std::forward` 的用处，可以参考下面的例子：
+
+```cpp
+void foo(std::string const& lval);
+void foo(std::string&& rval);
+template<typename T>
+void bar(T&& param) {
+    foo(param);
+}
+```
+
+上面的模板函数 `bar` 可以以合适的方式接收任意类型的参数（值传递或引用传递），即转发引用，我们很快就会介绍。不过一旦传入函数中后，`param` 始终是一个左值（回忆一下，右值引用也是一个左值），因此调用 `foo` 的时候就没法根据引用类型进入正确的函数。这时 `std::forward` 就大显身手了。它仅当传入类型此前是通过右值初始化的时候，才会将其转换为右值引用。判断参数是通过左值或右值初始化的奥秘在于模板参数 `T`，我们在[后续](# 理解引用折叠)会进行说明。
 
 ### 区分转发引用和右值引用
+
+**转发引用（Forwarding Reference）** 用来绑定任意类型的对象（包括值、左值引用和右值引用，无论其拥有什么样的修饰符），和右值引用使用完全一致的语法，但是其行为颇为不同。一般情况下，需要类型推导的地方出现的是转发引用，否则就是我们已经熟悉的右值引用。看下面的例子：
+
+```cpp
+char foo(int&& rval);				// 右值引用
+auto&& var = foo(10);				// 转发引用
+template<typename T>
+void bar(T&& rval);					// 右值引用
+template<typename T>
+void baz(T&& param);				// 转发引用
+```
+
+转发引用同样也是引用，所以我们需要在其定义时初始化；事实上正是初始化决定了转发引用实际的引用类型。
+
+```cpp
+template<typename T>
+void foo(T&& param);
+int main() {
+    int i = 10;
+    foo(i);				// foo 中 param 是一个 int&
+    foo(std::move(i));	// foo 中 param 是一个 int&&
+    return 0;
+}
+```
+
+前面我们说，需要类型推导的地方出现的通常是转发引用，这确实存在反例：
+
+```cpp
+template<typename T>
+void foo(std::vector<T>&& v);		// 此处传递的是右值引用
+template<typename T>
+void bar(T const&& param);			// 此处传递的是右值常引用
+```
+
+同时，模板类中定义的成员函数，对于其已经实例化的模板类型，只会产生右值引用而非转发引用。这个道理是一样的，即只有类型推导出现的地方才可能有转发引用：
+
+```cpp
+template<typename T>
+class MyClass {
+    void foo(T&& rval);			// 右值引用
+    template<typename... Args>
+    void bar(Args... args);		// 转发引用
+};
+```
+
+到现在为止我们都没有解释为什么转发引用有这样的功效。我们会在[后文](# 理解引用折叠)详细说明。
 
 ### 针对右值引用实施 `std::move`，针对转发引用实施 `std::forward`
 
