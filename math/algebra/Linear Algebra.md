@@ -386,4 +386,39 @@ $$
 > - $T(u + v) = T(u) + T(v)$。其中 $u, v \in V$。
 > - $T(cv) = cT(v)$。其中 $v \in V$，$c \in F$。
 
-所有从 $V$ 到 $W$ 的线性变换组成的集合记作 $\mathcal{L}(V, W)$。
+对于线性变换，我们时常会省略函数的括号，即将 $T(v)$ 记作 $Tv$。所有从 $V$ 到 $W$ 的线性变换组成的集合记作 $\mathcal{L}(V, W)$，这是一个向量空间，只需我们定义下列概念：
+
+- 对于 $S, T \in \mathcal{L}(V, W)$，它们的和 $S + T$ 定义为 $V \to W$ 的映射，满足 $(S + T)(v) = Sv + Tv$。
+- 对于 $c \in F$ 以及 $T \in \mathcal{L}(V, W)$，它们的标量积 $cT$ 定义为 $V \to W$ 的映射，满足 $(cT)(v) = c(Tv)$。
+- 定义 $0 \in \mathcal{L}(V, W)$ 为单位元，对任意 $v \in V$ 满足 $0v = 0$。
+
+我们将这样的空间称为线性变换空间。下面我们列举一些线性变换空间和在它们上定义的线性变换。
+
+> **例**：（线性变换）
+>
+> - $\mathcal{L}(V, V)$ 上定义了 **单位变换（Identity Transformation）** $I$，也记作 $1$，满足 $Iv = v$。
+> - $\mathcal{L}(\mathcal{P}(\mathbb{R}), \mathcal{P}(\mathbb{R}))$ 上定义了微分变换 $D$，满足 $Dp = p'$。
+> - $\mathcal{L}(\mathcal{P}(\mathbb{R}), \mathbb{R})$ 上定义了变换 $T$，满足 $Tp = \int_0^1p(x)\,dx$。
+> - $\mathcal{L}(F^\infty, F^\infty)$ 上定义了变换 $T$，满足 $T(x_1, x_2, ...) = (x_2, ...)$。
+> - $\mathcal{L}(\R^2, \R^2)$ 上定义了旋转变换 $T_\theta$，满足 $T(x, y) = (x\cos\theta - y\sin\theta, x\sin\theta + y\cos\theta)$。
+> - $\mathcal{L}(F^n, F^m)$ 上定义了变换 $T$，满足 $T(x_1, ..., x_n) = (A_{11}x_1 + ... + A_{1n}x_n, ..., A_{m1}x_1 + ... + A_{mn}x_n)$，其中 $A_{ij}, i = 1,...,m, j = 1,...,n$ 是某些常数。
+
+线性变换有一个非常重要的性质：
+
+> **命题**：对于任意向量空间 $V$ 及其基 $v_1, ..., v_n$ 和另一个向量空间 $W$ 和任选的 $w_1,...,w_n \in W$，总能找到一个线性变换 $T$ 使得对任意 $i = 1,...,n$ 都有 $Tv_i = w_i$。这个线性变换是唯一的。
+
+> **证**：让我们首先证明 $T$ 的存在性。定义 $T: V \to W$ 为：
+> $$
+> T(c_1v_1 + ... + c_nv_n) = c_1w_1 + ... + c_nw_n \nonumber
+> $$
+> 其中 $c_1, ..., c_n \in F$ 是任选的。这是一个明确的定义，因为使得 $v = c_1v_1 + ... + c_nv_n$ 的 $c_1, ..., c_n$ 是唯一的。为了证明这个变换是线性的，我们只需要考察 $T(cu + v)$：
+> $$
+> \begin{align*}
+> T(cu + v) &= T(c(a_1v_1 + ... + a_nv_n) + (b_1v_1 + ... + b_nv_n)) \\
+> &= T((ca_1 + b_1)v_1 + ... + (ca_n + b_n)v_n) \\
+> &= (ca_1 + b_1)w_1 + ... + (ca_n + b_n)w_n \\
+> &= c(a_1w_1 + ... + a_nw_n) + (b_1 + ... + b_n)w_n \\
+> &= cT(u) + T(v)
+> \end{align*}
+> $$
+> 这样我们就得到 $T$ 是满足要求的一个线性变换。最后为了证明其唯一性，我们从 $Tv_i = w_i$ 出发。由 $T$ 的线性可以得到 $T(c_iv_i) = c_iw_i$，从而 $T(c_1v_1 + ... + c_nv_n) = c_1w_1 + ... + c_nv_n$，这和我们的定义正好相符。
