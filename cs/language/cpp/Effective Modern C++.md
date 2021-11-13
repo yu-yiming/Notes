@@ -1703,7 +1703,106 @@ int main() {
     fwd(/* 一些参数 */);		// 理论上这两个函数应该有完全相同的行为。
 ```
 
+下面我们将列举诸多失败的情形：
 
+- 大括号表达式，也即是初始化列表，比如 `{ 1, 2 ,3 }`：
+
+  ```cpp
+  void f(std::vector<int> const& v);
+  int main() {
+      f({ 1, 2, 3 });			// 没有问题，{ 1, 2, 3 } 会通过构造函数隐式转换为 std::vector<int>
+      fwd({ 1, 2, 3 });		// 错误！{ 1, 2, 3 } 本身没有类型，因此此处转发引用无法进行类型推导
+      auto list = { 1, 2, 3 };
+      fwd(list);				// 没问题，因为 list 是 std::initializer_list<int>，可以隐式转换为 std::vector<int>
+      return 0;
+  }
+  ```
+
+- 用 `0` 或 `NULL` 作为空指针。此时会将其类型推导为整型，当然也就无法保持其想要的指针类型了。
+
+- 使用仅有声明的 `static const` 成员变量。**C++** 中，对于 `static const` 的成员，编译器往往将其看作一个类似于宏的固定值。因此我们甚至不需要给它在源文件中提供定义，只需要在类定义中直接为其“初始化”即可：
+
+  ```cpp
+  struct Foo {
+      static int const x = 42;	// 没有问题，所有 Foo::x 出现的地方都会被替换为 42
+  };
+  int main() {
+      std::cout << Foo::x;
+      return 0;
+  }
+  ```
+
+  不过上面成立的前提是，没有任何对 `Foo:x` 的取址操作，彼时编译器 *必须* 为它分配内存地址，因此必须要在类外给出定义了。这里面，引用也可能产生取址操作（因为多数情况下引用都是通过指针实现的）：
+
+  ```cpp
+  struct Foo {
+      static int const x;
+  };
+  int const Foo::x = 42;			// 需要在源文件中定义
+  int main() {
+      int& r = Foo::x;
+      std::cout << r;
+      return 0;
+  }
+  ```
+
+  敏锐的朋友可能已经意识到这和转发引用的相关性了。如果我们将类中静态常量成员定义为前面的形式，那么对它们使用完美转发都会失效，否则会发生链接错误。这个的解决方法也很显然，就是尽量将声明为 `static const` 的成员在源文件中定义出来。
+
+  在 **C++17** 之后，我们可以将成员声明为 `inline`，从而可以将它们在类定义中赋予初始值，并不再出现链接问题（可以类比自从 **C++**标准伊始就能定义在类定义中的函数默认为 `inline`）：
+
+  ```cpp
+  struct Foo {
+      static inline int const x = 42;	// 现在也没有问题了
+  };
+  int main() {
+      int& r = Foo::x;
+      std::cout << r;
+      return 0;
+  }
+  ```
+
+- 重载的函数和模板。不考虑转发引用时，即使出现函数重载，以函数指针为参数的函数也能顺利找到正确的函数，这是因为其签名中类型是确定的：
+
+  ```cpp
+  void process(int);
+  void process(int, char*);
+  void foo(void (*proc)(int));
+  int main() {
+      foo(process);			// 没有问题
+      return 0;
+  }
+  ```
+
+  但是如果调用 `fwd(process)` 问题就很大了，因为此时编译器无法确定传入的究竟是哪一个 `process`。此处有几种解决方法：
+
+  ```cpp
+  using RealProcessType = void (*)(int);
+  int main() {
+      RealProcessType rp = process;
+      
+      fwd<RealProcessType>(process);
+      fwd(static_cast<RealProcessType>(process));
+      fwd(rp);
+  }
+  ```
+
+  不过这样的方法显然需要你知道 `fwd` 函数中究竟调用了哪一种 `process`，而用户并不一定知道这一点。因此在使用完美转发的函数中要避免使用重载的函数来处理完美转发的变量。
+
+- 最后，是一个 **C++** 中较为少用的特性，位域。一言以蔽之，**C++** 标准禁止位域中的成员被非常量引用绑定。因此为了调用完美转发函数，我们需要将其强制类型转换为一个整型，之后再传入：
+
+  ```cpp
+  struct IPv4Header {
+      std::uin32_t version : 4,
+      			 IHL : 4,
+      			 DSCP : 6,
+      			 ECN : 2,
+      			 totalLength : 16;
+  };
+  int main() {
+      IPV4Header h{};
+      fwd(static_cast<uint16_t>(h.totalLength));
+  }
+  ```
 
 ## `lambda` 表达式
 
