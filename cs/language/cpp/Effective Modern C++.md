@@ -1385,13 +1385,325 @@ MyClass get_object() {
 
 ### 避免依赖转发引用类型进行重载
 
+我们之前已经认识到，使用转发引用可以完美地处理各种情形的参数（值、左值引用、右值引用），它显然是一个在一些情形替代重载的手段：
+
+```cpp
+static std::multiset<std::string> mset;
+template<typename T>
+void foo(T&& str) {
+    mset.emplace(std::forward<T>(str));
+}
+
+int main() {
+    std::string str = "abc";
+    foo(str);					// 作为左值引用传递，在 foo 中通过复制构造函数构建 mset 中的新元素
+    foo(std::string("abc"));	// 作为右值引用传递，在 foo 中通过移动构造函数构建 mset 中的新元素
+    foo(std::move(str));		// 同上
+    foo("abc");					// 同上
+    return 0;
+}
+```
+
+如果是原来的方式，对 `std::string const&` 和 `std::string&&` 两种情况进行重载，就非常不高效：
+
+```cpp
+static std::multiset<std::string> mset;
+void foo(std::string const& str) {
+    mset.emplace(str);			// 任何情况下都会进行复制构造
+}
+void foo(std::string&& str) {
+    mset.emplace(str);			// 任何情况下都会进行复制构造！这简直是一个大骗局
+}
+int main() {
+    std::string str = "abc";
+    foo(str);					// 作为左值引用传递，在 foo 中通过复制构造函数构建 mset 中的新元素
+    foo(std::string("abc"));	// 作为右值引用传递，在 foo 中通过复制构造函数构建 mset 中的新元素
+    foo(std::move(str));		// 同上
+    foo("abc");					// 首先通过构造函数构建临时的 std::string
+    							// 通过右值引用传递，然后在 foo 中通过复制构造函数构建 mset 中的新元素
+    return 0;
+}
+```
+
+因此，我们应该积极使用转发引用以代替原来笨拙的重载。不过，考虑一个需要用另一种类型重载 `foo` 的情形：
+
+```cpp
+static std::multiset<std::string> mset;
+std::string get_string(int idx);
+template<typename T>
+void foo(T&& str) {
+    mset.emplace(std::foward<T>(str));
+}
+void foo(int idx) {
+    mset.emplace(get_string(idx));		// 通过 get_string 函数得到一个字符串
+}
+```
+
+这里在调用 `foo` 时，就会对这两种情况进行对比，以判断 `T&&` 还是 `int` 更符合参数类型。一些情况下结果可能会出人意料：
+
+```cpp
+int main() {
+    foo(42);				// 调用 foo(int)，和预期一致。这是因为非模版函数在函数调用时有更高的优先级
+    foo(42l);				// 调用了 foo(T&&)，这是一个精准匹配，而 foo(int) 需要对参数进行一次类型转换，优先度较低
+    						// 这里实际上会产生编译期错误，因为调用 mset.emplace 时参数 long 无法顺利进行
+    return 0;
+}
+```
+
+因此当使用转发引用作为参数的函数时，要避免同时使用重载，因为转发引用会精准匹配任何类型，在一些情况下会“抢走”不属于它们的函数调用，有时这并不符合直觉。
+
+如果对成员构造函数使用转发引用（甚至进行重载），会出现更加严重的问题。考虑下面这种情形：
+
+```cpp
+class MyClass {
+public:
+    template<typename T>
+    explicit MyClass(T&& str) : m_val(std::fowrad<T>(str)) {}
+    explicit MyClass(int idx) : m_val(get_string(idx)) {}
+private:
+    std::string m_val;
+};
+```
+
+看起来似乎和普通函数的情形相同，但是不要忘记 **C++** 的特种构造函数！`MyClass` 中没有给出任何复制或移动构造函数，因此编译器会自动生成 `MyClass(MyClass const&)` 和 `MyClass(MyClass&&)`。现在考虑下面的代码：
+
+```cpp
+int main() {
+    MyClass mc_1("abc");
+    auto mc_2(mc_1);		// 错误！这里调用了使用转发引用的构造函数，而非默认生成的 `MyClass(MyClass const&)`
+    						// 此时没法将 MyClass 转换为 std::string 类型
+    return 0;
+}
+```
+
+这里出现预料以外情形的原因是，在模版实例化时，转发引用的构造函数可以变成 `explicit MyClass(MyClass&)` 的形式，比起复制构造函数的 `MyClass(MyClass const&)`，它不需要对输入类型添加 `const` 修饰符，因此是更佳的匹配。为了验证我们的说法，可以尝试对 `mc_1` 添加 `const` 修饰符，此时就能确保调用的是复制构造函数了（因为尽管转发引用的版本实例化后拥有相同等级的匹配度，但编译器会优先采用非模版成员函数）。
+
+更加烦人的情况是在派生类中使用基类的构造函数，此时 *一定* 会调用转发引用的版本（甚至没有解决手段）：
+
+```cpp
+class MyDerivedClass : public MyClass {
+public:
+    MyDerivedClass(MyDerivedClass const& other) : MyClass(other) {}
+    MyDerivedClass(MyDerivedClass&& other) : MyClass(other) {}
+};
+```
+
+这里出现问题的原因是 `other` 的类型是派生类引用，和基类的复制/移动构造函数的匹配程度不及转发引用的构造函数。这让我们立刻处在一个两难的境地：如果不使用转发引用，那么重载时就会产生大量的重复代码；如果使用，该如何处理特殊情况（需要复制和移动）的函数调用呢？紧接着这个条框将进行详细说明。
+
 ### 熟悉依赖转发引用类型进行重载的替代方案
+
+对于上一节提到的，重载 `foo` 造成的问题，最简单的方法就是 *不要重载*。在很多流行的编程语言中根本不支持重载（比如 **Python** 和 **Rust** 等），它们用不同名称的函数以及范型机制解决了这个问题。对于 **C++** 来说也是一样的。执行完全类似的行为时（传递值、左值引用、右值引用），我们可以利用转发引用；其它的情形值得使用别的函数名称。比如需要 `int` 参数的 `foo` 函数可以命名为 `foo_by_index`。不过，构造函数的问题没法通过这个解决：它们的名字必须是相同的。
+
+我们也可以完全忘记 **C++11** 的更新，使用 `T const&` 作为参数类型（这里的 `T` 是一个具体的类型）。不过这也就抛弃了转发引用带来的高效率。
+
+另一种古老而容易被人忽略的方法是使用值传递（即使用 `T` 作为参数类型，`T` 是一个具体的类型），这样也能将不同重载版本“平等”地区分开来。或许这有悖 **C++** 标准出现以来流行的传递引用的高效形式，不过当我们确定对象在函数中 *一定* 会被复制时，一个合理的方式是将其在传入函数时就进行复制。我们会在后面的条款中详细分析这种策略的效率问题。
+
+上面的三种方式某种程度上都是比较“简单”的解决方式，要么抛弃重载，要么抛弃转发引用。下面我们将介绍不抛弃其中任何一个的解决方案：
+
+一种方式是通过判断将普通情况和传入特殊类型的情况进行区分（有点类似于手动重载），看看下面对 `foo` 函数的改良：
+
+```cpp
+template<typename T>
+void foo_impl(T&& str, std::false_type) {
+    // 此时是调用了字符串的版本
+}
+void fool_impl(int i, std::true_type) {
+    // 此时是调用了整数的版本
+}
+
+template<typename T>
+void foo(T&& val) {
+    foo_impl(std::forward<T>(val), std::is_integral<std::remove_reference_t<T>>{});
+}
+```
+
+上面的类型特质 `std::integral` 会通过整数类型（无论是 `int`、`short` 还是`long` 等）实例化为 `std::true_type`，其余情况则会被实例化为 `std::false_type`，这样我们就可以通过重载将不同情况完全区分开了。需要注意这里的 `std::remove_reference` 是必须的，因为进行完美转发时，左值会被推导为 `T&`（左值引用），在这里进行类型特质判断时会产生 `std::false_type`。
+
+这种方法对转发引用的构造函数依然不起效果，因为编译器会生成特种函数，而我们没法保证编译器一定或一定不调用转发引用的构造函数或普通的复制/移动构造函数，因此使用额外传标签类型重载的方式并不好写。此时可以使用模版元编程的一大杀器，`std::enable_if` 和 **C++** 的 **代替失败不是错误（Substitution Failure Is Not An Error, SFINAE）** 机制来让转发引用的构造函数在一些情况下不能被实例化（从而选择复制/移动构造函数）：
+
+```cpp
+class MyClass {
+public:
+    template<typename T, typename = std::enable_if_t<!std::is_same_v<MyClass, std::decay_t<T>>>>>
+    explicit MyClass(T&& val);
+    // 省略类实现
+};
+```
+
+这里的一连串令人望而却步的类型特质就是 **SFINAE** 的使用示例，如果不熟悉模版元编程的朋友，这里我可以简单介绍一下。`std::enable_if<expr>` 中的 `expr` 是一个编译器常量，当它在模版实例化时得到 `false` 时，当前的模版会实例化失败；由于 **SFINAE** 机制，此处编译器并不会报错，而是接着寻找其它能够完成匹配的函数。这样，我们就筛选出不允许使用转发引用构造的参数类型，并让它们通过其它方式（复制/移动）构造。上面除了用到 `std::is_same` 来判断两个类型是否完全相等，我们还用到 `std::decay` 来去除模版类型 `T` 所带的引用限定符和 `const`/`volatile` 修饰符（实际上它还将会数组退化成指针，但和我们此处的需求无关）。
+
+这还没完，因为我们还得让派生类调用基类构造函数时，能够调用复制/移动构造函数而非转发引用的版本。此时可以利用类型特质 `std::is_base_of` 来判断。完整的代码如下：
+
+```cpp
+class MyClass {
+public:
+    template<
+    	typename T,
+        typename = std::enable_if_t<
+            !std::is_base_of_v<MyClass, std::decay_t<T>> &&
+            !std::is_integral_v<std::remove_reference_t<T>>>>
+    explicit MyClass(T&& str) : m_val(std::forward<T>(str)) {}
+    explicit MyClass(int idx) : m_val(get_string(idx)) {}
+private:
+    std::string m_val;
+};
+```
+
+太酷了！这应该是最完美的版本了，无论是输入任何方式传递的字符串和整型，都能够完美地调用构造函数。同时派生类也可以毫无负担地调用基类的构造函数。呃，其实还有一个优化方向。上面的 `std::enable_if` 只是过滤了派生类和整型；我们没有拦截别的类型。这会导致其它的输入会产生编译期错误（而且很可能非常丑陋），比如你可以试试将 `char16_t []` 类型带进去。此时可以在构造函数定义中使用 `static_cast` 产生更好看的报错信息：
+
+```cpp
+static_assert(std::is_constructible_v<std::string, T>, "Parameter cannot construct a std::string");
+```
+
+不过前面的混沌报错依然会出现…… 然后跟着我们自定义的静态断言信息，只能说我们尽力了。
 
 ### 理解引用折叠
 
+本节我们将探索 **C++** 的 **引用折叠（Reference Collapse）**。它是指模版类型推导时，将多重引用修饰符折叠为单独的引用修饰符的行为。我们知道 **C++** 中引用并不是一个对象，因此不能声明引用的引用，比如 `auto& & rx = x` 是无效的。不过，转发引用出现时，参数的类型就好像是一个引用的引用：
+
+```cpp
+template<typename T>
+void foo(T&& val);
+template<typename T>
+void bar(T const& val);
+template<typename T>
+void baz(T& val);
+
+int main() {
+    int i{};
+    
+    foo(42);		// T 被推导为 int，所以 val 是 int&& 类型
+    bar(42);		// T 被推导为 int，所以 val 是 int const& 类型
+    
+    foo(i);			// T 被推导为 int&，所以 val 是 int& && 类型？实际上是 int& 类型
+    bar(i);			// T 被推导为 int，所以 val 是 int const& 类型
+    baz(i);			// T 被推导为 int，所以 val 是 int& 类型
+    
+    return 0;
+}
+```
+
+显然 `foo(i)` 的情况下不应该是 `int& &&` 类型，而是 `int&` 类型。如果让我们暂时忽视 `T` 经过类型推导的结果，可以发现当函数型参是一个引用时，根据其是左值还是右值引用以及实参是左值还是右值有四种情况：
+
+- `T&` 以及左值实参，此时 `T&` 是一个左值引用。
+- `T const&` 以及右值实参，此时 `T const&` 是一个左值常引用。
+- `T&&` 以及左值实参，此时 `T&&` 是一个左值引用。
+- `T&&` 以及右值实参，此时 `T&&` 是一个右值引用。
+
+可以看到只有型参和实参都是右值的情况下，函数参数才会变成右值引用。这也是 `std::forward` 生效的情形。让我们从它的简单版本的定义探究每种情况下究竟发生了什么：
+
+```cpp
+template<typename T>
+T&& forward(std::remove_reference_t<T>& param) {
+    return static_cast<T&&>(param);
+}
+```
+
+对于传入一个左值的情形，`T` 会被推导成左值引用，它会导致下面的实例化结果（以 `std::string` 为例）：
+
+```cpp
+// 这不是合法的 C++ 代码，仅做演示
+std::string& && forward(std::remove_reference_t<std::string&>& param) {
+ 	return static_cast<std::string& &&>(param);
+}
+```
+
+经过引用折叠，我们得到的是：
+
+```cpp
+std::string& forward(std::string& param) {
+    return static_cast<std::string&>(param);		// cast 了个寂寞
+}
+```
+
+如果传入的是一个右值，`T` 便是一个光秃秃的类型，实例化结果如下：
+
+```cpp
+std::string&& forward(std::remove_reference_t<std::string>& param) {
+    return static_cast<std::string&&>(param);   
+}
+```
+
+这个甚至不需要引用折叠就可以得到：
+
+```cpp
+std::string&& forward(std::string& param) {
+    return static_cast<std::string&&>(param);		// 和 std::move 完全一致，将结果作为右值引用返回
+}
+```
+
+我们此前提到过，有类型推导存在时的右值引用大多是转发引用。因此，使用 `auto&&` 的情景都是转发引用：
+
+```cpp
+int main() {
+    auto i = 10;
+    
+    auto&& x = i;		// 等同于 int& && x = i; 即 int& x = i;
+    auto&& y = 42;		// 等同于 int&& y = 42;
+    auto&& z = rand();	// 等同于 int&& z = rand();
+    return 0;
+}
+```
+
+除此之外，在声明别名和使用 `decltype` 判断类型时，也会发生引用折叠：
+
+```cpp
+template<typename T>
+struct MyStruct {
+    using RrefT = T&&;
+    using DeclT = decltype(T&&);
+};
+int main() {
+    MyStruct<int&> ms_1;	// RrefT 和 DeclT 都是 int& 类型
+    MyStruct<int&&> ms_2;	// RrefT 和 DeclT 都是 int&& 类型
+    return 0;
+}
+```
+
 ### 假定移动操作不存在、成本高、未使用
 
+本章中我们主要介绍了 **C++11** 引入的移动语义、右值引用和引申的转发引用。它们在不少应用场景都能提升效率，事实上也确实如此。不过我们也不应该“神化”这些新的特性。**C++98** 的标准库在 **C++11** 经过了彻底的翻修，以在移动操作更加高效时使用移动操作，不过有些第三方代码库不一定支持移动操作，或者有些类干脆禁止了移动操作（通过 `= delete` 定义），此时使用 `std::move` 等技巧的作用就非常有限。
+
+此外，有些类型的设计方式根本不适合进行移动，比如 `std::array`：
+
+```cpp
+std::array<int, 100> arr_1;
+auto arr_2 = std::move(arr_1);		// 没有什么用处，因为 std::array 将元素存储在对象当中，依然需要移动每一个元素
+									// 对于 int 类型来说，移动就是复制。
+```
+
+相比之下，`std::vector` 的移动要高效得多（因为它本身只需要转移一个堆指针的所有权）：
+
+```cpp
+std::vector<int> vec_1;
+auto vec_2 = std::move(vec_1);		// 将 vec_1.data_ptr 赋值给 vec_2.data_ptr
+```
+
+处于中间形态的 `std::string` 则在短字符串的情况下存储在栈上，否则会开辟堆上的空间存储。这样我们对于不同长度的字符串，移动相比复制的优势是不同的。如果处理的是短字符串，则移动并没有什么好处。此外，我们在[前文]()中也提到过，为了兼容 **C++98** 容器操作的一些强异常保证，一些底层复制操作只有在已知移动操作不会抛出异常时才会使用移动操作。因此，没有 `noexcept` 声明的移动在一些地方仍会被强制使用复制操作代替。
+
+总之，在以下场景中，**C++11** 的移动语义并没有什么用处：
+
+- 没有实现移动操作：待移动的对象未能提供移动操作，此时移动就会变成复制操作。
+- 移动并没有更快：由于对象的存储性质，移动并不比复制更快。
+- 移动不可用：移动本可以发生的语境下，要求移动不能发射异常，但是移动操作没有声明为 `noexcept`。
+
+还有一个容易忽视的情形，当对象是一个左值时，如果我们没有使用 `std::move` 或 `std::forward`，它也不会进行移动操作。
+
 ### 熟悉完美转发的失败情形
+
+完美转发堪称 **C++11** 中最引人注目的特性之一。不过，特性繁多的 **C++** 中自然能找到让它无法正常工作的情形。，对于任意函数 `foo`，如果下面两个操作的行为不同，我们就称完美转发在此失败了：
+
+```cpp
+template<typename... Ts>
+void fwd(Ts&&... params) {
+    f(std::forward<Ts>(params)...);
+}
+int main() {
+    f(/* 一些参数 */);
+    fwd(/* 一些参数 */);		// 理论上这两个函数应该有完全相同的行为。
+```
+
+
 
 ## `lambda` 表达式
 
