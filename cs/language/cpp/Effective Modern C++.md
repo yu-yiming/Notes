@@ -1806,7 +1806,73 @@ int main() {
 
 ## `lambda` 表达式
 
+lambda 表达式让函数定义变得十分简单，我们可以在许多需要传入谓词的函数（如 **STL** 中的 `_if` 系列函数）中轻松地使用。其它常见地应用还有提供 `std::sort`、`std::map` 等允许自定义比较函数的情景。比起定义一个函数（**C++** 中的函数只能定义在文件作用域中）或定义一个仿函数（重载了 `operator ()` 的类型），lambda 表达式各种意义上都更加出色。
+
+lambda 表达式可以创建一个运行期的对象，称为 **闭包（Closure）**，它的结构和仿函数基本一致。不过，闭包的类型是被编译器隐藏起来的，每个 lambda 表达式都会对应独特的闭包类型，尽管它们看起来可能是一模一样的。
+
+```cpp
+int main() {
+    auto f = []() { return 0; };
+    auto g = []() { return 0; };
+    std::cout << std::is_same_v<decltype(f), decltype(g)>;	// 输出 0
+    return 0;
+}
+```
+
+闭包默认支持了复制构造，因此我们可以在初始化时让一个闭包等于另一个的拷贝，此时两者的类型是相同的。不过闭包将复制赋值函数定义为 `= delete`，因此闭包在初始化后就不可能更改了。**C++20** 之后，没有捕获的闭包允许进行复制赋值操作。
+
 ### 避免默认捕获形式
+
+**C++11** 中，闭包有两种捕获形式，值或引用。当在捕获列表中显示列出形如 `x` 或 `&y` 时，我们会将 `x` 或 `y` 的引用捕获到闭包中。如果直接写 `=` 或 `&` 则会默认将所有闭包中出现的自由变量捕获为值或引用。
+
+捕获引用是有较大风险的。因为闭包以返回值或参数形式离开当前作用域后，其捕获的引用可能会失效：
+
+```cpp
+using FilterCont = std::vector<std::function<bool(int)>>;
+static FilterContainer filters;
+void add_divisor_filter() {
+    auto x = some_value();
+    auto y = some_value();
+    auto divisor = get_divisor(x, y);
+    filters.emplace_back([&](auto value) { return value % divisor == 0; });
+}
+```
+
+上面捕获的 `divisor` 会在 `add_divisor_filter` 调用后失效，此后如果调用存储在 `filters` 里的闭包就会报错。这里如果坚持将所有捕获变量显式写出来，即 `[&divisor]` 的形式，或许能提醒我们这是一个局部变量。
+
+或许，在确保捕获引用的生命周期长于闭包时，可以使用默认捕获的形式；不过为了避免此后发现这个闭包特别好用，从而复制粘贴到另一块代码处且忘记修改默认捕获，就可能造成问题。
+
+你也许会认为，如果默认捕获值就不会有这样的问题。很可惜，让我们看看下面的例子：
+
+```cpp
+class DivisorFilter {
+public:
+    void add_filter() const {
+        filters.emplace_back([=](auto value) { return value % divisor == 0; });
+    }
+private:
+    int divisor;
+};
+```
+
+理论上，lambda 只能捕获非静态局部变量，这里的 `divisor` 是一个成员变量，是如何被捕获的呢？答案是 `[=]` 会默认以引用方式捕获 `this`，所以闭包中就可以省略 `this` 调用 `divisor` 了。你或许已经意识到，这是一个巨大的隐患，因为这样闭包使用的合法性就要关联一个 `DivsiorFilter` 对象的声明周期。因此一个推荐的写法是：
+
+```cpp
+void DivisorFilter::add_filter() const {
+    auto captured_divisor = divisor;
+    filters.emplace_back([captured_divisor](auto val) { return value % capture_divisor == 0; });
+}
+```
+
+在 **C++14** 之后，我们可以使用 **广义 lambda 捕获（Generalized Lambda Capture）** 来捕获这样的变量：
+
+```cpp
+void DivisorFilter::add_filter() const {
+    filters.emplace_back([divisor = divisor](auto val) { return value % capture_divisor == 0; });
+}
+```
+
+此外，`[=]` 还会给人以闭包和外界行为完全隔离的错觉。事实上，由于所有闭包都会默认以引用方式捕获静态变量，当外界修改了静态变量时，闭包内的行为也会发生变化。因此，一方面我们建议在闭包中慎重使用外部的静态变量；另一方面，默认捕获应该被杜绝。
 
 ### 使用初始化捕获将对象引入闭包
 
@@ -1816,7 +1882,22 @@ int main() {
 
 ## 并发 API
 
+谢天谢地，**C++11** 终于在语言层面上支持，且提供了一系列的标准库用于并发了。这样我们就可以在不同平台编写兼容的并发程序了。
+
 ### 优先选用基于任务而非基于线程的程序设计
+
+如果我们想要异步运行一个函数 `foo`，有两种基本方式，**基于线程（Thread-Based）** 或 **基于任务（Task-Based）**：
+
+```cpp
+int foo();
+int main() {
+    std::thread t(foo);				// 基于线程
+    auto fut = std::async(foo);		// 基于任务
+    return 0;
+}
+```
+
+
 
 ### 如果异步是必要的，则指定 `std::launch::async`
 
