@@ -1235,7 +1235,7 @@ MyClass& MyClass::operator =(MyClass const& rhs) {
 }
 ```
 
-有意思的是，如果使用 `std::shared_ptr`，就完全无需在意前面这个问题。没有编写析构函数时，编译器会自动生成移动操作。这其实也反映了两种智能指针的设计区别：`std::unique_ptr` 更加小巧高效，将删除器类型作为智能指针类型中的一部分，因此如果要利用编译器自动生成的特种函数，就要求指向的类型是完整类型；`std::shared_ptr` 相对笨重，它不将删除器类型作为智能指针类型的一部分，自动生成的特种函数中不要求指向类型是完整类型。
+有意思的是，如果使用 `std::shared_ptr`，就完全无需在意前面这个问题。没有编写析构函数时，编译器会自动生成移动操作。这其实也反映了两种智能指针的设计区别：`std::unique_ptr` 更加小巧高效，将删除器类型作为智能指针类型中的一部分，因此如果要利用编译器自动生成的特殊成员函数，就要求指向的类型是完整类型；`std::shared_ptr` 相对笨重，它不将删除器类型作为智能指针类型的一部分，自动生成的特殊成员函数中不要求指向类型是完整类型。
 
 ## 右值引用、移动语义和完美转发
 
@@ -1465,7 +1465,7 @@ private:
 };
 ```
 
-看起来似乎和普通函数的情形相同，但是不要忘记 **C++** 的特种构造函数！`MyClass` 中没有给出任何复制或移动构造函数，因此编译器会自动生成 `MyClass(MyClass const&)` 和 `MyClass(MyClass&&)`。现在考虑下面的代码：
+看起来似乎和普通函数的情形相同，但是不要忘记 **C++** 的特殊构造函数！`MyClass` 中没有给出任何复制或移动构造函数，因此编译器会自动生成 `MyClass(MyClass const&)` 和 `MyClass(MyClass&&)`。现在考虑下面的代码：
 
 ```cpp
 int main() {
@@ -1876,9 +1876,112 @@ void DivisorFilter::add_filter() const {
 
 ### 使用初始化捕获将对象引入闭包
 
-### 对 `auto&&` 类型的形参使用 `decltype`、以 `std::forward`
+我们知道可以用值或引用两种方式捕获变量；但是既然 **C++11** 引入了移动语义，那么是否能够通过右值引用来移动变量到 lambda 中呢？遗憾的是，这不能通过简单的类如 `[&&x]` 的方式做到。**C++14** 中提供的广义 lambda 捕获倒是可以完成相同的事情：
+
+```cpp
+int main() {
+    auto up = std::make_unique<int>(10);
+    auto f = [up = std::move(up)] { return *up; };	// 当然，可以直接在这里调用 std::make_unique
+    return 0;
+}
+```
+
+如果使用 **C++11** 的编译器，我们可以延续此前仿函数的定义：
+
+```cpp
+class CaptureByMove {
+public:
+    explicit CaptureByMove(std::unique_ptr<int>&& up)
+        : m_up(std::move(up)) {}
+    int operator ()() const {
+        return *m_up;
+    }
+private:
+    std::unique_ptr<int> m_up;
+};
+```
+
+不过这样有点太啰嗦，如果希望简单一些，可以使用 `std::bind`，它会返回一个新的函数，其等价于 `std::bind` 的第一个参数提供的函数，但该函数的前几个参数由 `std::bind` 的后续参数提供。
+
+```cpp
+int main() {
+    auto up = std::make_unique<int>(10);
+    auto f = std::bind([](std::unique_ptr<int> const& up) { return *up; }, std::move(up));
+    return 0;
+}
+```
+
+细心的同学会发现，这里 `up` 是作为常引用传入的，这是因为闭包的实现会自动将 `operator ()` 声明为 `const`，因此所有捕获变量不能在其中修改，我们为了保持意义上的一致，就传入了常引用。如果需要修改捕获的参数，则需要将 lambda 声明为 `mutable`：
+
+```cpp
+int main() {
+    auto f = [up = std::make_unique<int>(10)] mutable { *up += 42; return *up; };
+    auto g = std::bind(
+        [] (std::unique_ptr<int>& up) mutable { *up += 42; return *up; }, std::move(up));
+    return 0;
+}
+```
+
+### 对 `auto&&` 类型的形参使用 `decltype` 以通过 `std::forward` 转发
+
+**C++14** 引入了 **泛型 lambda（Generic Lambda）**，这无疑是对 lambda 表达能力的极大提升：
+
+```cpp
+int main() {
+    auto id = [] (auto x) { return x; };
+    return 0;
+}
+```
+
+上面 `id` 的闭包类型等价于下面这个：
+
+```cpp
+class GenericLambda {
+public:
+    template<typename T>
+    auto operator ()(T x) const {
+        return x;
+    }
+};
+```
+
+不过，如果在需要知晓闭包参数中 `auto` 类型的地方，这就比使用模板函数时更加麻烦。比如如果我们的 lambda 中需要转发传入的参数，此时必须使用 `std::forward`，且参数类型需要指定出来。我们可以让 `decltype` 完成这个工作：
+
+```cpp
+int main() {
+    auto f = [] (auto&& param) {
+        return foo(std::foward<decltype(param)>(param));
+    };
+    auto g = [] (auto&&... params) {
+        return bar(std::forward<decltype(param)>(param)...);
+    };
+    return 0;
+}
+```
+
+如果还记得 `decltype` 规则的同学会发现一个问题，那就是它对右值引用会如实地给出其类型，这似乎和我们之前对 `std::forward` 的用法不一致（我们一律不使用任何引用限定符）。不过回忆一下 `std::forward` 的定义：
+
+```cpp
+template<typename T>
+T&& forward(std::remove_reference_t<T>& param) {
+    return static_cast<T&&>(param);
+}
+```
+
+如果我们将 `T` 显式给出，比如说为 `int&&`，实例化后的结果应该是：
+
+```cpp
+// 下面不是合法的 C++ 代码，仅作为演示
+int&& forward(int& param) {
+    return static_cast<int&& &&>(param);
+}
+```
+
+由于引用折叠的机制，我们最后依然会得到 `static_cast<int&&>(param)`，因此没有任何问题。
 
 ### 优先选用 `lambda` 表达式，而非 `std::bind`
+
+
 
 ## 并发 API
 
