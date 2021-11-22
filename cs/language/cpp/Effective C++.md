@@ -2,7 +2,7 @@
 
 [TOC]
 
-本篇是 *Effective C++ (Scott Meyers)* 的阅读笔记，会遵照原文进行分章。
+本篇是 *Effective C++ (Scott Meyers)* 的阅读笔记，会遵照原文进行分章。阅读本篇的同学最好对 **C++** 已经有一定了解，知道变量、函数、类以及相关概念。
 
 ## 让自己熟悉 **C++**
 
@@ -307,13 +307,70 @@ FileSystem& tfs() {
 
 ### 了解 **C++** 默默编写并调用哪些函数
 
-**C++** 会为没有编写一些 **特殊成员函数（Special Member Function）** 的类型进行这些函数的默认实现。详细请参考 *Effective Modern C++* 的条款 17，这里不再赘述。
+**C++** 会为没有编写一些 **特殊成员函数（Special Member Function）** 的类型进行这些函数的默认实现。详细请参考 *Effective Modern C++* 的条款 17，这里只提一下一种特别的情况：
+
+```cpp
+class Foo {
+public:
+    Foo(std::string& str, int x)
+        : m_str(str), m_x(x) {}
+private:
+    std::string& m_str;
+    int const m_x;
+};
+int main() {
+    Foo f1("abc", 10), f2("def", 42);
+    f1 = f2;				// 错误！编译器拒绝生成复制赋值操作。这是因为 C++ 不允许改变引用和常量
+    return 0;
+}
+```
 
 ### 如果不想使用编译器自动生成的函数，应该明确禁止它
 
+如果不希望编译器自动生成特殊成员函数，比如复制相关操作，可以使用 `= delete` 作为其定义，详情参考 *Effective Modern C++* 的条款 11（事实上那里直接将本书这里提供的方法给否定了）。不过对于不支持 **C++11** 的情形，下面的 `Uncopyable` 类或许有些帮助：
+
+```cpp
+class Uncopyable {
+protected:
+    Uncopyable() {}
+    ~Uncopyable() {}
+private:
+    Uncopyable(Uncopyable const&);			// 通过将复制操作声明为 private 而阻止任何复制
+    Uncopyable& operator =(Uncopyable const&);
+};
+class MyClass : private Uncopyable {
+    // 省略定义
+};
+```
+
+上面只要我们不为 `MyClass` 定义复制操作，编译器就会尝试自动定义，并在其中首先默认调用基类的复制操作，而这会产生编译器错误（`private` 成员函数无法访问）。
+
 ### 为多态基类声明 `virtual` 析构函数
 
+简而言之，如果希望一个类型被继承，那么 *一定* 要将基类的类型声明为 `virtual`。这是因为，一个指向派生类的基类指针被释放时，只会调用基类的析构函数。如果不声明为 `virtual`，派生类中声明的成员变量就不能正常释放。
+
+不过，对于不可能被继承的类型，我们也不该无脑加上 `virtual` 限定符，这是因为虚函数是有代价的：每个对象都会配套一个 **虚表指针（Virtual Table Pointer）**，其指向一个函数指针构成的数组。在对象调用某一个虚函数时，实际调用的成员函数取决于虚表中相应位置存储的函数指针。这个表无疑会占用很多的内存。如果本来是一个简单的类型，比如图形引擎常用的 `Point` 类型，本身可能只是由两个 `float` 组成的轻量结构，但是加上了 `virtual` 修饰后，就会无端多出一个指针的大小：
+
+```cpp
+struct Point {
+    Point(float x_, float y_);
+    ~Point();
+    float x, y;   
+};
+// 下面是声明 virtual 函数后，类中的结构
+struct PointVirtual {
+    Point(float x_, float y_);
+    virtual ~Point();
+    float x, y;
+    vptr_t vptr;		// 这里的 vptr_t 指向一系列函数指针
+};
+```
+
+此外，继承其它的类型也可能让自己的函数变为 `virtual` 的，比如由于 `std::string` 有一个虚的析构函数，继承自 `std::string` 会导致派生类的虚构函数自动变为 `virtual` 的（无论你是否显式声明）。
+
 ### 不要让析构函数抛出异常
+
+析构函数是用来释放资源的，因此如果抛出了异常，会导致内存泄露
 
 ### 不要在构造和析构函数中使用 `virtual` 函数
 
@@ -406,6 +463,8 @@ FileSystem& tfs() {
 ### 认识模版元编程
 
 ## 自定义 `new` 和 `delete`
+
+**C++** 区别于许多其它现代高级语言的一点，就是其采用手动管理内存。相比 **Java** 或 **Python** 这些采用 **垃圾回收（Garbage Collection, GC）** 机制的语言，**C++** 程序员需要花更多精力来写出安全有效的代码。尤其是在多线程环境下，堆是一个可修改全局资源，因此会发生 **竞争条件（Race Condition）**，此时不同线程执行的顺序会影响到最终的结果。如果我们使用的函数没有为并发做好准备，内存相关操作可能会出现严重问题。
 
 ### 了解 new-handler 的行为
 
