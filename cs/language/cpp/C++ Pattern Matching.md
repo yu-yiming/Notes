@@ -191,6 +191,12 @@ if (auto c is int = f()) {}
 if (auto d is std::integral = g()) {}
 ```
 
+最后，我们可以将 `is` 表达式写在初始化器中，它的含义不言自明：
+
+```cpp
+auto flag = v is std::pair<int, int>;
+```
+
 #### `is` 的用例
 
 在 `if` 表达式中：
@@ -241,4 +247,104 @@ auto make_array() { /* 省略定义 */ }
 int is = 42;
 assert(is is int);				// 没有问题
 ```
+
+### 通用转换表达式：`as`
+
+`as` 表达式提供了通用的转换语法，支持静态、动态或自定义的转换方式。我们约定将 `refto(T, x)` 定义为：
+
+- `T` 是引用类型时，返回 `T`。
+- 如果 `x` 是一个左值，则返回 `T&`。
+- 如果 `x` 是一个右值（这是剩余的唯一情形），则返回 `T&&`。
+
+`as` 表达式的语法如下：
+
+```cpp
+x as T						// x 是一个表达式
+```
+
+`as` 和 `is` 拥有相同的运算优先级，`T` 是一个类型谓词或特定类型。这个表达式返回类型是 `refto(T, x)`，详细如下（会从上到下判断，一旦有一个满足则返回该结果）：
+
+- 如果 `std::is_same_v<T, typeof(x)>`，则返回 `x` 的引用。
+- 如果 `x` 可以被 `refto(T, x)` 类型的变量绑定，则返回一个绑定到 `x` 的 `refto(T, x)` 类型引用。
+- 如果 `operator as<T>(x)` 或 `x.operator as<T>()` 有定义（被重载），则返回它的结果。
+- 如果 `typeof(x)` 可以隐式转换为`T`，则返回 `T` 类型的右值，其为 `x` 转换为 `T` 类型后的值。
+- 如果 `T(x)` 是合法的且结果可以被解引用（即可以使用运算符 `operator *`），则返回 `*T(x)`。
+- 如果 `dynamic_cast<refto(T, x)>(x)` 是合法的，则返回这个转换后的值。
+- 如果 `dynamic_cast<T>(x)` 是合法的，则返回这个转换后的值。
+- 如果 `!(x is Pointer)` 且 `T(x)` 合法，则返回 `T(x)`。
+- 否则 `x as T` 就是非良构的。
+
+有两种 `as` 表达式可能成立的情形：
+
+- `expression as type-id`
+- `expression as expression`
+
+和 `is` 表达式类似，右侧的部分可以被解构：
+
+```cpp
+x as [C1, C2, ..., Cn]		// 当且仅当 auto&& [x1, x2, ..., xn] = x; 可以通过编译时才合法
+    						// 它等价于 forward_as_tuple(x1 as C1, x2 as C2, ..., xn as Cn)
+```
+
+#### `as` 用于变量声明和结构化绑定
+
+这部分和 `is` 的用法比较相似：
+
+```cpp
+std::variant<std::pair<int, int>, std::string> v;
+auto&& [a, b] as std::pair<int, int> = v;			// 要求 as 表达式必须匹配成功
+if (auto&& [a, b] as std::pair<int, int> = v) {		// 检查 as 表达式是否成功匹配，若否则不进入分支（也不赋值）
+    // 省略细节
+}
+```
+
+我们可能会不禁将上面的用法将显示写出存储类型作比较：
+
+```cpp
+int a = f();					// 要求 f() 返回一个可以隐式转换为 int 的值（比如通过构造函数）
+auto a as int = g();			// 要求 g() 返回一个可以强制转换为 int 的值（比如将 std::variant<int, std::stirng> 转换为 int
+```
+
+`if` 语句的情况是类似的。最后，`as` 表达式也可以写在初始化器中：
+
+```cpp
+auto [a, b] = v as std::pair<int, int>;
+```
+
+#### `as` 的用例
+
+我们可以利用 `as` 完成显式参数转换：
+
+```cpp
+void f(std::string);
+char a = 'a';
+f(std::string(a));			// 错误！不允许将构造函数像函数式类型转换一样使用（尽管理应没有问题）
+f(std::string{a});			// 使用列表初始化
+f(a as std::string);		// 没有问题
+```
+
+在有继承关系的类型中切换会更加直观：
+
+```cpp
+namespace NS {
+	struct A { void f() {} };
+    struct B : A {};
+    struct C { B i; };
+}
+struct D : NS::C {
+    void foo() {
+        this->NS::C::i.NS::A::f();				// 只使用 ::
+        ((*this as NS::C).i as NS::A).f();		// 利用 as 表达式
+    }
+}
+```
+
+和 `is` 关键字一样，`as` 是一个上下文关键字，因此可以定义同名的标识符：
+
+```cpp
+short as = 42;
+assert(as as int == 42);
+```
+
+### `is/as` 和动态类型：自定义以及 `std`
 
