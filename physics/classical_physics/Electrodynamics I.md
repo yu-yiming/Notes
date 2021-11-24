@@ -2008,3 +2008,12 @@ $$
 | 13       | $\mathbf{D}_\text{above}^\parallel - \mathbf{D}_\text{below}^\parallel = \mathbf{P}_\text{above}^\parallel - \mathbf{P}_\text{below}^\parallel$ |
 | 14       | $H_\text{above}^\perp - H_\text{below}^\perp = -(M_\text{above}^\perp - M_\text{below}^\perp)$ |
 
+我们也给出一些常见的电荷分布产生的电磁场。注意，下面所有带电都指均匀带电，通电指通恒稳电流，即 $\lambda, \sigma, \rho, I, K, J$ 均为常数：
+
+| **分布（电）**   | **公式**                                                     | **分布（磁）** | **公式**                                                  |
+| ---------------- | ------------------------------------------------------------ | -------------- | --------------------------------------------------------- |
+| 无限长直带电导线 | $E = \dfrac{\lambda}{2\pi\epsilon_0s}$                       | 无限长直导线   | $B = \dfrac{\mu_0I}{2\pi s}$                              |
+| 有限带电直导线   |                                                              | 有限长导线段   | $B = \dfrac{\mu_0I}{4\pi s}(\sin\theta_2 - \sin\theta_1)$ |
+| 带电环路         | $E = \dfrac{\lambda}{2\epsilon_0}\dfrac{Rz}{(R^2+z^2)^{3/2}}$ | 通电环路       | $B = \dfrac{\mu_0I}{2}\dfrac{R^2}{(R^2+z^2)^{3/2}}$       |
+| 带电平面         | $E = \dfrac{\sigma}{2\epsilon_0}$                            | 通电平面       | $B = \dfrac{\mu_0K}{2}$                                   |
+
