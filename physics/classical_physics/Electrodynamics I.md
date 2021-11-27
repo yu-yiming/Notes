@@ -37,7 +37,9 @@ $$
 
 矢量的 **点乘（Dot Product）** 描述了两个矢量在同一方向共同的作用效果，大小为两个矢量大小之积乘以它们夹角的余弦，即：
 $$
-\marginbox{\mathbf{A}\cdot \mathbf{B} = AB\cos\theta}
+\begin{equation}
+	\marginbox{\mathbf{A}\cdot \mathbf{B} = AB\cos\theta} \label{dot-product}\tag{1.1}
+\end{equation}
 $$
 可以参考下图：
 
@@ -45,21 +47,25 @@ $$
 
 特别地有 $\mathbf{A}\cdot\mathbf{A} = A^2$。从几何角度理解，点乘是将一个矢量投影到另一个矢量的方向上之后两者的乘积。物理学中的功 $W = \int\mathbf{F}\cdot\,d\mathbf{l}$ 是比较典型的使用点乘的例子。通过点乘的定义我们可以轻易地得到余弦定理：
 $$
+\begin{equation*}
 c^2 = \mathbf{c}\cdot\mathbf{c} = (\mathbf{a} - \mathbf{b})\cdot(\mathbf{a} - \mathbf{b}) = \mathbf{a}\cdot\mathbf{a} - 2\mathbf{a}\cdot\mathbf{b} + \mathbf{b}\cdot\mathbf{b} = a^2 + b^2 -2ab\cos\theta
+\end{equation*}
 $$
 矢量的 **叉乘（Cross Product）** 定义为垂直于两个矢量所在平面的矢量，大小为两个矢量大小之积乘以它们夹角的正弦，方向则满足 **右手定则（Right-Hand Rule）**：
 $$
-\marginbox{\mathbf{A}\times\mathbf{B} = AB\sin\theta\hat{\mathbf{n}}}
+\begin{equation}
+	\marginbox{\mathbf{A}\times\mathbf{B} = AB\sin\theta\hat{\mathbf{n}}} \label{cross-product}\tag{1.2}
+\end{equation}
 $$
-其中 $\hat{\mathbf{n}}$ 是满足右手定则的法向量，该定则描述如下：将四指指向第一个矢量的方向，大拇指处于同一平面并垂直于它们，然后使得四指能通过较小角度转到第二个矢量的方向时，大拇指的方向就是 $\hat{\mathbf{n}}$ 的方向。为了更好说明这个方向，我们以笛卡尔坐标系为例：
+其中 $\hat{\mathbf{n}}$ 是满足右手定则的法矢量，该定则描述如下：将四指指向第一个矢量的方向，大拇指处于同一平面并垂直于它们，然后使得四指能通过较小角度转到第二个矢量的方向时，大拇指的方向就是 $\hat{\mathbf{n}}$ 的方向。为了更好说明这个方向，我们以笛卡尔坐标系为例：
 
 <img src="graphs/ed1_1-3.png" alt="ed1_1-3" style="zoom:40%;" />
 
 上图中，通过叉乘定义有：
 $$
-\begin{align}
-	\hat{\mathbf{x}}\times\hat{\mathbf{y}} = \hat{\mathbf{z}} && \hat{\mathbf{y}}\times\hat{\mathbf{z}} = \hat{\mathbf{x}} && \hat{\mathbf{z}}\times\hat{\mathbf{x}} = \hat{\mathbf{y}}
-\end{align}
+\begin{equation}
+	\hat{\mathbf{x}}\times\hat{\mathbf{y}} = \hat{\mathbf{z}} \qquad \hat{\mathbf{y}}\times\hat{\mathbf{z}} = \hat{\mathbf{x}} \qquad \hat{\mathbf{z}}\times\hat{\mathbf{x}} = \hat{\mathbf{y}} \tag{1.3}
+\end{equation}
 $$
 特别地有 $\mathbf{A}\times\mathbf{A} = \mathbf{0}$。此外，通过右手定则不难发现叉乘不满足交换律，即 $\mathbf{A}\times\mathbf{B} = -\mathbf{B}\times\mathbf{A}$。
 
@@ -67,34 +73,42 @@ $$
 
 在 $n$ 维空间中，对于线性无关的 $n$ 个矢量 $\hat{\mathbf{e}}_1,...,\hat{\mathbf{e}}_n$，对给定的 $n$ 维矢量 $\mathbf{A}$ 总能找到唯一的 $n$ 元组 $(A_1,...,A_n)$ 使得下式成立：
 $$
-\mathbf{A} = \sum_{i=1}^n A_i\hat{\mathbf{e}}_i
+\begin{equation}
+	\mathbf{A} = \sum_{i=1}^n A_i\hat{\mathbf{e}}_i \tag{1.4}
+\end{equation}
 $$
-因此，我们对笛卡尔坐标系中的向量 $\mathbf{A}$ 总能写成下面的形式：
+因此，我们对笛卡尔坐标系中的矢量 $\mathbf{A}$ 总能写成下面的形式：
 $$
-\mathbf{A} = A_x\hat{\mathbf{x}} + A_y\hat{\mathbf{y}} + A_z\hat{\mathbf{z}}
+\begin{equation}
+	\mathbf{A} = A_x\hat{\mathbf{x}} + A_y\hat{\mathbf{y}} + A_z\hat{\mathbf{z}} \tag{1.5}
+\end{equation}
 $$
-我们可以根据此定义给出向量加减法、点乘和叉乘在笛卡尔坐标系中的计算公式：
+我们可以根据此定义给出矢量加减法、点乘和叉乘在笛卡尔坐标系中的计算公式：
 $$
 \begin{align}
 \begin{split}
 	\mathbf{A} + \mathbf{B} &= (A_x + B_x)\hat{\mathbf{x}} + (A_y + B_y)\hat{\mathbf{y}} + (A_z + B_z)\hat{\mathbf{z}} \\
 	\mathbf{A} \cdot \mathbf{B} &= A_xB_x + A_yB_y + A_zB_z \\
 	\mathbf{A} \times \mathbf{B} &= (A_yB_z - A_zB_y)\hat{\mathbf{x}} + (A_zB_x - A_xB_z)\hat{\mathbf{y}} + (A_xB_y - A_yB_x)\hat{\mathbf{z}}
-\end{split}
+\end{split} \tag{1.6}
 \end{align}
 $$
 其中叉乘的公式可以通过行列式变得更加优雅：
 $$
+\begin{equation}
 \mathbf{A}\times\mathbf{B} = 
 \begin{vmatrix}
 	\hat{\mathbf{x}} & \hat{\mathbf{y}} & \hat{\mathbf{z}} \\
 	A_x & A_y & A_z \\
 	B_x & B_y & B_z
 \end{vmatrix}
+\end{equation} \label{cross-product-determinant}\tag{1.7}
 $$
-现在计算点乘变得如此简单，我们可以利用点乘的定义得到两个向量之间的夹角：
+现在计算点乘变得如此简单，我们可以利用点乘的定义得到两个矢量之间的夹角：
 $$
+\begin{equation}
 \cos{\theta} = \frac{\mathbf{A}\cdot\mathbf{B}}{AB} = \frac{A_xB_x + A_yB_y + A_zB_z}{\sqrt{(A_x^2 + A_y^2 + A_z^2)(B_x^2 + B_y^2 + B_z^2)}}
+\end{equation} \label{angle-by-dot-product}\tag{1.8}
 $$
 最后让我们介绍两种常见的矢量连乘公式：$\mathbf{A}\cdot(\mathbf{B}\times\mathbf{C})$ 和 $\mathbf{A}\times(\mathbf{B}\times\mathbf{C})$。其中第一个式子的结果是一个标量，$\mathbf{B}\times\mathbf{C}$ 得到了垂直于 $\mathbf{B}$、$\mathbf{C}$ 所在平面的矢量 $BC\sin\theta\hat{\mathbf{n}}$，随后它与 $\mathbf{A}$ 的点乘正好得到了 $\mathbf{A}$ 到 $\mathbf{B}$、$\mathbf{C}$ 所在平面的距离。通过下面的图片来理解，我们不难发现这个结果就是所示平行六面体的体积：
 
@@ -102,21 +116,29 @@ $$
 
 另一个 $\mathbf{A}\times(\mathbf{B}\times\mathbf{C})$ 可以通过叉乘在笛卡尔坐标系的计算方式强行得到下面的结果：
 $$
+\begin{equation}
 \mathbf{A}\times(\mathbf{B}\times\mathbf{C}) = \mathbf{B}(\mathbf{A}\cdot\mathbf{C}) - \mathbf{C}(\mathbf{A}\cdot\mathbf{B})
+\end{equation} \label{triple-product}\tag{1.9}
 $$
  类似地也有：
 $$
+\begin{equation}
 (\mathbf{A}\times\mathbf{B})\times\mathbf{C} = -\mathbf{A}(\mathbf{B}\cdot\mathbf{C}) + \mathbf{B}(\mathbf{A}\cdot\mathbf{C})
+\end{equation}
 $$
 通过上面两个公式，我们就可以得到任意的矢量点乘叉乘混合的结果了。
 
 在进入更深层次的矢量分析之前，让我们确立物理学中的 **位置（Position）**、**位移（Displacement）** 和 **分离矢量（Separation Vector）** 等概念和它们的记号。位置矢量指的是空间中从原点指向某一点的矢量，通常记为 $\mathbf{r}$。电动力学中通常关心两个位置矢量，它们是 **场源点（Source Point）**，记为 $\mathbf{r}'$ 和 **场点（Field Point）**，记为 $\mathbf{r}$。从场源点指向场点的矢量则被称为分离矢量，记为 $\boldsymbol{\mathscr{r}}$，它可以定义为：
 $$
-\boldsymbol{\mathscr{r}} = \mathbf{r} - \mathbf{r}'
+\begin{equation}
+\brcur = \mathbf{r} - \mathbf{r}'
+\end{equation} \label{field-position-notation} \tag{1.10}
 $$
 位移是指表明位置移动的矢量 $\Delta\mathbf{r} = \mathbf{r}_1 - \mathbf{r}_0$。当这个量取无穷小时我们就得到了无穷小位移矢量 $d\mathbf{l}$：
 $$
-d\mathbf{l} = d\mathbf{r} = dx\,\hat{\mathbf{x}} + dy\,\hat{\mathbf{y}} + dz\,\hat{\mathbf{z}}
+\begin{equation}
+d\mathbf{l} = d\mathbf{r} = dx\,\hat{\mathbf{x}} + dy\,\hat{\mathbf{y}} + dz\,\hat{\mathbf{z}} 
+\end{equation} \label{infinitesimal-length} \tag{1.11}
 $$
 
 ### 矢量微分
@@ -125,21 +147,29 @@ $$
 
 我们默认已经对标量的函数与微分比较熟悉了。对于函数 $f(x)$，它的导数 $\frac{df}{dx}$ 表明其 **斜率（Slope）** 的特征。现在假设函数 $T(x, y, z)$ ，它的“斜率”显得不是那么明显，我们需要考虑它所有方向上单位长度引起的变化：
 $$
+\begin{equation}
 dT = \frac{\partial T}{\partial x}\,dx + \frac{\partial T}{\partial y}\,dy + \frac{\partial T}{\partial z}\,dz
+\end{equation} \label{total-derivative} \tag{1.12}
 $$
-我们只需要考虑 $x, y, z$ 三个方向即可，因为所有其他方向的变化率都可以通过它们三个的线性组合得到。注意到上面的公式和点乘的相似性。将它重写为向量点乘的形式：
+我们只需要考虑 $x, y, z$ 三个方向即可，因为所有其他方向的变化率都可以通过它们三个的线性组合得到。注意到上面的公式和点乘的相似性。将它重写为矢量点乘的形式：
 $$
-dT = \left(\frac{\partial T}{dx}\hat{\mathbf{x}} + \frac{\partial T}{dx}\hat{\mathbf{y}} + \frac{\partial T}{dx}\hat{\mathbf{z}}\right)\cdot(dx\,\hat{\mathbf{x}} + dy\,\hat{\mathbf{y}} + dz\,\hat{\mathbf{z}}) = \nabla T\cdot d\mathbf{l}
+\begin{equation}
+	dT = \left(\frac{\partial T}{dx}\hat{\mathbf{x}} + \frac{\partial T}{dx}\hat{\mathbf{y}} + \frac{\partial T}{dx}\hat{\mathbf{z}}\right)\cdot(dx\,\hat{\mathbf{x}} + dy\,\hat{\mathbf{y}} + dz\,\hat{\mathbf{z}}) = \nabla T\cdot d\mathbf{l}
+\end{equation}
 $$
  $\nabla$ 是引入的新记号，我们称其为 **Del 算子（Del Operator）**，其定义如下：
 $$
+\begin{equation}
 \marginbox{\nabla = \hat{\mathbf{x}}\frac{\partial}{\partial x} + \hat{\mathbf{y}}\frac{\partial}{\partial y} + \hat{\mathbf{z}}\frac{\partial}{\partial z}}
+\end{equation} \label{del-operator} \tag{1.13}
 $$
 可以看到 del 算子和微分算子 $\frac{d}{dx}$ 非常相似。后文中我们将利用 del 算子重新建立微积分中的一些定理，可以时常将其和微分算子对比。
 
 当 $\nabla$ 使用在标量函数前时，会遵循类似于乘法分配律的规则得到：
 $$
+\begin{equation}
 \nabla T = \left(\hat{\mathbf{x}}\frac{\partial}{\partial x} + \hat{\mathbf{y}}\frac{\partial}{\partial y} + \hat{\mathbf{z}}\frac{\partial}{\partial z}\right)T = \frac{\partial T}{dx}\hat{\mathbf{x}} + \frac{\partial T}{dx}\hat{\mathbf{y}} + \frac{\partial T}{dx}\hat{\mathbf{z}}
+\end{equation} \label{gradient-cartesian} \tag{1.14}
 $$
 我们将这个矢量函数称为 $T$ 的 **梯度（Gradient）**。根据 (15) 式我们也可以发现，梯度是使得 $dT$ 最大的 $d\mathbf{l}$ 方向。如果更加生动地说明，梯度就是站在某点时最陡的（向高处的）方向，而梯度的大小就是这个方向上的斜率。
 
@@ -147,11 +177,15 @@ $$
 
 由于 Del 算子的矢量性质，我们可以尝试得到它和矢量函数的点乘和叉乘。点乘得到的是矢量函数的 **散度（Divergence）**：
 $$
+\begin{equation}
 \nabla\cdot\mathbf{v} = \left(\hat{\mathbf{x}}\frac{\partial}{\partial x} + \hat{\mathbf{y}}\frac{\partial}{\partial y} + \hat{\mathbf{z}}\frac{\partial}{\partial z}\right)\cdot(v_x\hat{\mathbf{x}} + v_y\hat{\mathbf{y}} + v_z\hat{\mathbf{z}}) = \frac{\partial v_x}{\partial x} + \frac{\partial v_y}{\partial y} + \frac{\partial v_z}{\partial z}
+\end{equation} \label{divergence-cartesian} \tag{1.15}
 $$
-散度的几何意义是某点上一个向量函数的发散程度。我们不加证明地给出其等价的定义：
+散度的几何意义是某点上一个矢量函数的发散程度。我们不加证明地给出其等价的定义：
 $$
-\marginbox{\nabla\cdot\mathbf{v} = \lim_{V\to 0}\frac{1}{|V|}\oint_{S(V)}\mathbf{v}\cdot\hat{\mathbf{n}}\,dS}
+\begin{equation}
+\marginbox{\nabla\cdot\mathbf{v} = \lim_{V\to 0}\frac{1}{V}\oint_\mathcal{S}\mathbf{v}\cdot d\mathbf{a}}
+\end{equation} \label{divergence} \tag{1.16}
 $$
 也即一个闭合曲面中矢量场的通量（穿过该曲面的积分）与闭合曲面形成体积 $V$ 之比在 $V\to 0$ 的极限。在静电场的章节中我们会再一次看到类似的定义。
 
@@ -159,6 +193,7 @@ $$
 
 **旋度（Curl）** 则描述了一个矢量函数的旋转程度：
 $$
+\begin{align}
 \nabla\times\mathbf{v} = \left(\hat{\mathbf{x}}\frac{\partial}{\partial x} + \hat{\mathbf{y}}\frac{\partial}{\partial y} + \hat{\mathbf{z}}\frac{\partial}{\partial z}\right)\times(v_x\hat{\mathbf{x}} + v_y\hat{\mathbf{y}} + v_z\hat{\mathbf{z}}) =
 \begin{vmatrix}
 	\hat{\mathbf{x}} & \hat{\mathbf{y}} & \hat{\mathbf{z}} \\
@@ -166,7 +201,16 @@ $$
 	v_x & v_y & v_z
 \end{vmatrix}  \\
 = \left(\frac{\partial v_z}{\partial y} - \frac{\partial v_y}{\partial z}\right)\hat{\mathbf{x}} + \left(\frac{\partial v_x}{\partial z} - \frac{\partial v_z}{\partial x}\right)\hat{\mathbf{y}} + \left(\frac{\partial v_y}{\partial x} - \frac{\partial v_x}{\partial y}\right)\hat{\mathbf{z}}
+\end{align} \label{curl-cartesian} \tag{1.17}
 $$
+
+下面是它的数学定义：
+$$
+\begin{equation}
+	\marginbox{\nabla\times \mathbf{v} = \lim_{S\to 0}\frac{1}{S}\oint_\mathcal{P} \mathbf{v}\cdot d\mathbf{l}}
+\end{equation} \label{curl} \tag{1.18}
+$$
+可见，这是一个曲面边界的环路积分与该曲面形成面积 $S$ 之比在 $S \to 0$ 的极限。
 
 #### 矢量微分的运算定律
 
@@ -179,7 +223,7 @@ $$
 	\frac{d}{dx}(fg) &= f\frac{dg}{dx} + g\frac{df}{dx} \\
 	\frac{d}{dx}\left(\frac{f}{g}\right) &= \frac{g\frac{df}{dx} - f\frac{dg}{dx}}{g^2}
 \end{split}
-\end{align}
+\end{align} \label{derivative-rules} \tag{1.19}
 $$
 在矢量微分中，也有相当类似的定律，比如加法定律：
 $$
@@ -189,17 +233,17 @@ $$
 	\nabla\cdot(\mathbf{A} + \mathbf{B}) &= \nabla\cdot\mathbf{A} + \nabla\cdot\mathbf{B} \\
 	\nabla\times(\mathbf{A} + \mathbf{B}) &= \nabla\times\mathbf{A} + \nabla\times\mathbf{B}
 \end{split}
-\end{align}
+\end{align} \label{vector-derivate-add-rules} \tag{1.20}
 $$
 标量乘法定律：
 $$
 \begin{align}
 \begin{split}
-\nabla(kf) &= k\nabla f \\
-\nabla\cdot(k\mathbf{A}) &= k(\nabla\cdot\mathbf{A}) \\
-\nabla\times(k\mathbf{A}) &= k(\nabla\times\mathbf{A})
+    \nabla(kf) &= k\nabla f \\
+    \nabla\cdot(k\mathbf{A}) &= k(\nabla\cdot\mathbf{A}) \\
+    \nabla\times(k\mathbf{A}) &= k(\nabla\times\mathbf{A})
 \end{split}
-\end{align}
+\end{align} \label{vector-derivative-scalar-multiply-rules} \tag{1.21}
 $$
 梯度定律：
 $$
@@ -207,7 +251,7 @@ $$
 \begin{split}
 	\nabla(fg) &= f\nabla g + g\nabla f \\
 	\nabla(\mathbf{A}\cdot\mathbf{B}) &= \mathbf{A}\times(\nabla\times\mathbf{B}) + \mathbf{B}\times(\nabla\times\mathbf{A}) + (\mathbf{A}\cdot\nabla)\mathbf{B} + (\mathbf{B}\cdot\nabla)\mathbf{A} \end{split}
-\end{align}
+\end{align} \label{vector-derivative-gradient-rules} \tag{1.22}
 $$
 以及矢量乘法定律：
 $$
@@ -218,7 +262,7 @@ $$
 	\nabla\times(f\mathbf{A}) &= f(\nabla\times \mathbf{A}) - \mathbf{A}\times(\nabla f) \\
 	\nabla\times(\mathbf{A}\times\mathbf{B}) &= (\mathbf{B}\cdot\nabla)\mathbf{A} - (\mathbf{A}\cdot\nabla)\mathbf{B} + \mathbf{A}(\nabla\cdot{B}) - \mathbf{B}(\nabla\cdot\mathbf{A})
 \end{split}
-\end{align}
+\end{align} \label{vector-derivative-vector-multiply-rules} \tag{1.23}
 $$
 上面这一系列定律都可以通过矢量的运算定律以及梯度、散度和旋度的定义得到。
 
@@ -226,34 +270,47 @@ $$
 
 我们可以使用两次 del 算子以得到函数的二阶导数。其中最常用的是梯度的散度，我们称其为 **拉普拉斯（Laplacian）**：
 $$
-\nabla\cdot(\nabla T) = \left(\hat{\mathbf{x}}\frac{\partial}{\partial x} + \hat{\mathbf{y}}\frac{\partial}{\partial y} + \hat{\mathbf{z}}\frac{\partial}{\partial z}\right)\cdot\left(\frac{\partial T}{dx}\hat{\mathbf{x}} + \frac{\partial T}{dx}\hat{\mathbf{y}} + \frac{\partial T}{dx}\hat{\mathbf{z}}\right) = \frac{\partial^2T}{\partial x^2} + \frac{\partial^2 T}{\partial y^2} + \frac{\partial^2 T}{\partial z^2}
+\begin{align}
+	\nabla\cdot(\nabla T) &= \left(\hat{\mathbf{x}}\frac{\partial}{\partial x} + \hat{\mathbf{y}}\frac{\partial}{\partial y} + \hat{\mathbf{z}}\frac{\partial}{\partial z}\right)\cdot\left(\frac{\partial T}{dx}\hat{\mathbf{x}} + \frac{\partial T}{dx}\hat{\mathbf{y}} + \frac{\partial T}{dx}\hat{\mathbf{z}}\right) \\ 
+	&= \frac{\partial^2T}{\partial x^2} + \frac{\partial^2 T}{\partial y^2} + \frac{\partial^2 T}{\partial z^2}
+\end{align} \label{laplacian-cartesian} \tag{1.24}
 $$
 我们经常将上面式子简写为 $\nabla^2 T$，其中 $\nabla^2$ 是一个新定义的算子，称为 **拉普拉斯算子（Laplacian Operator）**：
 $$
-\marginbox{\nabla^2 = \frac{\partial^2}{\partial x^2} + \frac{\partial^2}{\partial y^2} + \frac{\partial^2}{\partial z^2}}
+\begin{equation}
+	\marginbox{\nabla^2 = \frac{\partial^2}{\partial x^2} + \frac{\partial^2}{\partial y^2} + \frac{\partial^2}{\partial z^2}}
+\end{equation} \label{laplacian-operator} \tag{1.25}
 $$
 偶尔我们也会对矢量使用拉普拉斯算子，此时它代表对矢量的不同分量分别进行不同方向的求拉普拉斯：
 $$
-\nabla^2\mathbf{v} = (\nabla^2v_x)\hat{\mathbf{x}} + (\nabla^2v_y)\hat{\mathbf{y}} + (\nabla^2v_z)\hat{\mathbf{z}}
+\begin{equation}
+	\nabla^2\mathbf{v} = (\nabla^2v_x)\hat{\mathbf{x}} + (\nabla^2v_y)\hat{\mathbf{y}} + (\nabla^2v_z)\hat{\mathbf{z}}
+\end{equation} \label{vector-laplacian} \tag{1.26}
 $$
 除了梯度的散度，我们还可能得到：
 
 - 梯度的旋度。我们可以通过其定义证明：
   $$
-  \nabla\times(\nabla T) = \mathbf{0}
+  \begin{equation}
+  	\nabla\times(\nabla T) = \mathbf{0}
+  \end{equation} \label{curl-of-gradient} \tag{1.27}
   $$
   这是一个很重要的结论。通常被用来判断一个矢量场 $\nabla T$ 是否是某个标量场 $T$ 的梯度。
-
+  
 - 散度的梯度，即 $\nabla(\nabla\cdot \mathbf{v})$。遗憾的是，在物理学中这个表达式很少被用到，因此对它的兴趣寥寥。但注意散度的梯度 *不等于* 梯度的散度！
 
 - 旋度的散度。我们可以通过其定义证明：
   $$
-  \nabla\cdot(\nabla\times\mathbf{v}) = 0
+  \begin{equation}
+  	\nabla\cdot(\nabla\times\mathbf{v}) = 0 \label{divergence-of-curl} \tag{1.28}
+  \end{equation}
   $$
-
+  
 - 旋度的旋度。其计算可以参考矢量连乘公式：
   $$
-  \nabla\times(\nabla\times \mathbf{v}) = \nabla(\nabla\cdot\mathbf{v}) - \nabla^2\mathbf{v}
+  \begin{equation}
+  	\nabla\times(\nabla\times \mathbf{v}) = \nabla(\nabla\cdot\mathbf{v}) - \nabla^2\mathbf{v}
+  \end{equation} \label{curl-of-curl} \tag{1.29}
   $$
   此式也常作为矢量的拉普拉斯定义式。
 
@@ -263,45 +320,61 @@ $$
 
 - 线积分：沿着一个路径的积分，定义如下：
   $$
+  \begin{equation}
   \int_\mathbf{a}^\mathbf{b}\mathbf{v}\cdot d\mathbf{l}
+  \end{equation} \label{line-integral} \tag{1.30}
   $$
   其中 $\mathbf{v}$ 是一个矢量函数，$d\mathbf{l}$ 则是无穷小位移矢量，描述了积分路径的方向，可以参考下图：
 
   <img src="graphs/ed1_1-5.png" alt="ed1_1-5" style="zoom:40%;" />
-
+  
   当线积分的初始点 $\mathbf{a}$ 和终止点 $\mathbf{b}$ 重合时，这就变成了一个闭合曲线，此时我们将线积分记为下面的形式：
   $$
-  \oint \mathbf{v}\cdot d\mathbf{l}
+  \begin{equation}
+  	\oint \mathbf{v}\cdot d\mathbf{l}
+  \end{equation} \label{closed-line-integral} \tag{1.31}
   $$
   
 - 面积分：垂直作用于一个曲面的积分：
   $$
-  \int_\mathcal{S}\mathbf{v}\cdot d\mathbf{a}
+  \begin{equation}
+  	\int_\mathcal{S}\mathbf{v}\cdot d\mathbf{a}
+  \end{equation} \label{surface-integral} \tag{1.32}
   $$
-  其中 $\mathcal{S}$ 是积分针对的曲面，$d \mathbf{a}$ 则是一个无穷小面积的法向量。显然一块面积的法向量有两个，因此此处可能会产生歧义，在积分时应该明确说明面积的方向。如果 $\mathcal{S}$ 是闭合的，我们就可以将面积分记为：
+  其中 $\mathcal{S}$ 是积分针对的曲面，$d \mathbf{a}$ 则是一个无穷小面积的法矢量。显然一块面积的法矢量有两个，因此此处可能会产生歧义，在积分时应该明确说明面积的方向。如果 $\mathcal{S}$ 是闭合的，我们就可以将面积分记为：
   $$
-  \oint \mathbf{v}\cdot d\mathbf{a}
+  \begin{equation}
+  	\oint \mathbf{v}\cdot d\mathbf{a}
+  \end{equation} \label{closed-surface-integral} \tag{1.33}
   $$
   我们对面积分还有一个常用的称呼。考虑将 $\mathbf{v}$ 视为单位时间单位截面上某个流体的质量时，那么 $\int\mathbf{v}\cdot d\mathbf{a}$ 能够描述单位时间通过某个面的流体质量。我们因此也将其称为 **通量（Flux）**。
-
+  
 - 体积分：对某个体积的积分：
   $$
-  \int_\mathcal{V}T\,d\tau
+  \begin{equation}
+  	\int_\mathcal{V}T\,d\tau
+  \end{equation} \label{volume-integral} \tag{1.34}
   $$
   这里 $T$ 是一个标量函数，而 $d\tau$ 是一个无穷小体积。在笛卡尔坐标系中可以轻易得到：
   $$
-  d\tau = dx\,dy\,dz
+  \begin{equation}
+  	d\tau = dx\,dy\,dz
+  \end{equation} \label{infinitesimal-volume-cartesian} \tag{1.35}
   $$
   偶尔我们也会遇到矢量函数的体积分：
   $$
-  \int\mathbf{v}\,d\tau = \hat{\mathbf{x}}\int v_x\,d\tau + \hat{\mathbf{y}}\int v_y\,d\tau + \hat{\mathbf{z}}\int v_z\,d\tau
+  \begin{equation}
+  	\int\mathbf{v}\,d\tau = \hat{\mathbf{x}}\int v_x\,d\tau + \hat{\mathbf{y}}\int v_y\,d\tau + \hat{\mathbf{z}}\int v_z\,d\tau
+  \end{equation} \label{vector-volume-integral} \tag{1.36}
   $$
 
 #### 微积分基本定理
 
 虽然大家它可能已经很熟悉了，但是为了和后面将要提到的其它基本定理比较，这里还是将 **微积分基本定理（The Fundamental Theorem of Calculus）** 写出来：
 $$
-\int_a^b\left(\frac{df}{dx}\right)\,dx = f(b) - f(a)
+\begin{equation}
+	\int_a^b\left(\frac{df}{dx}\right)\,dx = f(b) - f(a)
+\end{equation} \label{fundamental-theorem} \tag{1.37}
 $$
 其几何意义是显然的。下面让我们对矢量微积分中导数的三种变形：梯度、散度和旋度分别给出类似的基本定理：
 
@@ -309,20 +382,24 @@ $$
 
 在一个线积分中，任取一段无穷小的路径 $d\mathbf{l}$ 都有 $dT = \nabla T \cdot d\mathbf{l}$（我们此前在 (15) 式中已经给出）。因此对于完整的线积分：
 $$
-\label{gradient-theorem}
-\int_\mathbf{a}^\mathbf{b}(\nabla T)\cdot d\mathbf{l} = T(\mathbf{b}) - T(\mathbf{a})
+\begin{equation}
+	\int_\mathbf{a}^\mathbf{b}(\nabla T)\cdot d\mathbf{l} = T(\mathbf{b}) - T(\mathbf{a})
+\end{equation} \label{gradient-theorem} \tag{1.38}
 $$
 这也即是 **梯度基本定理（The Fundamental Theorem for Gradients）**。其几何意义在于，空间中任意两点的“高度差”等价于连接它们的路径上每个“高度”变化的和。和微积分基本定理对比我们可以发现，它们的特征都在于，一个积分的结果只取决于边界点，和中间过程（路径）无关。物理学中，如果一个矢量场的线积分和路径无关，我们就称其为 **保守的（Conservative）**。从梯度基本定理来看，一个矢量场保守的充分条件是这个场是某个标量场的梯度。我们可以从该定理迅速得到一个推论 ：
 $$
-\oint (\nabla T)\cdot d\mathbf{l} = 0
+\begin{equation}
+	\oint (\nabla T)\cdot d\mathbf{l} = 0
+\end{equation} \label{closed-line-integral-of-gradient} \tag{1.39}
 $$
 
 #### 散度基本定理
 
 **散度基本定理（The Fundamental Theorem for Divergences）** 将面积分和散度的体积分联系到了一起：
 $$
-\label{divergence-theorem}
-\underset{\mathcal{V}}{\int}(\nabla\cdot\mathbf{v})\,d\tau = \underset{\mathcal{S}}{\oint}\mathbf{v}\cdot d\mathbf{a}
+\begin{equation}
+	\int_\mathcal{V}(\nabla\cdot\mathbf{v})\,d\tau = \oint_\mathcal{S}\mathbf{v}\cdot d\mathbf{a}
+\end{equation} \label{divergence-theorem} \tag{1.40}
 $$
 它也被称为 **高斯定理（Gauss's Theorem）**、**格林定理（Green's Theorem）** 或 **散度定理（Divergence Theorem）**。其几何意义在于，一个闭合曲面的通量等于该曲面包围的面积内总量的变化值。同样地，这也将一个积分（等式左侧）的结果取决于其边界区域（等式右侧的曲面）。
 
@@ -330,8 +407,9 @@ $$
 
 **旋度基本定理（The Fundamental Theorem for Curls）** 将旋度对某曲面的通量和该曲面边界的线积分联系到了一起：
 $$
-\label{stokes-theorem}
-\underset{\mathcal{S}}{\int}(\nabla\times \mathbf{v})\cdot d\mathbf{a} = \underset{\mathcal{P}}{\oint}\mathbf{v}\cdot d\mathbf{l}
+\begin{equation}
+	\int_\mathcal{S}(\nabla\times \mathbf{v})\cdot d\mathbf{a} = \oint_\mathcal{P}\mathbf{v}\cdot d\mathbf{l}
+\end{equation} \label{stokes-theorem} \tag{1.41}
 $$
 这也被称为 **斯托克斯定理（Stokes' Theorem）**。其几何意义在于，一个曲面内旋度的总量等于其边界处一圈的变化之和。通过图片能够更好理解这一点：
 
@@ -339,14 +417,18 @@ $$
 
 和梯度基本定理类似，我们发现旋度的通量和所选曲面无关，只和曲面边界有关；对于闭合曲面，我们总有：
 $$
-\oint(\nabla \times\mathbf{v}) \cdot d\mathbf{a} = 0
+\begin{equation}
+	\oint(\nabla \times\mathbf{v}) \cdot d\mathbf{a} = 0
+\end{equation} \label{closed-surface-integral-of-curl} \tag{1.42}
 $$
 
 #### 分部积分
 
 通过对微分乘法定律 $(fg)' = fg' + gf'$ 的应用，我们可以得到 **分部积分（Integration by Parts）**的积分方法：
 $$
-\int_a^b f\left(\frac{dg}{dx}\right)\,dx = -\left.\int_a^b g\left(\frac{df}{dx}\right)\,dx + fg\right|_a^b
+\begin{equation}
+	\int_a^b f\left(\frac{dg}{dx}\right)\,dx = -\left.\int_a^b g\left(\frac{df}{dx}\right)\,dx + fg\right|_a^b
+\end{equation} \label{integrate-by-parts} \tag{1.43}
 $$
 类似地，我们也可以将矢量微分中介绍的乘法定律变为积分的形式，比如：
 $$
@@ -354,8 +436,9 @@ $$
 $$
 根据散度定理我们可以进一步得到：
 $$
-\label{partial-integration}
-\int_\mathcal{V} f(\nabla\cdot\mathbf{A})\,d\tau = -\int_\mathcal{V}\mathbf{A}\cdot(\nabla f)\,d\tau + \oint_\mathcal{S} f\mathbf{A}\cdot d\mathbf{a}
+\begin{equation}
+	\int_\mathcal{V} f(\nabla\cdot\mathbf{A})\,d\tau = -\int_\mathcal{V}\mathbf{A}\cdot(\nabla f)\,d\tau + \oint_\mathcal{S} f\mathbf{A}\cdot d\mathbf{a}
+\end{equation} \label{integrate-by-parts-divergence} \tag{1.44}
 $$
 看起来非常抽象，但分部积分确实是一个非常强大的积分工具，我们会时常用到。
 
@@ -383,13 +466,13 @@ $$
 	\hat{\boldsymbol{\theta}} &= \cos\theta\cos\phi\hat{\mathbf{x}} + \cos\theta\sin\phi\hat{\mathbf{y}} - \sin\theta\hat{\mathbf{z}} \\
 	\hat{\boldsymbol{\phi}} &= -\sin\phi \hat{\mathbf{x}} + \cos\phi\hat{\mathbf{y}}
 \end{split}
-\end{align}
+\end{align} \label{spherical-basis-from-cartesian} \tag{1.45}
 $$
 因此进行微分时我们要考虑它们的偏导数，实际上就是下面这些：
 $$
 \begin{align}
 	\frac{\partial \hat{\mathbf{r}}}{\partial \theta} = \hat{\boldsymbol{\theta}} && \frac{\partial \hat{\boldsymbol{\theta}}}{\partial \theta} = -\hat{\mathbf{r}} 
-\end{align}
+\end{align} \label{derivatives-of-spherical-basis} \tag{1.46}
 $$
 接下来，让我们给出所有球坐标系中所有和微积分相关的公式。首先我们尝试得到 $d\mathbf{l}$，也即无穷小的位移。这可以通过对三个方向 $\hat{\mathbf{r}}$ 、$\hat{\boldsymbol{\theta}}$、$\hat{\boldsymbol{\phi}}$ 上的分量求和得到。我们可以通过下图理解这三个方向上的分量：
 
@@ -397,15 +480,21 @@ $$
 
 因此我们有：
 $$
-d\mathbf{l} = dr\hat{\mathbf{r}} + r\,d\theta\hat{\boldsymbol{\theta}} + r\sin\theta\,d\phi\hat{\boldsymbol{\phi}}
+\begin{equation}
+	d\mathbf{l} = dr\hat{\mathbf{r}} + r\,d\theta\hat{\boldsymbol{\theta}} + r\sin\theta\,d\phi\hat{\boldsymbol{\phi}}
+\end{equation} \label{infinitesimal-length-spherical} \tag{1.47}
 $$
 通过这三个分量我们还可以得到 $d\tau$，也即它们的乘积：
 $$
-d\tau = r^2\sin\theta\,dr\,d\theta\,d\phi
+\begin{equation}
+	d\tau = r^2\sin\theta\,dr\,d\theta\,d\phi
+\end{equation} \label{infinitesimal-volume-spherical} \tag{1.48}
 $$
 对于面积 $da$ 则取决于它的方向。如果 $r$ 保持不变，则它是 $\hat{\boldsymbol{\theta}}$ 与 $\hat{\boldsymbol{\phi}}$ 方向的两个分量的乘积（这种情况比较常见）：
 $$
-d\mathbf{a} = r^2\sin\theta\,d\theta\,d\phi\hat{\mathbf{r}}
+\begin{equation}
+	d\mathbf{a} = r^2\sin\theta\,d\theta\,d\phi\hat{\mathbf{r}}
+\end{equation} \label{infinitesimal-surface-spherical} \tag{1.49}
 $$
 如果 $\theta$ 保持不变，则公式如下：
 $$
@@ -420,13 +509,16 @@ $$
 $$
 第二步中我们省略了 $\hat{\mathbf{y}}$ 和 $\hat{\mathbf{z}}$ 的项，但是它们和第一项是类似的，都是对某一分量分解为球坐标系下三个分量的和。通过代入前面介绍过的公式，我们可以得到 del 算子相关的所有公式：
 $$
-\label{derivatives-spherical-coordinates}
 \begin{align}
 \nabla T &= \frac{\partial T}{\partial r}\hat{\mathbf{r}} + \frac{1}{r}\frac{\partial T}{\partial \theta}\hat{\boldsymbol{\theta}} + \frac{1}{r\sin\theta}\frac{\partial T}{\partial \phi}\hat{\boldsymbol{\phi}} \\
+
 \nabla \cdot \mathbf{v} &= \frac{1}{r^2}\frac{\partial}{\partial r}(r^2v_r) + \frac{1}{r\sin\theta}\frac{\partial}{\partial \theta}(\sin\theta v_\theta) + \frac{1}{r\sin\theta}\frac{\partial v_\phi}{\partial \phi} \\
-\nabla\times \mathbf{v} &= \frac{1}{r\sin\theta}\left(\frac{\partial}{\partial \theta}(\sin\theta v_\phi) - \frac{\partial v_\theta}{\partial \phi}\right)\hat{\mathbf{r}} + \frac{1}{r}\left(\frac{1}{\sin\theta}\frac{\partial v_r}{\partial \phi} - \frac{\partial }{\partial r}(rv_\phi) \right)\hat{\boldsymbol{\theta}} + \frac{1}{r}\left(\frac{\partial}{\partial r}(rv_\theta) - \frac{\partial v_r}{\partial \theta}\right)\hat{\boldsymbol{\phi}} \\
+
+\nabla\times \mathbf{v} &= \frac{1}{r\sin\theta}\left(\frac{\partial}{\partial \theta}(\sin\theta v_\phi) - \frac{\partial v_\theta}{\partial \phi}\right)\hat{\mathbf{r}} + \frac{1}{r}\left(\frac{1}{\sin\theta}\frac{\partial v_r}{\partial \phi} - \frac{\partial }{\partial r}(rv_\phi) \right)\hat{\boldsymbol{\theta}} \\
+&+ \frac{1}{r}\left(\frac{\partial}{\partial r}(rv_\theta) - \frac{\partial v_r}{\partial \theta}\right)\hat{\boldsymbol{\phi}} \\
+
 \nabla^2 T &= \frac{1}{r^2}\frac{\partial}{\partial r}\left(r^2\frac{\partial T}{\partial r}\right) + \frac{1}{r^2\sin\theta}\frac{\partial}{\partial \theta}\left(\sin\theta\frac{\partial T}{\partial \theta}\right) + \frac{1}{r^2\sin^2\theta}\frac{\partial^2 T}{\partial \phi^2}
-\end{align}
+\end{align} \label{derivatives-spherical-coordinates} \tag{1.50}
 $$
 
 #### 柱坐标系
@@ -443,7 +535,7 @@ $$
 	\unit{\phi} &= -\sin\phi\unit{x} + \cos\phi\unit{y} \\
 	\unit{z} &= \unit{z}
 \end{split}
-\end{align}
+\end{align} \label{cylindrical-basis-from-cartesian} \tag{1.51}
 $$
 下面是一张示意图：
 
@@ -451,21 +543,24 @@ $$
 
 无穷小的位移是：
 $$
-d\mathbf{l} = ds\unit{s} + s\,d\phi\unit{\phi} + dz\unit{z}
+\begin{equation}
+	d\mathbf{l} = ds\unit{s} + s\,d\phi\unit{\phi} + dz\unit{z}
+\end{equation} \label{infinitesimal-length-cylindrical} \tag{1.52}
 $$
 我们同样可以得到 $d\tau$：
 $$
-d\tau = s\,ds\,d\phi\,dz
+\begin{equation}
+	d\tau = s\,ds\,d\phi\,dz
+\end{equation} \label{infinitesimal-volume-cylindrical} \tag{1.53}
 $$
 和球坐标系类似，我们可以得到柱坐标系下的梯度、散度、旋度的公式：
 $$
-\label{derivatives-cylindrical-coordinates}
 \begin{align}
 \nabla T &= \frac{\partial T}{\partial s}\unit{s} + \frac{1}{s}\frac{\partial T}{\partial \phi}\unit{\phi} + \frac{\partial T}{\partial z}\unit{z} \\
 \nabla\cdot \mathbf{v} &= \frac{1}{s}\frac{\partial}{\partial s}(sv_s) + \frac{1}{s}\frac{\partial v_\phi}{\partial \phi} + \frac{\partial v_z}{\partial z} \\
 \nabla\times\mathbf{v} &= \left(\frac{1}{s}\frac{\partial v_z}{\partial \phi} - \frac{\partial v_\phi}{\partial z}\right)\unit{s} + \left(\frac{\partial v_s}{\partial s} - \frac{\partial v_z}{\partial s}\right)\unit{\phi} + \frac{1}{s}\left(\frac{\partial}{\partial s}(sv_\phi) - \frac{\partial v_s}{\partial \phi}\right)\unit{z} \\
 \nabla^2T &= \frac{1}{s}\frac{\partial}{\partial s}\left(s\frac{\partial T}{\partial s}\right) + \frac{1}{s^2}\frac{\partial^2 T}{\partial \phi^2} + \frac{\partial^2 T}{\partial z^2}
-\end{align}
+\end{align} \label{derivatives-cylindrical} \tag{1.54}
 $$
 
 ### 狄拉克函数
@@ -488,17 +583,16 @@ $$
 
 定义 **狄拉克函数（Dirac Delta Function）** 为仅在 $x = 0$ 时不为 $0$ 的函数：
 $$
-\label{dirac-function}
 \delta(x) = 
 \begin{cases}
 	0, \qquad \text{若 $x \ne 0$} \\
 	\infty, \quad\ \ \text{若 $x = 0$}
-\end{cases}
+\end{cases} \label{dirac-function} \tag{1.55}
 $$
 它有一个非常重要的性质：
 $$
 \label{dirac-function-property}
-\int_{-\infty}^\infty\delta(x)\,dx = 1
+\int_{-\infty}^\infty\delta(x)\,dx = 1 \tag{1.56}
 $$
 狄拉克函数并不是严格意义上的函数，而是一个函数序列的极限。我们可以通过构造一系列函数不断逼近狄拉克函数，并对它们的积分求极限。对于一个常规的连续函数 $f(x)$，它和狄拉克函数的乘积满足一个有趣的性质：
 $$
@@ -506,23 +600,24 @@ $$
 $$
 这个结果是显而易见的（因为 $\delta(x)$ 在 $x \ne 0$ 的地方处处为 $0$）。如果对狄拉克函数进行平移，我们就能得到一个更加通用的结论：
 $$
-\int_{-\infty}^\infty f(x)\delta(x - a)\,dx = f(a)
+\int_{-\infty}^\infty f(x)\delta(x - a)\,dx = f(a) \tag{1.57}
 $$
 
 #### 三维的狄拉克函数
 
 我们可以通过一维的狄拉克函数轻易构造三维的版本：
 $$
-\label{3d-dirac-function}
-\delta^3(\mathbf{r}) = \delta(x)\delta(y)\delta(z)
+\begin{equation}
+	\delta^3(\mathbf{r}) = \delta(x)\delta(y)\delta(z) 
+\end{equation} \label{3d-dirac-function} \tag{1.58}
 $$
 此时它应该满足下面的性质：
 $$
-\int\delta^3(\mathbf{r})\,d\tau = \int_{-\infty}^\infty\int_{-\infty}^\infty\int_{-\infty}^\infty\delta(x)\delta(y)\delta(z)\,dx\,dy\,dz = 1
+\int\delta^3(\mathbf{r})\,d\tau = \int_{-\infty}^\infty\int_{-\infty}^\infty\int_{-\infty}^\infty\delta(x)\delta(y)\delta(z)\,dx\,dy\,dz = 1 \tag{1.59}
 $$
 和一个常规函数结合后我们也可以得到下面的结论：
 $$
-\int f(\mathbf{r})\delta^3(\mathbf{r} - \mathbf{a})\,d\tau = f(\mathbf{a})
+\int f(\mathbf{r})\delta^3(\mathbf{r} - \mathbf{a})\,d\tau = f(\mathbf{a}) \tag{1.60}
 $$
 有了以上铺垫，我们就可以给出之前遇到的矢量场的散度了：
 $$
@@ -534,7 +629,7 @@ $$
 $$
 由于 $\frac{1}{\rcur}$ 的梯度恰好是 $-\frac{\unit{\rcur}}{\rcur^2}$，我们可以得到：
 $$
-\nabla^2 \frac{1}{\rcur} = -4\pi\delta^3(\brcur)
+\nabla^2 \frac{1}{\rcur} = -4\pi\delta^3(\brcur) \tag{1.61}
 $$
 这个公式在电磁学中会非常常用。
 
@@ -544,7 +639,7 @@ $$
 $$
 \nabla\cdot\mathbf{V} = C \qquad \nabla\times\mathbf{V} = \mathbf{D} \qquad \nabla\cdot\mathbf{D} = 0 \nonumber
 $$
-第三个方程是我们之前就知道的结论。此时我们显然不能得到 $\mathbf{V}$。事实上，我们还需要一系列 **边界条件（Boundary Condition）**，比如通常包括无穷远处 $\mathbf{V} \to \mathbf{0}$。后续学习电磁场时，我们在介绍它们的微积分性质后，会给出为了求出它们需要的边界条件。
+第三个方程是我们根据第二个条件和 del 算子性质得到的结论。此时我们显然不能得到 $\mathbf{V}$。事实上，我们还需要一系列 **边界条件（Boundary Condition）**，比如通常包括无穷远处 $\mathbf{V} \to \mathbf{0}$。后续学习电磁场时，我们在介绍它们的微积分性质后，会给出为了求出它们需要的边界条件。
 
 此外，我们已经认识到梯度的旋度和旋度的散度恒为零了，因此在看到一个矢量场的散度或旋度为零时，我们能自然地得到一些很好的性质。下面是两个相关的定理：
 
@@ -564,13 +659,15 @@ $$
 \mathbf{F} = -\nabla V + \nabla\times \mathbf{A}
 $$
 
+我们会在后文中看到它们的身影。
 
 ## 静电场概述
 
 **静电学（Electrostatics）** 研究静止源电荷的电场问题，换句话说，这是研究与时间 *无关* 的电场性质。这种情况下我们可以立刻给出源电荷对测试电荷的力。通过 **库仑定律（Coulomb's Law）** 描述，即静电荷吸引另一个电荷产生的力正比于两电荷的乘积并反比于两电荷距离的平方，公式是：
 $$
-\label{coulomb's-law}
-\marginbox{\mathbf{F} = \frac{1}{4\pi\epsilon_0}\frac{qQ}{\mathscr{r}^2}\hat{\boldsymbol{\mathscr{r}}}}
+\begin{equation}
+    \marginbox{\mathbf{F} = \frac{1}{4\pi\epsilon_0}\frac{qQ}{\mathscr{r}^2}\hat{\boldsymbol{\mathscr{r}}}}
+\end{equation} \label{coulomb's-law} \tag{2.1}
 $$
 其中 $\epsilon_0$ 是一个常数，称为 **真空介电常数（Permittivity of Free Space）**，值是 $8.85\times10^{-12}\text{C}^2\cdot\text{N}^{-1}\cdot\text{m}^{-2}$。本篇中，记源电荷的位置为 $\mathbf{r}'$，测试电荷的位置为 $\mathbf{r}$，而两者之间的矢量（从源电荷指向测试电荷）为 $\boldsymbol{\mathscr{r}} = \mathbf{r} - \mathbf{r}'$。库仑定律和叠加原理组成了静电学的全部核心内容。之后我们引入的概念和公式都是它们的数学延伸。
 
@@ -584,15 +681,14 @@ $$
 &= \sum_{i=1}^n\frac{1}{4\pi\epsilon_0}\frac{q_iQ}{\mathscr{r}_i^2}\hat{\boldsymbol{\mathscr{r}_i}} \\
 &= \frac{Q}{4\pi\epsilon_0}\sum_{i=1}^n\frac{q_i}{\mathscr{r}_i^2}\hat{\boldsymbol{\mathscr{r}_i}} 
 \end{split}
-\end{align}
+\end{align} \tag{2.2}
 $$
 可以看到其中有一个和测试电荷无关的量，我们定义其为源电荷的 **电场强度（Electric Field）**：
 $$
-\label{coulomb's-law-sum}
 \begin{align}
 \mathbf{F} &= Q\mathbf{E} \\
-\mathbf{E} &= \frac{1}{4\pi\epsilon_0}\sum_{i=1}^n\frac{q_i}{\mathscr{r}_i^2}\hat{\boldsymbol{\mathscr{r}_i}}
-\end{align}
+\mathbf{E} &= \frac{1}{4\pi\epsilon_0}\sum_{i=1}^n\frac{q_i} {\mathscr{r}_i^2}\hat{\boldsymbol{\mathscr{r}_i}} 
+\end{align}\label{coulomb's-law-discrete} \tag{2.3}
 $$
 通过第一个定义式我们可以认识到，电场强度的值就是静电场中某点上，单位电荷受到源电荷的力的大小。让我们用一个例子来熟悉电场强度的求解：
 
@@ -608,18 +704,19 @@ $$
 > \end{align*}
 > $$
 
-当源电荷连续分布时，$(\ref{coulomb's-law-sum})$ 式中的求和符号就应该换成积分符号：
+当源电荷连续分布时，$(\ref{coulomb's-law-discrete})$ 式中的求和符号就应该换成积分符号：
 $$
 \mathbf{E} = \frac{1}{4\pi\epsilon_0}\int\frac{1}{\mathscr{r}^2}\hat{\boldsymbol{\mathscr{r}}}\,dq
 $$
 这里的 $dq$ 在实际计算时，要根据电荷分布的具体情况来代换成对线、对面、对体的积分，可以参考下面的图：
 
-<img src="/Users/yimingyu/Documents/GitHub/Notes/physics/graphs/ed1_2-2.png" alt="ed1_2-2" style="zoom:40%;" />
+<img src="graphs/ed1_2-2.png" alt="ed1_2-2" style="zoom:40%;" />
 
 在 (b)、(c)、(d) 的情况下，$dq$ 分别可以写为 $\lambda\,dl$、$\sigma\,da$、$\rho\,d\tau$，其中 $\lambda$、$\sigma$、$\rho$ 分别是电荷的线密度、面密度和体密度。其中最常用的就是体密度。我们有时会把下面这个公式称为库仑定律：
 $$
-\label{coulomb's-law-integral}
-\marginbox{\mathbf{E}(\mathbf{r}) = \frac{1}{4\pi\epsilon_0}\int\frac{\rho(\mathbf{r}')}{\mathscr{r}^2}\hat{\boldsymbol{\mathscr{r}}}\,d\tau}
+\begin{equation}
+	\marginbox{\mathbf{E}(\mathbf{r}) = \frac{1}{4\pi\epsilon_0}\int\frac{\rho(\mathbf{r}')}{\mathscr{r}^2}\hat{\boldsymbol{\mathscr{r}}}\,d\tau}
+\end{equation} \label{coulomb's-law-integral} \tag{2.4}
 $$
 让我们同样通过一个例子来理解连续分布的电荷产生的电场强度：
 
@@ -647,7 +744,9 @@ $$
 
 考虑一个曲面 $\mathcal{S}$，静电场 $\mathbf{E}$ 对其的通量是：
 $$
-\Phi_\mathbf{E} = \int_\mathcal{S}\mathbf{E}\cdot d\mathbf{a}
+\begin{equation}
+	\Phi_\mathbf{E} = \int_\mathcal{S}\mathbf{E}\cdot d\mathbf{a}
+\end{equation} \label{electric-flux} \tag{2.5}
 $$
 从某种方式来理解，这个公式计算的是穿过 $\mathcal{S}$ 的磁感线数量。当 $\mathcal{S}$ 是闭合的时候可以得到：
 $$
@@ -655,8 +754,9 @@ $$
 $$
 当 $\mathcal{S}$ 中存在多个源电荷时，我们可以利用叠加原理得到更为通用的结论，这就是 **高斯定理（Gauss's Law）**：
 $$
-\label{gauss's-law}
-\oint \mathbf{E}\cdot d\mathbf{a} = \frac{Q_\text{enc}}{\epsilon_0}
+\begin{equation}
+	\oint \mathbf{E}\cdot d\mathbf{a} = \frac{Q_\text{enc}}{\epsilon_0}
+\end{equation} \label{gauss's-law} \tag{2.6}
 $$
 其中 $Q_\text{enc}$ 是曲面内所有电荷的总量。这个美妙的结论充分显示了数学以及大自然的美感。事实上，所有满足距离平方反比的矢量场都能够得到类似的结论，我们这里不展开说明了。
 
@@ -666,8 +766,9 @@ $$
 $$
 右边这个等式就是我们之前得到的高斯定理，其中 $\rho$ 是曲面内的电荷体密度。将最左侧和最右侧的积分号去掉，我们就得到了**微分形式的高斯定理（Gauss's Law in Differential Form）**：
 $$
-\label{gauss's-law-derivative}
-\nabla\cdot \mathbf{E} = \frac{\rho}{\epsilon_0}
+\begin{equation}
+	\nabla\cdot \mathbf{E} = \frac{\rho}{\epsilon_0}
+\end{equation} \label{gauss's-law-derivative} \tag{2.7}
 $$
 这个公式是 **麦克斯韦方程组** 的一部分，且在 $\mathbf{E}$ 与 $\rho$ 和时间有关时依然有效。上面的结论其实可以从纯数学角度得到。根据库仑定律，即 $(\ref{coulomb's-law-integral})$，我们可以在左侧乘上 del 算子得到其散度：
 $$
@@ -675,7 +776,7 @@ $$
 $$
 其中的散度是我们此前计算过的：
 $$
-\nabla\cdot\left(\frac{\hat{\boldsymbol{\mathscr{r}}}}{\mathscr{r}^2}\right) = 4\pi\delta^2(\hat{\boldsymbol{\mathscr{r}}})
+\nabla\cdot\left(\frac{\hat{\boldsymbol{\mathscr{r}}}}{\mathscr{r}^2}\right) = 4\pi\delta^3(\hat{\boldsymbol{\mathscr{r}}})
 $$
 代入前面的式子我们就能轻易地得到微分形式的高斯定理。
 
@@ -714,27 +815,31 @@ $$
 $$
 我们发现这个结果只和起始点和终止点有关（是不是有点熟悉？没错，梯度基本定理，也即 $(\ref{gradient-theorem})$），当两点重合时，这个值就是 $0$。再利用斯托克斯定理 $(\ref{stokes-theorem})$，我们得到下式：
 $$
-\nabla\times\mathbf{E} = \mathbf{0}
+\begin{equation}
+	\nabla\times\mathbf{E} = \mathbf{0}
+\end{equation} \tag{2.8}
 $$
-当考虑多个电荷产生的电场时，利用叠加原理，就能得知任意分布的电场的旋度均为 $\mathbf{0}$。
+当考虑多个电荷产生的电场时，利用叠加原理，就能得知任意分布的静电场的旋度均为 $\mathbf{0}$。
 
 ### 电势
 
 我们在矢量分析的章节中已经提到过，旋度为零的矢量场，其环路积分为零，因此电场从某点到另一点的路径积分始终相等（即与路径无关）。我们可以通过下式定义 **电势（Electric Potential）**：
 $$
-\label{electric-potential}
-\marginbox{V(\mathbf{r}) = -\int_\mathcal{O}^\mathbf{r}\mathbf{E}\cdot\,d\mathbf{l}}
+\begin{equation}
+	\marginbox{V(\mathbf{r}) = -\int_\mathcal{O}^\mathbf{r}\mathbf{E}\cdot\,d\mathbf{l}}
+\end{equation} \label{electric-potential} \tag{2.9}
 $$
 其中 $\mathcal{O}$ 是任选的参照点，在具体问题中我们会具体设置。如果 $\mathcal{O}$ 是确定的，那么 $V$ 就只和 $\mathbf{r}$，也即场点的位置有关了。两点之间的 **电势差（Electric Potential Difference）** 则可以通过上面的定义快速得到：
 $$
-\label{electric-potential-difference}
-V(\mathbf{b}) - V(\mathbf{a}) = -\int_\mathcal{O}^\mathbf{b}\mathbf{E}\cdot d\mathbf{l} + \int_\mathcal{O}^\mathbf{a}\mathbf{E}\cdot d\mathbf{l} = -\int_\mathbf{a}^\mathbf{b}\mathbf{E}\cdot d\mathbf{l}
+\begin{equation}
+	V(\mathbf{b}) - V(\mathbf{a}) = -\int_\mathcal{O}^\mathbf{b}\mathbf{E}\cdot d\mathbf{l} + \int_\mathcal{O}^\mathbf{a}\mathbf{E}\cdot d\mathbf{l} = -\int_\mathbf{a}^\mathbf{b}\mathbf{E}\cdot d\mathbf{l}
+\end{equation} \label{electric-potential-difference} \tag{2.10}
 $$
 可以看到电势差和选取的参照点无关。事实上，如果我们改用另一个参照点 $\mathcal{O}'$，在 $\mathbf{r}$ 点的新旧势只差一个常数：
 $$
 V'(\mathbf{r}) = -\int_{\mathcal{O}'}^\mathbf{r}\mathbf{E}\cdot d\mathbf{l} = -\int_{\mathcal{O}'}^\mathcal{O}\mathbf{E}\cdot d\mathbf{l} - \int_\mathcal{O}^\mathbf{r}\mathbf{E}\cdot d\mathbf{l} = K + V(\mathbf{r})
 $$
-而两点间的电势差则保持不变。静电学中，我们习惯将 $\mathcal{O}$ 设在无穷远处，并令 $V(\mathcal{O}) = 0$。不过在一些特殊情况下，这可能会导致 $V(\mathbf{r}) = \infty$。
+而两点间的电势差则保持不变。静电学中，我们习惯将 $\mathcal{O}$ 设在无穷远处，并令 $V(\mathcal{O}) = 0$。不过在一些特殊情况下，这可能会导致 $V(\mathbf{r}) = \infty$，此时我们需要选择其它参照点。
 
 现在回到电势差，利用梯度基本定理：
 $$
@@ -742,8 +847,9 @@ $$
 $$
 将两端积分去掉，就可以得到电势定义的积分形式：
 $$
-\label{electric-potential-integral}
-\marginbox{\mathbf{E} = -\nabla V}
+\begin{equation}
+	\marginbox{\mathbf{E} = -\nabla V}
+\end{equation} \label{electric-field-from-potential} \tag{2.11}
 $$
 电势是电磁场中的重要概念，它作为一个易于分析的标量，可以唯一地确定电场；同时它惊人地满足叠加原理，即多个点电荷产生电场的电势等于它们分别产生的电势之和：
 $$
@@ -763,8 +869,9 @@ V(r) = -\int_\mathcal{O}^\mathbf{r} \mathbf{E}\cdot d\mathbf{l} = -\frac{1}{4\pi
 $$
 注意上式中我们利用了 $V(\infty) = 0$。因此，对于给定电荷密度为 $\rho(\mathbf{r}')$ 的一个体积，其电势为：
 $$
-\label{electric-potential-calculation}
-\marginbox{V(\mathbf{r}) = \frac{1}{4\pi\epsilon_0}\int\frac{\rho(\mathbf{r}')}{\rcur}\,d\tau'}
+\begin{equation}
+	\marginbox{V(\mathbf{r}) = \frac{1}{4\pi\epsilon_0}\int\frac{\rho(\mathbf{r}')}{\rcur}\,d\tau'}
+\end{equation} \label{electric-potential-integral} \tag{2.12}
 $$
 上面便是任意静电场的电势通解。其中的 $\rho(\mathbf{r}')\,d\tau'$ 可以被替换为 $\lambda(\mathbf{r}')\,dl'$ 或 $\sigma(\mathbf{r}')\,da'$。再次强调，这个结论是建立在 $V(\infty) = 0$ 的条件下的。
 
@@ -774,21 +881,23 @@ $$
 
 现在让我们考虑一个带电为 $\sigma$ 的平面附近的电场强度分布。我们可以构建一个高斯面方便求解。穿过上下两个面的电场之差应该满足：
 $$
-E_\text{above}^\perp - E_\text{below}^\perp = \frac{\sigma}{\epsilon_0}
+\begin{equation}
+	E_\text{above}^\perp - E_\text{below}^\perp = \frac{\sigma}{\epsilon_0}
+\end{equation} \label{electric-field-boundary-condition} \tag{2.13}
 $$
 对于平行方向的电场，可以考虑一个垂直并穿过平面的环路。只有 $E_\text{above}^\parallel = E_\text{below}^\parallel$ 时才能保证环路积分为零。
 
 至于电势 $V_\text{above}$ 和 $V_\text{below}$，根据电势差公式 $(\ref{electric-potential-difference})$，当两者非常接近时，应该满足 $V_\text{above} = V_\text{below}$。电势梯度在垂直于平面方向的分量则和电场强度类似，是不连续的：
 $$
-\frac{\partial V_\text{above}}{\partial n} - \frac{\partial V_\text{below}}{\partial n} = -\frac{\sigma}{\epsilon_0}
+\frac{\partial V_\text{above}}{\partial n} - \frac{\partial V_\text{below}}{\partial n} = -\frac{\sigma}{\epsilon_0} \tag{2.14}
 $$
-其中 $\frac{\partial V}{\partial n} = \nabla V\cdot\unit{n}$，被称为电势的 **正规导数（Normal Derivative）**。
+其中 $\frac{\partial V}{\partial n} = \nabla V\cdot\unit{n}$，被称为电势的 **法向导数（Normal Derivative）**。不难发现这个正规导数恰是电场垂直于平面方向分量的相反矢量。
 
 ### 静电学中的功与能
 
 假设目前已知电场强度 $\mathbf{E}$，测试电荷为 $Q$，求将它从 $\mathbf{a}$ 点移动到 $\mathbf{b}$ 点需要做多少功呢？由于测试电荷受到的电场力为 $\mathbf{F} = Q\mathbf{E}$，我们施加的力（至少）应该大小相同方向相反，为 $-Q\mathbf{E}$。整个过程我们做的功是：
 $$
-W = \int_\mathbf{a}^\mathbf{b}\mathbf{F}\cdot d\mathbf{l} = -Q\int_\mathbf{a}^\mathbf{b}\mathbf{E}\cdot d\mathbf{l} = Q(V(\mathbf{b}) - V(\mathbf{a})) \nonumber
+W = \int_\mathbf{a}^\mathbf{b}\mathbf{F}\cdot d\mathbf{l} = -Q\int_\mathbf{a}^\mathbf{b}\mathbf{E}\cdot d\mathbf{l} = Q(V(\mathbf{b}) - V(\mathbf{a}))
 $$
 为了得到电场和测试无关的做功性质，我们将 $W$ 比上 $Q$，得到：
 $$
@@ -796,7 +905,9 @@ $$
 $$
 可见电场中，电势差决定了做功需要的大小。如果考虑初始点为无穷远处（电势为 $0$），我们就得到了构建这个电荷系统所需要的能量，也即电势能：
 $$
-W = QV(\mathbf{r})
+\begin{equation}
+	W = QV(\mathbf{r})
+\end{equation} \label{electric-configuration-energy} \tag{2.15}
 $$
 从这个公式来看，电势就是电荷系统中单位电荷的电势能。
 
@@ -804,49 +915,54 @@ $$
 
 第一个电荷不需要任何能量，因为一开始不存在电场；第二个电荷需要克服第一个电荷的电场力，因此我们需要：
 $$
-W_2 = \frac{1}{4\pi\epsilon_0}q_2\left(\frac{q_1}{\rcur_{12}}\right) \nonumber
+W_2 = \frac{1}{4\pi\epsilon_0}q_2\left(\frac{q_1}{\rcur_{12}}\right)
 $$
 第三个电荷需要同时克服两个电场力做功：
 $$
-W_3 = \frac{1}{4\pi\epsilon_0}q_3\left(\frac{q_1}{\rcur_{13}} + \frac{q_2}{\rcur_{23}}\right) \nonumber
+W_3 = \frac{1}{4\pi\epsilon_0}q_3\left(\frac{q_1}{\rcur_{13}} + \frac{q_2}{\rcur_{23}}\right)
 $$
 第四个电荷需要同时克服三个电场力做功：
 $$
-W_4 = \frac{1}{4\pi\epsilon_0}q_4\left(\frac{q_1}{\rcur_{14}} + \frac{q_2}{\rcur_{24}} + \frac{q_3}{\rcur_{34}}\right)\nonumber
+W_4 = \frac{1}{4\pi\epsilon_0}q_4\left(\frac{q_1}{\rcur_{14}} + \frac{q_2}{\rcur_{24}} + \frac{q_3}{\rcur_{34}}\right)
 $$
 以此类推，我们最后可以得到一个通式：
 $$
-W = \frac{1}{4\pi\epsilon_0}\sum_{i=1}^n\sum_{j>i}^n\frac{q_iq_j}{\rcur{ij}}
+\begin{equation}
+	W = \frac{1}{4\pi\epsilon_0}\sum_{i=1}^n\sum_{j>i}^n\frac{q_iq_j}{\rcur_{ij}}
+\end{equation} \label{electric-configuration-energy-discrete} \tag{2.16}
 $$
 也可以等价写成：
 $$
-\label{electric-energy-discrete}
-W = \frac{1}{2}\sum_{i=1}^nq_i\sum_{j\ne i}^n\frac{1}{4\pi\epsilon_0}\frac{q_j}{\rcur_{ij}} = \frac{1}{2}\sum_{i=1}^nq_iV(\mathbf{r}_i)
+\begin{equation}
+	W = \frac{1}{2}\sum_{i=1}^nq_i\sum_{j\ne i}^n\frac{1}{4\pi\epsilon_0}\frac{q_j}{\rcur_{ij}} = \frac{1}{2}\sum_{i=1}^nq_iV(\mathbf{r}_i)
+\end{equation} \label{electric-configuration-energy-discrete-alt} \tag{2.17}
 $$
 
 #### 连续电荷分布的能量
 
-当电荷分布连续时，我们可以将 $(\ref{electric-energy-discrete})$ 简单改成：
+当电荷分布连续时，我们可以将 $(\ref{electric-configuration-energy-discrete-alt})$ 简单改成：
 $$
-\label{electric-energy-continuous}
-W = \frac{1}{2}\int\rho V\,d\tau
+\begin{equation}
+	W = \frac{1}{2}\int\rho V\,d\tau
+\end{equation} \label{electric-energy-continuous} \tag{2.18}
 $$
 下面我们尝试将其改写成 $E$ 的关系式，根据高斯定理，我们有：
 $$
-W = \frac{\epsilon_0}{2}\int(\nabla\cdot\mathbf{E})V\,d\tau \nonumber
+W = \frac{\epsilon_0}{2}\int(\nabla\cdot\mathbf{E})V\,d\tau
 $$
-利用分部积分法，我们可以得到：
+利用分部积分法 $(\ref{integrate-by-parts-divergence})$，我们可以得到：
 $$
 W = \frac{\epsilon_0}{2}\left(-\int\mathbf{E}\cdot(\nabla V)\,d\tau + \oint V\mathbf{E}\cdot d\mathbf{a}\right) = \frac{\epsilon_0}{2}\left(\underset{\mathcal{V}}{\int}E^2\,d\tau + \underset{\mathcal{S}}{\oint}V\mathbf{E}\cdot d\mathbf{a}\right)\nonumber
 $$
 这里有一个小技巧。E 大致是 $r^{-2}$ 数量级，$V$ 是 $r^{-1}$ 数量级，而 $\mathcal{S}$ 是 $r^2$ 数量级。上面的第一个积分由于 $E^2 > 0$，无论 $\mathcal{V}$  取多大都能保证单调递增；但第二个积分由于内部总体呈 $r^{-1}$ 数量级，随着 $\mathcal{S}$ 变大，这个积分会越来越小。因此我们只需要考虑无穷远处的一个 $\mathcal{V}$ 和其边界 $\mathcal{S}$，就可以忽略第二个积分了。因此在全空间中，静电场的能量是：
 $$
-\label{electric-energy-all-space}
-W = \frac{\epsilon_0}{2}\int E^2\,d\tau
+\begin{equation}
+	W = \frac{\epsilon_0}{2}\int E^2\,d\tau
+\end{equation} \label{electric-energy-all-space} \tag{2.19}
 $$
-等等，我们这里得到的似乎是一个永远为正的能量；反观 $(\ref{electric-energy-discrete})$，其结果显然可能是负数，这其中一定存在问题。让我们来好好考察以上这些公式的异同：
+等等，我们这里得到的似乎是一个永远为正的能量；反观 $(\ref{electric-configuration-energy-discrete-alt})$，其结果显然可能是负数，这其中一定存在问题。让我们来好好考察以上这些公式的异同：
 
-- 静电场能量的连续形式公式 $(\ref{electric-energy-continuous})$ 似乎就和离散形式 $(\ref{electric-energy-discrete})$ 意义不同。后者明确计算每个电荷和 *除自己以外* 的电荷的电势，但前者则统统计算进来。从这种角度看，连续形式公式更加 *全面* 地描述了电场的能量，它甚至考虑了每个电荷自己的能量。离散公式则更倾向于假设电荷已经存在，而计算将它们移动成特定分布时需要的能量。不过，$(\ref{electric-energy-all-space})$ 在计算点电荷的能量时会出现尴尬的一幕：
+- 静电场能量的连续形式公式 $(\ref{electric-energy-continuous})$ 似乎就和离散形式 $(\ref{electric-configuration-energy-discrete-alt})$ 意义不同。后者明确计算每个电荷和 *除自己以外* 的电荷的电势，但前者则统统计算进来。从这种角度看，连续形式公式更加 *全面* 地描述了电场的能量，它甚至考虑了每个电荷自己的能量。离散公式则更倾向于假设电荷已经存在，而计算将它们移动成特定分布时需要的能量。不过，$(\ref{electric-energy-all-space})$ 在计算点电荷的能量时会出现尴尬的一幕：
   $$
   W = \frac{\epsilon_0}{2}\frac{1}{(4\pi\epsilon_0)^2}\int\left(\frac{q}{r^2}\right)^2r^2\sin\theta\,dr\,d\theta\,d\phi = \frac{q^2}{8\pi\epsilon_0}\int_0^\infty\frac{1}{r^2}\,dr = \infty
   $$
@@ -898,11 +1014,15 @@ $$
 $$
 坏消息是，即使是这个积分也不见得好算。等式右侧的 $\rho$ 本身可能比较复杂，因为我们能够控制的往往只是总电荷。所以，下面这个微分形式的公式，即 **泊松方程（Poisson's Equation)** 可能更加有用：
 $$
-\nabla^2V = -\frac{\rho}{\epsilon_0}
+\begin{equation}
+	\nabla^2V = -\frac{\rho}{\epsilon_0}
+\end{equation} \label{poisson's-equation} \tag{3.1}
 $$
 这个公式配合一些边界条件时和积分形式的公式是等价的。通常，我们对电荷密度为 $0$ 的地方更感兴趣。换句话说，虽然某些地方周围存在电荷，但我们只关注于不存在电荷的地方。此时等式右侧为 $0$，我们也就将公式化为了更加友好的形式：
 $$
-\nabla^2V = 0
+\begin{equation}
+	\nabla^2V = 0
+\end{equation} \label{laplace's-equation} \tag{3.2}
 $$
 这便是 **拉普拉斯方程（Laplace's Equation）**。本节中将用一些篇幅，首先介绍这个偏微分方程的性质和求解。
 
@@ -918,7 +1038,9 @@ $$
 #### 一维的拉普拉斯方程
 
 $$
-\frac{d^2 V}{dx^2} = 0
+\begin{equation}
+	\frac{d^2 V}{dx^2} = 0
+\end{equation} \label{1d-laplace's-equation} \tag{3.3}
 $$
 
 这甚至只是一个常微分方程。其通解是显然的：
@@ -930,12 +1052,16 @@ $$
 #### 二维的拉普拉斯方程
 
 $$
-\frac{\partial^2 V}{\partial x^2} + \frac{\partial^2 V}{\partial y^2} = 0
+\begin{equation}
+	\frac{\partial^2 V}{\partial x^2} + \frac{\partial^2 V}{\partial y^2} = 0
+\end{equation} \label{2d-laplace's equation} \tag{3.4}
 $$
 
 这次我们就没办法得到一个简单的通解了（具体的解我们会在后面讨论）。不过其依然遵守方程的两个性质：
 $$
-V(x, y) = \frac{1}{2\pi R}\underset{\text{circle}}{\oint}V\,dl
+\begin{equation}
+	V(x, y) = \frac{1}{2\pi R}\underset{\text{circle}}{\oint}V\,dl
+\end{equation} \tag{3.5}
 $$
 （这不是 $V$ 的解！）可以看到任一点的解都是其周围以之为中心任取的圆边界上解的平均值。受这个特性启发，我们可以设计出一个计算电势的算法：首先确定边界上所有点的电势，并对内部特定网格上的点上的电势进行合理猜测。之后，根据这些值更新周围点的平均电势。多次迭代后就能够得到确定的电势。
 
@@ -944,13 +1070,16 @@ $$
 #### 三维的拉普拉斯方程
 
 $$
-\label{laplace-equation-3d}
-\frac{\partial^2 V}{\partial x^2} + \frac{\partial^2 V}{\partial y^2} + \frac{\partial^2 V}{\partial z^2} = 0
+\begin{equation}
+	\frac{\partial^2 V}{\partial x^2} + \frac{\partial^2 V}{\partial y^2} + \frac{\partial^2 V}{\partial z^2} = 0
+\end{equation} \label{3d-laplace's-equation} \tag{3.6}
 $$
 
 同样地，三维中的拉普拉斯方程满足下面的性质：
 $$
-V(\mathbf{r}) = \frac{1}{4\pi R^2}\underset{\text{sphere}}{\oint}V\,da
+\begin{equation}
+	V(\mathbf{r}) = \frac{1}{4\pi R^2}\underset{\text{sphere}}{\oint}V\,da
+\end{equation} \tag{3.7}
 $$
 
 #### 边界条件、导体和唯一性定理
@@ -986,7 +1115,7 @@ $$
 - $z = 0$ 时  $V = 0$，因为导体接地。
 - 远离 $q$ 时，也即 $x^2 + y^2 + z^2 \gg d^2$ 时， $V \to 0$。
 
-根据第一唯一性定理，我们可以根据这些边界条件确定唯一的电势。不过即使如此，我们也需要想办法得到一个解。考虑一个完全不同的题设，导体平面根本不存在，并且在 $(0, 0, -d)$ 处存在另一个 $-q$ 电荷。此时我们可以轻松地写出空间中任一点的电势：
+根据第一唯一性定理，我们可以根据这些边界条件确定唯一的电势，从而确定唯一的电场。不过即使如此，我们也需要想办法得到一个解。考虑一个完全不同的题设，导体平面根本不存在，并且在 $(0, 0, -d)$ 处存在另一个 $-q$ 电荷。此时我们可以轻松地写出空间中任一点的电势：
 $$
 V(x, y, z) = \frac{q}{4\pi\epsilon_0}\left(\frac{1}{\sqrt{x^2 + y^2 + (z - d)^2}} + \frac{1}{\sqrt{x^2 + y^2 + (z + d)^2}}\right)
 $$
@@ -1034,7 +1163,7 @@ $$
 
 现在介绍一种直接解决拉普拉斯方程的方式，它基于一个简单的假设：调和函数能够表示成一系列一元函数的积，即如下形式（我们先从二维中的拉普拉斯方程讲起）：
 $$
-V(x, y) = X(x)Y(y)
+V(x, y) = X(x)Y(y) \tag{3.8}
 $$
 这当然不是拉普拉斯方程的通解；但是根据这个假设我们可以轻松地进一步求解：将 (84) 式插入原方程：
 $$
@@ -1048,7 +1177,9 @@ $$
 $$
 因此原方程的解是：
 $$
-V(x, y) = (Ae^{kx} + Be^{-kx})(C\sin{ky} + D\sin{ky})
+\begin{equation}
+	V(x, y) = (Ae^{kx} + Be^{-kx})(C\sin{ky} + D\sin{ky})
+\end{equation} \label{2d-laplace's-equation-general-solution} \tag{3.9}
 $$
 为了能进一步求解这个方程，我们设定四个边界条件（这只是某一种特殊情形，后面根据问题的不同设置我们需要不同的边界条件）：
 
@@ -1071,7 +1202,7 @@ V(x, y) = \sum_{n=1}^\infty C_ne^{-\frac{n\pi x}{a}}\sin{\frac{n\pi y}{a}}
 $$
 边界条件的第三条要求 $V(0, y) = V_0(y)$。我们可以根据傅立叶级数的知识对 *任意* 的 $V_0(y)$ 进行例如 (89) 式（取 $x = 0$ ）的构造（这和函数的 **完备性（Completeness）** 有关，具体证明比较复杂，我们这里不进行说明）。最后一个问题是 $C_n$ 的求解，这用到了一个小技巧。我们将 (89) 式稍稍改写一下，引入 $n' \in \Z^+$：
 $$
-\sum_{n=1}^\infty C_n\int_0^a\sin{\frac{n\pi y}{a}}\sin{\frac{n'\pi y}{a}}\,dy = \int_0^aV_0(y)\sin{\frac{n'\pi y}{a}}\,dy
+\sum_{n=1}^\infty C_n\int_0^a\sin{\frac{n\pi y}{a}}\sin{\frac{n'\pi y}{a}}\,dy = \int_0^aV_0(y)\sin{\frac{n'\pi y}{a}}\,dy \tag{3.10}
 $$
 左式的值惊人地简单，在 $n' \ne n$ 时均为 $0$。在 $n' = n$ 时则是 $\frac{a}{2}C_n$（这被称为函数的 **正交性（Orthogonality）**）。这样我们就得到了 $C_n$ 的计算式：
 $$
@@ -1128,7 +1259,7 @@ $$
 >
 > <img src="graphs/ed1_3-5.png" alt="ed1_3-5" style="zoom:50%;" />
 
-> **解**：这里我们需要解一个三维的拉普拉斯方程，即 $(\ref{laplace-equation-3d})$ 式。利用分离变量法，我们假设 $V(x, y, z) = X(x)Y(y)Z(z)$。代入原方程后得到：
+> **解**：这里我们需要解一个三维的拉普拉斯方程，即 $(\ref{3d-laplace's-equation})$ 式。利用分离变量法，我们假设 $V(x, y, z) = X(x)Y(y)Z(z)$。代入原方程后得到：
 > $$
 > \frac{1}{X}\frac{d^2 X}{dx^2} + \frac{1}{Y}\frac{d^2 Y}{dy^2} + \frac{1}{Z}\frac{d^2 Z}{dz^2} = 0
 > $$
@@ -1141,8 +1272,10 @@ $$
 > 对于这三个常微分方程，我们可以轻易地得到下面的解：
 > $$
 > \begin{align}
-> 	X(x) = Ae^{\sqrt{k^2+l^2}x} + Be^{-\sqrt{k^2+l^2}x} && Y(y) = C\sin{ky} + D\cos{ky} && Z(z) = E\sin{lz} + F\cos{lz}
-> \end{align}
+> 	X(x) &= Ae^{\sqrt{k^2+l^2}x} + Be^{-\sqrt{k^2+l^2}x} \\
+>     Y(y) &= C\sin{ky} + D\cos{ky} \\
+>     Z(z) &= E\sin{lz} + F\cos{lz}
+> \end{align} \label{3d-laplace's-equation-general-solution} \tag{3.11}
 > $$
 > 代入边界条件，我们可以得到下面的解：
 > $$
@@ -1169,18 +1302,21 @@ $$
 
 此前的边界都是平行于坐标轴的平面，因此使用笛卡尔坐标系非常合适。但是我们同样对以球面为边界的电势问题感兴趣。球坐标系中，拉普拉斯方程是以下的形式：
 $$
+\begin{equation}
 \frac{1}{r^2}\frac{\partial}{\partial r}\left(r^2\frac{\partial V}{\partial r}\right) + \frac{1}{r^2\sin{\theta}}\frac{\partial }{\partial \theta}\left(\sin{\theta}\frac{\partial V}{\partial \theta}\right) + \frac{1}{r^2\sin^2\theta}\frac{\partial^2 V}{\partial \phi^2} = 0
+\end{equation} \label{3d-laplace's-equation-spherical} \tag{3.12}
 $$
 这个式子令人望而却步。我们假设这个式子和 $\phi$ 无关，这样我们可以将其简化为：
 $$
-\label{laplace-3d-spherical-reduced}
-\frac{\partial }{\partial r}\left(r^2\frac{\partial V}{\partial r}\right) + \frac{1}{\sin{\theta}}\frac{\partial}{\partial \theta}\left(\sin{\theta}\frac{\partial V}{\partial \theta}\right) = 0
+\begin{equation}
+	\frac{\partial }{\partial r}\left(r^2\frac{\partial V}{\partial r}\right) + \frac{1}{\sin{\theta}}\frac{\partial}{\partial \theta}\left(\sin{\theta}\frac{\partial V}{\partial \theta}\right) = 0
+\end{equation} \label{3d-laplace-equation-spherical-reduced} \tag{3.13}
 $$
 利用分离变量法，我们假设：
 $$
 V(r, \theta) = R(r)\Theta(\theta)
 $$
-插入 $(\ref{laplace-3d-spherical-reduced})$ 式，我们可以得到：
+插入 $(\ref{3d-laplace-equation-spherical-reduced})$ 式，我们可以得到：
 $$
 \frac{1}{R}\frac{d}{dr}\left(r^2\frac{dR}{dr}\right) + \frac{1}{\Theta\sin{\theta}}\frac{d}{d\theta}\left(\sin{\theta}\frac{d\Theta}{d\theta}\right) = 0
 $$
@@ -1196,8 +1332,9 @@ $$
 $$
 其中 $P_l(x)$ 被称为 **勒让德多项式（Legendre Polynomial）**，其通常可以通过 **罗德里格公式（Rodrigues Formula）** 计算得到：
 $$
-\label{rodrigues-formula}
-P_l(x) = \frac{1}{2^ll!}\left(\frac{d}{dx}\right)^l(x^2 - l)^l
+\begin{equation}
+	P_l(x) = \frac{1}{2^ll!}\left(\frac{d}{dx}\right)^l(x^2 - l)^l
+\end{equation} \label{rodrigues-formula} \tag{3.14}
 $$
 作为举例，下面是前几个勒让德多项式：
 $$
@@ -1216,7 +1353,9 @@ $$
 
 这样我们就得到了球坐标系下不考虑方位角 $\phi$ 的拉普拉斯方程的通解：
 $$
-V(r, \theta) = \sum_{l = 0}^\infty\left(A_lr^l + \frac{B_l}{r^{l+1}}\right)P_l(\cos\theta)
+\begin{equation}
+	V(r, \theta) = \sum_{l = 0}^\infty\left(A_lr^l + \frac{B_l}{r^{l+1}}\right)P_l(\cos\theta)
+\end{equation} \label{3d-laplace's-equation-spherical-general-solution} \tag{3.15}
 $$
 这里需要注意的是，勒让德多项式并不是 $\Theta(\theta)$ 唯一的解（原方程是二阶的偏微分方程），但它们在 $\theta = 0$ 或 $\theta = \pi$ 时会得到物理中不成立的值，因此我们不考虑。作为例子，$l = 0$ 时另外有一个解 $\Theta(\theta) = \ln\left(\tan{\frac{\theta}{2}}\right)$。
 
@@ -1273,7 +1412,9 @@ $$
 $$
 这样就得到了电偶极子在远处的电势分布：
 $$
-V(\mathbf{r}) = \frac{1}{4\pi\epsilon_0}\frac{qd\cos\theta}{r^2}
+\begin{equation}
+	V(\mathbf{r}) = \frac{1}{4\pi\epsilon_0}\frac{qd\cos\theta}{r^2}
+\end{equation} \label{electric-dipole-potential} \tag{3.16}
 $$
 这个结果可能还有些出乎意料，因为电势的衰减速度居然和距离成平方反比。实际上，如果对于类似设置的 **四极子（Quadrupole）**、**八极子（Octopole）** 进行分析，它们的电势衰减速度分别为立方反比和四次方反比。
 
@@ -1281,62 +1422,67 @@ $$
 
 现在让我们考虑一个更加通用的场景。对于一个电荷分布，取原点到源和场的径矢 $\mathbf{r}'$ 和 $\mathbf{r}$，源到场的矢量为 $\mathscr{r}$（这正是我们一直以来的设置）。设 $\mathbf{r}$ 和 $\mathbf{r}'$ 的夹角为 $\alpha$。根据余弦定理有：
 $$
-\mathscr{r}^2 = r^2 + r'^2 - 2rr'\cos\alpha = r^2\left[1 + \left(\frac{r'}{r}\right)^2 - 2\left(\frac{r'}{r}\right)\cos\alpha\right]\nonumber
+\mathscr{r}^2 = r^2 + r'^2 - 2rr'\cos\alpha = r^2\left[1 + \left(\frac{r'}{r}\right)^2 - 2\left(\frac{r'}{r}\right)\cos\alpha\right]
 $$
 我们记：
 $$
-\epsilon = \left(\frac{r'}{r}\right)\left(\frac{r'}{r} - 2\cos\alpha\right)\nonumber
+\epsilon = \left(\frac{r'}{r}\right)\left(\frac{r'}{r} - 2\cos\alpha\right) \tag{3.17}
 $$
 这样原始就可以写为 $\mathscr{r} = r\sqrt{1 + \epsilon}$ 的形式了。根据二项式定理我们可以将其展开为多项式：
 $$
-\label{expansion-of-1-over-r}
 \begin{align}
 \frac{1}{\mathscr{r}} &= \frac{1}{r}\left(1 - \frac{1}{2}\epsilon + \frac{3}{8}\epsilon^2 - \frac{5}{16}\epsilon^3 + ... \right) \nonumber\\
 &= \frac{1}{r}\left[1 - \frac{1}{2}\left(\frac{r'}{r}\right)\left(\frac{r'}{r} - 2\cos\alpha\right) + \frac{3}{8}\left(\frac{r'}{r}\right)^2\left(\frac{r'}{r} - 2\cos\alpha\right)^2 - \frac{5}{16}\left(\frac{r'}{r}\right)^3\left(\frac{r'}{r} - 2\cos\alpha\right)^3 + ...\right] \nonumber\\
 &= \frac{1}{r}\left[1 + \left(\frac{r'}{r}\right)\cos\alpha + \left(\frac{r'}{r}\right)^2\left(\frac{3\cos^2\alpha - 1}{2}\right) + \left(\frac{r'}{r}\right)^3\left(\frac{5\cos^3\alpha - 3\cos\alpha}{2}\right) + ...\right] \nonumber\\
 &= \frac{1}{r}\sum_{n=0}^\infty \left(\frac{r'}{r}\right)^nP_n(\cos\alpha)
-\end{align}
+\end{align} \label{expansion-of-1-over-r} \tag{3.18}
 $$
 中间真的非常巧合，每一项的系数正好是勒让德多项式（事实上，我们也将 $\frac{1}{r}$ 称为勒让德多项式的生成函数）。这样，我们就得到了任意电荷分布在远处的产生的电势，我们也将其称为电势 $\frac{1}{r}$ 的 **多极展开（Multipole Expansion）**：
 $$
-\label{multipole-expansion}
+\begin{equation}
 V(\mathbf{r}) = \frac{1}{4\pi\epsilon_0}\sum_{n=0}^\infty \frac{1}{r^{n+1}}\int r'^nP_n(\cos\alpha)\rho(\mathbf{r}')\,d\tau'
+\end{equation} \label{electric-multipole-expansion} \tag{3.18}
 $$
 
 #### 单极子和偶极子
 
 在 $r \gg 0$ 时，多极展开公式被第一项主导，也就是单极子的电势近似（当 $r' = 0$ 时，这个式子就是准确的电势公式）：
 $$
-V_\text{mon}(\mathbf{r}) = \frac{1}{4\pi \epsilon_0}\frac{Q}{r}\nonumber
+V_\text{mon}(\mathbf{r}) = \frac{1}{4\pi \epsilon_0}\frac{Q}{r}
 $$
 当总电荷 $Q \to 0$ 时，主导的就是第二项了（因为第一项趋于 $0$）：
 $$
-V_\text{dip}(\mathbf{r}) = \frac{1}{4\pi\epsilon_0}\frac{1}{r^2}\int r'\cos\alpha\rho(\mathbf{r}')\,d\tau'\nonumber
+V_\text{dip}(\mathbf{r}) = \frac{1}{4\pi\epsilon_0}\frac{1}{r^2}\int r'\cos\alpha\rho(\mathbf{r}')\,d\tau'
 $$
 由于 $r'\cos\alpha = \hat{\mathbf{r}}\cdot\mathbf{r}'$，我们可以将上式写得更为简洁：
 $$
-V_\text{dip}(\mathbf{r}) = \frac{1}{4\pi\epsilon_0}\frac{1}{r^2}\hat{\mathbf{r}}\cdot\int\mathbf{r}'\rho(\mathbf{r}')\,d\tau'\nonumber
+V_\text{dip}(\mathbf{r}) = \frac{1}{4\pi\epsilon_0}\frac{1}{r^2}\hat{\mathbf{r}}\cdot\int\mathbf{r}'\rho(\mathbf{r}')\,d\tau'
 $$
 其中和 $\mathbf{r}$ 无关的项称为 **偶极矩（Dipole Moment）**：
 $$
-\label{def-dipole-moment}
-\marginbox{\mathbf{p} = \int\mathbf{r}'\rho(\mathbf{r}')\,d\tau'}
+\begin{equation}
+	\marginbox{\mathbf{p} = \int\mathbf{r}'\rho(\mathbf{r}')\,d\tau'}
+\end{equation} \label{electric-dipole-moment} \tag{3.19}
 $$
 这样，也可以将满足偶极子分布的电势写成：
 $$
-\label{dipole-potential}
-V_\text{dip}(\mathbf{r}) = \frac{1}{4\pi\epsilon_0}\frac{\mathbf{p}\cdot\hat{\mathbf{r}}}{r^2}
+\begin{equation}
+	V_\text{dip}(\mathbf{r}) = \frac{1}{4\pi\epsilon_0}\frac{\mathbf{p}\cdot\hat{\mathbf{r}}}{r^2}
+\end{equation} \label{electric-dipole-potential-alt} \tag{3.20}
 $$
 偶极矩取决于电荷分布的集合特性（比如说形状、大小和密度）。如果考虑离散的电荷分布，偶极矩的定义如下式：
 $$
-\mathbf{p} = \sum_{i=1}^nq_i\mathbf{r}_i'
+\begin{equation}
+	\mathbf{p} = \sum_{i=1}^nq_i\mathbf{r}_i'
+\end{equation} \label{electric-dipole-moment-discrete} \tag{3.21}
 $$
 特别地，只有正负两个电荷存在时（此时我们称其为 **物理偶极子（Physical Dipole）**，它们产生的偶极矩将只和它们之间的距离有关：
 $$
-\label{physical-dipole}
-\mathbf{p} = q\mathbf{r}_+' - q\mathbf{r}_-' = q\mathbf{d}
+\begin{equation}
+	\mathbf{p} = q\mathbf{r}_+' - q\mathbf{r}_-' = q\mathbf{d}
+\end{equation} \label{physical-dipole} \tag{3.22}
 $$
-结合 $(\ref{dipole-potential})$，我们可以得到与上一节相同的结论。注意这里是一个估计值；当 $r$ 变大或者 $d$ 变小时，这个估计会更加精确。当 $d \to 0$ 时，我们可以得到一个 **完美偶极子（Perfect Dipole）**。此时为了不让偶极矩削减至零，我们还应该让 $q \to \infty$，保证 $qd$ 是一个固定的值。此时我们可以放心地使用 $(\ref{dipole-potential})$ 式了。
+结合 $(\ref{electric-dipole-potential-alt})$，我们可以得到与上一节相同的结论。注意这里是一个估计值；当 $r$ 变大或者 $d$ 变小时，这个估计会更加精确。当 $d \to 0$ 时，我们可以得到一个 **完美偶极子（Perfect Dipole）**。此时为了不让偶极矩削减至零，我们还应该让 $q \to \infty$，保证 $qd$ 是一个固定的值。此时我们可以放心地使用 $(\ref{electric-dipole-potential-alt})$ 式了。
 
 #### 电偶极子的电场
 
@@ -1346,7 +1492,9 @@ V_\text{dip}(r, \theta) = \frac{p\cos\theta}{4\pi\epsilon_0r^2}
 $$
 求它每个方向的梯度的负数即是该方向的电场，综合起来就是：
 $$
-\textbf{E}_\text{dip}(r, \theta) = \frac{p}{4\pi\epsilon_0}(2\cos\theta\hat{\mathbf{r}} + \sin\theta\hat{\boldsymbol{\theta}})
+\begin{equation}
+	\textbf{E}_\text{dip}(r, \theta) = \frac{p}{4\pi\epsilon_0}(2\cos\theta\hat{\mathbf{r}} + \sin\theta\hat{\boldsymbol{\theta}})
+\end{equation} \label{electric-field-of-dipole} \tag{3.23}
 $$
 可以看到偶极子场和距离的三次方成反比；类似地我们能得到四极子场和距离的四次方、八极子场和距离的五次方……成反比。这和我们此前得到的结论（电偶极子的电势和平方成反比，四极子和八极子则是平方反比和立方反比）互洽。
 
@@ -1937,12 +2085,38 @@ $$
 
 
 
+## 物质中的磁场
 
+日常生活中，我们对“磁性”的印象往往来自于冰箱贴、指南针、南北极等看起来和电流八竿子打不着的地方。但实际上，如果我们从微观层面研究，就会发现它们磁性是来源于电荷的运动：没错，电子绕着原子核运动，并存在自旋，此时是会产生磁场的。通常，这些电子的磁场会相互抵消，因此宏观中大多数物体没有磁性。但在一些条件下（比如外加磁场）电子旋转的朝向会趋于一致，此时磁场效应就相对明显了，我们称该物体被 **磁化（Magnetize）** 了。
 
+电极化的方向总是和外加电场方向相同，但磁化就要分具体情况了：**顺磁体（Paramagnet）** 被激发出的磁场和外加磁场相同，**逆磁体（Diamagnet）** 被激发出的磁场和外加电场相反，而 **铁磁体（Ferromagnet）** 是一种特殊的磁体，它在外加磁场消失后依然会保持磁化的状态。永磁铁通常是由铁磁体制成的。本章中，我们会首先对这些不同类型的磁性来源进行分析，然后再引入和 **电位移** 类似的辅助场作为数学工具研究物质中的磁场。
 
+### 磁化
 
+#### 磁偶极子所受力和力矩
 
+磁偶极子在磁场中会受到一个力矩。我们来考虑一个正方形的电流环路在磁场中受到的力矩（这是因为任意的电流环路都可以视作一系列正方形电流环路的加和，如下图右所示）。将这个环路中心置于原点，并且给它一个 $z$ 轴向 $y$ 轴方向的倾斜角。假设磁场方向为 $\unit{z}$，则倾斜的两边所受磁力抵消，我们就只需要计算”跷跷板“两端所受磁力了（如下图左所示）：
 
+<img src="graphs/ed1_6-1.png" alt="ed1_6-1" style="zoom:110%;" /><img src="graphs/ed1_6-2.png" alt="ed1_6-2" style="zoom:110%;" />
+
+每一段受到的磁力都是 $IbB$，但方向相反。利用 $m = Iab$，我们可以得到力矩：
+$$
+\begin{align}
+	\mathbf{N} = \mathbf{m}\times\mathbf{B}
+\end{align} \label{magnetic-dipole-torque} \tag{6.1}
+$$
+这个公式对匀强磁场总是成立；特别地，如果磁偶极子是一个完美偶极子，则对任意磁场都成立。在这个力矩作用下，磁偶极子总会达到 $\mathbf{m}$ 和 $\mathbf{B}$ 方向相同的结果，这就是 **顺磁性（Paramagnetism）** 的由来。原子中的电子就是这样的一个偶极子，因此如果有能够响应外加磁场的电子，物体就会显顺磁性。不过根据量子力学中的泡利不相容原理，原子中的电子时常会两两成对，并呈现正好相反的自旋——因此，顺磁性往往出现在有 *奇数* 个电子的原子或分子中（不过也不要把这个当作最终的、完整的理论，因为我们根本没有考虑电子之间的热碰撞等损耗）。
+
+现在尝试计算这个电流环路受到的合外力。如果是匀强磁场，则合力为 $\mathbf{0}$：
+$$
+\begin{equation*}
+	\mathbf{F} = I\oint(d\mathbf{l}\times\mathbf{B}) = I\oint d\mathbf{l}\times \mathbf{B} = \mathbf{0}
+\end{equation*}
+$$
+如果不是匀强磁场，我们以螺线管为例：
+$$
+
+$$
 
 
 ## 公式汇总
