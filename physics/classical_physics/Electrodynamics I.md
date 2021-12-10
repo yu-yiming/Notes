@@ -952,7 +952,7 @@ W = \frac{\epsilon_0}{2}\int(\nabla\cdot\mathbf{E})V\,d\tau
 $$
 利用分部积分法 $(\ref{integrate-by-parts-divergence})$，我们可以得到：
 $$
-W = \frac{\epsilon_0}{2}\left(-\int\mathbf{E}\cdot(\nabla V)\,d\tau + \oint V\mathbf{E}\cdot d\mathbf{a}\right) = \frac{\epsilon_0}{2}\left(\underset{\mathcal{V}}{\int}E^2\,d\tau + \underset{\mathcal{S}}{\oint}V\mathbf{E}\cdot d\mathbf{a}\right)\nonumber
+W = \frac{\epsilon_0}{2}\left(-\int\mathbf{E}\cdot(\nabla V)\,d\tau + \oint V\mathbf{E}\cdot d\mathbf{a}\right) = \frac{\epsilon_0}{2}\left(\int_\mathcal{V}E^2\,d\tau + \oint_\mathcal{S}V\mathbf{E}\cdot d\mathbf{a}\right)\nonumber
 $$
 这里有一个小技巧。E 大致是 $r^{-2}$ 数量级，$V$ 是 $r^{-1}$ 数量级，而 $\mathcal{S}$ 是 $r^2$ 数量级。上面的第一个积分由于 $E^2 > 0$，无论 $\mathcal{V}$  取多大都能保证单调递增；但第二个积分由于内部总体呈 $r^{-1}$ 数量级，随着 $\mathcal{S}$ 变大，这个积分会越来越小。因此我们只需要考虑无穷远处的一个 $\mathcal{V}$ 和其边界 $\mathcal{S}$，就可以忽略第二个积分了。因此在全空间中，静电场的能量是：
 $$
