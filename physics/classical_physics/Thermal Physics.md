@@ -359,4 +359,140 @@ $$
 $$
 \mu = \left(\frac{\partial F}{\partial N}\right)_{V, T}
 $$
-也即系统体积和温度不变时，亥姆霍兹自由能对粒子数量的偏导数。这是一个和体积类似的概念。在两个允许交换物质但体积不变的系统之间，其平衡会在 $\mu_L = \mu_R$ 时达到。
+也即系统体积和温度不变时，亥姆霍兹自由能对粒子数量的偏导数。从离散的方式来理解，化学势就是将一个粒子加入系统所需要的功：
+$$
+\begin{equation*}
+	\mu(N) = F(N + 1) - F(n)
+\end{equation*}
+$$
+在两个允许交换物质但体积不变的系统之间，其平衡会在 $\mu_L = \mu_R$​ 时达到，证明如下：
+$$
+\begin{align*}
+	\frac{\partial F}{\partial N_L} &= \frac{\partial F_L}{\partial N_L} + \frac{\partial F_R}{\partial N_R} \\
+	&= \frac{\partial F_L}{\partial N_L} + \frac{\partial F_R}{\partial N_L}\frac{\partial N_L}{\partial N_R} \\
+	&= \frac{\partial F_L}{\partial N_L} - \frac{\partial F_R}{\partial N_L} = 0 \\
+	&\implies \frac{\partial F_L}{\partial N_L} = \frac{\partial F_R}{\partial N_R}
+\end{align*}
+$$
+此时系统的亥姆霍兹自由能达到最小值（也即熵达到最大值）。这里我们比较已经接触过的三个宏观量的相似性：
+
+- 两个允许交换 *能量* 的系统，会在 *温度* 相同时达到平衡。
+- 两个允许交换 *体积* 的系统，会在 *压强* 相同时达到平衡。
+- 两个允许交换 *物质* 的系统，会在 *化学势* 相同时达到平衡。
+
+之后我们会学到将它们三个统一起来的公式。
+
+化学势可以帮助理解某些化学反应。比如当氢气和氧气能够自发生成水时，我们就知道此时：
+$$
+2\mu_{\text{H}_2} + \mu_{\text{O}_2} < \mu_{\text{H}_2\text{O}}
+$$
+
+> **例**：一个系统中的体积 $V$ 和温度 $T$ 保持不变，且内能 $U = aN^2$，熵 $S = cN$，求该系统的化学势：
+
+> **解**：只需要代入化学势的定义即可：
+> $$
+> \mu = \frac{\partial F}{\partial N} = \partial_N(U - TS) = 2aN - cT
+> $$
+
+> **例**：将一个金原子掺杂在许多硅原子中，假设这给系统增加了 $\Delta$ 的内能，求平衡时金原子浓度和温度的关系。
+
+> **解**：平衡时系统的亥姆霍兹自由能达到最小值，因此 $dF = dU - TdS = 0$。$dU = \Delta$ 和 $T$ 都是已知的，因此我们只需算出加入一个金原子时系统变化的熵即可。假设硅原子中原来掺杂了 $N_\text{Au}$ 个金原子，则：
+> $$
+> \begin{align*}
+> 	dS &= (k\ln{N_\text{Si}} - k[\ln{(N_{\text{Au}}}!) - \ln{((N_\text{Au} - 1)!)}])dN_\text{Au} \\
+> 	&= -k\ln\left(\frac{N_\text{Au}}{N_\text{Si}}\right)
+> \end{align*}
+> $$
+> 因此：
+> $$
+> dF = \Delta + kT\ln\left(\frac{N_\text{Au}}{N_\text{Si}}\right) = 0
+> $$
+> 最终得到：
+> $$
+> \frac{N_\text{Au}}{N_\text{Si}} = e^{-\Delta/kT}
+> $$
+> 或者等价的：
+> $$
+> \ln\left(\frac{N_\text{Au}}{N_\text{Si}}\right) = -\frac{\Delta}{k}\left(\frac{1}{T}\right)
+> $$
+
+上面这个金原子的例子可以扩展到所有 **理想溶液（Ideal Solution）** 的分析中。我们可以类似地得到：
+$$
+\mu = kT\ln\left(\frac{N_\text{solute}}{N_\text{solvent}}\right) + ...
+$$
+半导体中掺杂的 $\text{P}$ 和 $\text{B}$ 也有类似的公式：
+$$
+\mu = 2kT\ln\left(\frac{N_\text{conduction}}{N_\text{atoms}}\right)
+$$
+和热量之于温度（热容）类似，当 $d\mu/dN$ 大于零时，系统可以达到稳定平衡。热容不能小于零，但是 $d\mu/dN$ 是可能小于零的，此时会向一个方向持续转化，直到 $d\mu/dN$ 大于等于零为止。此时会产生低浓度和高浓度的“分离”，例如水蒸气在一些情况下会变成水（液体）与水蒸气的混合，此时两者浓度有很大差别但在折中的浓度中不存在平衡；以及饱和的糖水和析出的糖结晶也有很大的浓度差。
+
+### 吉布斯自由能
+
+**吉布斯自由能（Gibbs Free Energy）** 描述一个恒定压强与温度的系统：
+$$
+G = U + pV - TS
+$$
+首先，让我们给出热力学中最重要的公式之一，**热力学基本关系（Fundamental Relation of Thermodynamics）**。下面这个公式在平衡状态下恒成立：
+$$
+\begin{equation*}
+	dS = \frac{1}{T}dU + \frac{p}{T}dV - \frac{\mu}{T}dN
+\end{equation*} \label{fundamental-relation-of-thermodynamics}
+$$
+下面我们通过一些假设证明这个关系式。首先，当 $N$ 不变（即 $dN = 0$）时，$dS$ 应该满足：
+$$
+dS = \left(\frac{\partial S}{\partial U}\right)_VdU + \left(\frac{\partial S}{\partial V}\right)_UdV
+$$
+根据温度的定义，第一项可以轻松得出。第二项则需要考虑当 $S$ 取最大值时，有：
+$$
+\begin{align*}
+	\frac{dS}{dV} &= \left(\frac{\partial S}{\partial V}\right)_U + \left(\frac{\partial S}{\partial U}\right)_V\left(\frac{dU}{dV}\right)_S \\
+	&\text{（考虑一个活塞中的气体，体积变化时也受到/对外界做功）} \\
+	&= \left(\frac{\partial S}{\partial V}\right)_U + \frac{1}{T}(-p) \\
+	&= 0
+\end{align*}
+$$
+这样就得到了基本关系中的第二项。为了证明第三项成立，可以证明基本关系公式在 $V, T$ 不变时得到的 $\mu$ 和亥姆霍兹自由能定义的 $\mu$ 是等价的：
+$$
+\begin{align*}
+	\mu dN &= dU - TdS + pdV \\
+	&= dU - TdS \\
+	dF &= dU - TdS - SdT \\
+	&= dU - TdS \\
+	&= \mu dN
+\end{align*}
+$$
+通过热力学基本关系，我们可以给出一些宏观量的微分定义，其中一些我们此前可能接触过了：
+$$
+\begin{align*}
+\begin{split}
+	\frac{1}{T} &= \left(\frac{\partial S}{\partial U}\right)_{V, N} \\
+	\frac{p}{T} &= \left(\frac{\partial S}{\partial T}\right)_{U, N} \\
+	\frac{\mu}{T} &= -\left(\frac{\partial S}{\partial N}\right)_{V, U}
+\end{split}
+\end{align*}
+$$
+现在让我们回到吉布斯自由能。和亥姆霍兹自由能类似，它也在取最小值时使系统达到平衡。证明如下：
+$$
+\begin{align*}
+	dG &= dU + pdV + Vdp - TdS - SdT \\
+	&= dU + pdV - TdS \\
+	&= -(dU_\text{env} + pdV_\text{env}) - TdS \\
+	&= -TdS_\text{env} - TdS \\
+	&= -TdS_\text{tot}
+\end{align*}
+$$
+因此只有吉布斯自由能取最小值时，系统的熵才能取最大值，达到平衡状态。
+
+此外，将吉布斯自由能的微分和基本关系进行比较，我们很快发现它和化学势的关系：
+$$
+\mu = \left(\frac{\partial G}{\partial N}\right)_{p, T}
+$$
+事实上，由于 $p, T$ 是不变的，我们可以直接得到：
+$$
+G = \mu N
+$$
+更通用地，当系统中存在不同化学势的混合物时，总体的吉布斯自由能即是：
+$$
+G = \sum_{i}\mu_iN_i
+$$
+需要特别注意，这个公式不能类推到亥姆霍兹自由能。
