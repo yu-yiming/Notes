@@ -15,7 +15,7 @@ $$
 	& x + y \ge 1
 \end{align*}
 $$
-上面的问题中，出现了两个重要的部分。其一是 **目标函数（Object Function）**，即我们需要优化的线性多项式；另一个是 **约束（Constraint）**，即下面列出的多个不等式（约束也可以包含等式）。经过重排列，我们可以将上面的约束记为矩阵的形式：
+上面的问题中，出现了两个重要的部分。其一是 **目标函数（Objective Function）**，即我们需要优化的线性多项式，它的值称为 **目标值（Objective Value）**；另一个是 **约束（Constraint）**，即下面列出的多个不等式（约束也可以包含等式）。经过重排列，我们可以将上面的约束记为矩阵的形式：
 $$
 A\mathbf{x} \le \mathbf{b} \\
 \text{其中}\quad A = \begin{bmatrix} 0 & 1 \\ 2 & -1 \\ -1 & -1 \end{bmatrix}, 
@@ -25,7 +25,7 @@ $$
 我们将所有满足上面式子的点集 $\{ \mathbf{x} \mid A\mathbf{x} \le \mathbf{b}\}$ 称为 **可行域（Feasible Region）**。可行域中每一个点都被称为 **可行解（Feasible Solution）**。如果将目标函数也改写成矩阵的形式，我们就得到了一个比较通用的线性优化问题：
 $$
 \begin{align*}
-\underset{x, y \in \R}{\text{maximize}}& \quad \mathbf{c}^T\mathbf{x} \\
+\underset{x, y \in \R}{\text{maximize}}& \quad \mathbf{c}^\text{T}\mathbf{x} \\
 \text{subject to}& \quad A\mathbf{x} \le \mathbf{b} \\\\
 \text{其中} \quad &\mathbf{c} = \begin{bmatrix} 1 \\ -1 \end{bmatrix}
 \end{align*}
@@ -85,7 +85,7 @@ $$
 
 这三个点包围的区域就是我们要求的可行域了。如果把目标函数也视作直线，那就是 $x - y = C$ 这样的无数条直线的集，它和上面给出的可行域需要拥有交集且满足 $C$ 最大。这里我们直接给出要点：线性优化问题的最优解一定出现在 **顶点（Vertex）** 集当中，即所有直线交集的集合。因此我们只需要将这些交点代入目标函数就能得到最优解了。上例中 $2 - (-1) = 3$ 是最大值，因此 $(2, -1)$ 是最优解。
 
-对于多个变量多个方程的线性优化问题，我们都可以通过这个方式得到最优解。但是之所以称其为 **简单的（Naive）** 线性优化算法，是因为它过于低效。考虑一个拥有 50 个变量、100 个不等式组成的约束，我们需要计算 $C_{50}^{100}\approx 10^{29}$ 次目标函数才能比较出最优解，这个数量级甚至不能被超级计算机承受，因此现实中我们不会用这种方法考虑较为复杂的线性优化问题。本篇的重点也即是，如何用更高效的方法解决线性优化问题。
+对于多个变量多个方程的线性优化问题，我们都可以通过这个方式得到最优解。但是之所以称其为 **简单的（Naive）** 线性优化算法，是因为它很好操作，却过于低效。考虑一个拥有 50 个变量、100 个不等式组成的约束，我们需要计算 $C_{50}^{100}\approx 10^{29}$ 次目标函数才能比较出最优解，这个数量级甚至不能被超级计算机承受，因此现实中我们不会用这种方法考虑较为复杂的线性优化问题。本篇的重点也即是，如何用更高效的方法解决线性优化问题。
 
 ### 线性优化问题的诸多公式化表示
 
@@ -93,7 +93,7 @@ $$
 
 #### 非负数的约束变量
 
-我们总是默认所有的约束变量（约束中出现的变量）都是非负的，也即 $\mathbf{x} \ge 0$。其原因主要是：
+我们几乎总是默认所有的约束变量（约束中出现的变量）都是非负的，也即 $\mathbf{x} \ge 0$。其原因主要是：
 
 - 现实生活中很多约束变量本来就不会出现负数情形。
 - 在数学上非负数一些美好的性质（比如其拥有下确界 $0$）。
@@ -101,17 +101,21 @@ $$
 
 因此，我们在此可以给出线性优化问题的 **标准形式（Canonical Form）**：
 $$
-\underset{\mathbf{x} \in \R^n}{\text{maximize}} \quad & \mathbf{c}^T\mathbf{x} \\
+\begin{align*}
+\underset{\mathbf{x} \in \R^n}{\text{maximize}} \quad & \mathbf{c}^\text{T}\mathbf{x} \\
 	\text{subject to} \quad & A\mathbf{x} \le \mathbf{b} \\
 	& \mathbf{x} \ge 0
+\end{align*} \tag{1}
 $$
 这里虽然最优解要求目标函数取最大值，但其实对于要求最小值的情形，只需令 $\mathbf{c}' = -\mathbf{c}$，就可以将问题转换为求最大值的线性优化问题。
 
-如果题目没有给出标准形式，并不要求约束变量都为非负数，我们可以对每一个约束变量 $x_i$ 引入变量 $x_i^+, x_i^- \ge 0$ 使得 $x = x_i^+ - x_i^-$，然后将问题转换为：
+如果题目没有给出标准形式，比如并不要求约束变量都为非负数，我们可以对每一个约束变量 $x_i$ 引入变量 $x_i^+, x_i^- \ge 0$ 使得 $x = x_i^+ - x_i^-$，然后将问题转换为：
 $$
-\underset{\mathbf{x}' \in \R^{2n}}{\text{maximize}} \quad & \mathbf{c}^T\mathbf{x}' \\
+\begin{align*}
+\underset{\mathbf{x}' \in \R^{2n}}{\text{maximize}} \quad & \mathbf{c}^\text{T}\mathbf{x}' \\
 	\text{subject to} \quad & A\mathbf{x}' \le \mathbf{b} \\
 	& \mathbf{x}' \ge 0
+\end{align*} \tag{2}
 $$
 此时可能会出现有无数组最优解的情形，但我们依然能够从中得到原问题的最优解。
 
@@ -127,7 +131,7 @@ $$
 我们可以引入 $x^+, x^-, y^+, y^-$ 四个变量，然后将问题转换为：
 $$
 \begin{align*}
-	\underset{x, y \in \R}{\text{maximize}} \quad & x^+ - x^- - y^+ + y^- \\
+	\underset{x^+, x^-, y^+, y^- \in \R}{\text{maximize}} \quad & x^+ - x^- - y^+ + y^- \\
 	\text{subject to} \quad & y^+ - y^- \le 3\\
 	& 2x^+ - 2x^- - y^+ + y^- \le 5 \\
 	& -x^+ + x^- - y^+ + y^- \le -1 \\
@@ -138,12 +142,14 @@ $$
 
 #### 线性优化问题的等式形式
 
-不等式问题解决起来并不是那么方便。实际上，我们可以通过引入 **松弛变量（Slack Variable）** 来将约束中的不等式变为等式：
+不等式问题解决起来并不是那么方便。实际上，我们可以通过引入 **松弛变量（Slack Variable）** 来将约束中的不等式变为等式，这是解决线性优化问题时极为常用的工具：
 $$
-\underset{\mathbf{x} \in \R^n}{\text{maximize}} \quad & \mathbf{c}^T\mathbf{x} \\
+\begin{align*}
+\underset{\mathbf{x} \in \R^n}{\text{maximize}} \quad & \mathbf{c}^\text{T}\mathbf{x} \\
 	\text{subject to} \quad & A\mathbf{x} = \mathbf{b} \\
 	& \mathbf{x} \ge 0 \\
-	\text{其中} \quad &\mathbf{x}^T = \begin{bmatrix} x_1,...,x_n,s_1,...s_m \end{bmatrix}
+	\text{其中} \quad &\mathbf{x}^\text{T} = \begin{bmatrix} x_1,...,x_n,s_1,...s_m \end{bmatrix}
+\end{align*} \tag{3}
 $$
 还是前面那个例子，我们可以引入松弛变量 $s_1, s_2, s_3$ 使其变为：
 $$
@@ -161,7 +167,7 @@ $$
 
 ## 简单形法
 
-**简单形法（Simplex Method）** 可以描述为：从线性优化问题的一个可行解线性变换为另一个可行解，每次都使其得到优化，直到达到最优解。这个变换过程遵循了中矩阵的 **行运算（Row Operation）**以及 **高斯消元法（Gaussian Elimination）**，比如下面的方程：
+**简单形法（Simplex Method）** 可以描述为：从线性优化问题的一个可行解线性变换为另一个可行解，每次都使其得到优化（或至少不恶化），直到达到最优解。这个变换过程遵循了中矩阵的 **行运算（Row Operation）**以及 **高斯消元法（Gaussian Elimination）**，比如下面的方程：
 $$
 \begin{cases}
 3x + y = 6 \\
@@ -246,7 +252,7 @@ $$
 	 -z & 0 & 0 & 0 & 1 & 2 & -6
 \end{array} \nonumber
 $$
-可以看到，这个表格中中间的五列给出了首行中每个变量对应的系数，最左侧一列则是给出了每个方程中的基本变量。最右侧一列（除去最后一行）则是基本变量的取值，它们总是一个正数。最下面一行是方程的目标函数，满足 $-z +x_4 + 2x_5 = -6$。这点可以通过设 $z = x_1 + x_2 + x_3 + x_4 + x_5$ 并进行简单的行变换得到。不难发现令非基本变量为 $0$ 后就能得到这个表对应的基本可行解 $6$，因此每个简单形表右下角取负即是一个基本可行解，我们的目标就是每次进行行变换都让这个数变得更小，以达到最大值。
+可以看到，这个表格中中间的五列给出了首行中每个变量对应的系数，最左侧一列则是给出了每个方程中的基本变量。最右侧一列（除去最后一行）则是基本变量的取值，它们总是一个正数。最下面一行是方程的目标函数，满足 $-z +x_4 + 2x_5 = -6$。这点可以通过设 $z = x_1 + x_2 + x_3 + x_4 + x_5$ 并进行简单的行变换得到。不难发现令非基本变量为 $0$ 后就能得到这个表对应的基本可行解 $6$，因此每个简单形表右下角取负即是一个基本可行解对应的目标值，我们的目标就是每次进行行变换都让这个数变得更小，以达到最大值。
 
 不过我们看到 $z = 6 + x_4 + 2x_5$ 时，显然 $z$ 不应该止步于 $6$。当 $x_4, x_5$ 取某个整数时，都能得到更大的值。因此我们需要进行行变换，直到 $-z$ 列中 $x_1, x_2, x_3, x_4, x_5$ 列中不存在任何正数，此时 $z = n - ax_i - bx_j$。由于 $x_i, x_j \ge 0$，我们就得到了最大值 $n$。
 
@@ -541,7 +547,7 @@ $$
 
 - Bland 基准规则：给所有约束变量（$x_1,...,x_n,s_1,...,s_m$）一个序号。在每次选择时，优先选择序号低的。
 - 随机基准规则：每次选择时随机进行。
-- 词典基准规则：为每个方程设置 $\epsilon_1,...,\epsilon_m$ 使得 $1 \gg \epsilon_1 \gg \epsilon_2 \gg ... \gg \epsilon_m > 0$，然后将 $\mathbf{b}$ 全体加上 $[\epsilon_1,....,\epsilon_m]^T$，再继续进行简单形法。此时可以保证不会因为简单形表的退化而出现循环。
+- 词典基准规则：为每个方程设置 $\epsilon_1,...,\epsilon_m$ 使得 $1 \gg \epsilon_1 \gg \epsilon_2 \gg ... \gg \epsilon_m > 0$，然后将 $\mathbf{b}$ 全体加上 $[\epsilon_1,....,\epsilon_m]^\text{T}$，再继续进行简单形法。此时可以保证不会因为简单形表的退化而出现循环。
 
 我们将详细描述 **词典基准规则（Lexicographic Pivoting Rule）**，其基于一个简单的思考：简单形表变换中出现循环的原因通常是多个基本可行解描述的是同一个点。如果我们对约束右侧加上一系列很小且不同的值，那样就不会出现多条线重合的情形了。让我们以上一节中遇到的问题为例，展示词典基准规则的使用：
 $$
@@ -591,38 +597,42 @@ $$
 
 ### 基本可行解
 
-现在让我们用矩阵构建更为严格的线性优化问题算法。考虑一个等式形式的线性优化问题：
+现在让我们用矩阵构建更为严格的线性优化问题算法。考虑一个等式形式的线性优化问题（引入松弛变量后一定是下这种形式）：
 $$
 \begin{align}
 \begin{split}
-	\underset{\mathbf{x} \in \R^n}{\text{maximize}} \quad & \mathbf{c}^T\mathbf{x} \\
+	\underset{\mathbf{x} \in \R^n}{\text{maximize}} \quad & \mathbf{c}^\text{T}\mathbf{x} \\
 	\text{subject to} \quad & A\mathbf{x} = \mathbf{b} \\
 	& \mathbf{x} \ge \mathbf{0}
 \end{split}
-\end{align}
+\end{align} \tag{4} \label{4}
 $$
 此处 $A$ 是一个 $m\times n$ 的矩阵，$\mathbf{c} \in \R^n, \mathbf{b} \in \R^m$（这个设定将贯穿下面全文；当没有特别给出这些矩阵和向量的类型时，都以此处的声明为准）。为了方便讨论，我们假设 $A$ 中的各行是线性无关的。下面让我们来正式地定义 **基本可行解** ：从 $A$ 中选取不重复且按顺序排列的某 $m$ 列序号记为 $\mathcal{B}$，其代表我们将选取的基本变量的序号。其余的 $n - m$ 个序号按顺序排列记为 $\mathcal{N}$。定义 $\mathbf{x}_\mathcal{B} = (x_{k_1}, x_{k_2},..., x_{k_m})$，其中 $k_1, k_2,..., k_m \in \mathcal{B}$ 且 $k_1 < k_2 <. ..< k_m$。类似地我们可以定义 $\mathbf{x}_\mathcal{N}$。这样我们就可以将目标函数写为：
 $$
-\mathbf{c}^T\mathbf{x} = \mathbf{c}_\mathcal{B}^T\mathbf{x}_\mathcal{B} + \mathbf{c}_\mathcal{N}^T\mathbf{x}_\mathcal{N}
+\begin{align*}
+	\mathbf{c}^\text{T}\mathbf{x} = \mathbf{c}_\mathcal{B}^\text{T}\mathbf{x}_\mathcal{B} + \mathbf{c}_\mathcal{N}^\text{T}\mathbf{x}_\mathcal{N}
+\end{align*} \tag{5}
 $$
 而约束条件也可以写为：
 $$
-A_\mathcal{B}\mathbf{x}_\mathcal{B} + A_\mathcal{N}\mathbf{x}_\mathcal{N} = \mathbf{b}
+\begin{align*}
+	A_\mathcal{B}\mathbf{x}_\mathcal{B} + A_\mathcal{N}\mathbf{x}_\mathcal{N} = \mathbf{b}
+\end{align*} \tag{6}
 $$
 为了得到基本可行解，我们需要 $A_\mathcal{B}$ 是可逆的，此时设 $\mathbf{x}_\mathcal{N} = 0$，我们就有 $\mathbf{x}_\mathcal{B} = A_\mathcal{B}^{-1}\mathbf{b}$。如果此时同时有 $\mathbf{x}_\mathcal{B} \ge \mathbf{0}$，我们就称其是一个基本可行解。
 
-此外，让我们再定义 $\R^n$ 子集的 **顶点（Vertex）** 与 **极值点（Extreme Point）** 的概念。对于 $S \subseteq \R^n$，顶点是指令某个线性函数 $\boldsymbol{\alpha}^T\mathbf{x}$ 严达到格最小值的点 $\mathbf{y} \in S$。极值点则是指在不在任意两个点 $\mathbf{x}, \mathbf{y} \in S$ 之间的点 $\mathbf{z} \in S$。最后，定义 **可行域** $F = \{x \in \R^n \mid A\mathbf{x} = \mathbf{b}\}$。现在我们要证明在可行域中，基本可行解、顶点与极值点是等价的：
+此外，让我们再定义 $\R^n$ 子集的 **顶点（Vertex）** 与 **极值点（Extreme Point）** 的概念。对于 $S \subseteq \R^n$，顶点是指令某个线性函数 $\boldsymbol{\alpha}^\text{T}\mathbf{x}$ 严达到格最小值的点 $\mathbf{y} \in S$。极值点则是指在不在任意两个点 $\mathbf{x}, \mathbf{y} \in S$ 之间的点 $\mathbf{z} \in S$。最后，定义 **可行域** $F = \{x \in \R^n \mid A\mathbf{x} = \mathbf{b}\}$。现在我们要证明在可行域中，基本可行解、顶点与极值点是等价的：
 
 > **命题**：任何基本可行解都是可行域的一个顶点。
 
-> **证明**：首先任意选择一个基本可行解及其对应的 $\mathcal{B}, \mathcal{N}$。设 $\alpha_i = \begin{cases}1\quad i \in \mathcal{N} \\ 0 \quad i \in \mathcal{B}\end{cases}$，则 $\boldsymbol{\alpha}^T\mathbf{x}$ 就是所有非基本变量的和。显然当且仅当 $\mathbf{x}_\mathcal{N} = \mathbf{0}$ 时才有最小值 $\mathbf{0}$，因此基本可行解对应了可行域的一个顶点。
+> **证明**：首先任意选择一个基本可行解及其对应的 $\mathcal{B}, \mathcal{N}$。设 $\alpha_i = \begin{cases}1\quad i \in \mathcal{N} \\ 0 \quad i \in \mathcal{B}\end{cases}$，则 $\boldsymbol{\alpha}^\text{T}\mathbf{x}$ 就是所有非基本变量的和。显然当且仅当 $\mathbf{x}_\mathcal{N} = \mathbf{0}$ 时才有最小值 $\mathbf{0}$，因此基本可行解对应了可行域的一个顶点。
 
 > **命题**：$S \subseteq \R^n$ 的顶点同时也是它的极值点。
 
-> **证明**：设 $\mathbf{x} \in S$ 是 $S$ 的一个顶点，$\boldsymbol{\alpha}$ 是令 $\boldsymbol{\alpha}^T\mathbf{x} < \boldsymbol{\alpha}^T\mathbf{y}$ 对任意 $\mathbf{y} \ne \mathbf{x} \in S$ 成立的向量。假设 $\mathbf{x}$ 并不是极值点，则存在 $\mathbf{y}, \mathbf{y}'$ 使得 $\mathbf{x} = t\mathbf{y} + (1-t)\mathbf{y}'$。此时有：
+> **证明**：设 $\mathbf{x} \in S$ 是 $S$ 的一个顶点，$\boldsymbol{\alpha}$ 是令 $\boldsymbol{\alpha}^\text{T}\mathbf{x} < \boldsymbol{\alpha}^\text{T}\mathbf{y}$ 对任意 $\mathbf{y} \ne \mathbf{x} \in S$ 成立的向量。假设 $\mathbf{x}$ 并不是极值点，则存在 $\mathbf{y}, \mathbf{y}'$ 使得 $\mathbf{x} = t\mathbf{y} + (1-t)\mathbf{y}'$。此时有：
 > $$
 > \begin{equation*}
-> 	\boldsymbol{\alpha}^T\mathbf{x} = t\boldsymbol{\alpha}^T\mathbf{y} + (1-t)\boldsymbol{\alpha}^T\mathbf{y}' < t\boldsymbol{\alpha}^T\mathbf{x} + (1-t)\boldsymbol{\alpha}^T\mathbf{x} = \boldsymbol{\alpha}^T\mathbf{x}
+> 	\boldsymbol{\alpha}^\text{T}\mathbf{x} = t\boldsymbol{\alpha}^\text{T}\mathbf{y} + (1-t)\boldsymbol{\alpha}^\text{T}\mathbf{y}' < t\boldsymbol{\alpha}^\text{T}\mathbf{x} + (1-t)\boldsymbol{\alpha}^\text{T}\mathbf{x} = \boldsymbol{\alpha}^\text{T}\mathbf{x}
 > \end{equation*}
 > $$
 > 矛盾！因此 $\mathbf{x}$ 必然是一个极值点。
@@ -668,15 +678,17 @@ E = \begin{bmatrix}
 \end{bmatrix}
 \nonumber
 $$
-这样，我们就可以将经过一系列行运算的等式写作 $MA\mathbf{x} = M\mathbf{b}$ 的形式。实际上 $M = A_\mathcal{B}^{-1}$，这是因为 $(MA)_\mathcal{B} = I$。因此对于方程 (6)，我们可以找到它的解：
+这样，我们就可以将经过一系列行运算的等式写作 $MA\mathbf{x} = M\mathbf{b}$ 的形式。实际上 $M = A_\mathcal{B}^{-1}$，这是因为 $(MA)_\mathcal{B} = I$。因此对于给定的基 $\mathcal{B}$，我们可以找到基本解：
 $$
-\mathbf{x}_\mathcal{B} = A_\mathcal{B}^{-1}\mathbf{b} - A_\mathcal{B}^{-1}A_\mathcal{N}\mathbf{x}_\mathcal{N}
+\begin{align*}
+	\mathbf{x}_\mathcal{B} = A_\mathcal{B}^{-1}\mathbf{b} - A_\mathcal{B}^{-1} A_\mathcal{N} \mathbf{x}_\mathcal{N}
+\end{align*} \tag{7}
 $$
 当令 $\mathbf{x}_\mathcal{N} = \mathbf{0}$ 时我们就得到了 $\mathbf{x}_\mathcal{B} = A_\mathcal{B}^{-1}\mathbf{b}$。这个结论在线性代数中应该已经讨论过，这里只是进行重温。
 
 ### 简单形表的公式
 
-现在让我们把上面的一些结论代入到简单形表中。对于 (4) 描述的线性优化问题，我们在简单形法中每次选择 $\mathcal{B}$ 时要确保：
+现在让我们把上面的一些结论代入到简单形表中。对于 $(\ref{4})$ 描述的线性优化问题，我们在简单形法中每次选择 $\mathcal{B}$ 时要确保：
 
 - $A_\mathcal{B}$ 是可逆的，此时令 $\mathbf{x}_\mathcal{N} = 0$，我们就得到了一个基本解 $\mathbf{x}_\mathcal{B} = A_\mathcal{B}^{-1}\mathbf{b}$。
 - $\mathbf{x}_\mathcal{B} \ge \mathbf{0}$，此时这个基本解就是可行的。
@@ -688,8 +700,8 @@ $$
 	\\
 	\mathbf{x}_\mathcal{B} & & I & & Q & & \mathbf{p} \\
 	\\\hline
-	-z & & \mathbf{0}^T & & \mathbf{r}^T & & -z_0
-\end{array}
+	-z & & \mathbf{0}^\text{T} & & \mathbf{r}^\text{T} & & -z_0
+\end{array} \tag{8}
 $$
 这里 $Q$ 是一个矩阵，而 $\mathbf{p}, \mathbf{r}$ 是两个向量。需要注意的是我们要求表的左上角是单位矩阵 $I$，因此可能需要列之间的交换。下面举一个例子说明：
 $$
@@ -761,9 +773,9 @@ A_\mathcal{B}^{-1}A_\mathcal{N} = \begin{bmatrix}
 \end{bmatrix}
 = Q
 $$
-目标函数 $z_0$ 也比较直白，正是 $z = \mathbf{c}^T\mathbf{x} = \mathbf{c}_\mathcal{B}^T\mathbf{x}_\mathcal{B} + \mathbf{c}_\mathcal{N}^T\mathbf{x}_\mathcal{N}$，且此时 $\mathbf{x}_\mathcal{B} = A_\mathcal{B}^{-1}\mathbf{b}$ 。最后让我们尝试得到 $\mathbf{r}$。实际上我们可以完全让 $-z$ 行保持不变，然后得到 $I$ 与 $Q$ 后（它们合起来即是 $A_\mathcal{B}^{-1}A$），为了让基本变量所在的列能够被清空，我们需要从 $\mathbf{c}^T$ 中减去 $\mathbf{c}_\mathcal{B}^TA_\mathcal{B}^{-1}A$，其过程如下：
+目标函数 $z_0$ 也比较直白，正是 $z = \mathbf{c}^\text{T}\mathbf{x} = \mathbf{c}_\mathcal{B}^\text{T}\mathbf{x}_\mathcal{B} + \mathbf{c}_\mathcal{N}^\text{T}\mathbf{x}_\mathcal{N}$，且此时 $\mathbf{x}_\mathcal{B} = A_\mathcal{B}^{-1}\mathbf{b}$ 。最后让我们尝试得到 $\mathbf{r}$。实际上我们可以完全让 $-z$ 行保持不变，然后得到 $I$ 与 $Q$ 后（它们合起来即是 $A_\mathcal{B}^{-1}A$），为了让基本变量所在的列能够被清空，我们需要从 $\mathbf{c}^\text{T}$ 中减去 $\mathbf{c}_\mathcal{B}^\text{T}A_\mathcal{B}^{-1}A$，其过程如下：
 $$
-\mathbf{c}_\mathcal{B}^TA_\mathcal{B}^{-1}A = 
+\mathbf{c}_\mathcal{B}^\text{T}A_\mathcal{B}^{-1}A = 
 \begin{bmatrix}
 	3 & 0 & 2
 \end{bmatrix}
@@ -775,19 +787,19 @@ $$
 = \begin{bmatrix}
 	3 & 0 & 2 & 1/2 & 5/2
 \end{bmatrix} \\
-\mathbf{c}^T - \mathbf{c}_\mathcal{B}^TA_\mathcal{B}^{-1}A =
+\mathbf{c}^\text{T} - \mathbf{c}_\mathcal{B}^\text{T}A_\mathcal{B}^{-1}A =
 \begin{bmatrix}
 	0 & 0 & 0 & -1/2 & -5/2
 \end{bmatrix}
 $$
-只要取它序数为 $\mathcal{N}$ 中的项，就得到了 $\mathbf{r}^T$。
+只要取它序数为 $\mathcal{N}$ 中的项，就得到了 $\mathbf{r}^\text{T}$。
 
 最后我们总结如下：
 
 - $\mathbf{p} = A_\mathcal{B}^{-1}\mathbf{b}$
 - $Q = A_\mathcal{B}^{-1}A_\mathcal{N}$
-- $\mathbf{r}^T = \mathbf{c}_\mathcal{N}^T - \mathbf{c}_\mathcal{B}^TA_\mathcal{B}^{-1}A_\mathcal{N}$
-- $z_0 = \mathbf{c}_\mathcal{B}^TA_\mathcal{B}^{-1}\mathbf{b}$ 
+- $\mathbf{r}^\text{T} = \mathbf{c}_\mathcal{N}^\text{T} - \mathbf{c}_\mathcal{B}^\text{T}A_\mathcal{B}^{-1}A_\mathcal{N}$
+- $z_0 = \mathbf{c}_\mathcal{B}^\text{T}A_\mathcal{B}^{-1}\mathbf{b}$ 
 
 ### 修改后的简单形法
 
@@ -795,7 +807,7 @@ $$
 
 下面是修改的简单形法的全部步骤：
 
-- **计价（Pricing）**：决定新的基 $\mathcal{B}$。此前使用简单形表时，这步只需要选择一个差额成本符号正确（求最大值时寻找正数，反之找负数）的基本变量即可。现在我们并不打算将整个差额成本向量 $\mathbf{r}^T$ 算出来，只需对 $\mathcal{N}$ 中每个变量 $x_j$，计算 $r_j = c_i - \mathbf{c}_\mathcal{B}^TA_\mathcal{B}^{-1}A_j$，只要其满足符号要求，就选择其为新的基本变量。这里我们使用 Bland 基准规则，因此 $j$ 将从 $\mathcal{N}$ 中最小的开始直到最大。$r_j$ 的计算细节也值得讨论。由于 $\mathbf{c}_\mathcal{B}^TA_\mathcal{B}^{-1}$ 和 $j$ 无关且可能多次重复计算，我们应该首先计算这个乘积。这个乘积在目标函数 $z_0$ 的公式中也出现了，我们记其为 $\mathbf{u}^T$。
+- **计价（Pricing）**：决定新的基 $\mathcal{B}$。此前使用简单形表时，这步只需要选择一个差额成本符号正确（求最大值时寻找正数，反之找负数）的基本变量即可。现在我们并不打算将整个差额成本向量 $\mathbf{r}^\text{T}$ 算出来，只需对 $\mathcal{N}$ 中每个变量 $x_j$，计算 $r_j = c_i - \mathbf{c}_\mathcal{B}^\text{T}A_\mathcal{B}^{-1}A_j$，只要其满足符号要求，就选择其为新的基本变量。这里我们使用 Bland 基准规则，因此 $j$ 将从 $\mathcal{N}$ 中最小的开始直到最大。$r_j$ 的计算细节也值得讨论。由于 $\mathbf{c}_\mathcal{B}^\text{T}A_\mathcal{B}^{-1}$ 和 $j$ 无关且可能多次重复计算，我们应该首先计算这个乘积。这个乘积在目标函数 $z_0$ 的公式中也出现了，我们记其为 $\mathbf{u}^\text{T}$。
 
 - 列生成：为了找到离开的变量，我们应该计算 $Q_j$。它可以通过公式 $Q_j = (A_\mathcal{B}^{-1}A_\mathcal{N})_j = A_\mathcal{B}^{-1}A_j$ 得到。
 
@@ -844,7 +856,7 @@ $$
 	-z & 1 & 1 & 1 & 2 & 0 & 0 & 0
 \end{array}\nonumber
 $$
-此时有 $\mathcal{B} = (s_1, s_2)$。易知 $A_\mathcal{B}^{-1} = \begin{bmatrix} 1 & 0 \\ 0 & 1 \end{bmatrix}$，$\mathbf{p} = \begin{bmatrix} 4 \\ 5 \end{bmatrix}$。依此我们可以得到 $\mathbf{u}^T = \mathbf{c}_\mathcal{B}^TA_\mathcal{B}^{-1} = \begin{bmatrix} 0 & 0 \end{bmatrix}$。简单形表的核心信息如下：
+此时有 $\mathcal{B} = (s_1, s_2)$。易知 $A_\mathcal{B}^{-1} = \begin{bmatrix} 1 & 0 \\ 0 & 1 \end{bmatrix}$，$\mathbf{p} = \begin{bmatrix} 4 \\ 5 \end{bmatrix}$。依此我们可以得到 $\mathbf{u}^\text{T} = \mathbf{c}_\mathcal{B}^\text{T}A_\mathcal{B}^{-1} = \begin{bmatrix} 0 & 0 \end{bmatrix}$。简单形表的核心信息如下：
 $$
 \begin{array}{ccc|c}
 	\mathcal{B} & A_\mathcal{B}^{-1} & x_1 & \mathbf{p} \\\hline
@@ -858,7 +870,7 @@ $$
 	s_2 & 0\quad 1 & 0 & 5
 \end{array}\nonumber
 $$
-我们在上面的变换中选择让 $x_3$ 进入基，$s_1$ 离开。随后我们得到 $\mathbf{u}^T = \mathbf{c}_\mathcal{B}^TA_\mathcal{B}^{-1} = \begin{bmatrix} 1 & 0 \end{bmatrix} \begin{bmatrix} 1/3 & 0 \\ 0 & 1 \end{bmatrix} = \begin{bmatrix} 1/3 & 0 \end{bmatrix}$。计算得到 $x_2$ 的差额成本为：$1 - \begin{bmatrix} 1/3 & 0 \end{bmatrix}\begin{bmatrix} -1 \\ 2 \end{bmatrix} = \frac{4}{3} > 0$。因此 $x_2$ 可以进入基。经过计算可以得到 $Q_{x_2} = A_\mathcal{B}^{-1}A_{x_2} = \begin{bmatrix} 1/3 & 0 \\ 0 & 1 \end{bmatrix}\begin{bmatrix} -1 \\ 2 \end{bmatrix} = \begin{bmatrix} -1/3 \\ 2 \end{bmatrix}$。现在简单形表为：
+我们在上面的变换中选择让 $x_3$ 进入基，$s_1$ 离开。随后我们得到 $\mathbf{u}^\text{T} = \mathbf{c}_\mathcal{B}^\text{T}A_\mathcal{B}^{-1} = \begin{bmatrix} 1 & 0 \end{bmatrix} \begin{bmatrix} 1/3 & 0 \\ 0 & 1 \end{bmatrix} = \begin{bmatrix} 1/3 & 0 \end{bmatrix}$。计算得到 $x_2$ 的差额成本为：$1 - \begin{bmatrix} 1/3 & 0 \end{bmatrix}\begin{bmatrix} -1 \\ 2 \end{bmatrix} = \frac{4}{3} > 0$。因此 $x_2$ 可以进入基。经过计算可以得到 $Q_{x_2} = A_\mathcal{B}^{-1}A_{x_2} = \begin{bmatrix} 1/3 & 0 \\ 0 & 1 \end{bmatrix}\begin{bmatrix} -1 \\ 2 \end{bmatrix} = \begin{bmatrix} -1/3 \\ 2 \end{bmatrix}$。现在简单形表为：
 $$
 \begin{array}{ccc|c}
 	\mathcal{B} & A_\mathcal{B}^{-1} & x_2 & \mathbf{p} \\\hline
@@ -872,7 +884,7 @@ $$
 	x_2 & 0\quad 1/2 & 1 & 5/2
 \end{array}
 $$
-在此计算 $\mathbf{u}^T = \mathbf{c}_\mathcal{B}^TA_\mathcal{B}^{-1} = \begin{bmatrix} 1 & 1 \end{bmatrix}\begin{bmatrix} 1/3 & 1/6 \\ 0 & 1/2 \end{bmatrix} = \begin{bmatrix} 1/3 & 2/3 \end{bmatrix}$。接下来通过 $r_j = c_j - \mathbf{u}^TA_j$ 来寻找合适的新的基本变量。$x_3$ 的差额成本为：$1 - \begin{bmatrix} 1/3 & 2/3 \end{bmatrix}\begin{bmatrix} 4 \\ 0 \end{bmatrix} = -\frac{1}{3} < 0$，因此并不合适。$x_4$ 的差额成本为：$2 - \begin{bmatrix} 1/3 & 2/3 \end{bmatrix}\begin{bmatrix} -1 \\ 1 \end{bmatrix} = \frac{5}{3} > 0$，因此 $x_4$ 可以进入基。计算得到 $Q_{x_4} = A_\mathcal{B}^{-1}A_{x_4} = \begin{bmatrix} 1/3 & 1/6 \\ 0 & 1/2 \end{bmatrix}\begin{bmatrix} -1 \\ 1 \end{bmatrix} = \begin{bmatrix} -1/6 \\ 1/2 \end{bmatrix}$。简单形表如下：
+在此计算 $\mathbf{u}^\text{T} = \mathbf{c}_\mathcal{B}^\text{T}A_\mathcal{B}^{-1} = \begin{bmatrix} 1 & 1 \end{bmatrix}\begin{bmatrix} 1/3 & 1/6 \\ 0 & 1/2 \end{bmatrix} = \begin{bmatrix} 1/3 & 2/3 \end{bmatrix}$。接下来通过 $r_j = c_j - \mathbf{u}^\text{T}A_j$ 来寻找合适的新的基本变量。$x_3$ 的差额成本为：$1 - \begin{bmatrix} 1/3 & 2/3 \end{bmatrix}\begin{bmatrix} 4 \\ 0 \end{bmatrix} = -\frac{1}{3} < 0$，因此并不合适。$x_4$ 的差额成本为：$2 - \begin{bmatrix} 1/3 & 2/3 \end{bmatrix}\begin{bmatrix} -1 \\ 1 \end{bmatrix} = \frac{5}{3} > 0$，因此 $x_4$ 可以进入基。计算得到 $Q_{x_4} = A_\mathcal{B}^{-1}A_{x_4} = \begin{bmatrix} 1/3 & 1/6 \\ 0 & 1/2 \end{bmatrix}\begin{bmatrix} -1 \\ 1 \end{bmatrix} = \begin{bmatrix} -1/6 \\ 1/2 \end{bmatrix}$。简单形表如下：
 $$
 \begin{array}{ccc|c}
 	\mathcal{B} & A_\mathcal{B}^{-1} & x_2 & \mathbf{p} \\\hline
@@ -886,10 +898,10 @@ $$
 	x_4 & 0\quad 1 & 1 & 5
 \end{array}\nonumber
 $$
-$\mathbf{u}^T = \mathbf{c}_\mathcal{B}^TA_\mathcal{B}^{-1} = \begin{bmatrix} 1 & 2 \end{bmatrix} \begin{bmatrix} 1/3 & 1/3 \\ 0 & 1 \end{bmatrix} = \begin{bmatrix} 1/3 & 7/3 \end{bmatrix}$。似乎我们已经走完了所有变量，检查一下差额成本：
+$\mathbf{u}^\text{T} = \mathbf{c}_\mathcal{B}^\text{T}A_\mathcal{B}^{-1} = \begin{bmatrix} 1 & 2 \end{bmatrix} \begin{bmatrix} 1/3 & 1/3 \\ 0 & 1 \end{bmatrix} = \begin{bmatrix} 1/3 & 7/3 \end{bmatrix}$。似乎我们已经走完了所有变量，检查一下差额成本：
 $$
 \begin{align*}
-\mathbf{r}^T &= \mathbf{c}_\mathcal{N}^T - \mathbf{u}^TA_\mathcal{N} \\
+\mathbf{r}^\text{T} &= \mathbf{c}_\mathcal{N}^\text{T} - \mathbf{u}^\text{T}A_\mathcal{N} \\
 &= \begin{bmatrix} 1 & 1 & 0 & 0 \end{bmatrix} - 
 \begin{bmatrix} 1/3 & 7/3 \end{bmatrix}
 \begin{bmatrix} -1 & 4 & 1 & 0 \\ 2 & 0 & 0 & 1 \end{bmatrix} \\
@@ -908,7 +920,7 @@ $$
 & 0 \le x_2 \le 1 \\
 &... \\
 & 0 \le x_d \le 1
-\end{align*}
+\end{align*} \tag{9}
 $$
 最优解显然是 $(0, ..., 1)$，不过根据 Bland 基准规则，我们需要遍历所有可能后才能达到这个最优解。我们将 $d=3$ 的情形用下图展示出来：
 
@@ -932,7 +944,7 @@ $$
 
 <img src="graphs/lp8.png" alt="lp8" style="zoom:40%;" />
 
-可以看到我们的目标函数经历了 $0.001 \to 0.009 \to 0.091 \to ... \to 0.999$ 这样逐渐优化的变化。
+可以看到我们的目标函数经历了 $0.001 \to 0.009 \to 0.091 \to ... \to 0.999$ 这样逐渐优化的变化。不过，走的还是可怕轨迹。
 
 #### Klee-Monty 正方体
 
@@ -1002,68 +1014,88 @@ $$
 现在让我们考虑通用的情况，一个如下的线性优化问题（称为 **原始线性优化问题（Primal Linear Program）**）：
 $$
 \begin{align*}
-\underset{\mathbf{x} \in \R^n}{\text{maximize}}\quad & \mathbf{c}^T\mathbf{x} \\
+(\mathbf{P}) \quad
+\begin{cases}
+\underset{\mathbf{x} \in \R^n}{\text{maximize}}\quad & \mathbf{c}^\text{T}\mathbf{x} \\
 \text{subject to}\quad & A\mathbf{x} \le \mathbf{b} \\
 & \mathbf{x} \ge \mathbf{0}
-\end{align*}
+\end{cases}
+\end{align*} \tag{10} \label{primal-program}
 $$
 它存在一个 **对偶线性优化问题（Dual Linear Program）** 如下：
 $$
 \begin{align*}
-\underset{\mathbf{x} \in \R^m}{\text{minimize}} \quad & \mathbf{u}^T\mathbf{b} \\
-\text{subject to}\quad & \mathbf{u}^TA \ge \mathbf{c}^T \\
+(\mathbf{D}) \quad
+\begin{cases}
+\underset{\mathbf{x} \in \R^m}{\text{minimize}} \quad & \mathbf{u}^\text{T}\mathbf{b} \\
+\text{subject to}\quad & \mathbf{u}^\text{T}A \ge \mathbf{c}^\text{T} \\
 & \mathbf{u} \ge \mathbf{0}
-\end{align*}
+\end{cases}
+\end{align*} \tag{11}
 $$
 该问题和下面的等价，我们更通常采取下面的形式：
 $$
 \begin{align*}
-\underset{\mathbf{x} \in \R^m}{\text{minimize}}\quad & \mathbf{b}^T\mathbf{u} \\
-\text{subject to} \quad & A^T\mathbf{u} \ge \mathbf{c} \\
+(\mathbf{D}) \quad
+\begin{cases}
+\underset{\mathbf{x} \in \R^m}{\text{minimize}}\quad & \mathbf{b}^\text{T}\mathbf{u} \\
+\text{subject to} \quad & A^\text{T}\mathbf{u} \ge \mathbf{c} \\
 & \mathbf{u} \ge 0
-\end{align*}
+\end{cases}
+\end{align*} \tag{12} \label{dual-program}
 $$
 下面给出两个定理：
 
-> **线性优化问题的弱对偶性（Weak Duality of Linear Program)**：对于原始问题的任何可行解 $\mathbf{x}$ 和该原始问题对应的对偶问题的任何可行解 $\mathbf{u}$ 都有 $\mathbf{c}^T\mathbf{x} \le \mathbf{b}^T\mathbf{u}$。特别地，对偶问题最优解下的目标函数是原始问题最优解下的目标函数的上界。
+> **线性优化问题的弱对偶性（Weak Duality of Linear Program)**：对于原始问题的任何可行解 $\mathbf{x}$ 和该原始问题对应的对偶问题的任何可行解 $\mathbf{u}$ 都有 $\mathbf{c}^\text{T}\mathbf{x} \le \mathbf{b}^\text{T}\mathbf{u}$。特别地，对偶问题最优解下的目标值是原始问题最优解下的目标值的上界。
 >
-> **线性优化问题的强对偶性（Strong Duality of Linear Program）**：如果原始问题和对偶问题都有最优解，那么它们最优解时的目标函数值是一样的。
+> **线性优化问题的强对偶性（Strong Duality of Linear Program）**：如果原始问题和对偶问题都有最优解，那么它们最优解时的目标值是一样的。
 
 我们暂时不对强对偶性进行证明。但通过这个结论，我们知道寻找线性优化问题的上界是一个有意义的操作，这个上界的最小值就是原始问题的目标函数最大值。不过，原始问题中的一些细节可能和我们这里设置的不太一样：
 
-- 比如此前的例子中，我们不再要求 $x_2 \ge 0$。
-- 比如此前的例子中，我们将第一个约束的两侧交换（即将符号取反），得到 $2x_1 + x_2 + 4x_3 \ge 3$。此时为了保持符号一致，我们应该为两侧都乘上 $-1$。
+- 比如此前的例子中，我们不再要求 $x_2 \ge 0$。此时我们必须令 $x_2$ 的系数，即 $u_1 + u_2$ 等于 $1$，否则任何其它的系数都无法保证是 $u_1 + u_2$ 的上界。比如 $u_1 + 2u_2 + u_3$ 并非 $u_1 + u_2$ 的上界，因为 $u_2$ 可以是任意小的数。
+- 比如此前的例子中，我们将第一个约束的两侧交换（即将符号取反），得到 $2x_1 + x_2 + 4x_3 \ge 3$。此时为了保持符号一致，我们应该为两侧都乘上 $-1$。此时对应的对偶变量应该是非正数。
 - 比如我们需要 *最小化* 而不是最大化目标函数。此时所有过程都反过来了。我们需要找到目标函数的最小下界，因此在对偶问题中我们应该尝试得到最大值。
 
-下文中，除了矩阵 $A$ 的列 $A_1, ..., A_n$，我们还会用到它的行 $\mathbf{a}_1^T, ..., \mathbf{a}_m^T$。
+不难理解，所谓的原始问题和对偶问题是高度对称的。原始问题本身就是对偶问题的对偶问题。其中一者的变量对应着另一者的约束，其中的最大值问题的目标值对应着（另外那个）最小值问题的目标值。因此，我们没必要细究原始问题和对偶问题哪一个是最大值问题（及哪一个是最小值问题）。下表是一个简单的对应：
+
+|  最大值问题  |  最小值问题  |
+| :----------: | :----------: |
+|  $\le$ 约束  | 变量 $\ge 0$ |
+|   $=$ 约束   |  变量无限制  |
+|  $\ge$ 约束  | 变量 $\le 0$ |
+| 变量 $\ge 0$ |  $\ge$ 约束  |
+|  变量无限制  |   $=$ 约束   |
+| 变量 $\le 0$ |  $\le$ 约束  |
+
+下文中，除了矩阵 $A$ 的列 $A_1, ..., A_n$，我们还会用到它的行 $\mathbf{a}_1^\text{T}, ..., \mathbf{a}_m^\text{T}$。
 
 ### 互补松弛性
 
-现在让我们进一步探索对偶性相关的一些性质。根据线性代数中的一些运算性质，我们在原问题中通过 $A \mathbf{x} \le \mathbf{b}$ 及 $\mathbf{u}^T \ge \mathbf{0}^T$ 可以得到 $\mathbf{u}^TA\mathbf{x} \le \mathbf{u}^T\mathbf{b}$；然后在对偶问题中通过 $\mathbf{u}^TA \ge \mathbf{c}^T$ 和 $\mathbf{x} \ge 0$ 得到 $\mathbf{u}^TA\mathbf{x} \ge \mathbf{c}^T\mathbf{x}$。根据强对偶性，我们有：
+现在让我们进一步探索对偶性相关的一些性质。根据线性代数中的一些运算性质，我们在原问题中通过 $A \mathbf{x} \le \mathbf{b}$ 及 $\mathbf{u}^\text{T} \ge \mathbf{0}^\text{T}$ 可以得到 $\mathbf{u}^\text{T}A\mathbf{x} \le \mathbf{u}^\text{T}\mathbf{b}$；然后在对偶问题中通过 $\mathbf{u}^\text{T}A \ge \mathbf{c}^\text{T}$ 和 $\mathbf{x} \ge 0$ 得到 $\mathbf{u}^\text{T}A\mathbf{x} \ge \mathbf{c}^\text{T}\mathbf{x}$。根据强对偶性，我们有：
 $$
-\mathbf{u}^T\mathbf{b} = \mathbf{u}^TA\mathbf{x} = \mathbf{c}^T \mathbf{x}
+\mathbf{u}^\text{T}\mathbf{b} = \mathbf{u}^\text{T}A\mathbf{x} = \mathbf{c}^\text{T} \mathbf{x} \tag{13}
 $$
 从这个连等式我们可以得到：
 $$
 \begin{align*}
-	\sum_{i=1}^n(\mathbf{u}^TA_i - c_i)x_i = 0 &&
-	\sum_{i=1}^mu_i(b_i - \mathbf{a}_i^T\mathbf{x}) = 0
-\end{align*}
+	\sum_{i=1}^n(\mathbf{u}^\text{T}A_i - c_i)x_i = 0 &&
+	\sum_{i=1}^mu_i(b_i - \mathbf{a}_i^\text{T}\mathbf{x}) = 0
+\end{align*} \tag{14} \label{complementary-slackness}
 $$
-注意到我们在原始问题和对偶问题中的约束条件 $\mathbf{a}_i^T\mathbf{x} \le b_i$ 和 $\mathbf{u}^TA_i - c_i \ge 0$，因此上面的求和公式中，要么 $u_i = 0$，要么 $\mathbf{a}_i^T = b_i$；且要么 $\mathbf{u}^TA_i = c_i$，要么 $x_i = 0$。这就让我们得到了下面的定理：
+注意到我们在原始问题和对偶问题中的约束条件 $\mathbf{a}_i^\text{T}\mathbf{x} \le b_i$ 和 $\mathbf{u}^\text{T}A_i - c_i \ge 0$，因此上面的求和公式中，要么 $u_i = 0$，要么 $\mathbf{a}_i^\text{T} = b_i$；且要么 $\mathbf{u}^\text{T}A_i = c_i$，要么 $x_i = 0$。这就让我们得到了下面的定理：
 
 > **互补松弛性（Complementary Slackness）**：假设 $\mathbf{x}$ 是原始问题的最优解，而 $\mathbf{u}$ 是对偶问题最优解。此时：
 >
 > - 对于任意 $i = 1, ..., m$，或者原始问题中第 $i$ 个约束条件中的等号成立，或者 $u_i = 0$。
 > - 对于任意 $i = 1, ..., n$，或者对偶问题中第 $i$ 个约束条件中的的等号成立，或者 $x_i = 0$。
 
-上面定理得名于这样的术语：一个 $\le$ 或 $\ge$ 约束在等号成立时被称为 **紧致的（Tight）**，否则就称为 **松弛的（Slack）**。由于对于每一对 $u_i$ 和 $\mathbf{a}_i^T - b_i$ 或 $\mathbf{u}^TA_i - c_i$ 和 $c_i$ 中必定至少有一个是松弛的，我们将其称为”互补” 松弛性。虽然这个结论只是通过上一节给出的两种情形下推出的，其它情况下可以得到相同的结论。下面有一个更强的结论：
+上面定理得名于这样的术语：一个 $\le$ 或 $\ge$ 约束在等号成立时被称为 **紧致的（Tight）**，否则就称为 **松弛的（Slack）**。由于对于每一对 $u_i$ 和 $\mathbf{a}_i^\text{T} - b_i$ 或 $\mathbf{u}^\text{T}A_i - c_i$ 和 $c_i$ 中必定至少有一个是松弛的，我们将其称为”互补” 松弛性。虽然这个结论只是通过上一节给出的两种情形下推出的，其它情况下可以得到相同的结论。下面有一个更强的结论：
 
 > - 设 $\mathbf{x}$ 是原始问题的一个可行解，$\mathbf{u}$ 是对偶问题的一个可行解。如果 $\mathbf{x}$ 和 $\mathbf{u}$ 均满足互补松弛性，则它们都是最优解。
 
-该结论是显然成立的，因为互补松弛性暗示了可行解与每个约束的乘积都是 $0$。进行逆推后很容易得到 (17) 式，这也就证明了可行解最优。
+该结论是显然成立的，因为互补松弛性暗示了可行解与每个约束的乘积都是 $0$。进行逆推后很容易得到 (13) 式，这也就证明了可行解最优。
 
-互补松弛性启示我们的是，$u_i$ 本身表示了原始问题中第 $i$ 个约束条件对最优解的意义大小。当 $\mathbf{a}_i^T - b_i \le 0$ （约束是松弛的）时，这个约束条件是没有意义的，因此 $u_i = 0$。反过来，当对偶问题中的约束是松弛的时候，它对应的 $c_i = 0$。
+互补松弛性启示我们的是，$u_i$ 本身表示了原始问题中第 $i$ 个约束条件对最优解的意义大小。当 $\mathbf{a}_i^\text{T} - b_i \le 0$ （约束是松弛的）时，这个约束条件是没有意义的，因此 $u_i = 0$。反过来，当对偶问题中的约束是松弛的时候，它对应的 $x_i = 0$。
 
 下面举一个例子进行说明：
 $$
@@ -1141,23 +1173,23 @@ $$
 
 我们之前已经多次求结果这样的问题，因此可以立刻知道它的（原始）最优解是 $(2, 5)$。不过其对应的对偶最优解是什么呢？首先请回忆[修改后的简单形法](# 修改后的简单形法)里我们给出的差额成本公式：
 $$
-r_j = c_j - \mathbf{u}^TA_j \nonumber
+r_j = c_j - \mathbf{u}^\text{T}A_j
 $$
-此处的 $\mathbf{u}^T = \mathbf{c}_\mathcal{B}^TA_\mathcal{B}^{-1}$。给它起名为 $\mathbf{u}$ 并不是巧合，实际上它最终就是我们想要的对偶最优解。
+此处的 $\mathbf{u}^\text{T} = \mathbf{c}_\mathcal{B}^\text{T}A_\mathcal{B}^{-1}$。给它起名为 $\mathbf{u}$ 并不是巧合，实际上它最终就是我们想要的对偶最优解。
 
-> **引理**：如果 $\mathcal{B}$ 是原始问题最优解的基，则 $\mathbf{u}^T = \mathbf{c}_\mathcal{B}^TA_\mathcal{B}^{-1}$ 是对偶问题的最优解。
+> **引理**：如果 $\mathcal{B}$ 是原始问题最优解的基，则 $\mathbf{u}^\text{T} = \mathbf{c}_\mathcal{B}^\text{T}A_\mathcal{B}^{-1}$ 是对偶问题的最优解。
 
-> **证**：为了证明它是最优解，我们首先应该证明其是一个对偶可行解。我们已经知道在得到原始最优解时有 $r_j \le 0$，因而 $\mathbf{u}^TA_j \ge c_j$，这恰好是对偶约束，因此 $\mathbf{u}$ 确实是对偶可行的。然后，由于：
+> **证**：为了证明它是最优解，我们首先应该证明其是一个对偶可行解。我们已经知道在得到原始最优解时有 $r_j \le 0$，因而 $\mathbf{u}^\text{T}A_j \ge c_j$，这恰好是对偶约束，因此 $\mathbf{u}$ 确实是对偶可行的。然后，由于：
 > $$
-> \mathbf{u}^T\mathbf{b} = \mathbf{c}_\mathcal{B}^TA_\mathcal{B}^{-1}\mathbf{b} = \mathbf{c}_\mathcal{B}^T\mathbf{p} = \mathbf{c}^T\mathbf{x} = z_0 \nonumber
+> \mathbf{u}^\text{T}\mathbf{b} = \mathbf{c}_\mathcal{B}^\text{T}A_\mathcal{B}^{-1}\mathbf{b} = \mathbf{c}_\mathcal{B}^\text{T}\mathbf{p} = \mathbf{c}^\text{T}\mathbf{x} = z_0 \nonumber
 > $$
 > 当对偶问题的目标函数等于原始问题的目标函数时，它就是最优解。
 
-下面，尝试观察引入松弛变量的情形。此时有 $\mathbf{r}_\mathcal{S}^T = \mathbf{c}_\mathcal{S}^T - \mathbf{u}^TA_\mathcal{S}^T$，由于 $\mathcal{c}_\mathcal{S}^T = \mathbf{0}$ 且 $A_\mathcal{S}^T = I$，我们有：
+下面，尝试观察引入松弛变量的情形。此时有 $\mathbf{r}_\mathcal{S}^\text{T} = \mathbf{c}_\mathcal{S}^\text{T} - \mathbf{u}^\text{T}A_\mathcal{S}^\text{T}$，由于 $\mathcal{c}_\mathcal{S}^\text{T} = \mathbf{0}$ 且 $A_\mathcal{S}^\text{T} = I$，我们有：
 $$
-\mathbf{u}^T = -\mathbf{r}_\mathcal{S}^T
+\mathbf{u}^\text{T} = -\mathbf{r}_\mathcal{S}^\text{T} \tag{15}
 $$
-这倒是一个意外收获。简单来说，当为线性优化问题引入松弛变量时，其差额成本所在行就是对偶问题的解。不过需要注意原始问题是最小化问题的情形，此时对于 $\sum a_ix_i \ge b$ 应该化为 $-\sum a_ix_i + s = -b$（使所有约束乘上 $-1$）。这样的变化会导致对偶问题的解是原来的负数，因此有 $\mathbf{u}^T = \mathbf{r}_\mathcal{S}^T$。
+这倒是一个意外收获。简单来说，当为线性优化问题引入松弛变量时，其差额成本所在行就是对偶问题的解的相反数。不过需要注意原始问题是最小化问题的情形，此时对于 $\sum a_ix_i \ge b$ 应该化为 $-\sum a_ix_i + s = -b$（使所有约束乘上 $-1$）。这样的变化会导致对偶问题的解是原来的负数，因此有 $\mathbf{u}^\text{T} = \mathbf{r}_\mathcal{S}^\text{T}$。
 
 现在我们有了一个计算对偶最优解的公式，并发现它和原始最优解时的目标函数是一样的。这就是强对偶性的证明（这并不是一个严格的证明）。通过对偶性，我们对于任意线性优化问题，都有下面的结论：
 
@@ -1174,30 +1206,38 @@ $$
 
 特别注意，前面我们给出的计算对偶最优解的公式，是建立在 $r_j \le 0$ 的基础上的（否则这个解甚至不是对偶可行的）。因此更宽泛地说，一个简单形表是 **对偶可行的（Dual Feasible）** 当且仅当其差额成本均为非正数（这是原始问题求最大值时，否则要求非负数）。但从这个判断标准来看，无论 $\mathbf{b}$ 的值是什么都不会影响对偶问题解的可行性（尽管当其中存在负数时，这就不对应原始可行解了），比如下面这个例子：
 $$
-\begin{align*}
+\begin{aligned}
 	\underset{x, y \in \R}{\text{minimize}} \quad & x + y \\
 	\text{subject to} \quad & 2x + y \ge 6 \\
 	& 3x + y \ge 7 \\
 	& x + 2y \ge 9 \\
 	& x, y \ge 0
-\end{align*}
+\end{aligned} 
+\qquad\leadsto\qquad
+\begin{aligned}
+	\underset{x, y, s_1, s_, s_3 \in \mathbb{R}}{\text{minimize}} \quad & x + y \\
+	\text{subject to} \quad & -2x - y + s_1 = -6 \\
+	& -3x - y + s_ = -7 \\
+	& -x - 2y + s_3 = -9 \\
+	& x, y, s_1, s_2, s_3 \ge 0
+\end{aligned}
 $$
 写成 $\mathcal{B} = \{s_1, s_2, s_3 \}$ 的简单形表：
 $$
 \begin{array}{cccccc|c}
 	 & x & y & s_1 & s_2 & s_3 & \\\hline
-	s_1 & 2 & 1 & 1 & 0 & 0 & 6 \\
-	s_2 & 3 & 1 & 0 & 1 & 0 & 7 \\
-	s_3 & 1 & 2 & 0 & 0 & 1 & 9 \\\hline
+	s_1 & -2 & -1 & 1 & 0 & 0 & -6 \\
+	s_2 & -3 & -1 & 0 & 1 & 0 & -7 \\
+	s_3 & -1 & -2 & 0 & 0 & 1 & -9 \\\hline
 	-z & 1 & 1 & 0 & 0 & 0 & 0
 \end{array}
 \nonumber
 $$
-由于 $s_1, s_2, s_3$ 都是负数，这不是一个原始可行解，然而 $(0, 0, 0)$ 确实是对偶可行解。这给我们一个启示：很多时候较难找到一个原始可行解，但可以轻松地找到一个对偶可行解。此时我们可以采用两阶段的简单形法，逐步得到最优解。
+由于 $s_1, s_2, s_3$ 都是负数，这不是一个原始可行解，然而 $(0, 0, 0)$ 确实是对偶可行解。这给我们一个启示：很多时候较难找到一个原始可行解，但可以轻松地找到一个对偶可行解（比如通过引入松弛变量）。此时我们可以采用两阶段的简单形法，逐步得到最优解。
 
 #### 对偶简单形法
 
-我们也可以干脆直接通过优化对偶问题的可行解来得到最优解，这被称为 **对偶简单形法（Dual Simplex Method）**。比如在上一节的例子中，我们可以通过行变换来将 $\mathbf{b}$ 的值全部变为整数，以得到原始可行解。就和简单形法中，从 $-z$ 行挑出一个非负数（最大值问题）类似，我们应该从 $\mathbf{b}$ 中挑出一个非负数，然后从它所在行中挑选一个负数，使得 $r_i/a_{ij}$ 最小。这样我们就可以让 $i$ 离开基，并引入 $j$ 了。这里需要让 $r_i/a_{ij}$ 最小的原因和简单形法中让 $b_i/a_{ij}$ 最小的原因类似，如果我们选择比值更大的，就无法让得到的解对偶可行（$-z$ 行会变成负数）。上一节中的例子可以由此化为下表：
+我们也可以干脆直接通过优化对偶问题的可行解来得到最优解，这被称为 **对偶简单形法（Dual Simplex Method）**。比如在上一节的例子中，我们可以通过行变换来将 $\mathbf{p}$ 的值全部变为正数，以得到原始可行解。就和简单形法中，从 $-z$ 行挑出一个非负数（最大值问题）类似，我们应该从 $\mathbf{p}$ 中挑出一个非正数，然后从它所在行中挑选一个负数，使得 $r_i/a_{ij}$ 最小。这样我们就可以让 $i$ 离开基，并引入 $j$ 了。这里需要让 $r_i/a_{ij}$ 最小的原因和简单形法中让 $r_i/a_{ij}$ 最小的原因类似，如果我们选择比值更大的，就无法让得到的解对偶可行（$-z$ 行会变成负数）。上一节中的例子可以由此化为下表：
 $$
 \begin{array}{cccccc|c}
 	 & x & y & s_1 & s_2 & s_3 & \\\hline
@@ -1391,9 +1431,9 @@ $$
 A_? & 1/2 & -1/2
 \end{array} \nonumber
 $$
-此时从统计上来看，Alice 能保证无论 Bob 做怎样的选择，都最多亏损 $1/2$；Bob 只需选择 $B_2$ 就能保证赚 $1/2$。我们将 Alice 用随机方式从 $a$ 种策略中选择一种的方式称为 **混合策略（Mixed Strategy）**。假设每种策略的概率是 $x_1,... x_a$，其满足 $x_1 + ... + x_a = 1$，且盈亏表可以用 $A$ 表示，则采用混合策略后的期望盈亏表是 $\mathbf{x}^T A$。类似地，如果 Bob 随机从 $b$ 种策略中选择一种方式的概率为 $y_1, ..., y_b$，则期望盈亏表是 $A\mathbf{y}$。当两者都采用混合策略时，最终得到的期望盈亏表则是：
+此时从统计上来看，Alice 能保证无论 Bob 做怎样的选择，都最多亏损 $1/2$；Bob 只需选择 $B_2$ 就能保证赚 $1/2$。我们将 Alice 用随机方式从 $a$ 种策略中选择一种的方式称为 **混合策略（Mixed Strategy）**。假设每种策略的概率是 $x_1,... x_a$，其满足 $x_1 + ... + x_a = 1$，且盈亏表可以用 $A$ 表示，则采用混合策略后的期望盈亏表是 $\mathbf{x}^\text{T} A$。类似地，如果 Bob 随机从 $b$ 种策略中选择一种方式的概率为 $y_1, ..., y_b$，则期望盈亏表是 $A\mathbf{y}$。当两者都采用混合策略时，最终得到的期望盈亏表则是：
 $$
-A' = \mathbf{x}^TA\mathbf{y}
+A' = \mathbf{x}^\text{T}A\mathbf{y}
 $$
 
 #### 最优最劣策略
@@ -1404,26 +1444,26 @@ Alice 当然希望能够选择 $\mathbf{x}$ 的最优解，但是由于她不清
 
 我们这里直接给出结论：当 Alice 采用确定的混合策略 $\mathbf{x}$ 时，存在让 Bob 最受益的唯一策略。证明如下：
 
-> **证**：当 Alice 采用混合策略 $\mathbf{x}$ 时，她的盈亏表就变为 $\mathbf{x}^TA$。
+> **证**：当 Alice 采用混合策略 $\mathbf{x}$ 时，她的盈亏表就变为 $\mathbf{x}^\text{T}A$。
 >
-> - 如果 Bob 采用唯一的策略，比如每次都会选择 $B_i$，其中 $i \in \{1, ..., b\}$，Alice 的盈亏将是 $(\mathbf{x}^TA)_i$。
+> - 如果 Bob 采用唯一的策略，比如每次都会选择 $B_i$，其中 $i \in \{1, ..., b\}$，Alice 的盈亏将是 $(\mathbf{x}^\text{T}A)_i$。
 >
-> - 如果 Bob 采用混合策略，此时盈亏表变为 $\mathbf{x}^TA\mathbf{y}$，其相当于：
+> - 如果 Bob 采用混合策略，此时盈亏表变为 $\mathbf{x}^\text{T}A\mathbf{y}$，其相当于：
 >   $$
->   (\mathbf{x}^TA)_1y_1 + \dots + (\mathbf{x}^TA)_by_b\nonumber
+>   (\mathbf{x}^\text{T}A)_1y_1 + \dots + (\mathbf{x}^\text{T}A)_by_b\nonumber
 >   $$
->   此时一定存在一个最小值 $(\mathbf{x}^TA)_i$ 作为 Alice 的最劣情形；如果进行加权，就等价于在一些情况下选择对 Bob 的最优解，而一些情况下选择其它的解。显然这比不上唯一策略。
+>   此时一定存在一个最小值 $(\mathbf{x}^\text{T}A)_i$ 作为 Alice 的最劣情形；如果进行加权，就等价于在一些情况下选择对 Bob 的最优解，而一些情况下选择其它的解。显然这比不上唯一策略。
 
 在这个引理下，我们可以找出 Alice 进行时的最劣情形，即：
 $$
-\min{\{(\mathbf{x}^TA)_1,...,(\mathbf{x}^TA)_b \}} \nonumber
+\min{\{(\mathbf{x}^\text{T}A)_1,...,(\mathbf{x}^\text{T}A)_b \}} \nonumber
 $$
-为了让其适应线性优化问题，我们设 $u = \min\{(\mathbf{x}^TA)_1,...,(\mathbf{x}^TA)_b\}$，则下面的线性优化问题就是 Alice 采用最优最劣策略时寻找的最优情形（其中设 $\mathbf{1}$ 为每一项都是 $1$ 的 $b$ 维向量）：
+为了让其适应线性优化问题，我们设 $u = \min\{(\mathbf{x}^\text{T}A)_1,...,(\mathbf{x}^\text{T}A)_b\}$，则下面的线性优化问题就是 Alice 采用最优最劣策略时寻找的最优情形（其中设 $\mathbf{1}$ 为每一项都是 $1$ 的 $b$ 维向量）：
 $$
 \begin{align*}
 \underset{\mathbf{x} \in \R^a, u \in \R}{\text{maximize}} \quad & u \\
-\text{subject to} \quad & u\mathbf{1}^T - \mathbf{x}^TA \le \mathbf{0}^T \\
-& \mathbf{x}^T\mathbf{1} = 1 \\
+\text{subject to} \quad & u\mathbf{1}^\text{T} - \mathbf{x}^\text{T}A \le \mathbf{0}^\text{T} \\
+& \mathbf{x}^\text{T}\mathbf{1} = 1 \\
 & \mathbf{x} \ge \mathbf{0}
 \end{align*}
 $$
@@ -1432,7 +1472,7 @@ $$
 \begin{align*}
 \underset{\mathbf{y} \in \R^b, v \in \R}{\text{minimize}} \quad & v \\
 \text{subject to} \quad & \mathbf{1}v - A\mathbf{y} \ge \mathbf{0} \\
-& \mathbf{1}^T\mathbf{y} = 1 \\
+& \mathbf{1}^\text{T}\mathbf{y} = 1 \\
 & \mathbf{y} \ge \mathbf{0}
 \end{align*}
 $$
@@ -1464,11 +1504,11 @@ $$
 
 事实上，可行性问题和优化问题的难度是相当的。根据强对偶性，我们可以将任意优化问题：
 $$
-\max\{\mathbf{c}^T\mathbf{x} \mid A\mathbf{x} \le \mathbf{b}, \mathbf{x} \ge\mathbf{0}\} \nonumber
+\max\{\mathbf{c}^\text{T}\mathbf{x} \mid A\mathbf{x} \le \mathbf{b}, \mathbf{x} \ge\mathbf{0}\} \nonumber
 $$
 转化为等价的可行性问题：
 $$
-\{(\mathbf{x}, \mathbf{u}) \in \R^{n+m}\mid \mathbf{c}^T\mathbf{x} = \mathbf{u}^T\mathbf{b}, A\mathbf{x} \le \mathbf{b}, \mathbf{u}^TA \ge \mathbf{c}, \mathbf{x} \ge \mathbf{0}, \mathbf{u} \ge \mathbf{0}\} \nonumber
+\{(\mathbf{x}, \mathbf{u}) \in \R^{n+m}\mid \mathbf{c}^\text{T}\mathbf{x} = \mathbf{u}^\text{T}\mathbf{b}, A\mathbf{x} \le \mathbf{b}, \mathbf{u}^\text{T}A \ge \mathbf{c}, \mathbf{x} \ge \mathbf{0}, \mathbf{u} \ge \mathbf{0}\} \nonumber
 $$
 因此，当我们找到下面这个问题的解时，也就自然地得到了优化问题的解。
 
@@ -1498,7 +1538,7 @@ $$
 
 
 
-## 图论
+## 图论问题
 
 本章中让我们讨论图中的线性优化问题。
 
@@ -1604,7 +1644,7 @@ $$
 > - 当 $k = 1$ 时，这个矩阵或者是 $[0]$ 或者是 $[1]$，因此它显然满足要求。
 > - 如果 $k \ge 2$ 且其中有一列全部是 $0$，则它的行列式是 $0$。
 > - 如果 $k \ge 2$ 且其中有一列只有一个 $1$，则可以将其转化为 $(k - 1)\times(k - 1)$ 的行列式，根据归纳假设，它的行列式一定是 $0, \pm 1$ 中的一个。
-> - 如果 $k \ge 2$ 且其中有一列中有两个 $1$。记这个子矩阵为 $B$。将 $\mathbf{u} \in \R^k$ 定义为 $B$ 中第 $i$ 行是否对应 $X$ 中的一个顶点（是则 $u_i = 1$，否则 $u_i = -1$）。这样，$\mathbf{u}^TB$ 就给出了 $u_i + u_j$ 组成的向量，其中 $(i, j)$ 是 $B$ 中出现的列。由于 $(i, j)$ 只有两个端点 $i \in X$ 和 $j \in Y$，有 $u_i + u_j = 1 + (-1) = 0$，故 $\mathbf{u}^TB = \mathbf{0}^T$。这意味着 $B$ 的行之间线性相关，由行列式的性质有 $\det{B} = 0$。
+> - 如果 $k \ge 2$ 且其中有一列中有两个 $1$。记这个子矩阵为 $B$。将 $\mathbf{u} \in \R^k$ 定义为 $B$ 中第 $i$ 行是否对应 $X$ 中的一个顶点（是则 $u_i = 1$，否则 $u_i = -1$）。这样，$\mathbf{u}^\text{T}B$ 就给出了 $u_i + u_j$ 组成的向量，其中 $(i, j)$ 是 $B$ 中出现的列。由于 $(i, j)$ 只有两个端点 $i \in X$ 和 $j \in Y$，有 $u_i + u_j = 1 + (-1) = 0$，故 $\mathbf{u}^\text{T}B = \mathbf{0}^\text{T}$。这意味着 $B$ 的行之间线性相关，由行列式的性质有 $\det{B} = 0$。
 > - 不可能出现一列中存在 3 个及以上 $1$ 的情况，因为列对应的边有且只有两个端点。
 >
 > 至此，我们证明了二分图的关联矩阵一定是全幺模的。
@@ -1835,7 +1875,7 @@ $$
 
 这一节中我们会介绍其它的网络流问题。其中可能会出现 *多个源汇* 的情形。不过我们可以通过添加辅助弧，并设置两个辅助结点 $s, t$ 来将其转换为等效的单一源汇的问题，参考下面的示意图：
 
-<img src="graphs/lp19.png" alt="lp19" style="zoom:80%;" />
+<img src="graphs/lp19.png" alt="lp19" style="zoom:100%;" />
 
 在通过右图解决问题后，我们只需要删除一开始加入的弧和结点即可。
 
@@ -1847,7 +1887,7 @@ d_k = \sum_{i : (i, k) \in A}x_{ik} - \sum_{j : (k, j) \in A}x_{kj}
 $$
 当需求为负数时，这个结点就是一个供给结点。此前我们分析的网络流都是由流量守恒，即需求为 $0$ 的结点组成的。不过，我们依然可以通过引入辅助弧和辅助结点来将其转化为一般的网络流：创建 $s, t$ 结点作为源和汇，并从 $s$ 指向对每个 $d_k < 0$ 的结点，且从每个 $d_k > 0$ 的结点指向 $t$。不难看出前后两个图是等价的。以下面示意图为例：
 
-<img src="graphs/lp20.png" alt="lp20" style="zoom:80%;" />
+<img src="graphs/lp20.png" alt="lp20" style="zoom:100%;" />
 
 需要说明的是，供给需求问题是一个 *可行性* 问题，而不是优化问题。所以我们需要找到能够让每一条流向 $t$ 的弧都能达到其容量（即满足其所有需求）。此时我们就可以删除 $s, t$ 及相关结点，并得到最终的解。
 
@@ -1868,5 +1908,423 @@ $$
 
 示意图如下：
 
-<img src="graphs/lp21.png" alt="lp21" style="zoom:80%;" />
+<img src="graphs/lp21.png" alt="lp21" style="zoom:100%;" />
 
+#### 最小成本流问题
+
+最小成本流问题描述的是一个网络 $(N, A)$ 中，每个结点 $k \in N$ 都对应一个需求 $d_k$，每条弧 $(i, j)$ 都对应一个 **成本（Cost）** $c_{ij}$。我们的目标是找到一个可行流使得总成本最小：
+$$
+\begin{align*}
+	\underset{\mathbf{x} \in \mathbb{R}^{|N|}}{\text{minimize}} \quad & \sum_{(i, j) \in A}c_{ij}x_{ij} \\
+	\text{subject to} \quad & \sum_{i: (i, k) \in A} x_{ik} - \sum_{j : (k, j)\in A}x_{kj} = d_k \\
+	& \mathbf{x} \ge \mathbf{0}
+\end{align*}
+$$
+为了简化讨论，我们假设这个网络是连通的，即任两个结点都能找到一条路径连接。对于不连通的情况我们可以将其拆分为多个最小成本流问题分别解决。
+
+我们不希望通过简单形表解决这个问题（产生的矩阵太庞大了）。或许还是直接在图上进行操作更加简单直观。但在此之前让我们先分析一下这个线性优化问题对应的矩阵。
+
+约束大体可以写成 $F\mathbf{x} = \mathbf{d}$ 的形式（我们暂时不考虑 $\mathbf{x} \ge \mathbf{0}$），其中 $F$ 是一个 $|N|$ 行 $|A|$ 列的矩阵。每一列都对应着一段弧 $(i, j)$，因此只在 $i$ 行有一个 $-1$，$j$ 行有一个 $1$。为了得到一个基本解，我们会选取某个基 $\mathcal{B}$，并计算 $\mathbf{x}_\mathcal{B} = F_\mathcal{B}^{-1}\mathbf{d}$。不过这里有个严重的问题，矩阵 $F$ 并不是线性无关的！这是因为每一行都对应一个结点，在将所有行相加后一定会得到 $0$（不然这个网络的需求和供给就不平衡了，此时不存在可行解）。因此我们需要去掉其中（任）一个约束。一个方便且等价的处理方式是只选择 $|N| - 1$ 个基本变量。
+
+选取基本变量时，我们需要确保这些弧不会产生环路（即不考虑弧的方向时，存在两个结点，有多于一种路径将它们相连）。环路的问题在于它会导致无穷多个可行解，比如下面这种情形：
+
+<img src="graphs/lp22.png" alt="lp22" style="zoom:50%;" />
+
+假设我们找到了一组可行解，其中包括 $x_{12}, x_{23}, x_{16}, x_{63}$，则很可能存在 $\delta$ 使得 $x_{12} + \delta, x_{23} + \delta, x_{16} - \delta, x_{63} - \delta$ 也满足条件，这就造成了无穷多组解。
+
+当选取的 $|N| - 1$ 条弧中不存在环路时，我们称这些弧是一个 **生成树（Spanning Tree）**。对于一个网络的生成树 $T$ 及需求向量 $\mathbf{d}$（其各项和应该为 $0$），我们 *总能* 找到 $x_{ij}$，对应所有弧 $(i, j)$，使得 $ F\mathbf{x} = \mathbf{d}$ 成立。方法如下：
+
+- 寻找一个 $T$ 中只和一条我们没有确定解的弧相连的结点 $k$（无论是从 $k$ 出发还是到达 $k$），通过此处的需求得到对应的弧的唯一解。
+- 重复上一步 $|N| - 1$ 次直到得到所有基本变量的解。
+
+不过，这样得到的解并不一定是可行解，因为至此我们都没有强调 $\mathbf{x} \ge 0$ 这个约束。此时我们将这组解称为 **平衡流（Balanced Flow）**。我们会在稍后讨论如何满足这一条件。
+
+接下来，我们将模拟简单形法中的基准步骤，向得到一组基本可行解的网络引入新的基本变量并移除旧的基本变量。这一步形象化的操作就是删除一条弧并引入一条新的弧。假设我们一开始的生成树如下图所示：
+
+<img src="graphs/lp23.png" alt="lp23" style="zoom:50%;" />
+
+我们可以选择一个可以加入弧，比如说 $(4, 5)$，加入后结果如下：
+
+<img src="graphs/lp24.png" alt="lp24" style="zoom:50%;" />
+
+此时为了保证各结点需求守恒，可以假设 $x_{45} = \delta$，然后和此前环路分析的结果类似，得到下面的”通解“：
+
+<img src="graphs/lp25.png" alt="lp25" style="zoom:50%;" />
+
+现在，我们一方面要避免环路，也要避免网络中任何一条弧的流量小于零。此时唯一可能的情况就是令 $\delta = 1$，此时 $x_{45} = 1, x_{56} = 4, x_{63} = 3, x_{43} = 0$。因此 $x_{43}$ 离开了基。
+
+不过，为什么选择了 $(4, 5)$ 加入基呢？是否有什么基准规则帮助我们思考？和简单形法类似，我们需要差额成本小于 $0$。比如如果我们想要加入 $(4, 5)$，就应该计算：
+$$
+c_{45} + c_{56} + c_{63} - c_{43}
+$$
+这个结果小于零时，最终得到的目标值才能被优化（具体为 $\delta(c_{45} + c_{56} + c_{63} - c_{43})$）。当任何可能加入的弧的差额成本都为非负数时，我们就得到了最优解。
+
+最后，让我们讨论令 $\mathbf{x} \ge \mathbf{0}$ 的方法。我们可以引入一个虚构结点 $a$，并将其和所有其它结点用虚构弧连接，具体如下：
+
+- 对于任意结点 $k$，如果 $d_k < 0$，则添加一个虚拟弧 $(k, a)$ 并令 $c_{ka} = 1$。
+- 对于任意结点 $k$，如果 $d_k > 0$，则添加一个虚拟弧 $(a, k)$ 并令 $c_{ak} = 1$。
+- 所有不和 $a$ 相连的弧的成本都暂记为 $0$。这样可以保证我们逐步移除和 $a$ 相连的弧。
+
+接下来就是利用基准方法将虚构弧统统移出基。这里有一个微妙的点，就是在引入虚构结点和虚构弧之后，网络中一共有 $|N| + 1$ 条弧，但我们最终只需要 $|N|$ 条，所以最后一定会剩下一条。但注意，当走到只剩下一条虚构弧的情况时，这条弧上的流量 *一定* 是零（因为需求是平衡的），因此此时我们直接删除这条弧即可。
+
+这样，我们就得到了一个对应可行解的生成树。随后就可以接着像前文所述解决最小成本流问题了。
+
+
+
+## 原始-对偶算法
+
+**原始-对偶算法（The Primal-Dual Algorithm）** 是受 Ford-Fulkerson 算法启发的，用来解决线性优化问题的算法。该算法有点类似于在网络流中寻找增广路径，每次从一个可行解出发，寻找最可能提升目标值的方向。它的利弊如下：
+
+- 每个“增广“步骤要比简单形法中的一步要更加复杂（耗时更长）。
+- 一条增广路径可能达到等同于在简单形法中好几步的结果。
+
+### 算法引入
+
+首先，假设我们从一个等式形式的最小值原始问题和对应的对偶问题：
+$$
+(\mathbf{P}) \quad
+\begin{cases}
+	\underset{\mathbf{x} \in \mathbb{R}^n}{\text{minimize}} \quad & \mathbf{c}^\text{T}\mathbf{x} \\
+	\text{subject to} \quad & A\mathbf{x} = \mathbf{b} \\
+	& \mathbf{x} \ge \mathbf{0}
+\end{cases}
+\qquad
+(\mathbf{D}) \quad
+\begin{cases}
+	\underset{\mathbf{u} \in \mathbb{R}^m}{\text{maximize}} \quad & \mathbf{u}^\text{T} \mathbf{b} \\
+	\text{subject to} \quad & \mathbf{u}^\text{T}A \le \mathbf{c}^\text{T} \\
+	& \mathbf{u}\ \text{unrestricted}
+\end{cases}
+$$
+原始问题中我们假设 $\mathbf{b} \ge \mathbf{0}$。$(\mathbf{P})$ 这种形式总是可以达到，因此我们不用在意此前的过程（引入松弛变量，两边同乘 $-1 $ 等）。现实生活中可能对对偶问题更感兴趣，此时我们依然可以利用原始-对偶算法求解问题。
+
+考虑下面的例子：
+$$
+(\mathbf{P}) \quad
+\begin{cases}
+	\underset{\mathbf{x} \in \mathbb{R}^3}{\text{minimize}} \quad & 2x_1 + 2x_2 + x_3 \\
+	\text{subject to} \quad & 2x_1 + x_2 - 4x_3 = 3 \\
+	& 4x_1 - x_2 + x_3 = 3 \\
+	& x_1, x_2, x_3 \ge 0
+\end{cases}
+\qquad (\mathbf{D}) \quad
+\begin{cases}
+	\underset{\mathbf{u} \in \mathbb{R}^2}{\text{maximize}} \quad & 3u_1 + 3u_2 \\
+	\text{subject to} \quad & 2u_1 + 4u_2 \ge 2 \\
+	& u_1 - u_2 \le 2 \\
+	& -4u_1 + u_2 \le 1
+\end{cases}
+$$
+假设我们已经得到了一个对偶解 $(1, 0)$。此时应该如何找到一个最好的方向呢？我们可以假设这个方向是 $\mathbf{v} \in \mathbb{R}^2$。我们下一步得到的是 $\mathbf{u} + t\mathbf{v}$，其中 $t > 0$ 是能取得的满足约束的最大值。此时目标值变化了 $t(\mathbf{v}^\text{T}\mathbf{b})$。为了让这个增长最快，我们理应选择最大的 $\mathbf{v}^\text{T}\mathbf{b}$，也即前一次的目标值 $\mathbf{u}^\text{T}\mathbf{b}$。
+
+现在，让我们尝试得到 $\mathbf{v}$ 的范围。将前一个对偶解带入对偶约束中，发现第一个是紧致的，第二个和第三个都是松弛的。因此为了保证将解优化到 $\mathbf{u} + t\mathbf{v}$ 后依然满足约束，显然有 $2v_1 + 4v_2 \le 0$。在非线性优化中，我们通常还会加上一个条件 $||\mathbf{v}|| = 1$，这里我们只需要求 $v_1, v_2 \le 1$。因此我们得到：
+$$
+\begin{align*}
+	\underset{\mathbf{v} \in \mathbb{R}^2}{\text{maximize}} \quad & 3v_1 + 3v_2 \\
+	\text{subject to} \quad & 2v_1 + 3v_2 \le 0 \\
+	& v_1 \le 1 \\
+	& v_2 \le 1
+\end{align*}
+$$
+更通用的形式如下：
+$$
+\begin{align*}
+	\underset{\mathbf{v} \in \mathbb{R}}{\text{maximize}} \quad & \mathbf{v}^\text{T}\mathbf{b} \\
+	\text{subject to} \quad & \mathbf{v}^\text{T}A_J \le \mathbf{0}^\text{T} \\
+	& v_1, ..., v_m \le 1
+\end{align*}
+$$
+其中 $J$ 对应紧致的对偶约束。
+
+在上面的例子中，我们可以得到 $\mathbf{v} = (1, -\frac{1}{2})$，下一步就是确定在这个方向前进的距离 $t$。把 $\mathbf{v}$ 代入 $\mathbf{u} + t\mathbf{v}$，再放到对偶约束中，我们得到：
+$$
+\begin{align*}
+	(1 + t) - (-\frac{1}{2}t) \le 2 &\implies t \le \frac{2}{3} \\
+    -4(1 + t) + (-\frac{1}{2}t) \le 1 & \implies t \ge -\frac{10}{9}
+\end{align*}
+$$
+（这里没有放到第一个约束中，因为我们对 $\mathbf{v}$ 的限制保证了 $\mathbf{u} + t\mathbf{v}$ 一定可以满足这个约束）因此最大的 $t$ 就是 $\frac{2}{3}$。新的基本可行解是 $(\frac{5}{3}, -\frac{1}{3})$。之后，我们可以类似地再进行一次次优化。不过肉眼可见地，这种方式相当繁琐：我们在每一步都要额外引入一个线性优化问题，这太过低效。
+
+对于上面这类问题，我们有一种特殊的变形，称为 **限定原始问题（Restricted Primal）**，而其对应的 **对偶限定原始问题（Dual Restricted Primal）** 恰好是我们前面得到的关于 $\mathbf{v}$ 的线性优化问题：
+$$
+(\mathbf{RP}) \quad
+\begin{cases}
+	\underset{\mathbf{x} \in \mathbb{R}^n, \mathbf{y} \in \mathbb{R}^m}{\text{minimize}} \quad & y_1 + ... + y_m \\
+	\text{subject to} \quad & A_J\mathbf{x}_J + I\mathbf{y} = \mathbf{b} \\
+	& \mathbf{x}, \mathbf{y} \ge \mathbf{0}
+\end{cases}
+\qquad (\mathbf{DRP}) \quad
+\begin{cases}
+	\underset{\mathbf{v} \in \mathbb{R}^m}{\text{maximize}} \quad & \mathbf{v}^\text{T}\mathbf{b} \\
+	\text{subject to} \quad & \mathbf{v}^\text{T}A_J \le \mathbf{c}_J^\text{T} \\
+	& v_1, ..., v_m \le 1
+\end{cases}
+$$
+
+这里 $y_i$ 对应着对偶问题 $(\mathbf{D})$ 中的松弛约束。因此从此前的例子可以得到下面的限定原始问题：
+$$
+\begin{align*}
+	\underset{\mathbf{x} \in \mathbb{R}, \mathbf{y} \in \mathbb{R}^2}{\text{minimize}} \quad & y_1 + y_2 \\
+	\text{subject to} \quad & 2x_1 + y_1 = 3 \\
+	& 4x_1 + y_2 = 3 \\
+	& x_1, y_1, y_2 \ge 0
+\end{align*}
+$$
+我们更倾向于使用限定原始问题，而非对偶限定原始问题来迭代，这是因为在对偶简单形法中已经见识到，对偶解最优解会在得到原始最优解时自然得到。此外，在 $(\mathbf{RP})$ 中的不同迭代不需要一个个独立求解。我们可以将一次迭代的最优解作为下一次迭代的起始点。
+
+### 利用 $(\mathbf{DRP})$ 的原始-对偶算法
+
+这就是我们此前介绍的低效方法，总结如下：
+
+- 对 $(\mathbf{P})$ 和 $(\mathbf{D})$ 进行适当变形使得 $\mathbf{b} \ge \mathbf{0}$。找到 $(\mathbf{D})$ 的一个可行解 $\mathbf{u}$。
+- 判断 $(\mathbf{D})$ 约束的紧致性，并用其构建 $(\mathbf{DRP})$。找到它的解 $\mathbf{v}$。这是我们提升 $\mathbf{u}$ 的最佳方向。
+- 找到使 $\mathbf{u} + t\mathbf{v}$ 可行的最大值 $t$，并用 $\mathbf{u} + t\mathbf{v}$ 代替 $\mathbf{u}$。
+- 重复前面两个步骤，直到不能再优化 $\mathbf{u}$ 为止。
+
+### 利用 $(\mathbf{RP})$ 的原始-对偶算法
+
+我们依然使用前面的例子，即：
+$$
+(\mathbf{P}) \quad
+\begin{cases}
+	\underset{\mathbf{x} \in \mathbb{R}^3}{\text{minimize}} \quad & 2x_1 + 2x_2 + x_3 \\
+	\text{subject to} \quad & 2x_1 + x_2 - 4x_3 = 3 \\
+	& 4x_1 - x_2 + x_3 = 3 \\
+	& x_1, x_2, x_3 \ge 0
+\end{cases}
+\qquad (\mathbf{D}) \quad
+\begin{cases}
+	\underset{\mathbf{u} \in \mathbb{R}^2}{\text{maximize}} \quad & 3u_1 + 3u_2 \\
+	\text{subject to} \quad & 2u_1 + 4u_2 \ge 2 \\
+	& u_1 - u_2 \le 2 \\
+	& -4u_1 + u_2 \le 1
+\end{cases}
+$$
+从对偶解 $\mathbf{u} = (1, 0)$ 出发，我们可以得到对应的 $(\mathbf{RP})$ 和 $(\mathbf{DRP})$：
+$$
+(\mathbf{RP}) \quad
+\begin{cases}
+	\underset{\mathbf{x \in \mathbb{R}, \mathbf{y} \in \mathbb{R}^2}}{\text{minimize}} \quad & y_1 + y_2 \\
+	\text{subject to} \quad & 2x_1 + y_1 = 3 \\
+	& 4x_1 + y_2 = 3 \\
+	& x_1, y_1, y_2 \ge 0
+\end{cases}
+\qquad (\mathbf{DRP}) \quad
+\begin{cases}
+	\underset{\mathbf{v} \in \mathbb{R}^2}{\text{maximize}} \quad & 3v_1 + 3v_2 \\
+	\text{subject to} \quad & 2v_1 + 4v_2 \le 0 \\
+	& v_1 \le 1 \\
+	& v_2 \le 1
+\end{cases}
+$$
+我们可以通过简单形法解 $(\mathbf{RP})$：
+$$
+\begin{array}{cccc|c}
+	 & x_1 & y_1 & y_2 & \\\hline
+	y_1  & 2 & 1 & 0 & 3 \\
+	y_2 & 4 & 0 & 1 & 3 \\\hline
+	-z_{rp} & -6 & 0 & 0 & -6
+\end{array}
+\quad\leadsto\quad
+\begin{array}{cccc|c}
+	 & x_1 & y_1 & y_2 & \\\hline
+	y_1 & 0 & 1 & -1/2 & 3/2 \\
+	x_1 & 1 & 0 & 1/4 & 3/4 \\\hline
+	-z_{rp} & 0 & 0 & 3/2 & -3/2
+\end{array}
+$$
+为了得到 $(\mathbf{DRP})$ 的解，回忆 $r_i = c_i - \mathbf{v}^\text{T}A_i$，因此对于 $y_1, ..., y_m$ 所在列 $\mathcal{Y}$，有：
+$$
+\mathbf{r}_\mathcal{Y}^\text{T} = \mathbf{c}_\mathcal{Y}^\text{T} - \mathbf{v}^\text{T}A_\mathcal{Y} = \mathbf{1}^\text{T} - \mathbf{v}^\text{T}
+$$
+因此我们得到 $\mathbf{v}^\text{T} = \begin{bmatrix} 1 & -1/2 \end{bmatrix}$。在令对偶约束成立的情况下，我们可以得到最大的 $t$ 是 $\frac{2}{3}$。此时新的解是 $\mathbf{u} = (\frac{5}{3}, -\frac{1}{3})$。此时 $(\mathbf{D})$ 的前两个约束都是紧致的，因此我们得到了新的 $(\mathbf{RP})$ 与 $(\mathbf{DRP})$：
+$$
+(\mathbf{RP}) \quad
+\begin{cases}
+	\underset{\mathbf{x} \in \mathbb{R}, \mathbf{y} \in \mathbb{R}^2}{\text{minimize}} \quad & y_1 + y_2 \\
+	\text{subject to} \quad & 2x_1 + x_2 + y_1 = 3 \\
+	& 4x_1 - x_2 + y_2 = 3 \\
+	& x_1, x_2, y_1, y_2 \ge 0
+\end{cases}
+\qquad (\mathbf{DRP}) \quad
+\begin{cases}
+	\underset{\mathbf{v} \in \mathbb{R}^2}{\text{maximize}} \quad & 3v_1 + 3v_2 \\
+	\text{subject to} \quad & 2v_1 + 4v_2 \le 0 \\
+	& v_1 - v_2 \le 0 \\
+	& v_1 \le 1 \\
+	& v_2 \le 1
+\end{cases}
+$$
+这里就显示出以 $(\mathbf{RP})$ 为核心的好处了。上一个迭代中 $(\mathbf{RP})$ 的解在这一次依然是可行解，只需令 $x_2 = 0$ 即可。不过这只是个例，是否会出现原来的解在新的 $(\mathbf{RP})$ 中消失的情况，若出现应该如何处理？下面我们做一些分析：
+
+- 如果消失的变量为零，则不会产生任何影响，我们不必在意。
+- *不可能* 出现正数变量消失的情况。具体来说，如果原来的 $(\mathbf{RP})$ 中某个变量为正数，根据互补松弛性，其对应的 $(\mathbf{DRP})$ 中的约束必然是紧致的（且等式右侧为 $0$）。回忆我们最开始对 $(\mathbf{DRP})$ 的构造，其约束中的等式对应的正是 $(\mathbf{D})$ 中的等式。现在对于新的解 $\mathbf{u} + t\mathbf{v}$，由于 $\mathbf{v} = 0$，我们得到的约束依然是紧致的。因此其对应的 $\mathbf{(P)}$ 中的变量依然会出现在 $(\mathbf{RP})$ 中。
+
+直到 $\mathbf{u}$ 无法继续优化为止，我们不断迭代进行这个算法。
+
+#### 冻结变量
+
+
+
+## 整数线性优化
+
+**整数线性优化问题（Integer Linear Program）**，或 **整数优化问题（Integer Program）** 是指限制一或多个变量需要是整数的线性优化问题。这在现实中相当常见，因为一些量在非整数时没有定义。比如此前讨论的二分图匹配以及最大流问题都是整数优化问题。不过当时我们通过证明其约束矩阵为全幺模矩阵，轻松地解决了解是否为整数的问题。但在一般的情形下，整数优化问题是非常复杂的一类问题：约束上的一点差别就可能导致完全不同的解。
+
+下列是一个线性优化问题，在不加整数约束、为 $x$ 加上整数约束，以及为 $x, y$ 均加上整数约束时可行域的示意图：
+
+<img src="graphs/lp26.png" alt="lp26" style="zoom:50%;" />
+
+除了整数约束外，它们是完全相同的线性优化问题：
+$$
+\begin{align*}
+	{\text{maximize}} \quad & x + y \\
+	\text{subject to} \quad & 3x + 8y \le 24 \\
+	& 3x - 4y \le 6 \\
+	& x, y \ge 0
+\end{align*}
+$$
+然而正如图中暗示的，前两种情况下，拥有相同的最优解 $(4, \frac{3}{2})$，而最后一种的最优解却是 $(2, 2)$ 或 $(3, 1)$，甚至不是唯一解。在一些极端情况下，比如一个可行域中不存在整数点时，整数优化问题是没有解的（而没有整数约束时有解）。我们需要解决这个问题。
+
+### 逻辑约束
+
+在正式讨论整数优化问题前，让我们首先介绍逻辑的一些基本概念。一个 **布尔变量（Boolean Variable）** 只可能有两种值：**TRUE** 和 **FALSE**。有三个主要的逻辑运算：
+
+- **AND**：$X_1$ **AND** $X_2$ 当且仅当 $X_1, X_2$ 都为 **TRUE** 时才是 **TRUE**，否则为 **FALSE**。
+- **OR**：$X_1$ **OR** $X_2$ 当且仅当 $X_1, X_2$ 都为 **FALSE** 时才是 **FALSE**，否则为 **TRUE**。
+- **NOT**：**NOT** $X$ 在 $X$ 为 **TRUE** 时为 **FALSE**，否则为 **TRUE**。
+
+布尔值满足性问题是指判断一个布尔值表达式是否可以得到 **TRUE**。比如下面这个表达式：
+$$
+(X_1 \ \text{OR} \ \text{NOT}(X_2))\ \text{AND}\ (X_2 \ \text{OR}\ \text{NOT}(X_3))\ \text{AND}\ (X_3 \ \text{OR}\ X_1)
+$$
+在 $X_1, X_2, X_3$ 均为 **TRUE** 时就是 **TRUE**。这个解并不一定是唯一的，但我们只关注这个解的 *存在性*。这个表达式的形式实际上是比较特殊的。定义 **合取范式（Conjunctive Normal Form, CNF）** 由以下成分组成：
+
+- **字面量（Literal）**，即 $X_i$ 或 $\text{NOT}(X_i)$。
+- 字面量组成的 **从句（Clause）**，即由 **OR** 连接的多个字面量。
+- 从句之间通过 **AND** 连接，形成最终的合取范式。
+
+所有的逻辑表达式都可以等价转换为合取范式。我们不在本篇中进行证明。
+
+我们可以用只能取 $0$ 或 $1$ 的整数变量来表示布尔变量。此时，逻辑运算变为等价的下列运算：
+
+- 对于任意 $X_i$，$\text{NOT}(X_i)$ 可以用 $1 - x_i$ 表示。
+- 对于任意 $X_1, ..., X_k$，$X_1\ \text{OR}\ ...\ \text{OR}\ X_k$ 为 **TRUE** 可以用 $x_1 + ... + x_k \ge 1$ 表示。
+- 至于合取范式中的 **AND**，我们不需要在意，因为已经要求其中的每一项 **OR** 都成立（即上一条）了。
+- 最后，为了让 $x_i$ 满足我们一开始的定义，需要对于每个 $x_i$ 加上 $0 \le x_i \le 1$ 这条约束。
+
+因此，只要我们找到这个问题的可行解，就知道其对应的逻辑表达式是否能被满足了。
+
+#### 将逻辑约束和线性约束结合
+
+在一些和逻辑判断相关的问题中，我们可以巧妙地引入逻辑约束。下面我们用一个例子展示。
+
+- 一个香蕉公司每卖一只香蕉就可以赚 \$1，但可以选择是否花 \$1000 租一个仓库。此时我们可以引入变量 $w$ 表示是否租赁一间仓库，$1000w$ 就是对应的花销。
+- 假设 $x_1, x_2, x_3$ 表明需要存在仓库中的产品。假设当且仅当租一间仓库时有 $x_1 + x_2 + x_3 \le 100$，否则 $x_1 = x_2 = x_3 = 0$。我们可以通过 $x_1 + x_2 + x_3 \le 100w$ 来表示这个约束。
+- 同样的设置下，假设当且仅当不租仓库时有 $x + y \le 50$，此外 $x + y$ 没有限制。这时我们可以用 $x + y \le 50 + Nw$ 表示这个约束。这里 $N$ 是一个非常大的数，使得 $x + y$ 不可能超过这个界限。
+
+### 整数优化问题
+
+考虑下面的整数优化问题：
+$$
+\begin{align*}
+	\underset{x, y \in \mathbb{Z}}{\text{maximize}} \quad & 4x + 5y \\
+	\text{subject to} \quad & x + 4y \le 10 \\
+	\quad & 3x - 4y \le 6 \\
+	& x, y \ge 0
+\end{align*}
+$$
+这个问题的可行域如下（用黑点标记出来了）：
+
+<img src="graphs/lp27.png" alt="lp27" style="zoom:50%;" />
+
+我们可以不在意整数约束，求得阴影部分可行域下的最优解：
+$$
+\begin{array}{ccccc|c}
+	 & x & y & s_1 & s_2 & \\\hline
+	s_1 & 1 & 4 & 1 & 0 & 10 \\
+	s_2 & 3 & -4 & 0 & 1 & 6 \\\hline
+	-z & 4 & 5 & 0 & 0 & 0
+\end{array}
+\quad \leadsto \quad
+\begin{array}{ccccc|c}
+	 & x & y & s_1 & s_2 & \\\hline
+	y & 1/4 & 1 & 1/4 & 0 & 5/2 \\
+	s_2 & 4 & 0 & 1 & 1 & 16 \\\hline
+	-z & 11/4 & 0 & -5/4 & 0 & -25/2
+\end{array}
+\quad \leadsto \quad
+\begin{array}{ccccc|c}
+	 & x & y & s_1 & s_2 & \\\hline
+	 y & 0 & 1 & 3/16 & -1/16 & 3/2 \\
+	 x & 1 & 0 & 1/4 & 1/4 & 4 \\\hline
+	 -z & 0 & 0 & -31/16 & -11/16 & -47/2
+\end{array}
+$$
+因此 $(4, 1.5)$ 是最优解，此时目标值为 $23.5$。不过显然这并不是整数优化问题的解，但我们至少能得出，$23.5$ 是我们要求的整数目标值的上界。如果需要更加严格的上界（或，最小值问题的下界），可以利用下面的公式：
+$$
+x_i \le \lfloor f \rfloor \qquad \text{或} \qquad x_i \ge \lceil f \rceil
+$$
+其中 $f$ 是线性优化问题最优解下的目标值。由于 $y = 1.5$ 不满足整数的条件，我们可以两边进行尝试，即分别设 $y \le 1$ 或 $y \ge 2$。让我们先考虑后面一种情况。我们可以在简单形表中加入一行 $s_3$，此时该表依然是对偶可行的：
+$$
+\begin{array}{cccccc|c}
+	 & x & y & s_1 & s_2 & s_3 & \\\hline
+	y & 0 & 1 & 3/16 & -1/16 & 0 & 3/2 \\
+	x & 1 & 0 & 1/4 & 1/4 & 0 & 4 \\
+	s_3 & 0 & -1 & 0 & 0 & 1 & -2 \\\hline
+	-z & 0 & 0 & -31/16 & -11/16 & 0 & -47/2
+\end{array}
+$$
+我们可以先将 $y$ 列的 $-1$ 清除，然后再用对偶简单形法得到新的最优解（用 $s_2$ 代替 $s_3$）：
+$$
+\begin{array}{cccccc|c}
+	 & x & y & s_1 & s_2 & s_3 & \\\hline
+	y & 0 & 1 & 3/16 & -1/16 & 0 & 3/2 \\
+	x & 1 & 0 & 1/4 & 1/4 & 0 & 4 \\
+	s_3 & 0 & 0 & 3/16 & -1/16 & 1 & -1/2 \\\hline
+	-z & 0 & 0 & -31/16 & -11/16 & 0 & -47/2
+\end{array}
+\quad\leadsto\quad
+\begin{array}{cccccc|c}
+	 & x & y & s_1 & s_2 & s_3 & \\\hline
+	y & 0 & 1 & 0 & 0 & -1 & 2 \\
+	x & 1 & 0 & 1 & 0 & 4 & 2 \\
+	s_2 & 0 & 0 & -3 & 1 & -16 & 8 \\\hline
+	-z & 0 & 0 & -4 & 0 & -11 & -18
+\end{array}
+$$
+
+现在我们得到了一个最优解 $(2, 2)$ 以及对应的目标值 $18$。现在还有另一边（也即 $y \le 1$）要考虑。这种情况下最优解是 $(\frac{10}{3}, 1)$，对应的目标值是 $\frac{55}{3}$。这个结果颇为尴尬，因为它优于 $18$，但不满足整数约束。因此我们需要再次将情况分为 $x \le 3$ 和 $x \ge 4$ 两种情况。需要注意的是，我们应该将这两个条件加到已经加入 $y \le 1$ 的简单形表中。
+
+经过不懈的努力，我们得到 $y\le 1$ 且 $x \le 3$ 时最优解是 $(3, 1)$，目标值为 $17$；$y \le 1$ 且 $x \ge 4$ 时不存在可行解。因此，我们得出结论，$(2, 2)$ 是最优解。
+
+作为总结，对于求最大值的整数优化问题（对于最小值问题，则应该将下文中的上界和下界兑换，并使用 $+\infty$ 作为最差值），我们需要维护两组数据：
+
+- 一列结点 $\mathcal{L}$，其中包含描述部分或全部可行域的线性优化问题。最开始时，$\mathcal{L}$ 只有一个元素，即没有整数约束的线性优化问题。
+- 一个候选的最优解 $\mathbf{x}^*$ 和其对应的目标值 $z^*$。最开始时，不存在一个最优解，并设 $z^* = -\infty$。
+
+算法中，每一步对 $\mathcal{L}$ 中的一个结点进行检查：解该线性优化问题，然后将其移出 $\mathcal{L}$。假设 $\mathbf{x}$ 是这里得到的最优解，$z$ 是目标值。接下来有三种情形：
+
+- 如果 $z \le z^*$，这个结点不可能得到更好的结果了，因此我们不再对该结点感兴趣。此时称该结点被 *边界修剪了（pruned by bound）*。一种更加特殊的情况是没有找到最优解（等价于 $z = -\infty$），此时我们称该结点被 *不可行性修剪了 （pruned by infeasibility）*。
+- 如果 $z > z^*$，且 $\mathbf{x}$ 是一个整数向量，则更新 $\mathbf{x}^* = \mathbf{x}$ 以及 $z^* = z$。我们同样也不需要对这个结点进行任何深入探索了，此时该结点被 *完整性修剪了（pruned by integrality）*。
+- 如果 $z > z^*$，但 $\mathbf{x}$ 不是一个整数向量。此时我们需要找到某一个 $x_i = f \notin \mathbb{Z}$，并在 $\mathcal{L}$ 中增加两个结点，其中一个等于当前结点加上 $x_i \le \lfloor f \rfloor$ 约束，另一个等于当前结点加上 $x_i \ge \lceil f \rceil$ 约束。
+
+我们不断进行上面这些步骤，直到 $\mathcal{L}$ 为空为止。此时 $\mathbf{x}^*$（如果存在）就是最优解，而 $z^*$ 是对应的目标值。
+
+### 切割平面法
+
+**切割平面法（The Cutting Plane Method）** 是解决整数优化问题的一系列策略。其构思于，整数优化算法中会包含一系列线性优化问题的构造，这些问题描述的是同一集整数点。如果从其中的一个线性优化问题中得到了分数的最优解，那就说明我们的构造不够好。我们应该尝试改善构造。
+
+假设下面是我们需要解决的整数优化问题：
+$$
+\begin{align*}
+	\underset{\mathbf{x} \in \mathbb{Z}^n}{\text{maximize}} \quad & \mathbf{c}^\text{T}\mathbf{x} \\
+	\text{subject to} \quad & A\mathbf{x} \le \mathbf{b} \\
+	& \mathbf{x} \ge \mathbf{0}
+\end{align*}
+$$
+假设我们在此得到了一个分数最优解 $\mathbf{x}^*$，为了改善之前对线性优化问题的构造，假设引入了一个新的不等式 $\boldsymbol{\alpha}^\text{T}\mathbf{x} \le \beta$ 满足下面的要求：
+
+- 其对于我们的整数优化问题有效。对于任意满足 $A\mathbf{x} \le \mathbf{b}$ 且 $\mathbf{x} > \mathbf{0}$ 的点 $\mathbf{x} \in \mathbb{Z}^n$ 都满足这个不等式。
+- 分数最优解被切在新的可行域外面，即 $\boldsymbol{\alpha}^\text{T}\mathbf{x}^* > \beta$。不然新一轮得到的最优解还是 $\mathbf{x}^*$。
+
+我们
