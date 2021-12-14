@@ -33,7 +33,7 @@ $ git help clone
 
 比如上面这段内容会让 **Git** 显示 `git clone` 指令的用法手册，结果中的一小部分如下图所示：
 
-<img src="graphs/git_1.png" alt="git_1" style="zoom:40%;" />
+<img src="graphs/git_1.png" alt="git_1" style="zoom:50%;" />
 
 如果用过 **Linux Man Page** 的会发现它们风格完全一致，会告诉你指令的语法、描述、可选参数等，还可能有示例。如果想要退出手册界面，只需按下 `Q` 键（顺带一提，手册界面中也可以使用上下键、翻页键等进行操作）。学会了打开 **Git** 用法手册，就已经开了个好头。我们遇到任何不确定的指令，都可以来这里寻找说明。
 
@@ -54,29 +54,29 @@ $ git config --global user.email "yu.yiming.self@gmail.com"
 
 这会在你的当前目录下创建 `.git` 文件夹，之后所有的仓库信息都将在这个文件夹中存储。由于它是用 `.` 开头的文件，系统可能默认不会显示它们，我们可以通过在命令行中输入 `ls -a`（**Linux** 及 **MacOS**）或在文件资源管理器（**Windows**）中上方的设置里让其显示隐藏的文件即可看到它们。如下图所示：
 
-<img src="graphs/git_2.png" alt="git_2" style="zoom:40%;" />
+<img src="graphs/git_2.png" alt="git_2" style="zoom:50%;" />
 
 这之后，我们就可以填充自己的项目了。不过 **Git** 并不会自动提交任何文件改动，我们需要使用 `git add` 命令来将特定文件的状态放到 **暂存区（Staging Area）**。暂存区存在的目的在于，我们有时不希望将所有对项目的修改都进行保存（即提交），所以需要手动指出准备保存的文件。
 
 假设我们创建了一个空的文本文件 `empty.txt`，可以通过 `git status` 指令来检查本地仓库中没有放到暂存区或没有提交的文件：
 
-<img src="graphs/git_3.png" alt="git_3" style="zoom:40%;" />
+<img src="graphs/git_3.png" alt="git_3" style="zoom:50%;" />
 
 第一句 `touch empty.txt` 创建了一个文本文件，此时对本地仓库检查时，发现它并没有放到暂存区中（甚至没有经过 **追踪（Track）**，即从来没有通过 **Git** 管理过）。此时这个文件会以红色进行列出，并提示我们使用 `git add <file>...` 暂存这个文件。暂存后，再次检查如下：
 
-<img src="graphs/git_4.png" alt="git_4" style="zoom:40%;" />
+<img src="graphs/git_4.png" alt="git_4" style="zoom:50%;" />
 
 此时我们就可以通过 `git commit` 指令来真正地保存这个文件的所有更新信息了。建议直接使用 `-m <msg>` 参数，否则会需要在 **Vim** 环境下给出这个提交信息，我们暂时还不想做 **Vim** 教学。
 
-<img src="graphs/git_5.png" alt="git_5" style="zoom:40%;" />
+<img src="graphs/git_5.png" alt="git_5" style="zoom:50%;" />
 
 执行 `git commit` 后会给出当前的分支、提交信息、（相比上次提交）修改的文件数量、增减的行数，这些可以作为参考。此时再进行 `git status` 会显示当前仓库中没有尚未保存的文件：
 
-<img src="graphs/git_6.png" alt="git_6" style="zoom:40%;" />
+<img src="graphs/git_6.png" alt="git_6" style="zoom:50%;" />
 
 如果我们修改了本地的文件，我们依然可以通过 `git add` 来保存修改：
 
-<img src="graphs/git_7.png" alt="git_7" style="zoom:40%;" />
+<img src="graphs/git_7.png" alt="git_7" style="zoom:50%;" />
 
 第一句的 `cat > empty.txt` 让我们向命令行输入想要覆盖到 `empty.txt` 的内容，以 `Ctrl-D` 结束。随后通过 `git status` 我们发现这个文件被标记为修改过的，因此我们依旧通过 `git add` 和 `git commit` 将其保存起来。
 
@@ -88,7 +88,7 @@ $ git add file_1 file_2 file_3
 
 如果有需要添加一整个文件夹的文件，可以直接使用 `git add <dir>` 来暂存其中的所有文件。`git add .` 则会将当前路径下 *所有* 修改过的文件、文件夹中的文件（层层递归）加入暂存区，这常用于为已有的项目设置仓库，此时只需 `git init` 后 `git add .` 并 `git commit` 即可。
 
-<img src="graphs/git_8.png" alt="git_8" style="zoom:40%;" />
+<img src="graphs/git_8.png" alt="git_8" style="zoom:50%;" />
 
 此外还有两个常用的，用于批量暂存文件的指令，`git add -A` 和 `git add -u`。前者会将仓库中所有修改过或未追踪的文件 `git add` 进来，同时也对已经删除的此前追踪的文件停止追踪；后者则不会增加未追踪的文件。为了对比这几个常见的指令，下面让我们用图表简单说明：
 
