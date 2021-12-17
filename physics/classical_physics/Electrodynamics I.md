@@ -1,6 +1,6 @@
 # Electrodynamics I
 
-本笔记是对应 *UIUC PHYS 435 Electromagnetic Fields I* 的学习笔记，其中包括了矢量微积分、偏微分方程、静电学、静磁学相关的知识点。由于本篇是物理笔记，其中的数学定理并不一定提供证明，即使有证明也不一定是严格的。主要参考了 *Introduction to Electrodynamics, 4th Edition: David J. Griffiths*，文中大量的例题、图片都来自该教材，章节的编排也基本按照这本书的设计。
+本笔记是对应 *UIUC PHYS 435 Electromagnetic Fields I* 中静电磁学部分的学习笔记，其中包括了矢量微积分、偏微分方程、静电学、静磁学相关的知识点。由于本篇是物理笔记，其中的数学定理并不一定提供证明，即使有证明也不一定是严格的。主要参考了 *Introduction to Electrodynamics, 4th Edition: David J. Griffiths*，文中大量的例题、图片都来自该教材，章节的编排也基本按照这本书的设计。
 
 [TOC]
 
@@ -646,13 +646,13 @@ $$
 - **无旋场（Irrotational Field）**：一个矢量场满足下面的条件中的任何一条时，就同时满足其它条，并被称为无旋场：
   - $\nabla\times\mathbf{F} = \mathbf{0}$ 处处成立。
   - $\int_\mathbf{a}^\mathbf{b}\mathbf{F}\cdot\,d\mathbf{l}$ 和路径无关，只与起始点和终止点有关。
-  - $\oint\mathbf{F}\cdot\,d\mathbf{l}$ 对任意环路成立。
-  - $\mathbf{F}$ 是某个标量场的梯度，即 $\mathbf{F} = -\nabla V$（这里的负号可以简单和功与能相联系；当我们希望矢量场做功时，它的势能就会相应减少。这里的 $V$ 包含有势能的意思。作为类比，重力势能在高处更高，但是顺着重力方向向下运动时，势能就会降低转化为动能）。同时这个 $V$ 不是唯一的，因为任意常数 $C$ 都能满足 $\mathbf{F} = -\nabla(V + C)$。
+  - $\oint\mathbf{F}\cdot\,d\mathbf{l} = 0$ 对任意环路成立。
+  - $\mathbf{F}$ 是某个标量场的梯度，即 $\mathbf{F} = -\nabla V$（这里的负号可以简单和功与能相联系；当我们希望矢量场做功时，它的势能就会相应减少。这里的 $V$ 包含有势能的意思。作为类比，重力势能在高处更高，但是顺着重力方向向下运动时，势能就会降低转化为动能）。同时这个 $V$ 不是唯一的，任意常数 $C$ 都能满足 $\mathbf{F} = -\nabla(V + C)$。
 - **无源场（Solenoidal Field）**：一个矢量场满足下面的条件中的任何一条时，就同时满足其它条，并被称为无源场：
   - $\nabla\cdot\mathbf{F} = 0$ 处处成立。
   - $\int\mathbf{F}\cdot\,d\mathbf{a}$ 在给定边界线时，与曲面形状无关。
   - $\oint\mathbf{F}\cdot\,d\mathbf{a} = 0$ 对任意闭合曲面成立。
-  - $\mathbf{F}$ 是某个矢量场的旋度，即 $\mathbf{F} = \nabla\times\mathbf{A}$。这个 $\mathbf{A}$ 不是唯一的，因为任意常数 $f$ 都能满足 $\mathbf{F} = \nabla\times(\mathbf{A} + \nabla f)$。
+  - $\mathbf{F}$ 是某个矢量场的旋度，即 $\mathbf{F} = \nabla\times\mathbf{A}$。这个 $\mathbf{A}$ 不是唯一的，任意标量场 $f$ 都能满足 $\mathbf{F} = \nabla\times(\mathbf{A} + \nabla f)$。
 
 此外，任意矢量场 $\mathbf{F}$ 都能表示为：
 $$
@@ -985,15 +985,17 @@ $$
 
 金属 **导体（Conductor）** 中，电子可以自由移动的。我们假设导体中存在 *无穷* 个自由电荷。此时它会有一些奇特的性质：
 
-- 在导体内 $\mathbf{E} = \mathbf{0}$。这是因为一旦存在外加电场 $\mathbf{E}_0$，导体中的电荷会进行自由移动（此时不是我们暂时研究的静电场），知道 **感应电荷（Induced Charge）** 产生的电场和外加电场中和为止。
+- 在导体内 $\mathbf{E} = \mathbf{0}$。这是因为一旦存在外加电场 $\mathbf{E}_0$，导体中的电荷会进行自由移动（此时不是我们暂时研究的静电场），直到 **感应电荷（Induced Charge）** 产生的电场和外加电场中和为止。
 - 在导体内 $\rho = 0$。这是通过上一条以及高斯定律得到的。
 - 所有净电荷都分布在导体表面。这是上一条的直接结论。这似乎有些魔幻，因为显然相同电荷之间会互相排斥，因此我们只能假定它们之间有合理的距离。
-- 导体附近的电场垂直于导体表面，否则电荷会不断移动。
-- 导体表面是一个等势面，否则电荷会不断移动。
+- 导体附近的电场垂直于导体表面，否则电荷会不断移动，直到剔除电场的切向分量位置。
+- 导体表面是一个等势面，否则电荷会不断移动，直到形成等势面为止。
 
 #### 感应电荷
 
-当我们将一个电荷 $+q$ 靠近一个不带电的导体时，它们会相互吸引。这是因为 $+q$ 会排斥导体中的正电荷，并留下负电荷；由于剩下的负电荷和 $+q$ 更近，所以总体呈现吸引效果。
+当我们将一个电荷 $+q$ 靠近一个不带电的导体时，它们会相互吸引。这是因为 $+q$ 会排斥导体中的正电荷，并留下负电荷；由于剩下的负电荷和 $+q$ 更近，所以总体呈现吸引效果。这里，我们分析一个比较特殊的情况。考虑一个金属球壳内部存在一个电荷 $q$。此时根据高斯定律，在球壳以内和以外都应该存在电场。球壳内侧会产生总量为 $-q$ 的感应电荷。这样，在导体中任何包围其内侧曲面的高斯面中总不存在任何净电荷。由导体的性质可以知道，在球壳外侧会产生总量为 $q$ 的电荷，因此包围球壳外侧曲面的高斯面中，净电荷总为 $q$，且导体本身呈电中性。
+
+这给我们一个比较令人欣喜的结果，那就是带空洞的导体（空洞中存在净电荷）的外部电场和空洞的位置无关。此外，如果导体中某个空洞内没有净电荷，那么此处的电场也为 $\mathbf{0}$，且在空洞表面不会有任何电荷，这也是 **法拉第笼（Faraday Cage）** 的原理。
 
 ## 电势
 
@@ -1514,8 +1516,9 @@ $$
 
 当把一个中性的粒子放到电场 $\mathbf{E}$ 中时，会发生什么？你可能会下意识认为无事发生。但由于原子中存在电子以及带正电的原子核，它们受到电场影响会以相反的方向运动：电子逆着电场方向，而原子核顺着电场方向。电场足够强的情况下，一些电子会完全脱离原子核，使其成为离子；其余的时候，电子和原子核会达到一个微妙的平衡：电场 $\mathbf{E}$ 虽然让它们相互分开，但是它们之间的电荷力会互相吸引。此时我们称这个原子被 **极化（Polarize）** 了。回忆我们上一章介绍的概念，这就形成了一个偶极矩，其方向和 $\mathbf{E}$ 一致。这个偶极矩在电场不足以 **离子化（Ionize）** 原子前，和电场强度成正比：
 $$
-\label{polarizability}
-\mathbf{p} = \alpha \mathbf{E}
+\begin{equation*}
+	\mathbf{p} = \alpha \mathbf{E}
+\end{equation*} \tag{4.1} \label{polarizability}
 $$
 其中常数 $\alpha$ 被称为 **原子极化度（Atomic Polarizability）**，它和原子类型相关。下表给出了一些常见的原子的极化度：
 $$
@@ -1539,7 +1542,7 @@ $$
 	p_x = \alpha_{xx}E_x + \alpha_{xy}E_y + \alpha_{xz}E_z \\
 	p_y = \alpha_{yx}E_x + \alpha_{yy}E_y + \alpha_{yz}E_z \\
 	p_z = \alpha_{zx}E_x + \alpha_{zy}E_y + \alpha_{zz}E_z
-\end{cases}
+\end{cases} \tag{4.2}
 $$
 
 #### 极化分子的对齐
@@ -1552,53 +1555,60 @@ $$
 $$
 \begin{align}
 \begin{split}
-\boldsymbol{\tau} &= (\mathbf{r}_+\times\mathbf{F}_+) + (\mathbf{r}_-\times\mathbf{F}_-) \\
+\mathbf{N} &= (\mathbf{r}_+\times\mathbf{F}_+) + (\mathbf{r}_-\times\mathbf{F}_-) \\
 &= \frac{1}{2}\mathbf{d}\times q\mathbf{E} + (-\frac{1}{2}\mathbf{d})\times (-q\mathbf{E}) \\
 &= q\mathbf{d}\times\mathbf{E}
 \end{split}
-\end{align}
+\end{align} \tag{4.3}
 $$
 结合物理偶极子偶极矩的计算式 $(\ref{physical-dipole})$，我们有：
 $$
-\label{dipole-torque}
-\boldsymbol{\tau} = \mathbf{p}\times\mathbf{E}
+\begin{equation*}
+	\mathbf{N} = \mathbf{p}\times\mathbf{E}
+\end{equation*} \tag{4.4} \label{dipole-torque}
 $$
-当电场不是匀强的时候，偶极子会受到一个非零的合外力 $\mathbf{F} = q\Delta \mathbf{E}$。 $\Delta \mathbf{E} = (\nabla E_x)\cdot\mathbf{d} + (\nabla E_y)\cdot\mathbf{d} + (\nabla E_z)\cdot\mathbf{d}$，故：
+当电场不是匀强的时候，偶极子会受到一个非零的合外力 $\mathbf{F} = q\Delta \mathbf{E}$。 $\Delta \mathbf{E} = (\nabla E_x)\cdot\mathbf{d} + (\nabla E_y)\cdot\mathbf{d} + (\nabla E_z)\cdot\mathbf{d}$，故 $\mathbf{F} = (\nabla E_x)\cdot\mathbf{p} + (\nabla E_y)\cdot\mathbf{p} + (\nabla E_z)\cdot \mathbf{p} = \nabla(\mathbf{E}\cdot\mathbf{p})$。为了防止造成 $\mathbf{p}$ 也要参与微分的错觉，我们通常使用下面的等价形式：
 $$
-\mathbf{F} = (\mathbf{p}\cdot\nabla)\mathbf{E}
+\begin{equation*}
+	\mathbf{F} = (\mathbf{p}\cdot\nabla)\mathbf{E}
+\end{equation*} \tag{4.5} \label{force-on-electric-dipole}
 $$
 此时，如果依然将偶极子的质心作为原点，我们得到的力矩依然是 $(\ref{dipole-torque})$ 这个式子；如果以其它点为原点，就要考虑合外力，最终的力矩是 $\mathbf{N} = (\mathbf{p}\times \mathbf{E}) + (\mathbf{r}\times\mathbf{F})$。
 
 综上，我们考察了原子或分子在电场下产生的极化现象。无论是原子的“趋离子化”，还是分子受到的力矩，都让它们朝着某个方向进行变化。我们用 **极化强度（Polarization）** 来量化这个变化，它表示单位体积内偶极矩的大小，记作 $\mathbf{P}$。随后我们将利用这个物理量研究一个极化物体内的电场，
 
-### 极化物体内的电场
-
 #### 束缚电荷
 
-根据电势的定义 $()$ 和极化强度定义，我们可以给出极化物体产生的电势：
+根据电势的定义 $(\ref{electric-potential-integral})$ 和极化强度定义，我们可以给出极化物体产生的电势：
 $$
-V(\mathbf{r}) = \frac{1}{4\pi\epsilon_0}\underset{\mathcal{V}}{\int}\frac{\mathbf{P}(\mathbf{r}')\cdot\hat{\boldsymbol{\mathscr{r}}}}{\mathscr{r}^2}\,d\tau'
+\begin{equation*}
+	V(\mathbf{r}) = \frac{1}{4\pi\epsilon_0}\int_\mathcal{V}\frac{\mathbf{P}(\mathbf{r}')\cdot\hat{\boldsymbol{\mathscr{r}}}}{\mathscr{r}^2}\,d\tau'
+\end{equation*} \tag{4.6}
 $$
 注意到 $\dfrac{\hat{\boldsymbol{\mathscr{r}}}}{\mathscr{r}^2} =\nabla'\left(\dfrac{1}{\mathscr{r}}\right)$，其中 $\nabla'$ 指的是对源坐标求梯度，因此上面的式子可以写成：
 $$
-V(\mathbf{r}) = \frac{1}{4\pi\epsilon_0}\underset{\mathcal{V}}{\int}\mathbf{P}(\mathbf{r}')\nabla'\left(\frac{1}{r}\right)\,d\tau'
+V(\mathbf{r}) = \frac{1}{4\pi\epsilon_0}\int_\mathcal{V}\mathbf{P}(\mathbf{r}')\nabla'\left(\frac{1}{r}\right)\,d\tau'
 $$
-利用分部积分法和散度定理，即公式 $(\ref{partial-integration})$，我们可以得到：
+利用分部积分法和散度定理，即公式 $(\ref{integrate-by-parts-divergence})$，我们可以得到：
 $$
-V(\mathbf{r}) = \frac{1}{4\pi\epsilon_0}\underset{\mathcal{S}}{\oint}\frac{1}{\mathscr{r}}\mathbf{P}(\mathbf{r}')\cdot\,d\mathbf{a}' - \frac{1}{4\pi\epsilon_0}\underset{\mathcal{V}}{\int}\frac{1}{\mathscr{r}}(\nabla'\cdot\mathbf{P}(\mathbf{r}'))\,d\tau
+\begin{equation*}
+	V(\mathbf{r}) = \frac{1}{4\pi\epsilon_0}\oint_\mathcal{S}\frac{1}{\mathscr{r}}\mathbf{P}(\mathbf{r}')\cdot\,d\mathbf{a}' - \frac{1}{4\pi\epsilon_0}\int_\mathcal{V}\frac{1}{\mathscr{r}}(\nabla'\cdot\mathbf{P}(\mathbf{r}'))\,d\tau
+\end{equation*} \tag{4.7}
 $$
-可以看到左侧比较像一个电荷分布的面积分，右侧则比较像一个体积分。对比电势的计算公式 $()$，我们设出两个虚拟的电荷密度：
+可以看到左侧比较像一个电荷分布的面积分，右侧则比较像一个体积分。对比电势的计算公式 $(\ref{electric-potential-integral})$，我们设出两个虚拟的电荷密度：
 $$
 \begin{align}
 \begin{split}
 	\sigma_b &= \mathbf{P}\cdot\hat{\mathbf{n}} \\
 	\rho_b &= -\nabla\cdot\mathbf{P}
 \end{split}
-\end{align}
+\end{align} \tag{4.8} \label{bound-charge-density}
 $$
 此时我们可以将公式写为更加简洁的形式：
 $$
-V(\mathbf{r}) = \frac{1}{4\pi\epsilon_0}\underset{\mathcal{S}}{\oint}\frac{1}{\mathscr{r}}\sigma_b\,da' + \frac{1}{4\pi\epsilon_0}\underset{\mathcal{V}}{\int}\frac{1}{\mathscr{r}}\rho_b\,d\tau'
+\begin{equation*}
+	V(\mathbf{r}) = \frac{1}{4\pi\epsilon_0}\oint_\mathcal{S}\frac{1}{\mathscr{r}}\sigma_b\,da' + \frac{1}{4\pi\epsilon_0}\int_\mathcal{V}\frac{1}{\mathscr{r}}\rho_b\,d\tau'
+\end{equation*} \tag{4.9} \label{electric-potential-of-bound-charge}
 $$
 这个结论告诉我们，一个极化物体的电势分布等价于一个拥有特定电荷密度的面积分和特定电荷密度的体积分之和。我们将这些“虚拟”的电荷称为 **束缚电荷（Bound Charge）**。不过事实上，这些电荷并非完全抽象；它们就来自于极化物体中的一个个极化分子。让我们假设一个特殊的情形：一系列偶极子首尾相连在一条直线上，此时中间的所有电荷可以认为都互相抵消，只剩下首尾两个电荷。因此这个奇怪的结构等价于其仅在头部有一个正电荷而结尾有一个负电荷，如下图所示：
 
@@ -1610,11 +1620,11 @@ $$
 
 当电场并非是匀强的时候，$\mathbf{P}$ 会产生非零的散度。此时任取的一个体积 $\mathcal{V}$ 内的净电荷等于被“推出”其边界 $\mathcal{S}$ 的电荷总量取负（回忆前面我们得到的 $q = PA$），因此我们可以列出：
 $$
-\underset{\mathcal{V}}{\int}\rho_b\,d\tau = -\underset{\mathcal{S}}{\oint}\mathbf{P}\cdot d\mathbf{a}\nonumber
+\int_\mathcal{V}\rho_b\,d\tau = -\oint_\mathcal{S}\mathbf{P}\cdot d\mathbf{a}
 $$
 再根据散度定理 $(\ref{divergence-theorem})$，我们得到：
 $$
-\underset{\mathcal{V}}{\int}\rho_b\,d\tau = -\underset{\mathcal{V}}{\int}(\nabla\cdot\mathbf{P})\,d\tau\nonumber
+\int_\mathcal{V}\rho_b\,d\tau = -\int_\mathcal{V}(\nabla\cdot\mathbf{P})\,d\tau
 $$
 由于 $\mathcal{V}$ 是任取的，我们可以将积分符号摘掉，这样也就得到了 $\rho_b = -\nabla\cdot\mathbf{P}$。
 
@@ -1645,48 +1655,80 @@ $$
 
 ### 电位移
 
+#### 电介质中的高斯定律
+
 如果我们综合考虑一个电介质中的电荷，它可能包括束缚电荷和之前我们已经熟悉的 **自由电荷（Free Charge）**：
 $$
-\rho = \rho_b + \rho_f
+\begin{equation*}
+	\rho = \rho_b + \rho_f
+\end{equation*} \tag{4.10}
 $$
 根据高斯定律和束缚电荷密度的计算公式，我们有：
 $$
-\epsilon_0\nabla\cdot\mathbf{E} = -\nabla\cdot\mathbf{P} + \rho_f\nonumber
+\epsilon_0\nabla\cdot\mathbf{E} = -\nabla\cdot\mathbf{P} + \rho_f
 $$
 将 del 算子移到同一边，我们可以得到：
 $$
-\nabla\cdot(\epsilon_0\mathbf{E} + \mathbf{P}) = \rho_f \nonumber
+\nabla\cdot(\epsilon_0\mathbf{E} + \mathbf{P}) = \rho_f
 $$
 这样就可以引入 **电位移（Electric Displacement）**的概念了：
 $$
-\marginbox{\mathbf{D} = \epsilon_0\mathbf{E} + \mathbf{P}}
+\begin{equation*}
+	\marginbox{\mathbf{D} = \epsilon_0\mathbf{E} + \mathbf{P}}
+\end{equation*} \tag{4.11} \label{electric-displacement}
 $$
 之前的式子也可以写为高斯定律的微分形式：
 $$
-\nabla\cdot \mathbf{D} = \rho_f
+\begin{equation*}
+	\nabla\cdot \mathbf{D} = \rho_f
+\end{equation*} \tag{4.12} \label{divergence-of-D}
 $$
 其对应的积分形式便是：
 $$
-\oint\mathbf{D}\cdot\,d\mathbf{a} = Q_{f_\text{enc}}
+\begin{equation*}
+	\oint\mathbf{D}\cdot\,d\mathbf{a} = Q_{f_\text{enc}}
+\end{equation*} \tag{4.13} \label{gauss's-law-of-D}
 $$
-虽然电位移 $\mathbf{D}$ 和电场强度 $\mathbf{E}$ 从公式上来看非常相似，它们多数情况下有完全不同的性质。首先，不存在关于电位移的库仑定律 $(\ref{coulomb's-law})$，即电位移不能通过对距离平方反比求体积分得到。此外，它也不存在与电势相等的概念，这是因为电位移的旋度不恒等于 $\mathbf{0}$：
+虽然电位移 $\mathbf{D}$ 和电场强度 $\mathbf{E}$ 从公式上来看非常相似，它们多数情况下有完全不同的性质。首先，不存在关于电位移的库仑定律 $(\ref{coulomb's-law})$，即电位移不能通过对距离平方反比求体积分得到。此外，它也不存在与电势对等的概念，这是因为电位移的旋度不恒等于 $\mathbf{0}$：
 $$
-\nabla\times\mathbf{D} = \epsilon_0(\nabla\times\mathbf{E}) + (\nabla\times\mathbf{P}) = \nabla\times\mathbf{P}
+\begin{equation*}
+	\nabla\times\mathbf{D} = \epsilon_0(\nabla\times\mathbf{E}) + (\nabla\times\mathbf{P}) = \nabla\times\mathbf{P}
+\end{equation*} \tag{4.14}
 $$
 因此通常情况下，它不是任何物理量的梯度，因此也就不存在类似于电势的概念了。
 
-#### 线性电介质
+#### 边界条件
+
+我们可以轻松地得到电介质存在时的边界条件：
+$$
+\begin{equation*}
+	D_\text{above}^\perp - D_\text{below}^\perp = \sigma_f
+\end{equation*} \tag{4.15}
+$$
+由电位移的旋度等于极化强度的旋度可得：
+$$
+\begin{equation*}
+	\mathbf{D}_\text{above}^\parallel - \mathbf{D}_\text{below}^\parallel = \mathbf{P}_\text{above}^\parallel - \mathbf{P}_\text{below}^\parallel
+\end{equation*} \tag{4.16}
+$$
+
+### 线性电介质
+
+#### 电极化率与介电率
 
 让我们回顾 $(\ref{polarizability})$，探究极化产生的原因。大多数情况下，我们可以将这个式子写成：
 $$
-\label{susceptibility}
-\mathbf{P} = \epsilon_0\chi_e\mathbf{E}
+\begin{equation*}
+	\mathbf{P} = \epsilon_0\chi_e\mathbf{E}
+\end{equation*} \tag{4.17} \label{electric-susceptibility}
 $$
-其中 $\chi_e$ 是介质的 **电极化率（Electric Susceptibility）**，它取决于物质的微观结构，以及温度等环境因素。 $\mathbf{E}$ 是考虑了极化产生的电场之后的总电场强度。我们将所有满足 $(\ref{susceptibility})$ 的物质称为 **线性电介质（Linear Dielectric）**。我们可以进一步得到电位移和总电场强度的关系：
+其中 $\chi_e$ 是介质的 **电极化率（Electric Susceptibility）**，它取决于物质的微观结构，以及温度等环境因素。 $\mathbf{E}$ 是考虑了极化产生的电场之后的总电场强度。我们将所有满足 $(\ref{electric-susceptibility})$ 的物质称为 **线性电介质（Linear Dielectric）**。此时我们可以进一步得到电位移和总电场强度的关系：
 $$
-\mathbf{D} = \epsilon_0E + \mathbf{P} = \epsilon_0(1 + \chi_e)\mathbf{E} = \epsilon\mathbf{E}
+\begin{equation*}
+	\mathbf{D} = \epsilon_0E + \mathbf{P} = \epsilon_0(1 + \chi_e)\mathbf{E} = \epsilon\mathbf{E}
+\end{equation*} \tag{4.18} \label{E-and-D}
 $$
-其中将 $1 + \chi_e$ 记为 $\epsilon$，称为 **介电率（Permittivity）**。和 $\epsilon_0$ 对比就能知道真空中 $\chi_0 = 0$，这很符合直觉。我们也将物质的介电率和真空介电率的比值记作 $\epsilon_r$，称为 **相对介电率（Relative Permittivity）**，或 **电介质常数（Dielectric Constant）**。下面是一些常见物质的电介质常数：
+其中将 $\epsilon_0(1 + \chi_e)$ 记为 $\epsilon$，称为 **介电率（Permittivity）**。和 $\epsilon_0$ 对比就能知道真空中 $\chi_0 = 0$，这很符合直觉。我们也将物质的介电率和真空介电率的比值记作 $\epsilon_r$，称为 **相对介电率（Relative Permittivity）**，或 **电介质常数（Dielectric Constant）**。下面是一些常见物质的电介质常数：
 
 | 物质     | 电介质常数 | 物质                 | 电介质常数 | 物质             | 电介质常数 |
 | :------- | :--------- | -------------------- | ---------- | ---------------- | ---------- |
@@ -1696,9 +1738,50 @@ $$
 | 甲醇     | 33.0       | 水                   | 80.1       | 冰（-30 摄氏度） | 104        |
 | 钽铌酸钾 | 34000      |                      |            |                  |            |
 
-由于电位移现在和电场强度成正比，我们可以做出合理猜测：此时电位移的旋度为 $\mathbf{0}$。
+由于电位移现在和电场强度成正比，我们可以做出合理猜测：此时电位移的旋度为 $\mathbf{0}$。可惜这是错误的结论。在不同电介质的边界处，$\mathbf{P}$ 跨越两种电介质的环路积分并不一定为 $0$，因此其旋度，也即 $\mathbf{D}$ 的旋度非零。不过，如果整个空间都由一种 *同质* 的（即介电率为常数）线性电介质充满，则我们确实可以认为 $\mathbf{D}$ 是无旋的。此时总有：
+$$
+\begin{equation*}
+	\mathbf{E} = \frac{1}{\epsilon}\mathbf{D} = \frac{1}{\epsilon_r}\mathbf{E}_\text{vac}
+\end{equation*} \tag{4.19}
+$$
+其中 $\mathbf{E}_\text{vac}$ 是假设电介质为真空时的电场强度。这意味着我们可以通过库仑定律来计算电位移，以及电介质中的电场强度。比如假设一个自由电荷 $q$ 嵌入了一个巨大的电介质中，此时它产生的电场强度是：
+$$
+\begin{equation*}
+	\mathbf{E} = \frac{1}{4\pi \epsilon}\frac{q}{r^2}\unit{r}
+\end{equation*} \tag{4.20}
+$$
+这个式子展示了一个有趣的现象，即这个电荷四周的电荷受到的力要小于在真空中所受到的（因为 $\epsilon > \epsilon_0$）。这是因为电介质极化产生的束缚电荷在该电荷周围部分抵消了其电荷量。
+
+#### 边界条件
+
+在同质的线性电介质中，束缚电荷体密度和自由电荷体密度总是成正比的：
+$$
+\begin{equation*}
+	\rho_b = -\nabla\cdot\mathbf{P} = -\nabla\cdot\left(\epsilon_0\frac{\chi_e}{\epsilon}\mathbf{D}\right) = -\left(\frac{\chi_e}{1 + \chi_e}\right)\rho_f
+\end{equation*} \tag{4.21}
+$$
+特别地，如果自由电荷不在电介质内，那么总有 $\rho = 0$，所有的净电荷一定在电介质表面。此时我们可以继续使用拉普拉斯方程。需要满足的边界条件有：
+$$
+\begin{equation*}
+	\epsilon_\text{above}E_\text{above}^\perp - \epsilon_\text{below}E_\text{below}^\perp = \sigma_f
+\end{equation*} \tag{4.22}
+$$
+或者等价的：
+$$
+\begin{equation*}
+	\epsilon_\text{above}\frac{\partial V_\text{above}}{\partial n} - \epsilon_\text{below}\frac{\partial V_\text{below}}{\partial n} = \sigma_f
+\end{equation*} \tag{4.23}
+$$
 
 
+同时，电势应该是连续的：
+$$
+\begin{equation*}
+	V_\text{above} = V_\text{below}
+\end{equation*} \tag{4.24}
+$$
+
+#### 电介质系统中的能量
 
 
 
@@ -1714,7 +1797,7 @@ $$
 
 ​                 <img src="graphs/ed1_5-1.png" alt="ed1_5-1" style="zoom:50%;" />              <img src="graphs/ed1_5-2.png" alt="ed1_5-2" style="zoom:50%;" />
 
-右图清晰地解释了两条通电导线磁力的示意图。需要注意 **磁场强度（Magnetic Field）** 是为了描述矢量 $\mathbf{v}$ 和 $\mathbf{F}$ 而“捏造出来的矢量。事实上，它是一个 **伪矢量（Pseudovector）**，其表现为，将其它设定进行镜像变换后，$\mathbf{B}$ 并不一定是原来的镜像变换，如下图所示：
+右图清晰地解释了两条通电导线磁力的示意图。需要注意 **磁场强度（Magnetic Field）** 是为了描述矢量 $\mathbf{v}$ 和 $\mathbf{F}$ 而“捏造“出来的矢量。事实上，它是一个 **伪矢量（Pseudovector）**，其表现为，将其它设定进行镜像变换后，$\mathbf{B}$ 并不一定是原来的镜像变换，如下图所示：
 
 <img src="graphs/ed1_5-3.png" alt="ed1_5-3" style="zoom:10%;" />
 
@@ -2145,9 +2228,9 @@ $$
 | 电场（偶极子项）                                          |                      坐标有关式见后表 5                      | 磁场（偶极子项）                                             |                      坐标有关式见后表 6                      |
 | 电场（偶极子项）                                          |                      坐标无关式见后表 7                      | 磁场（偶极子项）                                             |                      坐标无关式见后表 8                      |
 | 电偶极子受力矩                                            |        $\boldsymbol{N} = \mathbf{p}\times \mathbf{E}$        | 磁偶极子受力矩                                               |        $\boldsymbol{N} = \mathbf{m}\times\mathbf{B}$         |
-| 电偶极子受力                                              |       $\mathbf{F} = (\mathbf{p}\cdot\nabla)\mathbf{E}$       | 磁偶极子受力                                                 |       $\mathbf{F} = (\mathbf{m}\cdot\nabla)\mathbf{B}$       |
-| 极化密度                                                  |    $\displaystyle \mathbf{P} = \frac{d\mathbf{p}}{d\tau}$    | 磁化密度                                                     |    $\displaystyle \mathbf{M} = \frac{d\mathbf{m}}{d\tau}$    |
-| 电势（极化密度）                                          |                           见后表 9                           | 磁矢势（磁化密度）                                           |                          见后表 10                           |
+| 电偶极子受力                                              |       $\mathbf{F} = (\mathbf{p}\cdot\nabla)\mathbf{E}$       | 磁偶极子受力                                                 |       $\mathbf{F} = \nabla(\mathbf{m}\cdot\mathbf{B})$       |
+| 极化强度                                                  |    $\displaystyle \mathbf{P} = \frac{d\mathbf{p}}{d\tau}$    | 磁化强度                                                     |    $\displaystyle \mathbf{M} = \frac{d\mathbf{m}}{d\tau}$    |
+| 电势（$\mathbf{P}$）                                      |                           见后表 9                           | 磁矢势（$\mathbf{M}$）                                       |                          见后表 10                           |
 | 束缚电荷面密度                                            |             $\sigma_b = \mathbf{P}\cdot\unit{n}$             | 束缚电流面密度                                               |          $\mathbf{K}_b = \mathbf{M}\times\unit{n}$           |
 | 束缚电荷体密度                                            |              $\rho_b = -\nabla\cdot\mathbf{P}$               | 束缚电流体密度                                               |           $\mathbf{J}_b = \nabla\times\mathbf{M}$            |
 | 电势（极化物体）                                          |                          见后表 11                           | 磁矢势（磁化物体）                                           |                          见后表 12                           |
