@@ -969,16 +969,18 @@ $$
 
 - 即使是前后有推导关系的 $(\ref{electric-energy-continuous})$ 和 $(\ref{electric-energy-all-space})$ 也在形式上有微妙的差异。前者将能量局限于 $\rho \ne 0$，也即有电荷分布的地方，而后者则在整个空间中对电场进行积分。究竟是电荷，还是电场拥有能量呢？在更大的背景下，后者是更正确的结论。事实上，电场在全空间的能量密度（单位体积的能量）是：
   $$
-  U = \frac{\epsilon_0}{2}E^2
+  \begin{equation*}
+  	U = \frac{\epsilon_0}{2}E^2
+  \end{equation*} \tag{2.20} \label{electric-field-energy-density}
   $$
   这和 $(\ref{electric-energy-all-space})$ 相照应。
-
+  
 - 最后，令人惊讶（但并不难接受）的是，静电场能量不满足叠加原理。考虑两个电场 $\mathbf{E}_1$ 和 $\mathbf{E}_2$ 的叠加：
   $$
   \begin{align}
   W_\text{tot} &= \frac{\epsilon_0}{2}\int (\mathbf{E}_1 + \mathbf{E}_2)^2\,d\tau = \frac{\epsilon_0}{2}\int(E_1^2 + E_2^2 + 2\mathbf{E}_1\cdot\mathbf{E}_2)\,d\tau \nonumber \\
   &= W_1 + W_2 + \epsilon_0\int\mathbf{E}_1\cdot\mathbf{E}_2\,d\tau
-  \end{align}
+  \end{align} \tag{2.21}
   $$
 
 ### 导体
@@ -995,7 +997,75 @@ $$
 
 当我们将一个电荷 $+q$ 靠近一个不带电的导体时，它们会相互吸引。这是因为 $+q$ 会排斥导体中的正电荷，并留下负电荷；由于剩下的负电荷和 $+q$ 更近，所以总体呈现吸引效果。这里，我们分析一个比较特殊的情况。考虑一个金属球壳内部存在一个电荷 $q$。此时根据高斯定律，在球壳以内和以外都应该存在电场。球壳内侧会产生总量为 $-q$ 的感应电荷。这样，在导体中任何包围其内侧曲面的高斯面中总不存在任何净电荷。由导体的性质可以知道，在球壳外侧会产生总量为 $q$ 的电荷，因此包围球壳外侧曲面的高斯面中，净电荷总为 $q$，且导体本身呈电中性。
 
-这给我们一个比较令人欣喜的结果，那就是带空洞的导体（空洞中存在净电荷）的外部电场和空洞的位置无关。此外，如果导体中某个空洞内没有净电荷，那么此处的电场也为 $\mathbf{0}$，且在空洞表面不会有任何电荷，这也是 **法拉第笼（Faraday Cage）** 的原理。
+这给我们一个比较令人欣喜的结果，那就是带空洞的导体（空洞中存在净电荷）的外部电场和空洞的位置无关。此外，如果导体中某个空洞内没有净电荷，那么此处的电场也为 $\mathbf{0}$，且在空洞表面不会有任何电荷（为了理解这一点，可以考虑一个连接空洞表面一对正负电荷 $a, b$ 的环路。此时显然有 $\int_a^b \mathbf{E}\cdot d\mathbf{l} \ne 0$，然而环路剩余的部分均在导体中，那里 $\mathbf{E} = \mathbf{0}$，如下图所示。因此，电场的环路积分非零，这是不可能的），这也是 **法拉第笼（Faraday Cage）** 的原理。
+
+<img src="graphs/ed1_2-4.png" alt="ed1_2-4" style="zoom:50%;" />
+
+#### 导体的面电荷
+
+由于导体内部的电场为零，此前讨论的边界条件 $(\ref{electric-field-boundary-condition})$ 告诉我们导体表面的电场为：
+$$
+\begin{equation*}
+	\mathbf{E} = \frac{\sigma}{\epsilon_0}\unit{n}
+\end{equation*} \tag{2.22}
+$$
+类似地，通过另一条边界条件可以得到：
+$$
+\begin{equation*}
+	\sigma = -\epsilon_0\frac{\partial V}{\partial n}
+\end{equation*} \tag{2.23}
+$$
+因此只要我们可以计算出导体表面的电场或电势，就能得到相应的电荷面密度。由于电场的存在，这些面电荷会受到静电力。我们记单位面积受到的力为 $\mathbf{f}$，即 $\mathbf{f} = \sigma\mathbf{E}$。此处的 $\mathbf{E}$ 是外部电场，满足：
+$$
+\begin{equation*}
+	\mathbf{E}_\text{ave} = \frac{1}{2}\sigma(\mathbf{E}_\text{above} + \mathbf{E}_\text{below})
+\end{equation*} \tag{2.24}
+$$
+这是因为上表面的电场是外部电场 *加上* 面电荷产生的电场，而下表面的电场是外部电场 *减去* 面电荷产生的电场，因此两者的平均值便是纯粹的外部电场。在导体的设定下，$\mathbf{E}_\text{above}$ 是前面给出的电场，而 $\mathbf{E}_\text{below} = \mathbf{0}$，因此：
+$$
+\begin{equation*}
+	\mathbf{f} = \frac{\sigma^2}{2\epsilon_0}\unit{n}
+\end{equation*} \tag{2.25}
+$$
+我们将其称为 **静电压（Electrostatic Pressure）**，其倾向于将导体“拉入”电场中。如果用电场来表示这个量（套用 $(2.22)$ 公式）则是：
+$$
+\begin{equation*}
+	P = \frac{\epsilon_0}{2}E^2
+\end{equation*} \tag{2.26}
+$$
+注意此公式只在导体表面处成立。巧合的是，这个公式和 $(\ref{electric-field-energy-density})$ 完全一致。
+
+#### 电容
+
+考虑两个分别带 $+Q$ 和 $-Q$ 电荷的导体。由于导体表面是等势面，我们可以定义它们之间的电势差为：
+$$
+V = V_+ - V_- = -\int_{(-)}^{(+)}\mathbf{E}\cdot d\mathbf{l}
+$$
+现在让我们尝试得到和电场 $\mathbf{E}$ 有关的信息。根据库仑定律 $(\ref{coulomb's-law-integral})$，我们知道电场和电荷密度成正比；而电荷密度是和电荷量成正比的（这或许存疑，但事实如此且不难接受）。因此，我们发现电势差和两个导体带的电荷量成正比。我们将两者的比值定义为 **电容量（Capacitance）**，或简称为 **电容**（这个简称非常常用，但是有时会与 **电容（Capacitor）** ，即本模型中的这两个导体组成的结构混淆，因此在必要时我会将前者称为电容量）：
+$$
+\begin{equation*}
+	C \equiv \frac{Q}{V}
+\end{equation*} \tag{2.27} \label{capacitance}
+$$
+电容是一个只与导体几何性质（大小、形状、两个导体间的距离等）有关的量，**SI** 单位是 **法拉第（Farads, $\text{F}$）**，满足 $\text{F} = \text{C}/\text{V}$。这是一个很大的量，更常用的单位是微法（$10^{-6}$）或皮法（$10^{-12}$）。电容的定义保证其一定是一个正值。
+
+有的时候，我们会说某个导体的电容如何如何。此时是默认另一个导体为无限半径的球形壳。
+
+最后，让我们计算电容的能量。为了形成一个电容，我们需要将电荷从一个导体移动到另一个导体。假设某一刻目标导体上的电荷为 $q$，则有：
+$$
+dW = \left(\frac{q}{C}\right)\,dq
+$$
+因此：
+$$
+W = \int_0^Q\left(\frac{q}{C}\right)\,dq = \frac{1}{2}\frac{Q^2}{C}
+$$
+将 $Q = CV$ （这里的 $V$ 是最终状态下的电势差）代入则有：
+$$
+\begin{equation*}
+	W = \frac{1}{2}CV^2
+\end{equation*} \tag{2.28} \label{energy-of-capacitor}
+$$
+
 
 ## 电势
 
@@ -1194,15 +1264,15 @@ $$
 
 <img src="graphs/ed1_3-1.png" alt="ed1_3-1" style="zoom:40%;" />
 
-我们将边界条件中的前两条代入 (87) 式，可以得到：
+我们将边界条件中的前两条代入 $(3.9)$ 式，可以得到：
 $$
 V(x, y) = Ce^{-kx}\sin{ky}, \quad k = \frac{n\pi}{a}, \quad n = 1, 2, ...
 $$
-过程中可以意识到上面的边界条件是为了贴合之前 (85) 式，将 $x$ 设计为指数函数、$y$ 设计为三角函数。因为上面的 $n$ 是任取的正整数，也就是说我们得到了无穷多个解 $V_1, V_2, ...$。由于原方程是线性的（可以简单证明），我们可以写出分离变量法得到的通解：
+过程中可以意识到上面 $(3.9)$ 为了贴合边界条件，将 $x$ 设计为指数函数、$y$ 设计为三角函数。因为上面的 $n$ 是任取的正整数，也就是说我们得到了无穷多个解 $V_1, V_2, ...$。由于原方程是线性的（可以简单证明），我们可以写出分离变量法得到的通解：
 $$
 V(x, y) = \sum_{n=1}^\infty C_ne^{-\frac{n\pi x}{a}}\sin{\frac{n\pi y}{a}}
 $$
-边界条件的第三条要求 $V(0, y) = V_0(y)$。我们可以根据傅立叶级数的知识对 *任意* 的 $V_0(y)$ 进行例如 (89) 式（取 $x = 0$ ）的构造（这和函数的 **完备性（Completeness）** 有关，具体证明比较复杂，我们这里不进行说明）。最后一个问题是 $C_n$ 的求解，这用到了一个小技巧。我们将 (89) 式稍稍改写一下，引入 $n' \in \Z^+$：
+边界条件的第三条要求 $V(0, y) = V_0(y)$。我们可以根据傅立叶级数的知识对 *任意* 的 $V_0(y)$ 进行例如 $(3.9)$ 式（取 $x = 0$ ）的构造（这和函数的 **完备性（Completeness）** 有关，具体证明比较复杂，我们这里不进行说明）。最后一个问题是 $C_n$ 的求解，这用到了一个小技巧。我们将 $(3.9)$ 式稍稍改写一下，引入 $n' \in \Z^+$：
 $$
 \sum_{n=1}^\infty C_n\int_0^a\sin{\frac{n\pi y}{a}}\sin{\frac{n'\pi y}{a}}\,dy = \int_0^aV_0(y)\sin{\frac{n'\pi y}{a}}\,dy \tag{3.10}
 $$
@@ -1484,18 +1554,18 @@ $$
 	\mathbf{p} = q\mathbf{r}_+' - q\mathbf{r}_-' = q\mathbf{d}
 \end{equation} \label{physical-dipole} \tag{3.22}
 $$
-结合 $(\ref{electric-dipole-potential-alt})$，我们可以得到与上一节相同的结论。注意这里是一个估计值；当 $r$ 变大或者 $d$ 变小时，这个估计会更加精确。当 $d \to 0$ 时，我们可以得到一个 **完美偶极子（Perfect Dipole）**。此时为了不让偶极矩削减至零，我们还应该让 $q \to \infty$，保证 $qd$ 是一个固定的值。此时我们可以放心地使用 $(\ref{electric-dipole-potential-alt})$ 式了。
+结合 $(\ref{electric-dipole-potential-alt})$，我们可以得到与上一节相同的结论。注意这里是一个估计值；当 $r$ 变大或者 $d$ 变小时，这个估计会更加精确。当 $d \to 0$ 时，我们可以得到一个 **完美偶极子（Perfect Dipole）**，有时也称为 **纯偶极子（Pure Dipole）**。此时为了不让偶极矩削减至零，我们还应该让 $q \to \infty$，保证 $qd$ 是一个固定的值。此时我们可以放心地使用 $(\ref{electric-dipole-potential-alt})$ 式了。
 
 #### 电偶极子的电场
 
-现在我们假设偶极矩在原点沿 $z$ 方向。此时电势可以在球坐标系中简化为：
+现在我们假设一个完美偶极子在原点，偶极矩沿 $z$ 方向。此时 $(\ref{electric-dipole-potential-alt})$ 可以在球坐标系中简化为：
 $$
 V_\text{dip}(r, \theta) = \frac{p\cos\theta}{4\pi\epsilon_0r^2}
 $$
 求它每个方向的梯度的负数即是该方向的电场，综合起来就是：
 $$
 \begin{equation}
-	\textbf{E}_\text{dip}(r, \theta) = \frac{p}{4\pi\epsilon_0}(2\cos\theta\hat{\mathbf{r}} + \sin\theta\hat{\boldsymbol{\theta}})
+	\textbf{E}_\text{dip}(r, \theta) = \frac{p}{4\pi\epsilon_0r^3}(2\cos\theta\hat{\mathbf{r}} + \sin\theta\hat{\boldsymbol{\theta}})
 \end{equation} \label{electric-field-of-dipole} \tag{3.23}
 $$
 可以看到偶极子场和距离的三次方成反比；类似地我们能得到四极子场和距离的四次方、八极子场和距离的五次方……成反比。这和我们此前得到的结论（电偶极子的电势和平方成反比，四极子和八极子则是平方反比和立方反比）互洽。
@@ -1579,7 +1649,7 @@ $$
 
 #### 束缚电荷
 
-根据电势的定义 $(\ref{electric-potential-integral})$ 和极化强度定义，我们可以给出极化物体产生的电势：
+根据电偶极子产生电势的公式 $(\ref{electric-dipole-potential-alt})$ 和极化强度定义，我们可以给出极化物体产生的电势：
 $$
 \begin{equation*}
 	V(\mathbf{r}) = \frac{1}{4\pi\epsilon_0}\int_\mathcal{V}\frac{\mathbf{P}(\mathbf{r}')\cdot\hat{\boldsymbol{\mathscr{r}}}}{\mathscr{r}^2}\,d\tau'
@@ -1652,6 +1722,34 @@ $$
 > 下面是一个示意图。可以参考上一章结尾给出的图：
 >
 > <img src="graphs/ed1_4-4.png" alt="ed1_4-4" style="zoom:30%;" />
+
+#### 电介质中的电场
+
+上一节的一些论述似乎有值得思考的问题。对 $(4.6)$ 式的使用暗示我们将极化物体按照多个完美偶极子理解（实际上并非如此），且 $\mathbf{P}$ 作为一个（连续的）密度函数用于表示离散的分子形成的偶极子是否有欠考虑？在物体以外，我们通常可以接受这样的差异（因为 $\rcur$ 比正负电子对的间距 $d$ 大多了，此时物理偶极子 *约等于* 完美偶极子），但在物体内（恰巧也是我们上一节中积分的范围），其适用性存疑，本节将对此进行分析。
+
+物质中微观尺度下的电场是异常复杂的。因为在靠近电荷的地方，电场会变得极为庞大，然而稍微偏离（并靠近另一个电荷）时，电场的方向会发生大幅变化。更不要说考虑电荷的移动时，下一秒的电场分布就截然不同。因此，我们对微观下的电场兴趣不大（事实上也难以计算），而更注重（相对）宏观尺度的电场。比如，我们会将水是做一个连续流体（而忽略其分子结构），此时无需考虑水分子中电子的运动和相互作用。此时，我们通常会将某一点的场定义为一个包含该点的足够大的微小空间（比如几千个分子）中场的平均值。这样既能反应物体局部的特征，也能避免某点的突变影响数据。因此，当我们描述“物质中的电场”时，指的是宏观意义上的电场。类似的概念我们在物理中遇到过一些了，比如密度（我们求的当然不是原子的密度，更不是原子间“真空”的密度，而是一系列分子组成的物质质量比上它们占的体积）。
+
+现在让我们重新回顾一个极化物体中的电场。让我们专注于一个半径为 $R$ 的球体。它受到的电场可以被分为两个部分，即外部的偶极矩产生的电场和内部的偶极矩产生的电场：
+$$
+\mathbf{E} = \mathbf{E}_\text{out} + \mathbf{E}_\text{in}
+$$
+对一个球体的平均电场等于该球体在球心处受到的电场，因此：
+$$
+\begin{equation*}
+	V_\text{out} = \frac{1}{4\pi\epsilon_0}\underset{\text{outside}}{\int}\frac{\mathbf{P}(\mathbf{r}')\cdot\unit{\rcur}}{\rcur^2}\,d\tau'
+\end{equation*}
+$$
+这里使用该公式并无问题，因为我们可以假设球以外的电偶极矩和球心距离足够远。另一边，内部的偶极矩产生的电场可以通过球平均场得到：
+$$
+\mathbf{E}_\text{in} = -\frac{1}{4\pi\epsilon_0}\frac{\mathbf{p}}{R^3}
+$$
+我们再将 $\mathbf{p} = \mathbf{P}\int\,d\tau'$ 代回上式，就得到：
+$$
+\begin{equation*}
+	\mathbf{E}_\text{in} = -\frac{1}{3\epsilon_0}\mathbf{P}
+\end{equation*} \tag{4.10} \label{electric-field-inside-dielectric-sphere}
+$$
+由于我们选取的 $R$ 足够小，因此 $\mathbf{P}$ 相比其体积分小很多。因此我们最终得到的就是上一节的公式。这里有关电介质球体内部电场的结论，即 $(\ref{electric-field-inside-dielectric-sphere})$ 也颇有意思：无论实际上极化分布有多复杂，其在一个球体中的平均值等价于均匀分布的极化强度。
 
 ### 电位移
 
@@ -1782,6 +1880,32 @@ $$
 $$
 
 #### 电介质系统中的能量
+
+我们此前已经知道电容中的能量公式 $(\ref{energy-of-capacitor})$。现在考虑被线性电介质包围的电容，其电容量为：
+$$
+\begin{equation*}
+	C = \epsilon_r C_\text{vac}
+\end{equation*} \tag{4.25} \label{capacitance-in-dielectric}
+$$
+此结论从电容和电场成正比的性质不难得到。显然我们对电容充电所需的能量变多了。下面我们尝试推导该能量用电场表示的形式。首先，假设电介质从始至终不移动。当我们加入自由电荷，使电荷密度从 $\rho_f$ 增加了 $\Delta \rho_f$ 时，我们有：
+$$
+\begin{align*}
+	\Delta W = \int (\Delta \rho_f) V\,d\tau &= \int\nabla\cdot(\Delta \mathbf{D})V\,d\tau \\
+	&= \int\nabla\cdot[(\Delta\mathbf{D})V]\,d\tau + \int(\Delta\mathbf{D})\cdot \mathbf{E}\,d\tau \\
+	&= \int_\mathcal{S}V(\Delta \mathbf{D})\cdot d\mathbf{a} + \frac{1}{2}\int_\mathcal{V}\Delta (\mathbf{D}\cdot\mathbf{E})\,d\tau
+\end{align*}
+$$
+当我们令 $\mathcal{S}, \mathcal{V} \to \infty$ 时，第一项消失了，而第二项变为：
+$$
+\begin{equation*}
+	W = \frac{1}{2}\int\mathbf{D}\cdot\mathbf{E}\,d\tau
+\end{equation*} \tag{4.26} \label{energy-in-dielectric}
+$$
+我们不难发现它和此前得到的 $(\ref{electric-energy-all-space})$ 的区别，对于线性电介质而言在于一个系数 $\epsilon_r$。从物理意义上来讲，$(\ref{energy-in-dielectric})$ 是将自由电荷放置为特定分布，使得电介质得到相应电场时需要的能量；$(\ref{electric-energy-all-space})$ 则是同时考虑自由电荷和束缚电荷，将其放置为特定分布时需要的能量（换言之，其完全忽略了电介质的存在，而只考虑电荷分布。此时电介质中束缚电荷间的能量（类似于弹力）就会被忽略），因此通常我们不会这样计算）。
+
+此外，$(\ref{energy-in-dielectric})$ 通常只适用于线性电介质。对于一些带有损耗的系统，构建电场的能量可以是任意大的（因为此时功和路径有关）。
+
+#### 电介质的受力
 
 
 
