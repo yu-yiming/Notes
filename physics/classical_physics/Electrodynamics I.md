@@ -816,7 +816,7 @@ $$
 我们发现这个结果只和起始点和终止点有关（是不是有点熟悉？没错，梯度基本定理，也即 $(\ref{gradient-theorem})$），当两点重合时，这个值就是 $0$。再利用斯托克斯定理 $(\ref{stokes-theorem})$，我们得到下式：
 $$
 \begin{equation}
-	\nabla\times\mathbf{E} = \mathbf{0}
+	\marginbox{\nabla\times\mathbf{E} = \mathbf{0}}
 \end{equation} \tag{2.8}
 $$
 当考虑多个电荷产生的电场时，利用叠加原理，就能得知任意分布的静电场的旋度均为 $\mathbf{0}$。
@@ -1560,13 +1560,15 @@ $$
 
 现在我们假设一个完美偶极子在原点，偶极矩沿 $z$ 方向。此时 $(\ref{electric-dipole-potential-alt})$ 可以在球坐标系中简化为：
 $$
-V_\text{dip}(r, \theta) = \frac{p\cos\theta}{4\pi\epsilon_0r^2}
+\begin{equation*}
+	V_\text{dip}(r, \theta) = \frac{p\cos\theta}{4\pi\epsilon_0r^2}
+\end{equation*} \tag{3.23} \label{electric-potential-of-electric-dipole}
 $$
 求它每个方向的梯度的负数即是该方向的电场，综合起来就是：
 $$
 \begin{equation}
 	\textbf{E}_\text{dip}(r, \theta) = \frac{p}{4\pi\epsilon_0r^3}(2\cos\theta\hat{\mathbf{r}} + \sin\theta\hat{\boldsymbol{\theta}})
-\end{equation} \label{electric-field-of-dipole} \tag{3.23}
+\end{equation} \tag{3.24} \label{electric-field-of-electric-dipole}
 $$
 可以看到偶极子场和距离的三次方成反比；类似地我们能得到四极子场和距离的四次方、八极子场和距离的五次方……成反比。这和我们此前得到的结论（电偶极子的电势和平方成反比，四极子和八极子则是平方反比和立方反比）互洽。
 
@@ -1772,7 +1774,7 @@ $$
 这样就可以引入 **电位移（Electric Displacement）**的概念了：
 $$
 \begin{equation*}
-	\marginbox{\mathbf{D} = \epsilon_0\mathbf{E} + \mathbf{P}}
+	\marginbox{\mathbf{D} \equiv \epsilon_0\mathbf{E} + \mathbf{P}}
 \end{equation*} \tag{4.11} \label{electric-displacement}
 $$
 之前的式子也可以写为高斯定律的微分形式：
@@ -1940,6 +1942,7 @@ $$
 \end{align*}
 $$
 
+这和之前的结论是吻合的。
 
 ## 静磁场概览
 
@@ -1957,13 +1960,17 @@ $$
 
 <img src="graphs/ed1_5-3.png" alt="ed1_5-3" style="zoom:10%;" />
 
-**洛伦兹定律** 声称，速度为 $\mathbf{v}$ 的测试电荷 $Q$ 受到的磁场力和 $Q$、$\mathbf{v}$ 以及磁场强度 $\mathbf{B}$ 成正比，方向和 $\mathbf{v}\times\mathbf{B}$ 相同：
+**洛伦兹力定律（Lorentz Force Law）** 声称，速度为 $\mathbf{v}$ 的测试电荷 $Q$ 受到的磁场力和 $Q$、$\mathbf{v}$ 以及磁场强度 $\mathbf{B}$ 成正比，方向和 $\mathbf{v}\times\mathbf{B}$ 相同：
 $$
-\marginbox{\mathbf{F} = Q(\mathbf{v}\times \mathbf{B})}
+\begin{equation*}
+	\marginbox{\mathbf{F} = Q(\mathbf{v}\times \mathbf{B})}
+\end{equation*} \tag{5.1} \label{lorentz-force-law}
 $$
 这可以认为是静磁学的一个公理（类似于库仑定律），我们无需证明。如果同时考虑电场 $\mathbf{E}$，上式就变为：
 $$
-\mathbf{F} = Q(\mathbf{E} + \mathbf{v}\times\mathbf{B})
+\begin{equation*}
+	\mathbf{F} = Q(\mathbf{E} + \mathbf{v}\times\mathbf{B})
+\end{equation*} \tag{5.2} \label{electromagnetic-force}
 $$
 我们接下来的任务就是研究如何求得其中的 $\mathbf{E}$ 和 $\mathbf{B}$。
 
@@ -2046,41 +2053,49 @@ $$
 
 **电流（Current）** 是指单位时间内通过某点的电荷数量，单位是 **安培（Amperes, $\text{A}$）**，满足 $1\ \text{A} = 1\ \text{C}/\text{s}$。需要注意的是，电流的方向和电荷类型有关；负电荷（比如电子）移动方向和电流方向是相反的。对于电荷线密度为 $\lambda$ 的电线，它的电流可以通过下式计算：
 $$
-\mathbf{I} = \lambda\mathbf{v}
+\begin{equation*}
+	\mathbf{I} = \lambda\mathbf{v}
+\end{equation*} \tag{5.3} \label{line-current}
 $$
 我们可以由此推出洛伦兹力公式和电流的关系：
 $$
-\begin{align}
-\mathbf{F} &= \int(\mathbf{v}\times\mathbf{B})\,dq = \int(\mathbf{v}\times\mathbf{B})\lambda\,dl = \int(\mathbf{I}\times\mathbf{B})\,dl \nonumber \\
-&= \int I(d\mathbf{l}\times\mathbf{B})
-\end{align}
+\begin{align*}
+	\mathbf{F} &= \int(\mathbf{v}\times\mathbf{B})\,dq = \int(\mathbf{v}\times\mathbf{B})\lambda\,dl = \int(\mathbf{I}\times\mathbf{B})\,dl \nonumber \\
+&= \int I(d\mathbf{l}\times\mathbf{B}) \tag{5.4}
+\end{align*}
 $$
-当电流从平面中通过时（如下图所示），我们可以类似地定义 **平面电流密度（Surface Current Density）**，记为 $\mathbf{K}$：
+当电流从平面中通过时（如下图所示），我们可以类似地定义 **面电流密度（Surface Current Density）**，记为 $\mathbf{K}$：
 
 <img src="graphs/ed1_5-6.png" alt="ed1_5-6" style="zoom:40%;" />
 
 计算公式是：
 $$
-\mathbf{K} = \sigma\mathbf{v} = \frac{\mathbf{dI}}{dl_\perp}
+\begin{equation*}
+	\mathbf{K} = \sigma\mathbf{v} = \frac{\mathbf{dI}}{dl_\perp}
+\end{equation*} \tag{5.5} \label{surface-current-density}
 $$
 洛伦兹力为：
 $$
-\mathbf{F} = \int(\mathbf{K}\times\mathbf{B})\,da
+\begin{equation*}
+	\mathbf{F} = \int(\mathbf{K}\times\mathbf{B})\,da
+\end{equation*} \tag{5.6}
 $$
-三维空间中，可以定义 **体积电流密度（Volume Current Density）**，记为 $\mathbf{J}$，图示如下：
+三维空间中，可以定义 **体电流密度（Volume Current Density）**，记为 $\mathbf{J}$，图示如下：
 
 <img src="graphs/ed1_5-7.png" alt="ed1_5-7" style="zoom:50%;" />
 
 类似地我们有：
 $$
 \begin{align*}
-	\mathbf{J} &= \rho \mathbf{v} = \frac{d\mathbf{I}}{da_\perp} \\
-	\mathbf{F} &= \int(\mathbf{J}\times\mathbf{B})\,d\tau
+	\mathbf{J} &= \rho \mathbf{v} = \frac{d\mathbf{I}}{da_\perp} \tag{5.7} \label{volume-current-density} \\
+	\mathbf{F} &= \int(\mathbf{J}\times\mathbf{B})\,d\tau \tag{5.8}
 \end{align*}
 $$
 我们可以通过电流密度计算通过截面 $\mathcal{S}$ 的电流：
 $$
-I = \int_\mathcal{S}\mathbf{J}\cdot\,d\mathbf{a}
+\begin{equation*}
+	I = \int_\mathcal{S}\mathbf{J}\cdot\,d\mathbf{a}
+\end{equation*} \tag{5.9}
 $$
 根据散度定理我们有：
 $$
@@ -2092,30 +2107,39 @@ $$
 $$
 因此我们得到下面的重要结论：
 $$
-\label{continuity-equation}
-\marginbox{\nabla\cdot\mathbf{J} = -\frac{\partial \rho}{\partial t}}
+\begin{equation*}
+	\marginbox{\nabla\cdot\mathbf{J} = -\frac{\partial \rho}{\partial t}}
+\end{equation*} \tag{5.10} \label{continuity-equation}
 $$
 我们也将其称为 **连续性方程（Continuity Equation）**，其描述了局部电荷的守恒性。
 
 最后让我们总结一下计算电流时几个等价的式子：
 $$
-\sum_i Nq_i\mathbf{v}_i = \int_\mathcal{L}N\mathbf{I}\,dl = \int_\mathcal{S}N\mathbf{K}\,da = \int_\mathcal{V}N\mathbf{J}\,d\tau
+\begin{equation*}
+	\sum_i Nq_i\mathbf{v}_i = \int_\mathcal{L}N\mathbf{I}\,dl = \int_\mathcal{S}N\mathbf{K}\,da = \int_\mathcal{V}N\mathbf{J}\,d\tau
+\end{equation*} \tag{5.11}
 $$
-这个和我们之前讨论电荷分布时，$dq = \lambda\,dl = \sigma\,da = \rho\,d\tau$ 是类似的。
+其中 $N$ 是任意的函数。这个和我们之前讨论电荷分布时，$dq = \lambda\,dl = \sigma\,da = \rho\,d\tau$ 是类似的。
 
 ### 毕奥·萨伐尔定律
 
 我们至今一直将 $\mathbf{B}$ 当作已知的量，然而它究竟是多大呢？我们暂时只关注静磁场中 $\mathbf{B}$ 的大小。我们感兴趣的是会产生静磁场 **恒定电流（Steady Current）**，即电流方向和大小均保持不变。使得静磁场成立的重要一点是导线的任一处的电荷密度变化率为 $0$：
 $$
-\frac{\partial \rho}{\partial t} = 0
+\begin{equation*}
+	\frac{\partial \rho}{\partial t} = 0 \qquad \frac{\partial \mathbf{J}}{\partial t} = \mathbf{0}
+\end{equation*} \tag{5.12}
 $$
 需要注意单独的电荷 $q$ 匀速直线运动时 *不会* 产生静磁场，因为每当它移动到另一点，都会改变它运动轨迹上的电荷分布。一个理想的产生静磁场的模型是通恒定电流的无限长直导线。导线中任意一处的电流都是常数 $I$。此外，根据连续性方程 $(\ref{continuity-equation})$，我们能知道静磁场中：
 $$
-\nabla \cdot \mathbf{J} = 0
+\begin{equation*}
+	\nabla \cdot \mathbf{J} = 0
+\end{equation*} \tag{5.13}
 $$
 **毕奥·萨伐尔定律（Biot-Savart Law）** 定义静磁场的磁场强度 $\mathbf{B}$ 为：
 $$
-\mathbf{B}(\mathbf{r}) = \frac{\mu_0}{4\pi}\int\frac{\mathbf{I}\times\boldsymbol{\mathscr{r}}}{\mathscr{r}^2} = \frac{\mu_0I}{4\pi}\int\frac{d\mathbf{l}'\times\unit{\rcur}}{\rcur^2}
+\begin{equation*}
+	\mathbf{B}(\mathbf{r}) = \frac{\mu_0}{4\pi}\int\frac{\mathbf{I}\times\boldsymbol{\mathscr{r}}}{\mathscr{r}^2} = \frac{\mu_0I}{4\pi}\int\frac{d\mathbf{l}'\times\unit{\rcur}}{\rcur^2}
+\end{equation*} \tag{5.14} \label{biot-savart-law}
 $$
 其中 $\mu_0$ 被称为 **真空磁导率（Permeability of Free Space）**，其值为精确的：
 $$
@@ -2132,12 +2156,14 @@ $$
 > \begin{align*}
 > B &= \frac{\mu_0 I}{4\pi}\int_{\theta_1}^{\theta}\frac{\cos^2\theta}{s^2}s\sec^2\cos\theta\,d\theta \\
 > &= \frac{\mu_0I}{4\pi s}\int_{\theta_1}^{\theta_2}\cos\theta\,d\theta \\
-> &= \frac{\mu_0I}{4\pi s}(\sin\theta_2 - \sin\theta_1)
+> &= \frac{\mu_0I}{4\pi s}(\sin\theta_2 - \sin\theta_1) \tag{5.15}
 > \end{align*}
 > $$
 > 而这仅是一小段电线产生的磁场强度。当取无限长的导线段时，$\theta_1 = -\pi/2, \theta_2 = \pi/2$，我们得到：
 > $$
-> B = \frac{\mu_0I}{2\pi s}
+> \begin{equation*}
+> 	B = \frac{\mu_0I}{2\pi s}
+> \end{equation*} \tag{5.16}
 > $$
 > 它的方向是 $\unit{\phi}$。
 
@@ -2147,7 +2173,9 @@ F = I_2\left(\frac{\mu_0I_1}{2\pi s}\right)\int\,dl \nonumber
 $$
 对于一小段电线的作用力则是：
 $$
-f = \frac{\mu_0}{2\pi} \frac{I_1I_2}{d}
+\begin{equation*}
+	f = \frac{\mu_0}{2\pi} \frac{I_1I_2}{d}
+\end{equation*} \tag{5.17}
 $$
 我们可以将此和库仑定律进行对比，有高度的相似性。
 
@@ -2171,7 +2199,9 @@ $$
 $$
 拆掉最两侧的积分号后，我们就得到了：
 $$
-\nabla\times\mathbf{B} = \mu_0\mathbf{J}
+\begin{equation*}
+	\nabla\times\mathbf{B} = \mu_0\mathbf{J}
+\end{equation*}
 $$
 简单回顾，我们对于无限长直导线的磁场推出了这样的结论，但实际上它对任意磁场都有效。下面我们将通过毕奥·萨伐尔定律再次得到这个结论。
 
@@ -2186,7 +2216,9 @@ $$
 $$
 上面第一项中 $\nabla\times\mathbf{J} = 0$，第二项中那个旋度为 $\mathbf{0}$。因此我们得到了：
 $$
-\marginbox{\nabla\cdot\mathbf{J} = 0}
+\begin{equation*}
+	\marginbox{\nabla\cdot\mathbf{J} = 0}
+\end{equation*} \tag{5.18} \label{divergence-of-magnetic-field}
 $$
  这说明磁场的散度是 0。接下来考察磁场的旋度：
 $$
@@ -2217,11 +2249,15 @@ $$
 $$
 这样我们就得到了 **安培定律（Ampere's Law)**：
 $$
-\marginbox{\nabla\times\mathbf{B} = \mu_0 \mathbf{J}}
+\begin{equation*}
+	\marginbox{\nabla\times\mathbf{B} = \mu_0 \mathbf{J}}
+\end{equation*} \tag{5.19} \label{amperre's-law-derivative}
 $$
 它的积分形式我们之前在无限长直导线的例子中见到过了，也即：
 $$
-\marginbox{\oint\mathbf{B}\cdot d\mathbf{l} = \mu_0I_\text{enc}}
+\begin{equation*}
+	\marginbox{\oint\mathbf{B}\cdot d\mathbf{l} = \mu_0I_\text{enc}}
+\end{equation*} \tag{5.20} \label{ampere's-law}
 $$
 这个定律对于所有的静磁场（恒定电流产生的磁场）都成立。
 
@@ -2244,14 +2280,15 @@ $$
 
 电磁学研究的早期，物理学家倾向于认为磁力也源于类似于电荷的 **磁荷（Magnetic Charge）**，或 **磁单极子（Magnetic Monopole）**，并给出了和库仑定律极为相似的公式。当时是安培首先提出磁场源于运动的一系列电荷。事实上，直到现在都没有实验能证实磁单极子的存在，但一些基本的物理理论中着实需要它们。本篇中我们假定 *不存在* 磁单极子，也即所有磁场都是无源的，只有运动的电荷才能产生并受磁场影响。
 
-现实中，磁场力相比电场力要小得多；通常只有在测试电荷接近光速的情况下两者才相当。不过，对于一整个电流来说，产生效果的主要是磁力。
+现实中，磁场力相比电场力要小得多；通常只有在测试电荷接近光速的情况下两者才相当。不过，对于带有电流的电线来说，电场会因为导线整体呈中性（电流的四周由等量反向电荷组成），产生效果的主要是磁力。
 
 ### 磁矢势
 
 正如我们通过静电场无旋引入了电势 $V$ 使得电场是它的负梯度，由静磁场无源我们也可以引入 **磁矢势（Magnetic Vector Potential）** 使得其旋度为磁场：
 $$
-\label{magnetic-vector-poential}
-\marginbox{\mathbf{B} = \nabla\times\mathbf{A}}
+\begin{equation*}
+	\marginbox{\mathbf{B} = \nabla\times\mathbf{A}}
+\end{equation*} \tag{5.21} \label{magnetic-vector-poential}
 $$
 将其代入安培定律：
 $$
@@ -2259,8 +2296,9 @@ $$
 $$
 此处我们断定：
 $$
-\label{divergence-of-magnetic-vector-potential}
-\marginbox{\nabla\cdot \mathbf{A} = 0}
+\begin{equation*}
+	\marginbox{\nabla\cdot \mathbf{A} = 0}
+\end{equation*} \tag{5.22} \label{divergence-of-magnetic-vector-potential}
 $$
 这是因为对于任意使得 $(\ref{magnetic-vector-poential})$ 成立的 $\mathbf{A}$，$\mathbf{A} + \nabla f$ 同样也能使其成立，其中 $f$ 是任意的标量场。假设 $\nabla\cdot\mathbf{A} \ne 0$，下面证明我们总能找到 $f$ 使得 $\mathbf{A}_0 = \mathbf{A} + \nabla f$ 是无源场，并让 $\mathbf{A}_0$ 成为我们想要的磁矢势：
 $$
@@ -2272,55 +2310,94 @@ $$
 $$
 上面给出了满足在无穷远处 $\nabla\cdot\mathbf{A} \to 0$ 的解；但即使是其它情况，我们也总能找到泊松方程的解。综上，我们可以认为 $(\ref{divergence-of-magnetic-vector-potential})$ 成立。因而，我们可以得到磁矢势的拉普拉斯：
 $$
-\label{laplacian-of-magnetic-vector-potential}
-\marginbox{\nabla^2\mathbf{A} = \mu_0\mathbf{J}}
+\begin{equation*}
+	\marginbox{\nabla^2\mathbf{A} = \mu_0\mathbf{J}}
+\end{equation*} \tag{5.23} \label{laplacian-of-magnetic-vector-potential}
 $$
 这仍然是一个泊松方程。如果在无穷远处 $\mathbf{J} \to \mathbf{0}$，我们可以得到下面的解：
 $$
-\mathbf{A}(\mathbf{r}) = \frac{\mu_0}{4\pi}\int\frac{\mathbf{J}(\mathbf{r}')}{\rcur}\,d\tau' = \frac{\mu_0I}{4\pi}\int\frac{1}{\rcur}\,d\mathbf{l}' = \frac{\mu_0}{4\pi}\int\frac{\mathbf{K}}{\rcur}\,da'
+\begin{equation*}
+	\mathbf{A}(\mathbf{r}) = \frac{\mu_0}{4\pi}\int\frac{\mathbf{J}(\mathbf{r}')}{\rcur}\,d\tau' = \frac{\mu_0I}{4\pi}\int\frac{1}{\rcur}\,d\mathbf{l}' = \frac{\mu_0}{4\pi}\int\frac{\mathbf{K}}{\rcur}\,da'
+\end{equation*} \tag{5.24}
 $$
 
 
 #### 边界条件
 
-现在考虑一个电流密度为 $\mathbf{K}$ 的通电平面附近的磁场分布。对于平面上下的垂直方向磁场 $B_\text{above}^\bot$ 和 $B_\text{below}^\bot$由于磁场在闭合曲面上的积分恒为 $0$，如果在曲面上构造一个极薄的小盒子，我们不难得到 $B_\text{above}^\bot = B_\text{below}^\bot$。对于磁场的水平方向分量，则可以构造一个穿过曲面的环路，其方向和磁场方向平行并和曲面垂直。此时平面上下的磁场对其的环路积分为：
+现在考虑一个电流密度为 $\mathbf{K}$ 的通电平面附近的磁场分布。对于平面上下的垂直方向磁场 $B_\text{above}^\bot$ 和 $B_\text{below}^\bot$由于磁场在闭合曲面上的积分恒为 $0$，如果在曲面上构造一个极薄的小盒子，我们不难得到：
 $$
-\oint\mathbb{B}\cdot d\mathbf{l} = (B_\text{above}^\parallel - B_\text{below}^\parallel)l = \mu_0I_\text{enc} = \mu_0KI \implies B_\text{above}^\parallel - B_\text{below}^\parallel = \mu_0K \nonumber
+\begin{equation*}
+	B_\text{above}^\bot = B_\text{below}^\bot
+\end{equation*} \tag{5.25}
+$$
+对于磁场的水平方向分量，则可以构造一个穿过曲面的环路，其方向和磁场方向平行并和曲面垂直。此时平面上下的磁场对其的环路积分为：
+$$
+\begin{align*}
+	\oint\mathbf{B}\cdot d\mathbf{l} = (B_\text{above}^\parallel - B_\text{below}^\parallel)l = \mu_0I_\text{enc} = \mu_0Kl \\
+	\implies B_\text{above}^\parallel - B_\text{below}^\parallel = \mu_0K \tag{5.26}
+\end{align*}
 $$
 总结下来，我们得到：
 $$
-\mathbf{B}_\text{above} - \mathbf{B}_\text{below} = \mu_0(\mathbf{K}\times\unit{n})
+\begin{equation*}
+	\mathbf{B}_\text{above} - \mathbf{B}_\text{below} = \mu_0(\mathbf{K}\times\unit{n})
+\end{equation*} \tag{5.27}
 $$
 磁矢势和电势在边界条件中类似，也是连续的（令其散度为零的情况下），即：
 $$
-\mathbf{A}_\text{above} = \mathbf{A}_\text{below}
+\begin{equation*}
+	\mathbf{A}_\text{above} = \mathbf{A}_\text{below}
+\end{equation*} \tag{5.28}
 $$
 磁矢势的导数同样是不连续的：
 $$
-\frac{\partial \mathbf{A}_\text{above}}{\partial n} - \frac{\partial\mathbf{B}_\text{below}}{\partial n} = -\mu_0\mathbf{K}
+\begin{equation*}
+	\frac{\partial \mathbf{A}_\text{above}}{\partial n} - \frac{\partial\mathbf{B}_\text{below}}{\partial n} = -\mu_0\mathbf{K}
+\end{equation*} \tag{5.29}
 $$
 
 #### 多极展开
 
 回忆我们之前对 $\frac{1}{\rcur}$ 进行的展开式 $(\ref{expansion-of-1-over-r})$，我们同样可以得到远距离处磁矢势的多极展开：
 $$
-\label{multipole-expansion-vector-potential}
-\mathbf{A}(\mathbf{r}) = \frac{\mu_0I}{4\pi}\sum_{n=0}^\infty\frac{1}{r^{n+1}}\oint r'^nP_n(\cos\alpha)\,d\mathbf{l}'
+\begin{equation*}
+	\mathbf{A}(\mathbf{r}) = \frac{\mu_0I}{4\pi}\sum_{n=0}^\infty\frac{1}{r^{n+1}}\oint r'^nP_n(\cos\alpha)\,d\mathbf{l}'
+\end{equation*} \tag{5.30} \label{multipole-expansion-vector-potential}
 $$
 和电势的展开类似，我们将这个级数的第一项称为 **单极子**，第二项称为 **偶极子**，第三项称为 **四极子**，以此类推。不出意料的是，单极子项始终为零，这正是由于磁场的无源性，即 $\nabla\cdot \mathbf{B}$ 决定的。由此也向我们暗示了自然界中不存在磁单极子。所以磁偶极子成为了主导项：
 $$
-\mathbf{A}_\text{dip}(\mathbf{r}) = \frac{\mu_0I}{4\pi r^2}\oint r'\cos\alpha\,d\mathbf{l}' = \frac{\mu_0I}{4\pi r^2}\oint (\unit{r}\cdot\mathbf{r}')\,d\mathbf{l}'
+\begin{equation*}
+	\mathbf{A}_\text{dip}(\mathbf{r}) = \frac{\mu_0I}{4\pi r^2}\oint r'\cos\alpha\,d\mathbf{l}' = \frac{\mu_0I}{4\pi r^2}\oint (\unit{r}\cdot\mathbf{r}')\,d\mathbf{l}'
+\end{equation*} \tag{5.31}
 $$
 我们可以将 $\unit{r}$ 提出来，写成：
 $$
-\mathbf{A}_\text{dip}(\mathbf{r}) = \frac{\mu_0}{4\pi}\frac{\mathbf{m}\times\unit{r}}{r^2}
+\begin{equation*}
+	\mathbf{A}_\text{dip}(\mathbf{r}) = \frac{\mu_0}{4\pi}\frac{\mathbf{m}\times\unit{r}}{r^2}
+\end{equation*} \tag{5.32}
 $$
 其中 $\mathbf{m}$ 是 **磁偶极矩（Magnetic Dipole Moment）**，定义为：
 $$
-\marginbox{\mathbf{m} = I\int\,d\mathbf{a} = I\mathbf{a}}
+\begin{equation*}
+	\marginbox{\mathbf{m} = I\int\,d\mathbf{a} = I\mathbf{a}}
+\end{equation*} \tag{5.33} \label{magnetic-dipole-moment}
 $$
 
-在多极展开公式 $(\ref{multipole-expansion-vector-potential})$ 中，
+此处的 $\mathbf{a}$ 是一个带有方向的环路围成的面积，其方向由右手定则确定（四根手指方向与环路方向相同，大拇指向上，方向为面的方向）。在磁矢势多极展开公式 $(\ref{multipole-expansion-vector-potential})$ 中，显然磁偶极矩和原点的选择无关，这和电势在总电荷数为零（单极子为零）时，电偶极矩也和原点的选择无关一致。这也和磁单极子项恒为零相吻合。
+
+一个纯磁偶极子，可以想象为无限小的电流环路。如果将其放置在原点，其产生的磁矢势为：
+$$
+\begin{equation*}
+	\mathbf{A}_\text{dip}(\mathbf{r}) = \frac{\mu_0}{4\pi}\frac{m\sin\theta}{r^2}\unit{\phi}
+\end{equation*} \tag{5.34} \label{magnetic-vector-potential-of-magnetic-dipole}
+$$
+其相应的磁场是：
+$$
+\begin{equation*}
+	\mathbf{B}_\text{dip}(\mathbf{r}) = \frac{\mu_0m}{4\pi r^2}(2\cos\theta\unit{r} + \sin\theta\unit{\theta})
+\end{equation*} \tag{5.35} \label{magnetic-field-of-magnetic-dipole}
+$$
+这个结果和电偶极子激发的电场 $(\ref{electric-field-of-electric-dipole})$ 形式上几乎雷同。
 
 
 
@@ -2353,52 +2430,265 @@ $$
 \end{equation*}
 $$
 如果不是匀强磁场，我们以螺线管为例：
+
+<img src="graphs/ed1_6-4.png" alt="ed1_6-4" style="zoom:110%;" />
+
+对于上图所示的环路，螺线管产生的净力是：
+$$
+\begin{equation*}
+	F = 2\pi IRB\cos\theta
+\end{equation*} \tag{6.2}
+$$
+对于一个磁偶极矩为 $\mathbf{m}$ 的微元环路，在磁场 $\mathbf{B}$ 中受到的力则是：
+$$
+\begin{equation*}
+	\mathbf{F} = \nabla(\mathbf{m}\cdot\mathbf{B})
+\end{equation*} \tag{6.3} \label{force-on-magnetic-dipole}
+$$
+需要特别注意的是，虽然这和电场类似条件下得到的 $(\ref{force-on-electric-dipole})$ 类似，但是磁场中不能写成与其完全一致的形式。让我们尝试对 $(\ref{force-on-magnetic-dipole})$ 进行变形：
+$$
+\begin{align*}
+	\nabla(\mathbf{m}\cdot\mathbf{E}) &= \mathbf{m}\times(\nabla\times\mathbf{B}) + \mathbf{E}\times(\nabla\times\mathbf{m}) + (\mathbf{m}\cdot\nabla)\mathbf{E} + (\mathbf{E}\cdot\nabla)\mathbf{m} \\
+	&= \mu_0(\mathbf{m}\times\mathbf{J}) + (\mathbf{m}\cdot\nabla)\mathbf{B}
+\end{align*}
+$$
+可见由于磁场的散度不恒为零，最后会多出一项 $\mu_0(\mathbf{m}\times\mathbf{J})$，这就是问题所在。
+
+#### 磁场对原子轨道的影响
+
+考虑一个电子围绕原子核旋转的模型。假设其轨道半径为 $R$，则周期为 $T = 2\pi R/v$，其中 $v$ 是电子的速度。此时会形成一个电流：
+$$
+I = \frac{-e}{T} = -\frac{ev}{2\pi R}
+$$
+由磁偶极矩的计算公式 $(\ref{magnetic-dipole-moment})$ 得到：
+$$
+\begin{equation*}
+	\mathbf{m} = -\frac{1}{2}evR\unit{z}
+\end{equation*}
+$$
+此时如果外加一个磁场 $\mathbf{B}$，由于很难让整个轨道向一侧倾斜，顺磁性的表现会比较差。有另一个效应更加明显：电子的加速或减速。由于磁场参与了电子圆周运动的平衡：
+$$
+\frac{1}{4\pi\epsilon_0}\frac{e^2}{R^2} + e\bar{v}B = m_e\frac{\bar{v}^2}{R^2}
+$$
+这里第一项是电子和原子核的静电力，第二项则是磁场对电子的磁力。因此我们可以得到：
+$$
+e\bar{v}B = m_e\frac{\bar{v}^2}{R^2} - \frac{1}{4\pi\epsilon_0}\frac{e^2}{R^2} = \frac{m_e}{R}(\bar{v} + v)(\bar{v} - v)
+$$
+其中 $v$ 是磁场不存在时，电子做匀速圆周运动的速度。因此变化的速度为：
+$$
+\begin{equation*}
+	\Delta v = \bar{v} - v = \frac{eRB}{m_e}\frac{\bar{v}}{\bar{v} + v} \approx \frac{eRB}{2m_e}
+\end{equation*} \tag{6.4}
+$$
+这里我们假设 $\Delta v$ 非常小，因此 $\bar{v}$ 可以近似为 $v$。最后，这个速度改变造成的磁偶极矩的变化为：
+$$
+\begin{equation*}
+	\Delta\mathbf{m} = -\frac{e^2R^2}{4m_e}\mathbf{B}
+\end{equation*} \tag{6.5}
+$$
+可见偶极矩向磁场的反方向变化，直到方向完全相反为止。我们将这个性质称为 **逆磁性（Diamagnetism）**。多数情况下逆磁性的效应要比顺磁性弱得多，因此主要在偶数电子数量的原子中观测到。
+
+我们前面给出的公式说明只是一个非常理想且局限的情形（匀速圆周运动，且原子不受磁场影响等），但无论如何设置，其结论（磁偶极矩变化相反于磁场）保持不变。事实上只有借用量子物理的知识才能对其细节进行打磨，这里我们就不多介绍了。
+
+### 磁化物体的场
+
+#### 束缚电流
+
+和极化物体类似，我们定义单位体积中物体的磁偶极矩为其 **磁化强度（Magnetization）**，记作 $\mathbf{M}$。由于单个磁偶极子产生的磁矢势为：
+$$
+\begin{equation*}
+	\mathbf{A}(\mathbf{r}) = \frac{\mu_0}{4\pi}\frac{\mathbf{m}\times\unit{\rcur}}{\rcur^2}
+\end{equation*} \tag{6.6}
+$$
+因此对于一个磁化的物体，其产生的叠加的磁矢势为：
+$$
+\begin{equation*}
+	\mathbf{A}(\mathbf{r}) = \frac{\mu_0}{4\pi}\int\frac{\mathbf{M}(\mathbf{r}')\times\unit{\rcur}}{\rcur^2}\,d\tau'
+\end{equation*} \tag{6.7} \label{magnetic-vector-potential-of-magnetized-matter}
+$$
+随后进行和此前介绍[束缚电荷](#束缚电荷)时用的数学方法类似，得到：
+$$
+\begin{equation*}
+	\mathbf{A}(\mathbf{r}) = \frac{\mu_0}{4\pi}\int_\mathcal{V}\frac{1}{\rcur}[\nabla'\times\mathbf{M}(\mathbf{r}')] + \frac{\mu_0}{4\pi}\oint_\mathcal{S}\frac{1}{\rcur}[\mathbf{M}(\mathbf{r}')\times d\mathbf{a}']
+\end{equation*}
+$$
+我们将其中有电流密度特征的项提取出来：
+$$
+\begin{align*}
+	\mathbf{J}_b &= \nabla\times\mathbf{M} \\
+	\mathbf{K}_b &= \mathbf{M}\times\unit{n}
+\end{align*} \tag{6.8} \label{bound-current}
+$$
+由这个定义，我们就可以将前面的公式写成：
+$$
+\begin{equation*}
+	\mathbf{A}(\mathbf{r}) = \frac{\mu_0}{4\pi}\int_\mathcal{V}\frac{\mathbf{J}_b(\mathbf{r}')}{\rcur}\,d\tau' + \frac{\mu_0}{4\pi}\oint_\mathcal{S}\frac{\mathbf{K}_b(\mathbf{r}')}{\rcur}\,da'
+\end{equation*} \tag{6.9}
+$$
+这个结果暗示了，磁化物体的磁矢势等价于通过一个体电流 $\mathbf{J}_b$ 和面电流 $\mathbf{K}_b$ 产生的磁矢势。我们将它们称为 **束缚电流（Bound Current）**。在分析磁化物体时，我们常常通过磁化强度先得到该物体的束缚电流，然后再通过其求出磁场。
+
+#### 束缚电流的物理意义
+
+### 辅助场 $\mathbf{H}$
+
+#### 磁介质中的安培定律
+
+现在综合考虑磁介质中的电流，它应该分为两部分，束缚电流和 **自由电流（Free Current）**：
+$$
+\begin{equation*}
+	\mathbf{J} = \mathbf{J}_b + \mathbf{J}_f
+\end{equation*} \tag{6.10}
+$$
+根据安培定律，我们有：
+$$
+\frac{1}{\mu_0}(\nabla\times\mathbf{B}) = \nabla\times\mathbf{M} + \mathbf{J}_f
+$$
+将两个旋度项合并：
+$$
+\nabla\times\left(\frac{1}{\mu_0}\mathbf{B} - \mathbf{M}\right) = \mathbf{J}_f
+$$
+这里就可以引入 $\mathbf{H}$ 场了：
+$$
+\begin{equation*}
+	\marginbox{\mathbf{H} \equiv \frac{1}{\mu_0}\mathbf{B} - \mathbf{M}}
+\end{equation*} \tag{6.11} \label{H-field}
+$$
+物质中的安培定律因此可以写成：
+$$
+\begin{equation*}
+	\nabla\times\mathbf{H} = \mathbf{J}_f
+\end{equation*} \tag{6.12} \label{ampere's-law-in-matter-derivative}
+$$
+其积分形式是：
+$$
+\begin{equation*}
+	\oint\mathbf{H}\cdot d\mathbf{l} = I_{f\text{enc}}
+\end{equation*} \tag{6.13} \label{ampere's-law-in-matter}
+$$
+$\mathbf{H}$ 在磁介质中的作用和电位移，即 $\mathbf{D}$ 在电介质中的作用一致。我们对于磁化物体，时常可以通过自由电流求得 $\mathbf{H}$，然后通过其定义得到磁场强度。特别地，对于一些对称的物体，我们可以通过安培定律快速计算出 $\mathbf{H}$。
+
+我们并没有一个合适的名字称呼 $\mathbf{H}$ 场，或许 **辅助场（Auxiliary Field）** 是一个称呼，但更多的时候我们直接称其为 $\mathbf{H}$。一些教材中会将其称为 *磁场强度*，但这样就只能为 $\mathbf{B}$ 起另外一个名字，如 *磁通量密度*、*磁感应强度* 等，但是这些名字显得不太直观，无法体现出 $\mathbf{B}$ 在磁学中的关键地位（毕竟毕奥·萨法尔定律给出的是 $\mathbf{B}$ 而不是 $\mathbf{H}$），就好像将 $\mathbf{E}$ 称为 *电感应强度* 一样不自然。事实上，$\mathbf{D}$ 的命名，*电位移*，也令人迷惑不已。不过 $\mathbf{D}$ 的名称流传已久成为了习惯。
+
+值得一提的趣事是，$\mathbf{H}$ 在物理实验中的重要性比 $\mathbf{D}$ 要重要得多。这是因为实验中涉及磁场时会用到电磁铁，而其束缚电流我们是无法直接测量的。电流表中看到的是自由电流，因此算出来的就是 $\mathbf{H}$，而 $\mathbf{B}$ 则要根据磁介质的性质计算得出，反而不太好得到。另一边，涉及电场时会用到接入电源的电容，此时能够测量的是电源的电压，算出来的就是 $\mathbf{E}$。此时 $\mathbf{D}$ 要根据电介质的性质计算得出，不太好得到。如果有轻松测量电荷的方式，或许 $\mathbf{D}$ 会更加常用一些。
+
+$(\ref{ampere's-law-in-matter})$ 有的时候会诱使我们得到错误的结果。这是因为 $\mathbf{H}$ 的散度并不等于 $0$：
+$$
+\begin{equation*}
+	\nabla\cdot\mathbf{H} = \nabla\cdot(\frac{1}{\mu_0}\mathbf{B} - \mathbf{M}) = -\nabla\cdot\mathbf{M}
+\end{equation*} \tag{6.14}
+$$
+在一些不是完美对称的情形（圆柱、平面、螺线、环形线圈），如磁铁块（六面体），虽然不存在任何束缚电流，但不能断定 $\mathbf{H}$ 等于零，否则此时会有 $\mathbf{B} = \mu_0\mathbf{M}$，因此在磁铁外不存在磁场，显然与我们的直觉相悖。实际上这正是因为磁化强度在一些地方的散度不为零导致的。
+
+#### 边界条件
+
+物质存在时磁场中的边界条件是：
+$$
+\begin{equation*}
+	H_\text{above}^\perp - H_\text{below}^\perp = -(M_\text{above}^\perp - M_\text{below}^\perp)
+\end{equation*} \tag{6.15}
+$$
+平行方向则有：
+$$
+\begin{equation*}
+	\mathbf{H}_\text{above}^\parallel - \mathbf{H}_\text{below}^\parallel = \mathbf{K}_f\times\unit{n}
+\end{equation*} \tag{6.16}
 $$
 
-$$
+### 线性磁介质
 
+#### 磁极化率与磁导率
+
+本章开头的时候我们就介绍了两种磁性。它们共同的特点是和磁场成正比（在磁场不过强的时候）。事实上我们可以将这种性质用下面的形式表示：
+$$
+\begin{equation*}
+	\mathbf{M} = \chi_m\mathbf{H}
+\end{equation*} \tag{6.16} \label{magnetic-susceptibility}
+$$
+我们将 $\chi_m$ 称为 **磁化率（Magnetic Susceptibility）**，而满足这个式子的磁介质被称为 **线性磁介质（Linear Media）**。如果将其和电极化率的式子对比会发现奇怪的不对称性：理论上下面这个式子才是“正确”的定义式：
+$$
+\mathbf{M} = \frac{1}{\mu_0}\chi_m\mathbf{B}
+$$
+但由于历史原因，我们使用前一种公式。这种不对称性也延续到了 $\mathbf{B}$ 与 $\mathbf{H}$ 在线性磁介质种的本构关系中：
+$$
+\begin{equation*}
+	\mathbf{B} = \mu_0(\mathbf{H} + \mathbf{M}) = \mu_0(1 + \chi_m)\mathbf{H} = \mu\mathbf{H}
+\end{equation*} \tag{6.17} \label{B-and-H}
+$$
+可以对比发现和 $(\ref{E-and-D})$ 的区别。我们将 $\mu$ 称为物质的 **磁导率（Permeability）**。真空的磁导率是 $\mu_0$，此时 $\chi_m = 0$。磁导率与真空磁导率的比值并不常用。下面是一些常见物质的磁化率：
+
+| 物质     | 磁导率               | 物质     | 磁导率             |
+| -------- | -------------------- | -------- | ------------------ |
+| 铋       | $-1.7\times 10^{-4}$ | 氧气     | $1.7\times10^{-6}$ |
+| 金       | $-3.4\times10^{-5}$  | 钠       | $8.5\times10^{-6}$ |
+| 银       | $-2.4\times10^{-5}$  | 铝       | $2.2\times10^{-5}$ |
+| 铜       | $-9.7\times10^{-6}$  | 钨       | $7.0\times10^{-5}$ |
+| 水       | $-9.0\times10^{-6}$  | 铂       | $2.7\times10^{-4}$ |
+| 二氧化碳 | $-1.1\times10^{-8}$  | 液态氧气 | $3.9\times10^{-3}$ |
+| 氢气     | $-2.1\times10^{-9}$  | 钆       | $4.8\times10^{-1}$ |
+
+上表中左侧是逆磁体，右侧是顺磁体。
+
+线性磁介质中，我们发现 $\mathbf{M}$ 与 $\mathbf{H}$ 都和 $\mathbf{B}$ 成正比，这是否以为着前两者的散度都为 $0$ 呢？并非如此：
+$$
+\nabla\cdot\mathbf{H} = \nabla\cdot\left(\frac{1}{\mu}\mathbf{B}\right) = \mathbf{B}\cdot\nabla\left(\frac{1}{\mu}\right)
+$$
+因此在 $\mu$ 部位常数的时候，依然无法断言 $\mathbf{H}$ 为零。$\mathbf{M}$ 是同理的。即使是 $\mu$ 保持不变的线性磁介质，在边界处 $\mathbf{H}$ 是不连续的，因此其散度必然不是 $0$。
+
+### 铁磁性
+
+最后，让我们对第三种磁性，**铁磁性（Ferromagnetism）** 进行简单的介绍。其它大多数磁体的性质都是存在外加磁场的情况下，磁偶极矩发生定向改变，然后显示出磁性。铁磁体（和顺磁体类似）在产生与磁场相同方向的磁偶极矩后，倾向于 *维持* 当前的状态，即使在磁场消失后依然保持。这是因为铁磁体中的磁偶极子倾向于和其周围磁偶极子方向相同，更深层的原因涉及量子力学，这里不作说明。这个趋同的范围限制在一个 **域（Domain）** 内（大概包含几十亿个偶极子），不同域的偶极子间互不影响，整体的偶极矩方向也各不相同（通常和晶体结构有关）。这也是为什么不是所有的铁制物体都有磁性。但在磁场的作用下，所有域都会倾向于向一个方向对齐，我们也就得到了一个 **永磁铁（Permanent Magnet）**。如果磁场非常强大，使得所有域都对齐到一个方向，我们称该物质 **饱和（Saturated）** 了。
+
+从对铁磁性的描述中不难发现，其磁化过程是不可逆的。初始状态下，铁磁体中域的方向是相对随机的。在磁场作用下，它会被磁化为磁场方向直至饱和。如果我们这时候通相反方向的等量磁场，域的方向只会变为完全反向，不会回到开始的状态。这个变化曲线可以用 **磁滞环路（Hysteresis Loop）** 来表现：
+
+![ed1_6-5](graphs/ed1_6-5.png)
+
+如果需要量化电流和磁化强度的关系，我们常使用另一组关系的磁滞图，即 $\mu_0\mathbf{H}$ （与电流对应，根据安培定律）和 $\mathbf{B}$（因为 $\mathbf{B} = \mu_0(\mathbf{H} + \mathbf{M})$ 中 $\mathbf{H}$ 要比 $\mathbf{M}$ 要小得多，因此直接用 $\mathbf{B}$ 代替 $\mu_0\mathbf{M}$）：
+
+![ed1_6-6](graphs/ed1_6-6.png)
+
+注意这里横坐标是乘过 $10^4$ 之后的结果，因此实际上只需要通很小的电流，就可以在铁磁体中产生巨大的磁场。
 
 ## 公式汇总
 
 本篇的主要内容是静电场与静磁场的性质，以及通过矢量分析和偏微分方程等数学工具得到的有趣结论。从中我们应该意识到电磁场中存在大量相似的公式和设定。下面我们将其一一总结起来并进行对比，如下表所示：
 
-| **名称（电）**                                            |                           **公式**                           | **名称（磁）**                                               |                           **公式**                           |
-| :-------------------------------------------------------- | :----------------------------------------------------------: | ------------------------------------------------------------ | :----------------------------------------------------------: |
-| 库仑定律（$\mathbf{E}$）                                  | $\displaystyle{\mathbf{E}(\mathbf{r}) = \frac{1}{4\pi\epsilon_0}\int\frac{\rho(\mathbf{r}')}{\rcur^2}\unit{\rcur}\,d\tau'}$ | 毕奥·萨伐尔定律（$\mathbf{B}$）                              | $\displaystyle{\mathbf{B}(\mathbf{r}) = \frac{\mu_0}{4\pi}\int\frac{\mathbf{J}(\mathbf{r}')}{\rcur^2}\times\unit{\rcur}\,d\tau'}$ |
-| 电荷分布                                                  |        $dq = \lambda\,dl = \sigma\,da = \rho\,d\tau$         | 电流分布                                                     | $d(\sum q_i\mathbf{v}_i) = \mathbf{I}\,dl = \mathbf{K}\,da = \mathbf{J}\,d\tau$ |
-| 电场散度                                                  | $\displaystyle \nabla\cdot \mathbf{E} = \frac{\rho}{\epsilon_0}$ | 磁场散度                                                     |                 $\nabla\cdot \mathbf{B} = 0$                 |
-| 静电场旋度                                                |            $\nabla\times\mathbf{E} = \mathbf{0}$             | 静磁场旋度                                                   |         $\nabla\times \mathbf{B} = \mu_0\mathbf{J}$          |
-| 高斯定律                                                  | $\displaystyle \oint\mathbf{E}\cdot d\mathbf{a} = \frac{Q_\text{enc}}{\epsilon_0}$ | 安培定律                                                     | $\displaystyle \oint\mathbf{B}\cdot d\mathbf{l} = \mu_0I_\text{enc}$ |
-| 静电场无旋                                                |     $\displaystyle \oint\mathbf{E}\cdot d\mathbf{l} = 0$     | 磁场无源                                                     |     $\displaystyle \oint\mathbf{B}\cdot d\mathbf{a} = 0$     |
-| 电势                                                      | $\displaystyle V(\mathbf{r}) = -\int_\mathcal{O}^\mathbf{r} \mathbf{E}\cdot d\mathbf{l}$ | 磁矢势                                                       | $\displaystyle \mathbf{A}(\mathbf{r}) = \int_\mathcal{O}^\mathbf{r}\mathbf{B}\times d\mathbf{l}$ |
-| 电场是电势的梯度                                          |                   $\mathbf{E} = -\nabla V$                   | 磁场是磁矢势的旋度                                           |            $\mathbf{B} = \nabla\times \mathbf{A}$            |
-| 库仑定律（$V$）                                           | $\displaystyle V(\mathbf{r}) = \frac{1}{4\pi\epsilon_0}\int\frac{\rho(\mathbf{r}')}{\rcur}\,d\tau'$ | 毕奥·萨伐尔定律（$\mathbf{A}$）                              | $\displaystyle \mathbf{A}(\mathbf{r}) = \frac{\mu_0}{4\pi}\int\frac{\mathbf{J}(\mathbf{r}')}{\rcur}\,d\tau'$ |
-| 泊松方程（$V$）                                           |    $\displaystyle \nabla^2 V = -\frac{\rho}{\epsilon_0}$     | 泊松方程（$\mathbf{A}$）                                     |           $\nabla^2\mathbf{A} = -\mu_0\mathbf{J}$            |
-| 边界条件（$\mathbf{E}$）                                  | $\displaystyle \mathbf{E}_\text{above} - \mathbf{E}_\text{below} = \frac{\sigma}{\epsilon_0}\unit{n}$ | 边界条件（$\mathbf{B}$）                                     | $\mathbf{B}_\text{above} - \mathbf{B}_\text{below} = \mu_0(\mathbf{K}\times\unit{n})$ |
-| 边界条件（$V$）                                           |              $V_\text{above} = V_\text{below}$               | 边界条件（$\mathbf{A}$）                                     |     $\mathbf{A}_\text{above} = \mathbf{A}_\text{below}$      |
-| 边界条件（$\displaystyle \frac{\partial V}{\partial n}$） | $\displaystyle \frac{\partial V_\text{above}}{\partial n} - \frac{\partial V_\text{below}}{\partial n} = -\frac{\sigma}{\epsilon_0}$ | 边界条件（$\displaystyle \frac{\partial \mathbf{A}}{\partial n}$） | $\displaystyle \frac{\partial \mathbf{A}_\text{above}}{\partial n} - \frac{\partial\mathbf{A}_\text{below}}{\partial n} = -\mu_0\mathbf{K}$ |
-| 电势多极展开                                              |                        简略式见后表 1                        | 磁矢势多极展开                                               |                        简略式见后表 2                        |
-| 电势多极展开                                              |                        详细式见后表 3                        | 磁矢势多极展开                                               |                        详细式见后表 4                        |
-| 电偶极矩                                                  | $\displaystyle \mathbf{p} = \int\mathbf{r}'\rho(\mathbf{r}')\,d\tau'$ | 磁偶极矩                                                     |       $\displaystyle \mathbf{m} = I\int\,d\mathbf{a}'$       |
-| 电势的偶极子项                                            | $\displaystyle V_\text{dip} = \frac{1}{4\pi\epsilon_0}\frac{\mathbf{p}\cdot\unit{r}}{r^2}$ | 磁矢势的偶极子项                                             | $\displaystyle \mathbf{A}_\text{dip} = \frac{\mu_0}{4\pi}\frac{\mathbf{m}\times\unit{r}}{r^2}$ |
-| 电场（偶极子项）                                          |                      坐标有关式见后表 5                      | 磁场（偶极子项）                                             |                      坐标有关式见后表 6                      |
-| 电场（偶极子项）                                          |                      坐标无关式见后表 7                      | 磁场（偶极子项）                                             |                      坐标无关式见后表 8                      |
-| 电偶极子受力矩                                            |        $\boldsymbol{N} = \mathbf{p}\times \mathbf{E}$        | 磁偶极子受力矩                                               |        $\boldsymbol{N} = \mathbf{m}\times\mathbf{B}$         |
-| 电偶极子受力                                              |       $\mathbf{F} = (\mathbf{p}\cdot\nabla)\mathbf{E}$       | 磁偶极子受力                                                 |       $\mathbf{F} = \nabla(\mathbf{m}\cdot\mathbf{B})$       |
-| 极化强度                                                  |    $\displaystyle \mathbf{P} = \frac{d\mathbf{p}}{d\tau}$    | 磁化强度                                                     |    $\displaystyle \mathbf{M} = \frac{d\mathbf{m}}{d\tau}$    |
-| 电势（$\mathbf{P}$）                                      |                           见后表 9                           | 磁矢势（$\mathbf{M}$）                                       |                          见后表 10                           |
-| 束缚电荷面密度                                            |             $\sigma_b = \mathbf{P}\cdot\unit{n}$             | 束缚电流面密度                                               |          $\mathbf{K}_b = \mathbf{M}\times\unit{n}$           |
-| 束缚电荷体密度                                            |              $\rho_b = -\nabla\cdot\mathbf{P}$               | 束缚电流体密度                                               |           $\mathbf{J}_b = \nabla\times\mathbf{M}$            |
-| 电势（极化物体）                                          |                          见后表 11                           | 磁矢势（磁化物体）                                           |                          见后表 12                           |
-| 电位移                                                    |       $\mathbf{D} = \epsilon_0\mathbf{E} + \mathbf{P}$       | 磁场（$\mathbf{H}$）                                         | $\displaystyle \mathbf{H} = \frac{1}{\mu_0}\mathbf{B} - \mathbf{M}$ |
-| 电位移的散度                                              |      $\nabla\cdot \mathbf{D} = \rho_f = \rho - \rho_b$       | 磁场（$\mathbf{H}$）的旋度                                   | $\nabla\times\mathbf{H} = \mathbf{J}_f = \mathbf{J} - \mathbf{J}_b$ |
-| 高斯定律（$\mathbf{D}$）                                  | $\displaystyle \oint\mathbf{D}\cdot d\mathbf{a} = Q_{f\text{enc}}$ | 安培定律（$\mathbf{H}$）                                     | $\displaystyle \oint\mathbf{H}\cdot d\mathbf{l} = I_{f\text{enc}}$ |
-| 边界条件（$\mathbf{D}^\perp$）                            |   $D_\text{above}^\perp - D_\text{below}^\perp = \sigma_f$   | 边界条件（$\mathbf{H}^\parallel$）                           | $\mathbf{H}_\text{above}^\parallel - \mathbf{H}_\text{below}^\parallel = \mu_0(\mathbf{K}_f \times \unit{n})$ |
-| 边界条件（$\mathbf{D}^\parallel$）                        |                          见后表 13                           | 边界条件（$\mathbf{H}^\perp$）                               |                          见后表 14                           |
-| 线性电介质                                                |          $\mathbf{P} = \epsilon_0\chi_e\mathbf{E}$           | 线性磁介质                                                   |               $\mathbf{M} = \chi_m\mathbf{H}$                |
-| 介电率                                                    |             $\epsilon = \epsilon_0(1 + \chi_e)$              | 磁导率                                                       |                  $\mu = \mu_0(1 + \chi_m)$                   |
-| 本构关系                                                  |              $\mathbf{D} = \epsilon\mathbf{E}$               | 本构关系                                                     |                 $\mathbf{B} = \mu\mathbf{H}$                 |
-| 相对介电率                                                |   $\displaystyle \epsilon_r = \frac{\epsilon}{\epsilon_0}$   | 相对磁导率                                                   |          $\displaystyle \mu_r = \frac{\mu}{\mu_0}$           |
+| **名称（电）**                                         |                           **公式**                           | **名称（磁）**                                               |                           **公式**                           |
+| :----------------------------------------------------- | :----------------------------------------------------------: | ------------------------------------------------------------ | :----------------------------------------------------------: |
+| 库仑定律 $\mathbf{E}$                                  | $\displaystyle{\mathbf{E}(\mathbf{r}) = \frac{1}{4\pi\epsilon_0}\int\frac{\rho(\mathbf{r}')}{\rcur^2}\unit{\rcur}\,d\tau'}$ | 毕奥·萨伐尔定律 $\mathbf{B}$                                 | $\displaystyle{\mathbf{B}(\mathbf{r}) = \frac{\mu_0}{4\pi}\int\frac{\mathbf{J}(\mathbf{r}')}{\rcur^2}\times\unit{\rcur}\,d\tau'}$ |
+| 电荷分布                                               |        $dq = \lambda\,dl = \sigma\,da = \rho\,d\tau$         | 电流分布                                                     | $d(\sum q_i\mathbf{v}_i) = \mathbf{I}\,dl = \mathbf{K}\,da = \mathbf{J}\,d\tau$ |
+| 电场散度                                               | $\displaystyle \nabla\cdot \mathbf{E} = \frac{\rho}{\epsilon_0}$ | 磁场散度                                                     |                 $\nabla\cdot \mathbf{B} = 0$                 |
+| 静电场旋度                                             |            $\nabla\times\mathbf{E} = \mathbf{0}$             | 静磁场旋度                                                   |         $\nabla\times \mathbf{B} = \mu_0\mathbf{J}$          |
+| 高斯定律                                               | $\displaystyle \oint\mathbf{E}\cdot d\mathbf{a} = \frac{Q_\text{enc}}{\epsilon_0}$ | 安培定律                                                     | $\displaystyle \oint\mathbf{B}\cdot d\mathbf{l} = \mu_0I_\text{enc}$ |
+| 静电场无旋                                             |     $\displaystyle \oint\mathbf{E}\cdot d\mathbf{l} = 0$     | 磁场无源                                                     |     $\displaystyle \oint\mathbf{B}\cdot d\mathbf{a} = 0$     |
+| 电势                                                   | $\displaystyle V(\mathbf{r}) = -\int_\mathcal{O}^\mathbf{r} \mathbf{E}\cdot d\mathbf{l}$ | 磁矢势                                                       | $\displaystyle \mathbf{A}(\mathbf{r}) = \int_\mathcal{O}^\mathbf{r}\mathbf{B}\times d\mathbf{l}$ |
+| 电场是电势的梯度                                       |                   $\mathbf{E} = -\nabla V$                   | 磁场是磁矢势的旋度                                           |            $\mathbf{B} = \nabla\times \mathbf{A}$            |
+| 库仑定律 $V$                                           | $\displaystyle V(\mathbf{r}) = \frac{1}{4\pi\epsilon_0}\int\frac{\rho(\mathbf{r}')}{\rcur}\,d\tau'$ | 毕奥·萨伐尔定律 $\mathbf{A}$                                 | $\displaystyle \mathbf{A}(\mathbf{r}) = \frac{\mu_0}{4\pi}\int\frac{\mathbf{J}(\mathbf{r}')}{\rcur}\,d\tau'$ |
+| 泊松方程 $V$                                           |    $\displaystyle \nabla^2 V = -\frac{\rho}{\epsilon_0}$     | 泊松方程 $\mathbf{A}$                                        |           $\nabla^2\mathbf{A} = -\mu_0\mathbf{J}$            |
+| 边界条件 $\mathbf{E}$                                  | $\displaystyle \mathbf{E}_\text{above} - \mathbf{E}_\text{below} = \frac{\sigma}{\epsilon_0}\unit{n}$ | 边界条件 $\mathbf{B}$                                        | $\mathbf{B}_\text{above} - \mathbf{B}_\text{below} = \mu_0(\mathbf{K}\times\unit{n})$ |
+| 边界条件 $V$                                           |              $V_\text{above} = V_\text{below}$               | 边界条件 $\mathbf{A}$                                        |     $\mathbf{A}_\text{above} = \mathbf{A}_\text{below}$      |
+| 边界条件 $\displaystyle \frac{\partial V}{\partial n}$ | $\displaystyle \frac{\partial V_\text{above}}{\partial n} - \frac{\partial V_\text{below}}{\partial n} = -\frac{\sigma}{\epsilon_0}$ | 边界条件 $\displaystyle \frac{\partial \mathbf{A}}{\partial n}$ | $\displaystyle \frac{\partial \mathbf{A}_\text{above}}{\partial n} - \frac{\partial\mathbf{A}_\text{below}}{\partial n} = -\mu_0\mathbf{K}$ |
+| 电势多极展开                                           |                        简略式见后表 1                        | 磁矢势多极展开                                               |                        简略式见后表 2                        |
+| 电势多极展开                                           |                        详细式见后表 3                        | 磁矢势多极展开                                               |                        详细式见后表 4                        |
+| 电偶极矩                                               | $\displaystyle \mathbf{p} = \int\mathbf{r}'\rho(\mathbf{r}')\,d\tau'$ | 磁偶极矩                                                     |       $\displaystyle \mathbf{m} = I\int\,d\mathbf{a}'$       |
+| 电势的偶极子项                                         | $\displaystyle V_\text{dip} = \frac{1}{4\pi\epsilon_0}\frac{\mathbf{p}\cdot\unit{r}}{r^2}$ | 磁矢势的偶极子项                                             | $\displaystyle \mathbf{A}_\text{dip} = \frac{\mu_0}{4\pi}\frac{\mathbf{m}\times\unit{r}}{r^2}$ |
+| 电场（偶极子项）                                       |                      坐标有关式见后表 5                      | 磁场（偶极子项）                                             |                      坐标有关式见后表 6                      |
+| 电场（偶极子项）                                       |                      坐标无关式见后表 7                      | 磁场（偶极子项）                                             |                      坐标无关式见后表 8                      |
+| 电偶极子受力矩                                         |        $\boldsymbol{N} = \mathbf{p}\times \mathbf{E}$        | 磁偶极子受力矩                                               |        $\boldsymbol{N} = \mathbf{m}\times\mathbf{B}$         |
+| 电偶极子受力                                           |       $\mathbf{F} = (\mathbf{p}\cdot\nabla)\mathbf{E}$       | 磁偶极子受力                                                 |       $\mathbf{F} = \nabla(\mathbf{m}\cdot\mathbf{B})$       |
+| 极化强度                                               |    $\displaystyle \mathbf{P} = \frac{d\mathbf{p}}{d\tau}$    | 磁化强度                                                     |    $\displaystyle \mathbf{M} = \frac{d\mathbf{m}}{d\tau}$    |
+| 电势 $\mathbf{P}$                                      |                           见后表 9                           | 磁矢势 $\mathbf{M}$                                          |                          见后表 10                           |
+| 束缚电荷面密度                                         |             $\sigma_b = \mathbf{P}\cdot\unit{n}$             | 束缚电流面密度                                               |          $\mathbf{K}_b = \mathbf{M}\times\unit{n}$           |
+| 束缚电荷体密度                                         |              $\rho_b = -\nabla\cdot\mathbf{P}$               | 束缚电流体密度                                               |           $\mathbf{J}_b = \nabla\times\mathbf{M}$            |
+| 电势（极化物体）                                       |                          见后表 11                           | 磁矢势（磁化物体）                                           |                          见后表 12                           |
+| 电位移                                                 |       $\mathbf{D} = \epsilon_0\mathbf{E} + \mathbf{P}$       | 磁场 $\mathbf{H}$                                            | $\displaystyle \mathbf{H} = \frac{1}{\mu_0}\mathbf{B} - \mathbf{M}$ |
+| 电位移的散度                                           |      $\nabla\cdot \mathbf{D} = \rho_f = \rho - \rho_b$       | 磁场 $\mathbf{H}$ 的旋度                                     | $\nabla\times\mathbf{H} = \mathbf{J}_f = \mathbf{J} - \mathbf{J}_b$ |
+| 高斯定律 $\mathbf{D}$                                  | $\displaystyle \oint\mathbf{D}\cdot d\mathbf{a} = Q_{f\text{enc}}$ | 安培定律 $\mathbf{H}$                                        | $\displaystyle \oint\mathbf{H}\cdot d\mathbf{l} = I_{f\text{enc}}$ |
+| 边界条件 $\mathbf{D}^\perp$                            |   $D_\text{above}^\perp - D_\text{below}^\perp = \sigma_f$   | 边界条件 $\mathbf{H}^\parallel$                              | $\mathbf{H}_\text{above}^\parallel - \mathbf{H}_\text{below}^\parallel = \mu_0(\mathbf{K}_f \times \unit{n})$ |
+| 边界条件 $\mathbf{D}^\parallel$                        |                          见后表 13                           | 边界条件 $\mathbf{H}^\perp$                                  |                          见后表 14                           |
+| 线性电介质                                             |          $\mathbf{P} = \epsilon_0\chi_e\mathbf{E}$           | 线性磁介质                                                   |               $\mathbf{M} = \chi_m\mathbf{H}$                |
+| 介电率                                                 |             $\epsilon = \epsilon_0(1 + \chi_e)$              | 磁导率                                                       |                  $\mu = \mu_0(1 + \chi_m)$                   |
+| 本构关系                                               |              $\mathbf{D} = \epsilon\mathbf{E}$               | 本构关系                                                     |                 $\mathbf{B} = \mu\mathbf{H}$                 |
+| 相对介电率                                             |   $\displaystyle \epsilon_r = \frac{\epsilon}{\epsilon_0}$   | 相对磁导率                                                   |          $\displaystyle \mu_r = \frac{\mu}{\mu_0}$           |
 
 
 
@@ -2423,10 +2713,10 @@ $$
 
 我们也给出一些常见的电荷分布产生的电磁场。注意，下面所有带电都指均匀带电，通电指通恒稳电流，即 $\lambda, \sigma, \rho, I, K, J$ 均为常数：
 
-| **分布（电）**   | **公式**                                                     | **分布（磁）** | **公式**                                                  |
-| ---------------- | ------------------------------------------------------------ | -------------- | --------------------------------------------------------- |
-| 无限长直带电导线 | $E = \dfrac{\lambda}{2\pi\epsilon_0s}$                       | 无限长直导线   | $B = \dfrac{\mu_0I}{2\pi s}$                              |
-| 有限带电直导线   |                                                              | 有限长导线段   | $B = \dfrac{\mu_0I}{4\pi s}(\sin\theta_2 - \sin\theta_1)$ |
-| 带电环路         | $E = \dfrac{\lambda}{2\epsilon_0}\dfrac{Rz}{(R^2+z^2)^{3/2}}$ | 通电环路       | $B = \dfrac{\mu_0I}{2}\dfrac{R^2}{(R^2+z^2)^{3/2}}$       |
-| 带电平面         | $E = \dfrac{\sigma}{2\epsilon_0}$                            | 通电平面       | $B = \dfrac{\mu_0K}{2}$                                   |
+| **分布（电）** | **公式**                                                     | **分布（磁）**   | **公式**                                                  |
+| -------------- | ------------------------------------------------------------ | ---------------- | --------------------------------------------------------- |
+| 无限带电直导线 | $E = \dfrac{\lambda}{2\pi\epsilon_0s}$                       | 无限通电直导线   | $B = \dfrac{\mu_0I}{2\pi s}$                              |
+| 有限带电直导线 | $E = \dfrac{\lambda}{4\pi\epsilon_0s}(\cos\theta_2 - \cos\theta_1)$ | 有限通电直导线段 | $B = \dfrac{\mu_0I}{4\pi s}(\sin\theta_2 - \sin\theta_1)$ |
+| 带电环路       | $E = \dfrac{\lambda}{2\epsilon_0}\dfrac{Rz}{(R^2+z^2)^{3/2}}$ | 通电环路         | $B = \dfrac{\mu_0I}{2}\dfrac{R^2}{(R^2+z^2)^{3/2}}$       |
+| 带电平面       | $E = \dfrac{\sigma}{2\epsilon_0}$                            | 通电平面         | $B = \dfrac{\mu_0K}{2}$                                   |
 
