@@ -1,6 +1,6 @@
 # Intro to Real Analysis
 
-本篇是 *UIUC MATH 447 Real Variables* 的学习笔记，其中包含了实数、实数列、度量空间、以及微积分等知识点；和此前可能接触过的微积分不同，实数分析的数学理论更加严格，包含大量证明。
+本篇是 *UIUC MATH 447 Real Variables* 的学习笔记，其中包含了实数、实数列、度量空间、以及微积分等知识点；和此前可能接触过的微积分不同，实数分析的数学理论更加严格，包含大量证明。参考教材是 *Elementary Analysis: Kenneth A. Ross*。
 
 [TOC]
 
@@ -63,7 +63,7 @@ $$
 a + c = b + c \implies a = b \nonumber
 $$
 
-> **证**：通过数学归纳法证明（对 $c$ 进行归纳） $A(m)$：对任意 $k, l \in \N$ 都有 $k + m = l + m \implies k = l$。
+> **证明**：通过数学归纳法证明（对 $c$ 进行归纳） $A(m)$：对任意 $k, l \in \N$ 都有 $k + m = l + m \implies k = l$。
 >
 > - $A(1)$：显然成立，因为 $ k+ 1 = l + 1 \implies k = l$ 即 $S(k) = S(l) \implies k = l$ 源自公理 **B1**。
 > - $A(m)$：假设 $A(m)$ 成立，即 $k + m = l + m \implies k = l$ 成立。
@@ -73,7 +73,7 @@ $$
 
 下面证明 Grothendieck 群的存在性：
 
-> **证**：定义 $S \times S$ 上的二元关系 $\sim$，使对任意 $a, b, c, d \in S$，当 $a + d = b + c$ 时有 $(a, b) \sim (c, d)$。我们声明这是一个等价关系。自反性和对称性是显然的。传递性可以参考下面的论述，假设 $(a, b) \sim (c, d) \sim (e, f)$：
+> **证明**：定义 $S \times S$ 上的二元关系 $\sim$，使对任意 $a, b, c, d \in S$，当 $a + d = b + c$ 时有 $(a, b) \sim (c, d)$。我们声明这是一个等价关系。自反性和对称性是显然的。传递性可以参考下面的论述，假设 $(a, b) \sim (c, d) \sim (e, f)$：
 > $$
 > \begin{align*}
 > 	(a, b) \sim (c, d) \implies a + d = b + c && (1)\\
@@ -87,7 +87,7 @@ $$
 >
 > 首先，定义 $G$ 上的二元运算 $+$ 为 $[(a, b)] + [(c, d)] = [(a + c, b + d)]$。显然这个运算满足结合律和交换律。随后，定义单位元 $[(a, a)] = 0$，这里的 $a \in S$ 是任取的，因为任意 $a, b \in S$ 都有 $(a, a) \sim (b, b)$，同时 $[(a, a)] + [(b, c)] = [(a + b, a + c)] = [(b, c)]$。最后定义 $[(a, b)]$ 的逆元 $[(b, a)]$，因为 $[(a + b, b + a)] = 0$。这样我们就得到 $G$ 是一个交换群。
 >
-> 为了证明 Grothendieck 群是最小的包含 $S$ 的交换群，我们只需要尝试构造 $G$ 可能的子群，比如 $H = \{[(a, 2a)]\}$ 也包含 $S$（存在对应 `a \mapsto [(a, 2a)]`）且构成一个群（仍使用 $G$ 中的运算），且显然是 $G$ 的子集，因此我们有 $S \subseteq H \subseteq G$。下面我们证明 $H = G$：对任意的 $[(m, n)] \in G$，都有：
+> 为了证明 Grothendieck 群是最小的包含 $S$ 的交换群，我们只需要尝试构造 $G$ 可能的子群，比如 $H = \{[(a, 2a)]\}$ 也包含 $S$（存在对应 $a \mapsto [(a, 2a)]$）且构成一个群（仍使用 $G$ 中的运算），且显然是 $G$ 的子集，因此我们有 $S \subseteq H \subseteq G$。下面我们证明 $H = G$：对任意的 $[(m, n)] \in G$，都有：
 > $$
 > [(m, n)] + [(2n, n)] + [(m, 2m)] = [(2m + 2n, 2m + 2n)]\nonumber
 > $$
@@ -198,7 +198,9 @@ $$
 $$
 \R = R\backslash\Q = \{D \subset \Q\}
 $$
-如果我们借用 $R$ 完备的结论，实数集 $\R$ 的完备性是比较显然的，这里不再叙述。
+如果我们借用 $R$ 完备的结论，实数集 $\R$ 的完备性是比较显然的，它常常被叙述为如下公理：
+
+> **完备性公理（Completeness Axiom）**：实数集 $\mathbb{R}$ 的任意有上界子集 $S$ 都有最小上界，也即 $\sup S \in \mathbb{R}$。这个公理与其对称叙述等价，即实数集的任意有下界子集 $S$ 都有最大下界。
 
 为了方便定义 $\R$ 上的运算，先定义 $\R^+ = \{D \in \R\mid (-\infty, 0] \subseteq D\}$，并定义 $\R^+$ 上的 $+$ 和 $\cdot$ 运算。对于 $D_1, D_2 \in \R^+$：
 $$
@@ -210,10 +212,79 @@ $$
 它们遵循结合律、交换律和分配律：
 
 - $D_1 + (D_2 + D_3) = (D_1 + D_2) + D_3$.
-- $D_1\cdot(D_2\cdot D_3) = (D_1\cdot D_2) \cdot D_3)$。
+- $D_1\cdot(D_2\cdot D_3) = (D_1\cdot D_2) \cdot D_3$。
 - $D_1 + D_2 = D_2 + D_1$。
 - $D_1\cdot D_2 = D_2 \cdot D_1$。
 - $D_1\cdot(D_2 + D_3) = D_1\cdot D_2 + D_1\cdot D_3$。
 
-由此我们可以得到 $(\R^+, +)$ 和 $\R^+, \cdot)$ 均为满足消去律的半群。最终，我们可以得到它的 Grothendick 群，而它实际上就是我们的实数集，即 $\R = G(\R^+)$。
+由此我们可以得到 $(\R^+, +)$ 和 $(\R^+, \cdot)$ 均为满足消去律的半群。最终，我们可以得到它的 Grothendick 群，而它实际上就是我们的实数集，即 $\R = G(\R^+)$。
 
+> **性质**：实数集 $\mathbb{R}$ 是一个全序集。
+
+> **证明**：对于任意两个戴德金分割 $D_1, D_2$，如果 $D_1 \subseteq D_2$ 则没有问题。若 $D_1 \nsubseteq D_2$，则一定存在 $d_1 \in D_1$ 使得 $d_1 \notin D_2$。此时显然有 $D_2 \le d_1$，因此 $D_2 \subseteq D_1$。
+
+> **性质**：有理数在实数集中稠密。
+
+> **证明**：由 $D_1 < D_2$ 可得 $D_1 \subset D_2$，故存在 $d \in D_2$ 满足 $d \notin D_1$。此时有 $D_1 \subset (-\infty, d) \subset D_2$。
+
+> **定理**：实数集 $\mathbb{R}$ 不可数。
+
+> **证明**：让我们先证明下面的引理：
+>
+> > **引理**：$\mathbb{P}(\mathbb{N})$ 是不可数集。
+>
+> > **证明**：假设 $\mathbb{P}(\mathbb{N})$ 可数，则一定存在双射 $\varphi : \mathbb{N} \to \mathbb{P}(\mathbb{N})$ 。考虑 $\mathbb{N}$ 的子集 $B = \{n \in \mathbb{N} \mid n \notin \phi(n)\}$。由于 $B \in \mathbb{P}(\mathbb{N})$，存在 $m$ 使得 $\varphi(m) = B$。由 $B$ 的定义可知 $m \notin B$，但此时又符合了 $B$ 中元素的定义，因此 $m \in B$ 构成矛盾。
+>
+> 下面为了证明 $\mathbb{R}$ 不可数，我们只需要构建一个单射 $\varphi : \mathbb{P}(\mathbb{N}) \to [0, 1]$ 即可。实际上可以定义：
+> $$
+> \varphi(A) = \sum_{k \in A}3^{-k} = \sup \left\{\sum_{k \le n} 3^{-k} \mid k \in A, n \in \mathbb{N}\right\}
+> $$
+> 我们还没有正规地引入级数地概念，但是上面第二个等式给出了其等价定义。这个函数是良定义的，因为对于任意 $A, n \in \mathbb{N}$ 都有：
+> $$
+> \sum_{k \in A, k \le n} 3^{-k} \le \sum_{k=1}^n 3^{-k} = \frac{1}{3}\frac{1-3^{-n}}{1-3^{-1}} \le \frac{1}{2}
+> $$
+> 所以 $\varphi(A)$ 上有界，根据完备性公理则上确界存在。
+>
+> 接下来，需要证明 $\varphi$ 是一个单射。这等价于对任何不相等的 $A, B \in \mathbb{P}(\mathbb{N})$ 都有 $\varphi(A) \ne \varphi(B)$。自然数的幂集可以等价表示为一个无限长的二进制序列 $b_1b_2...$，其中每一项 $b_n$ 代表自然数 $n$ 是否出现在该集合中。由于这两个集合 $A = a_1a_2..., B = b_1b_2...$ 不相等，让我们假设其第一个不相同的地方为 $m_0$。即：
+> $$
+> m_0 = \min\{m \mid a_{m} \ne b_{m}\}
+> $$
+> 这暗示了对于任何 $j < m_0$ 都有 $a_j = b_j$。假设：
+> $$
+> \alpha = \sum_{j \in A, j < m_0} 3^{-j} = \sum_{j \in B, j < m_0}3^{-j}
+> $$
+> 则对于 $A$ 有：
+> $$
+> \varphi(A) \ge \alpha + \frac{1}{3^{m_0}}
+> $$
+> 对于 $B$，记：
+> $$
+> \varphi_k(B) = \sum_{j \in B, j \le k}3^{-j} = \alpha + \sum_{j \in B, m_0 < j \le k}3^{-j} \qquad (k > m_0)
+> $$
+> 进行进一步推导则有：
+> $$
+> \varphi_k(B) \le \alpha + \sum_{j \in B, j > m_0}3^{-j} \le \alpha + \frac{1}{3^{m_0+1}}\frac{3}{2} = \alpha +  \frac{1}{2\cdot 3^{m_0}} < \alpha + \frac{1}{3^{m_0}} = \varphi(A)
+> $$
+> 因此对任选的 $k > m_0$ 都有 $\varphi_k(B) < \varphi(A)$。因此我们得到：
+> $$
+> \varphi(B) \le \sup \sum_{j \in A, j \le k} 3^{-j} = \varphi_k(B) < \varphi(A)
+> $$
+> 也即 $\varphi(A) \ne \varphi(B)$。这就证明了 $\varphi$ 是单射。此时我们有 $\operatorname{Im}(\varphi) \subset [0, 1]$，后者一定是不可数集。由于 $\mathbb{R}$ 的子集不可数，其本身也一定不可数。
+
+> **阿基米德性质**：对于任意自然数 $a \in \mathbb{N}$，总存在 $n \in \mathbb{N}$ 使得 $n > a$。
+
+> **证明**：假设对于某个 $a$ 不存在 $n \in \mathbb{N}$ 使得 $n > a$。此时 $\mathbb{N}$ 存在上界。假设 $S = \sup \mathbb{N}$，此时有：
+>
+> - 对于任意 $n \in \mathbb{N}$ 均有 $n \le S$。
+> - 对于任意正数 $\epsilon$ 都存在 $n \in \mathbb{N}$ 使得 $S < a + \epsilon$。
+>
+> 因此，一定存在 $n$ 使得 $S - \frac{1}{2} < n < S$。此时有 $n + 1 > S - \frac{1}{2} + 1 = S + \frac{1}{2} > S$，和条件矛盾。
+
+## 数列
+
+### 实数列
+
+一个 **实数列（Sequence of Real Numbers）** 定义了一个函数 $x : \mathbb{N} \to \mathbb{R}$，我们将 $x(n), n \in \mathbb{N}$ 记作 $x_n$。一个实数列是 **单调的（Monotone）**，如果满足下面两个条件之一：
+
+- 对于任何 $n \in \mathbb{N}$，都有 $x_n \le x_{n+1}$，此时我们称其为递增（或非递减）实数列。
+- 对于任何 $n \in \mathbb{N}$，都有 $x_n \ge x_{n+1}$，此时我们称其为递减（或非递增）实数列。
