@@ -5,6 +5,11 @@
 [TOC]
 
 **线性代数（Linear Algebra）** 研究的是在有限维度向量空间上的线性变换。本篇中，我们假定大家对基本的线性代数知识，包括欧几里得空间和矩阵已经有了基本的了解。以此为基础，我们将研究更为抽象的向量空间和线性变换理论。
+$$
+\newcommand{\null}[0]{\operatorname{null}}
+\newcommand{\range}[0]{\operatorname{range}}
+$$
+
 
 ## 向量空间
 
@@ -422,3 +427,76 @@ $$
 > \end{align*}
 > $$
 > 这样我们就得到 $T$ 是满足要求的一个线性变换。最后为了证明其唯一性，我们从 $Tv_i = w_i$ 出发。由 $T$ 的线性可以得到 $T(c_iv_i) = c_iw_i$，从而 $T(c_1v_1 + ... + c_nv_n) = c_1w_1 + ... + c_nv_n$，这和我们的定义正好相符。
+
+线性变换可以进行函数复合运算，我们称其为线性变换的 **积（Product）**：
+
+- 对于 $T \in \mathcal{L}(U, V), S \in \mathcal{L}(V, W)$，定义 $ST \in \mathcal{L}(U, W)$ 为：
+  $$
+  (ST)(u) = S(Tu), \quad u \in U
+  $$
+
+我们可以理解为在线性空间中，记 $S\circ T$ 为 $ST$。线性变换的积有下列运算性质：
+
+- 结合性，即 $(T_1T_2)T_3 = T_1(T_2T_3)$。其中 $T_1, T_2, T_3$ 是使得积有定义的线性空间。
+- 单位元 $I$ 定义为 $TI = IT = T$。实际上对于 $T \in \mathcal{L}(U, V)$，$I$ 就是线性空间 $V$ 中的单位变换。
+- 分配性，即 $(S_1 + S_2)T = S_1T + S_2T$ 和 $S(T_1 + T_2) = ST_1 + ST_2$。其中 $T, T_1, T_2 \in \mathcal{L}(U, V)$，$S, S_1, S_2 \in \mathcal{L}(V, W)$。
+
+### 零空间与值域
+
+任何线性空间都有两个特殊的子空间。首先是所有向量都会被变换为 $0$ 的零空间：
+
+> **定义**：线性变换 $T \in \mathcal{L}(V, W)$ 的 **零空间（Null Space）** 是 $V$ 的一个子集，记作 $\null T$，满足：
+> $$
+> \null T = \{v \in V \mid Tv = 0 \}
+> $$
+
+> **例**：（零空间）
+>
+> - 若 $T\in \mathcal{L}(V, W)$ 是一个零变换，即对于任意 $v \in V$ 都有 $Tv  = 0$，则 $\null T = V$。
+> - 设 $D \in \mathcal{L}(\mathcal{P}(\mathbb{R}), \mathcal{P}(\mathbb{R}))$ 是微分变换，即 $Dp = p'$，则 $\null T = \mathcal{P}_0(\mathbb{R})$，也即全体常量函数。
+
+线性空间的零空间有下面两个性质：
+
+- $\null T$ 是 $V$ 的子空间，这证明起来并不难（只需证明 $T$ 在 $\null T$ 中封闭即可）。
+- 当且仅当 $T$ 是一个单射时，有 $\null T = \{0\}$。
+
+线性变换作为一个函数，显然有它的值域。
+
+> **定义**：线性变换 $T \in \mathcal{L}(V, W)$ 的 **值域（Range）** 是 $W$ 的一个子集，记作 $\range T$，满足：
+> $$
+> \range T = \{Tv \mid v \in V \}
+> $$
+
+> **例**：（值域）
+>
+> - 若 $T \in \mathcal{L}(V, W)$ 是一个零变换，即对于任意 $v \in V$ 都有 $Tv = 0$，则 $\range T = \{0\}$。
+> - 设 $D \in \mathcal{L}(\mathcal{P}(\mathbb{R}), \mathcal{P}(\mathbb{R}))$ 是微分变换，即 $Dp = p'$，则 $\range T = \mathcal{P}(\mathbb{R})$。
+
+线性空间的值域有下面的性质：
+
+- $\range T$ 是 $W$ 的子空间。这证明起来并不难（只需证明 $T$ 在 $\range T$ 中封闭即可）。
+
+介绍完零空间和值域，接下来有一个重要的定理：
+
+> **线性变换基本定理（Fundamental Theorem of Linear Maps）**：对于有限维度线性空间 $V$ 和线性变换 $T \in \mathcal{L}(V, W)$，其值域 $\range T$ 也是有限维度线性空间，且：
+> $$
+> \dim V = \dim\null T + \dim\range T
+> $$
+
+> **证**：设 $u_1, ..., u_m$ 是 $\null T$ 的基，此时有 $\dim\null T = m$。我们可以将这个基扩展为 $V$ 的基 $u_1, ..., u_m, v_1, ..., v_n$，故 $\dim V = m + n$。我们接下来只需证明 $\dim \range V = n$ 即可。设 $v \in V$，由于 $u_1, ..., u_m, v_1, ..., v_n$ 扩张成 $V$，我们可以将 $v$ 写成：
+> $$
+> v = a_1u_1 + ... + a_mu_m + b_1v_1 + ... + b_nv_n
+> $$
+> 对 $v$ 进行 $T$ 变换则有：
+> $$
+> Tv = Ta_1v_1 + ... + Ta_mu_m + Tb_1v_1 + ... Tb_nv_n = b_1Tv_1 + ... + b_nTv_n
+> $$
+> 由于 $v$ 的选取是任意的，这个式子告诉我们 $Tv_1, ..., Tv_n$ 扩张成 $\range T$，同时它也是有限维度的。为了验证 $Tv_1, ..., Tv_n$ 线性无关，令：
+> $$
+> c_1Tv_1 + ... + c_nTv_n = 0 \implies T(c_1v_1 + ... + c_nv_n) = 0
+> $$
+> 因此有：
+> $$
+> c_1v_1 + ... + c_nv_n \in \null T
+> $$
+> 由于 $u_1, ..., u_m$ 扩张成 $\null T$，且 $u_1, ...u_m, v_1, ...v_m$ 是线性无关的，因此上式中的 $c_1, ..., c_n = 0$。因此 $Tv_1, ..., Tv_n$ 线性无关，并构成 $\range T$ 的基，这也就有 $\dim \range V = n$ 了。
