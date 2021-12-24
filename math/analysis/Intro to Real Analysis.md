@@ -336,3 +336,56 @@ $$
 > **证明**：根据前面提到的[定理]()，可以找到一个单调的子序列。由于原数列有界，子数列也一定有界。根据上一条命题可以得到该子序列收敛。
 
 上面这个定理其实有一个更广泛的版本，即“所有有界区间都是 **序列紧致（Sequentially Compact）** 的”。其中，序列紧致定义为其中的每个序列都有一个收敛子序列。
+
+下面让我们定义数列的极限上确界：
+
+> **定义**：定义数列的 **极限上确界（Limit Supremum）** 为 $\lim\sup x_n = L$，如果满足下面的条件：
+>
+> - 对任意 $\epsilon > 0$ 都存在 $N \in \mathbb{N}$，令任意 $n > N$ 都有 $x_n < L + \epsilon$。
+> - 对任意 $\epsilon > 0$ 以及 $N \in \mathbb{N}$，存在 $n > N$ 使得 $x_n > L - \epsilon$。
+
+极限下确界的定义是类似的。由这个定义可以得到一个引理：
+
+> **引理**：若数列 $\{x_n\}$ 上有界，则：
+>
+> - $\displaystyle\lim\sup x_n = \inf_m\sup_{n > m} x_n$。
+> - $\displaystyle\lim\sup x_n = \sup\{\lim_{k}x_{n_k}\}$，其中 $\{x_{n_k}\}$ 是 $\{x_n\}$ 的收敛子数列。
+
+> **证明**：
+>
+> 对于第一条，假设等式右侧等于 $L'$，则对于任意 $\epsilon > 0$ 都存在 $m$ $\displaystyle\sup_{n > m}x_n - L' < \epsilon$。这满足了极限上确界成立的第一项。现在任选 $\epsilon, m > 0$，记 $\displaystyle \sup_{n>m}x_n = s_m$，则存在 $n > m$ 使得：
+> $$
+> x_n > s_m - \epsilon \ge \inf s_m - \epsilon = L' - \epsilon
+> $$
+> 因此左右等式相等。
+>
+> 第二条的证明首先需要一个备注：
+>
+> > **备注**：若数列上有界且极限为 $L$，则其极限小于等于数列的任意上界。
+>
+> > **证明**：设 $\lim x_n = L$，且有 $x_n \le b$，即 $b$ 是数列的一个上界。我们需要证明 $L \le b$。不然，则存在 $\epsilon > 0$ 使得 $b = L - \epsilon$。此时如果存在 $N \in \mathbb{N}$ 使得 $n > N$ 时有 $|x_n - L| < \epsilon$，则有：
+> > $$
+> > L - \epsilon < x_n < L + \epsilon
+> > $$
+> > 由左边的不等式推出 $x_n > L - \epsilon = b$，这和 $b$ 是 $\{x_n\}$ 上界相矛盾。因此一定有 $L \le b$。
+>
+> 设 $\sup\{\lim_k x_{n_k}\} = L''$，其中我们只选取存在极限的子数列。
+>
+> > **声明**：$\displaystyle L'' \le \lim\sup x_n = \inf_m\sup_{n > m}x_n$。
+>
+> > **证明**：记 $x = \displaystyle \lim_kx_{n_k}$，则对于任意 $\epsilon > 0$，$m \in \mathbb{N}$，都存在 $K \in \mathbb{N}$ 令任意 $k > K$ 都有 $x < x_{n_k} + \epsilon$。让我们取一个令 $n_k > m$ 的 $k > K$。此时有：
+> > $$
+> > x - \epsilon < x_{n_k} \le \sup_{n > m} x_n \xRightarrow{m\ \text{是任取的}} x - \epsilon \le \inf_m\sup_{n > m}x_n \xRightarrow{\epsilon\ \text{是任取的}} x \le \inf_m\sup_{n > m}x_n
+> > $$
+> > 因此所有 $x$ 的上确界一定小于等于不等式右侧，我们得到了结论。
+>
+> > **声明**： $\displaystyle L'' \ge \lim\sup x_n = \inf_m\sup_{n > m}x_n$。
+>
+> > **证明**：记 $s_m = \displaystyle \sup_{n>m}x_n$，$\displaystyle s_\infty = \inf_ms_m$，$\epsilon_k = 2^{-k}$。现在尝试证明命题 $A(k)$：存在 $n_1 < ... < n_k$ 使得 $s_\infty - \epsilon_j < x_{n_j} < s_\infty + \epsilon_j$。
+> >
+> > - $A(1)$，由下确界定义，一定存在 $m_1$ 使得 $s_\infty \le s_{m_1} < s_\infty + \epsilon_1$。再根据上确界定义，一定存在 $n_1 > m_1$，使得 $s_{m_1} - \epsilon_1 < x_{n_1} < s_{m_1}$。将两个不等式合并后得到 $s_\infty - \epsilon_1 \le s_{m_1} - \epsilon_1 < x_{n_1} < s_{m_1} < s_\infty + \epsilon_1$。
+> > - $A(k) \implies A(k + 1)$。首先构建 $n_{j, j < k}$。定义 $\tilde{m} = n_k$，则存在 $m > \tilde{m}$ 令 $s_m \le s_\infty +\epsilon_{k+1}$。$\lackproof$
+>
+> 至此我们就证明了引理。下有界的情形是完全对称的，这里我们就不再证明。
+
+> 
