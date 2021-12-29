@@ -1679,13 +1679,13 @@ std::vector<int> vec_1;
 auto vec_2 = std::move(vec_1);		// 将 vec_1.data_ptr 赋值给 vec_2.data_ptr
 ```
 
-处于中间形态的 `std::string` 则在短字符串的情况下存储在栈上，否则会开辟堆上的空间存储。这样我们对于不同长度的字符串，移动相比复制的优势是不同的。如果处理的是短字符串，则移动并没有什么好处。此外，我们在[前文]()中也提到过，为了兼容 **C++98** 容器操作的一些强异常保证，一些底层复制操作只有在已知移动操作不会抛出异常时才会使用移动操作。因此，没有 `noexcept` 声明的移动在一些地方仍会被强制使用复制操作代替。
+处于中间形态的 `std::string` 则在短字符串的情况下存储在栈上，否则会开辟堆上的空间存储。这样我们对于不同长度的字符串，移动相比复制的优势是不同的。如果处理的是短字符串，则移动并没有什么好处。此外，我们在[前文]()中也提到过，为了兼容 **C++98** 容器操作的一些强异常保证，一些底层复制操作只有在已知移动操作不会抛出异常时才会使用移动操作。因此，没有 `noexcept` 声明的移动在标准库一些地方仍会被强制使用复制操作代替。
 
 总之，在以下场景中，**C++11** 的移动语义并没有什么用处：
 
 - 没有实现移动操作：待移动的对象未能提供移动操作，此时移动就会变成复制操作。
 - 移动并没有更快：由于对象的存储性质，移动并不比复制更快。
-- 移动不可用：移动本可以发生的语境下，要求移动不能发射异常，但是移动操作没有声明为 `noexcept`。
+- 移动不可用：移动本可以发生的语境下，要求移动不能抛出异常，但是移动操作没有声明为 `noexcept`。
 
 还有一个容易忽视的情形，当对象是一个左值时，如果我们没有使用 `std::move` 或 `std::forward`，它也不会进行移动操作。
 
@@ -1981,7 +1981,59 @@ int&& forward(int& param) {
 
 ### 34. 优先选用 `lambda` 表达式，而非 `std::bind`
 
+`std::bind` 是古老的 `std::bind1st` 与 `std::bind2nd` 在 **C++11** 时的自然进化。某种角度讲，它的表达力还算强：
 
+```cpp
+void foo(int x, double y, int k) {
+    std::cout << x << y << k;
+}
+int main() {
+    using namespace std::placeholders;		// 引入这个命名空间，才能使用下面的占位符 _1, _2 等
+    auto f = std::bind(foo, _2, _1, 42);
+    f(3.14, 10);		// 相当于调用 foo(10, 3.14, 42)，此处的 3.14 会绑定到 _1，10 会绑定到 _2
+    return 0;
+}
+```
+
+不过，由于占位符 `_1`、`_2` 等的使用过于灵活，同时 `std::bind` 返回的函数对参数毫无限制，这会产生一些奇怪的默许行为：
+
+```cpp
+void foo(int x) {
+    std::cout << x;
+}
+int main() {
+    using namespace std::placeholders;
+    auto f = std::bind(foo, _3);
+    f(1.23, "abc", 10);		// 没有问题，前两个参数会被完全省略
+    return 0;
+}
+```
+
+真正让 `std::bind` 陷入难堪的是重载引发的函数选择问题。如果需要绑定的函数有多个版本，我们就不得不提供它的类型：
+
+```cpp
+void foo(int i);
+void foo(double x, double y);
+int main() {
+    using namespace std::placeholders;
+    using FooType1 = void (*)(double, double);
+    auto f = std::bind(static_cast<FooType1>(foo), _2);
+    f(1.0, 2.0);
+    return 0;
+}
+```
+
+这简直过于繁琐（我们甚至还没开始抱怨每次使用都不得不加的 `using namespace`）。相比之下，lambda 表达式清晰而简洁，且能在闭包体中轻松地进行更加丰富的运算。比如需要一个判断某数是否在一个区间中的函数，用 lambda 表达式和 `std::bind` 的实现如下：
+
+```cpp
+auto lo = 0, hi = 20;
+auto between_by_lambda = [lo, hi] (auto const& val) { return lo <= val && val <= hi; };
+auto between_by_bind = std::bind(std::logical_and{},
+                                 std::bind(std::less_equal{}, lo, _1),
+                                 std::bind(std::less_equal{}, _1, hi));
+```
+
+这样的天差地别让 `std::bind` 几乎没有任何可取之处了。实际上，除了在 **C++11** 中补全闭包不能移动捕获变量的遗憾（参见[条款32](#32. 使用初始化捕获将对象引入闭包)），以及缺少类型检查间接促使的“多态性”（这一点在 **C++14** 后也被泛型 lambda 完全替代），我们应该避免使用 `std::bind`。
 
 ## 并发 API
 
@@ -2000,11 +2052,81 @@ int main() {
 }
 ```
 
-
+两者间一个比较大的区别是，我们没有合适的方法得到前一种执行后返回的值，而后一种可以通过 `get` 方法可以得到。更重要的是，如果 `foo` 抛出了异常，以线程方式异步时程序会直接终止（调用 `std::terminate`），而基于任务的方式可以访问到这个异常。此外，`std::thread` 需要程序员手动处理可能出现的线程耗尽、超订、负载均衡以及跨平台适配问题，而 `std::async` 由于其调用时“不一定真正创建新线程”的特性，可以灵活地处理线程耗尽以及超订问题。
 
 ### 36. 如果异步是必要的，则指定 `std::launch::async`
 
+正如前面条款中所说，调用 `std::async` 时，函数可能不会立即异步运行；实际上它甚至可能不会通过异步方式来运行。运行的策略有下面两个：
+
+- `std::launch::async`：函数必须以异步方式运行，即执行于另一线程上。
+- `std::launch::deferred`: 函数只有在其返回的值调用 `get` 或 `wait` 时才调用，即讲函数调用推迟到某一个必要的时刻。采取该策略时，函数调用会阻塞当前线程，直到函数调用完毕为止。
+
+如果不指定任何运行策略，`std::async` 采用的将是上面两种的或运算，也即两者中任一个。下面的例子中，两个式子执行的策略是一致的：
+
+```cpp
+auto fut_1 = std::async(f);
+auto fut_2 = std::async(std::launch::async | std::launch::deferred, f);
+```
+
+默认情况下的灵活性也是为何条款35中我们推荐使用 `std::async` 的原因。
+
+不过，模棱两可的执行策略会导致下面的问题：
+
+- 无法预知函数是否和当前线程并发运行。
+- 无法预知函数是否运行在与调用 `get` 或 `wait` 的线程不同的某线程上。
+- 无法预知函数是否已经运行，因为无法保证程序的每一条控制流都调用了 `get` 或 `wait`。
+
+因此，如果在函数中使用了 `thread_loacal` 变量，我们甚至不知道这是哪个线程的局部存储；此外，基于 `wait` 的循环可能会永远无法终止：
+
+```cpp
+using namespace std::literals;
+void f() {
+    std::this_thread::sleep_for(1s);
+}
+auto fut = std::async(f);		// 对于负载较高的情况，fut 可能永远被推迟
+while (fut.wait_for(100ms) != std::future_status::ready) {
+    // 省略内容
+}
+```
+
+解决方法如下：
+
+```cpp
+auto fut = std::async(f);
+if (fut.wait_for(0s) == std::future_status::deferred) {
+    // 利用 wait 或 get 方法异步调用 f
+}
+else { // 未被推迟，则不可能死循环
+    while (fut.wait_for(100ms) != std::future_status::readY) {
+        // 省略内容
+    }
+}
+```
+
+作为总结，如果要用默认的运行策略使用 `std::async`，就要确保：
+
+- 任务不需要与调用 `get` 或 `wait` 的线程并发执行。
+- 读写任一个线程的 `thread_local` 变量都无碍。
+- 或者保证对 `std::async` 返回值调用 `get` 或 `wait`，或者能接受任务从不执行。
+- 考虑 `wait_for` 或 `wait_until` 会将任务推迟。
+
+只要上面任一个条件不能满足，就应该确保任务以异步方式执行。我们可以轻松撰写一个函数自动使用 `std::launch::async` 策略：
+
+```cpp
+template<typename F, typename... Args>
+inline auto force_async(F&& f, Args&&... args) {
+    return std::async(std::launch::async, std::forward<F>(f), std::forward<Args>(args)...);
+}
+```
+
 ### 37. 使 `std::thread` 类型对象在所有路径均不可连结
+
+`std::thread` 总处于两种状态之一，可以被 **连结（Join）**，或不可连结。可连结的 `std::thread` 通常是其底层线程处于阻塞或等待调度，或者是已经运行结束。相对地，不可连结的 `std::thread` 对象分为下面这些情况：
+
+- `std::thread` 被默认构造。此时没有任何函数可以执行。
+- 被移动的 `std::thread`，此时也没有任何函数可以执行。
+- 已连结的 `std::thread`，此时这个对象不再对应已结束运行的底层线程。
+- 已分离的 `std::thread`，因为分离操作会将该对象和其对应的底层线程分开。
 
 ### 38. 对变化多端的线程句柄析构函数行为保持关注
 
@@ -2015,6 +2137,53 @@ int main() {
 ## 微调
 
 ### 41. 针对可复制的形参，在移动成本低且一定会被复制的前提下，考虑将其按值传递
+
+**C++** 的一些函数参数，本来就是用来构造对象的，比如下面这两个函数：
+
+```cpp
+class MyClass {
+public:
+    void add_name(std::string const& str) {
+        m_names.push_back(str);
+    }
+    void add_name(std::string&& str) {
+        n_names.push_back(std::move(str));
+    }
+    // 省略内容
+};
+```
+
+这里虽然我们分成两种引用类型来接收 `std::string`，且效率上一定是最优的，但这重复的代码不免让我们心烦：明明是在做同一件事，却要写两个函数。如果参数数量更多，情况只会更糟……等等，我们不是有完美转发吗？
+
+```cpp
+class MyClass {
+public:
+    // 这里使用了 C++20 的 concept 特性，用来限定 T 的类型
+    template<std::convertible_to<std::string> T>
+    void add_name(T&& str) {
+        m_names.push_back(std::forward<T>(str));
+    }
+    // 省略内容
+};
+```
+
+不过，此时对于任何可以类型转换为 `std::string` 的类型，包括通过构造函数转换的，都会在调用时被实例化为不同类型。这毫无疑问会造成代码膨胀。唉，如果有什么方法可以避免代码膨胀，又能针对左值和右值分别进行复制和移动操作就好了……还真有，而且这是 **C++** 程序员很早就学到 *不要* 做的一件事，那就是将`std::string` 以值的方式传入函数：
+
+```cpp
+class MyClass {
+public:
+    // 对于左值和右值都没问题，前者会产生复制构造，后者会产生移动构造
+    void add_name(std::string str) {
+        m_names.push_back(std::move(str));	// 将参数再移动构造到 std::vector 当中
+    }
+}
+```
+
+如果把这个方法和开始的重载了两种引用的方式，会发现只多了一次移动操作。这样的额外成本我们完全可以接受！不过，还是有必要分析一下我们什么时候才需要考虑这样的方式：
+
+- 只有可复制的类型才能像这样传递。
+- 移动成本低廉时，额外的成本才能被接受。如果是类似于 `std::array` 这样高额移动成本的类型，多进行一次移动可能无法接受。
+- 
 
 ### 42. 考虑置入而非插入
 
