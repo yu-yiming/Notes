@@ -25,7 +25,7 @@ void foo(F const& f) {
 
 int main() {
     int i = 42;
-    foo([i] mutable { return ++i; });		// 错误，mutable 的闭包，其 operator() 没有被声明为 const
+    foo([i] mutable { return ++i; });	    // 错误，mutable 的闭包，其 operator() 没有被声明为 const
     return 0;
 }
 ```
@@ -52,9 +52,9 @@ struct Functor {
 
 int main() {
     Functor f;
-    foo(f);					// 传递左值引用
-    foo(Functor{});			// 传递右值引用
-    foo(std::move(f));		// 传递右值引用
+    foo(f);	                // 传递左值引用
+    foo(Functor{});	        // 传递右值引用
+    foo(std::move(f));	    // 传递右值引用
     return 0;
 }
 ```
@@ -94,8 +94,8 @@ private:
 
 int main() {
     Functor f(10);
-    foo(f);				// 输出 20
-    foo(f);				// 输出 30
+    foo(f);	            // 输出 20
+    foo(f);	            // 输出 30
     return 0;
 }
 ```
@@ -126,8 +126,8 @@ struct Bar {
 int main() {
     Bar b1{};
     Bar const b2{};
-    b1.bar();		// 输出 Bar::bar() 及 Foo::foo()
-    b2.bar();		// 输出 Bar::bar() const 及 Foo::foo() const
+    b1.bar();	    // 输出 Bar::bar() 及 Foo::foo()
+    b2.bar();	    // 输出 Bar::bar() const 及 Foo::foo() const
     return 0;
 }
 ```
@@ -253,3 +253,470 @@ struct Reference<C, std::false_type> {
 ```
 
 可以看到真的费事了很多，但如果一开始我就把 Trait 的类定义写好，就能少改点东西（我有大概十个类似的 Trait）。
+
+## 如何写一个递归的 `lambda` 表达式（2021/12/30）
+
+起因是我写一道 **LeetCode** 题的时候突然懒得额外定义辅助函数了，心想不如直接写个 lambda 表达式然后当场调用，比如像下面这样：
+
+```cpp
+extern int input;
+int foo() {
+    // 先不细说下面这个写法究竟有多少问题，只需要知道它有问题就行
+    return [] (auto in) {
+        return in == 0 ? 0 : this(std::abs(in) - 1) + in;
+    } (input);
+}
+```
+
+呃，不过这根本不是 **C++**，因为函数中没有 `this` 的概念。因此我（不情愿地）额外定义了这个 lambda：
+
+```cpp
+extern int input;
+int foo() {
+    auto lambda = [&lambda] (auto in) {
+        return in == 0 ? 0 : lambda(std::abs(in) - 1) + in;
+    };
+    return lambda(input);
+}
+```
+
+这里我还没有意识到另一个比较重要的问题，不过我看到 **GCC** 报错是，由于 `lambda` 是通过 `auto` 声明的，我们不能将它自己用在自己的初始化器中。这实际上非常合理。作为对比，数组的初始化器中就可以使用自己：
+
+```cpp
+int foo() {
+    int arr[] = { 1, arr[0], arr[1], 3 };
+    for (auto i : arr) {
+        std::cout << i;	        // 输出 1, 1, 1, 3
+    }
+}
+```
+
+不过可惜的是，**C++** 的闭包类型从来都是编译器特定的（可能以后也不会标准化），因此我们不可能写出来。一个显然的解决方法是使用无所不能的 `std::function`：
+
+```cpp
+extern int input;
+int foo() {
+    std::function<int(int)> lambda = [&lambda] (auto in) {
+        return in == 0 ? 0 : lambda(std::abs(in) - 1) + in;
+    };
+    return lambda(input);
+}
+```
+
+可惜 `std::function` 有一定的性能损失（类型擦除、无法编译期执行等）。通常，对于无捕获的闭包，我们可以用函数指针来存储；不过这里需要捕获闭包自身的引用，所以不行。但这也为我们提供了一个思路：如果捕获自身是个问题，那么我们完全可以把函数当作参数传进去。此时实际上也不需要在意闭包类型了，因为我们在 lambda 中没有用到任何递归：
+
+```cpp
+extern int input;
+int foo() {
+    auto lambda = [] (auto in, auto&& f) {
+        return in == 0 ? 0 : f(std::abs(in) - 1) + in;
+    };
+    return lambda(input, lambda);
+}
+```
+
+不过不可否认这样实在太丑了。如果要保证接口的易用和清晰，可以对其进行简单的包装：
+
+```cpp
+extern int input;
+int foo() {
+    return [] (auto in) {
+        auto lambda_impl = [] (auto in, auto&& f) -> int {
+            return in == 0 ? 0 : f(std::abs(in) - 1) + in;
+        };
+        return lambda_impl(in, lambda_impl);
+    } (input);
+}
+```
+
+上面内层 lambda 的返回类型必须显式声明出来，因为我在函数体中用的是三元运算符表达式，编译器没法推断出类型，这也就是我一开始没有发现的问题；如果改成 `if` 表达式，把返回 `0` 写在前面的话就不用声明返回类型了。
+
+上面这个实际上已经是完美的解决方案了，它只需要 **C++14** 的泛型 lambda 表达式就可以做到。作为拓展，我们可以从 $\lambda$ 演算的角度分析这个问题：在 $\lambda$ 演算中，所有 lambda 都是匿名的，此时应该怎样使用递归呢？答案是使用 **Y 结合子（Y Combinator）**，其定义如下：
+$$
+Y \equiv \lambda f.(\lambda x. f\ (x\ x))\ (\lambda x. f\ (x\ x))
+$$
+举个例子，如果我们需要定义递归版本的阶乘函数 $FACT$，则可以先定义 $G \equiv \lambda f. \lambda n.\ \textbf{if}\ n = 0\ \textbf{then}\ 1\ \textbf{else}\ n \times (f\ (n-1))$。随后定义：
+$$
+\begin{align*}
+	FACT &\equiv Y\ G \\
+	&= (\lambda f.(\lambda x. f\ (x\ x))\ (\lambda x. f\ (x\ x)))\ G \\
+	&= (\lambda x. G\ (x\ x))\ (\lambda x. G\ (x\ x)) \\
+	&= G\ ((\lambda x. G\ (x\ x))\ (\lambda x. G\ (x\ x))) \\
+	&= (\lambda f.\lambda n.\ \textbf{if}\ n = 0\ \textbf{then}\ 1\ \textbf{else}\ n\times(f\ (n - 1)))\ ((\lambda x. G\ (x\ x))\ (\lambda x. G\ (x\ x))) \\
+	&= \lambda n.\textbf{if}\ n = 0\ \textbf{then}\ 1\ \textbf{else}\ n\times (((\lambda x. G\ (x\ x))\ (\lambda x. G\ (x\ x)))\ (n - 1)) \\
+	&= \lambda n.\textbf{if}\ n = 0\ \textbf{then}\ 1\ \textbf{else}\ n\times ((Y\ G)\ (n - 1)) \\
+	&= \lambda n.\textbf{if}\ n = 0\ \textbf{then}\ 1\ \textbf{else}\ n\times (FACT\ (n - 1))
+\end{align*}
+$$
+我们惊奇地发现，利用 Y 结合子，函数可以自行逐层展开，直到基本情形（这里并不打算给出其对普遍情形有效的数学证明）。我们完全可以在 **C++** 中实现一个 Y 结合子：
+
+```cpp
+template<typename F>
+struct YCombinator {
+    template<typename... Args>
+    decltype(auto) operator ()(Args&&... args) const {
+        return f(*this, std::forward<Args>(args)...);
+    }
+    F f;
+};
+// 类模板参数推导（C++17），之前需要手写一个 make_y_combinator
+// 不过 C++20 之后对于聚合类型可以自行推导，这个语句也不需要了
+template<typename F>
+YCombinator(F) -> YCombinator<F>;
+```
+
+之后我们可以利用它进行递归调用：
+
+```cpp
+extern int input;
+int foo() {
+    return YCombinator(
+        [] (auto&& f, int in) { 
+            return in == 0 ? 0 : f(std::abs(in) - 1) + in; 
+        })(input);
+}
+```
+
+可以看到我们的逻辑和前面介绍的 Y 结合子及其用法基本一致。本例中，Y 结合子是我们定义的类 `YCombinator`，它的成员 `f` 就是其定义中的第一个参数，同时也是函数 $G$，也即我们传入的匿名 lambda 的第一个参数。
+
+参考资料：[Stack Overflow](https://stackoverflow.com/questions/2067988/recursive-lambda-functions-in-c11)、[Pedro Melendez](http://pedromelendez.com/blog/2015/07/16/recursive-lambdas-in-c14/)、[Harvard](https://groups.seas.harvard.edu/courses/cs152/2010sp/lectures/lec09.pdf)
+
+## 如何传递 `std::string`（2022/01/02)
+
+假设某一个类型中声明了 `std::string` 类型的成员，那么在构造函数中我们应该怎么传入参数呢？第一反应显然是使用常引用：
+
+```cpp
+struct Foo {
+    Foo(std::string const& s) : str(s) {}
+    std::string str;
+};
+```
+
+这在多数情况下当然没有问题，不过如果调用方使用的是字符串字面量，这就得经历两次构造：
+
+```cpp
+int main() {
+    Foo f("abc");	// 先通过 "abc" 构造一个 std::string 对象，经过常引用传递后再通过复制构造 Foo::str
+    return 0;
+}
+```
+
+这样显然不够高效。于是我立马想到传值进来：因为 `std::string` 注定会被拷贝一次，那么就让它在传参的时候构造，然后移动构造 `Foo::str`：
+
+```cpp
+struct Foo {
+    Foo(std::string s) : str(std::move(s)) {}
+    std::string str;
+};
+int main() {
+    Foo f("abc");	// 先通过 "abc"构造一个 std::string 对象（值传递），然后通过移动构造 Foo::str
+    return 0;
+}
+```
+
+不过随机我想到 `std::string` 使用了 **小对象优化（Small Object Optimization）**，在字符串较短时在栈上存储字符数组。因此如果构造很短的字符串，移动操作和复制操作一样耗时。经过我的 benchmark 测试，上面列出的两种方法和我猜想一致：在字符串较长时值传递更高效，反之引用传递更高效。
+
+那么，有没有什么方法能够减少构造次数的同时不会受到字符串大小的影响呢？巧了，我们有 **C++17** 引入的 `std::string_view`。由于它是本质是一对指针（类似于 range），因此任何情况下它的构造都是轻量的；在 `Foo` 的构造函数中我们可以通过 `std::string_view` 构造 `std::string`：
+
+```cpp
+struct Foo {
+    Foo(std::string_view sv) : str(sv) {}
+    std::string str;
+};
+int main() {
+    Foo f1("abc");
+    Foo f2(f1.str);
+    Foo f3(std::string("def"));
+    return 0;
+}
+```
+
+经过 benchmark 测试，无论是那种情况下 `std::string_view` 都有更高的性能。
+
+## 如何为类初始化 `static` 变量（2022/01/03）
+
+**C++** 中，类的成员声明为 `static` 时，它就脱离任何实例化对象存在了，我们可以直接通过类名来调用它：
+
+```cpp
+struct Foo {
+    static int i;
+};
+int Foo::i = 42;	// 需要这样定义 static 成员
+int main() {
+    std::cout << Foo::i;
+    Foo f{};
+    std::cout << f.i;	// 也可以通过实例化对象调用
+    return 0;
+}
+```
+
+然而，为 `static` 成员逐个定义未免过于麻烦，它们也不能出现在构造函数的初始化列表中。**C++** 支持一种简易的类中定义方式：
+
+```cpp
+struct Foo {
+    static int const i = 42;
+};
+```
+
+需要注意这种方式只对 `const` 的静态成员试用。此后所有的 `Foo::i`（或利用实例化对象调用的 `i`）都会被替换为  `42`，因此编译器甚至不需要为这个对象分配内存。某种程度上这是对 `#define` 部分用法的完美替代。不过也正是因为没有分配内存，对 `Foo::i` 取地址会出现链接错误：
+
+```cpp
+int main() {
+    std::cout << Foo::i;
+    std::cout << &Foo::i;	// 错误
+    return 0;
+}
+```
+
+所以这个解决方法非常局限。如果一定要这么写，也要在类外给出一个没有初始化器的声明：
+
+```cpp
+struct Foo {
+	static int const i = 42;
+};
+int const Foo::i;
+```
+
+而在 **C++17** 之后，即使不是 `const` 的静态成员，我们也可以通过声明为 `inline` 让其可以在类中安全地定义（这实际上和函数形成了微妙的不对称，类中定义的函数默认是 `inline` 的）：
+
+```cpp
+struct Foo {
+    static inline int i = 42;
+};
+```
+
+顺带一提，`constexpr` 本身就蕴含了 `inline`，所以 **C++17** 之后的 `static constexpr` 成员是可以取地址的。不过，如果我们需要用复杂的方式初始化静态成员时，初始化器就显得有些笨拙了。我们当然可以写一个函数或者 lambda 表达式来初始化：
+
+```cpp
+struct Foo {
+    static inline std::vector<int> v = [](int ct) {
+        std::vector<int> result{};
+        result.reserve(ct);
+        for (int i = 0; i < ct; ++i) {
+            result.push_back(2 * i + 1);
+        }
+    }(10);
+};
+```
+
+这样的写法一两个大概没有问题，但如果有许多需要初始化的静态变量，能把他们放到一起初始化是最好的。这就需要一个确保某个函数在任何实例对象开始构造前进行构造。**Java** 的类允许利用 `static` 代码块在任一个此类型对象实例化前做一些准备工作，但是 **C++** 并不支持这个特性。不过我们依然可以实现类似的行为。我们可以定义一个内部类，在其初始化时构造所有静态变量，然后再定义一个该内部类的静态对象，让其默认初始化即可。此时这个内部类的默认构造函数和 **Java** 的 `static` 代码块基本上是一个作用：
+
+```cpp
+struct Foo {
+    static inline int i;
+    static inline std::vector<int> v;
+private:
+    static inline struct Inner {
+        // 为所有静态变量赋值
+        Inner() {
+            i = 42;
+            v.reserve(10);
+            for (int i = 0; i < 10; ++i) {
+                v.push_back(2 * i + 1);
+            }
+        }
+    } initializer{};
+};
+```
+
+需要注意的是，这里的静态变量在声明初就已经初始化了（默认初始化），此后我们做的是修改它的值。这对于包含 `const` 或引用类型变量的对象来说局限性很大，但我们随时都可以在声明处进行初始化。
+
+## 完全理解编译与链接（2022/01/04）
+
+**C++** 从 **C** 继承的编译与链接过程不可谓不复杂。虽然此前零零碎碎地有一些理解，但总还是有不清楚的地方（比如 `inline` 相关的简直一团乱麻）。此次我想把这个知识完全捋清楚。这一条目的内容可能会比之前条目多很多，所以我会用副标题来标明结构。
+
+### 编译过程
+
+**C++** 代码（**C++20** 前，因为我们不打算在本条目中讨论 **模块（Module）**）的编译过程大概可以分为下面的两步：
+
+- 分别编译每一个源文件，即 `.cpp`、`.cc`、`.cxx` 等文件（后缀其实并不重要，但看到这些后缀通常可以断定它们是 **C++** 的源文件），并得到一个 **目标文件（Object File）**。这也是我们对 **C++** 中狭义的 **编译（Compilation）** 的定义。这个过程中主要进行的有下面几步（并不分先后顺序）：
+
+  - **预处理（Preprocessing）**：让 **预处理器（Preprocessor）** 执行代码中的 **预处理指令（Preprocessor Directive）**，主要进行一些文本替换，包括但不限于 `#include`（引入头文件）、`#if`（条件编译）、`#define`（宏）等。值得一提的是，`#include` 指令会在执行时对文件中的代码递归地进行预处理；考虑到宏对头文件也能产生效果，应该是首先执行 `#include` 再进行其它操作。
+
+  - 字符串处理：包括转换用户自定义字面量、**原始字符串（Raw String）** 等为常规的字符串（这个操作通常和预处理同时进行，我们也可以认为它是预处理的一部分），然后再将所有字符串从代码中的字符集转换为编译指定字符集。此外，所有相邻的字符串字面量都会被拼接在一起。
+
+  - 传统定义下的编译：这里的编译更加的特定，指的是包括将源代码分析并转化为 **中间代码（Intermediate Representative, IR）**（编译器前端），然后对其进行 **代码分析（Code Analysis）** 并加以优化（编译器中端），最后进行机器特定的优化和 **代码生成（Code Generation）**，即产生目标语言的程序（编译器后端）。本篇中的编译的目标语言一概是汇编码。编译器前端的代码分析包括下面几步（有先后顺序）：
+
+    - **词法分析（Lexical Analysis）**：将源代码变为一系列 **词法标记（Lexical Token）**，可以分类为标识符、运算符、数字、空格等。这部分只需要通过正则表达式来匹配代码。
+    - **语法分析（Parsing）**：将词法标记的序列变为 **语法分析树（Parse Tree）**，其中遇到不合法的语法会产生错误，比如代码 `n ++ 1` 变成的词法标记序列 `["n", "++", "1"]` 不满足任何语法，因此会报错。语法的规则是通过一个 **正式语言（Formal Language）** 定义的，比如 **上下文无关语法（Context-Free Grammar）** 等。语法分析通常可以和词法分析并行。
+    - **语义分析（Semantic Analysis）**：涉及变量绑定（将标识符和对象或函数等对应起来）和类型检查。如果遇到语义错误会报错，比如 `int i = 42; i = "abc";` 中，`i` 在此前的声明中表明它是 `int` 类型，但在随后的赋值操作中等号右侧是一个 `char const*` 类型。语义分析总是在词法和语法分析完毕后进行。
+
+    每个源文件经过编译器前端生成的结构被称为 **编译单元（Translation Unit）**，这个名词我们会在后面反复提到。
+
+    随后对于每个编译单元，编译器会进行中端和后端的操作。前者主要对代码结构和特征进行分析，比如定义的依赖性、别名分析（判断两个变量是否绑定同一个对象）等，随后进行 **内联展开（Inline Expansion）**、**常量折叠（Constant Folding）**、**死代码消除（Dead Code Elimination）** 等优化。最后，编译器后端会根据机器选择特定的汇编码作为目标，在存储模型上也会随机器不同有不同表现。
+
+  - **模板实例化（Template Instantiation）**：**C++** 中的模板类似代码生成器，在实际使用时需要将其实例化为有意义的代码（我们之后会详细说明），这通常在编译器前端执行完毕后进行。模板实例化可能会产生新的结构， **实例化单元（Instantiation Unit）**，也可能直接将实例化置入所有使用它的编译单元中。
+
+  至此，我们得到了一系列编译单元（以及可能还有一系列实例化单元），其中每个编译单元都是一个目标文件，使用 `.o`、`.obj` 等后缀，其中各主要包含：
+
+  - 数据：包括机器指令和值。
+  - **元数据（Metadata）**：用于帮助后续步骤中合并多个目标文件为可执行程序的信息（标签）。包括函数和对象的名字，以及程序段的名字。前者对应着我们在 **C++** 中定义的标识符，它们可能在当前编译单元中有定义，或仅有声明。后者则表明下面一段内容的性质，比如有下面几种：
+    - `text` 或 `code`：机器指令。
+    - `literal`：经过初始化的只读数据。
+    - `data`：经过初始化的可读写数据。
+    - `bss`：未经初始化的可读写数据。
+
+- 将每个目标文件产生的编译单元和实例化单元用 **链接器（Linker）** 进行链接，并生成可执行文件，后缀因平台而异，如 `.exe`、`.app`。
+
+  - 所有未经定义的名字会在不同编译单元中寻找其定义，并用其实际地址代替原来的标签。此时可能会遇到两种问题：
+    - 找不到定义，这便是一个链接错误。
+    - 找到多个定义。如果这个名字不是类、内联函数或变量、模板、模板偏特化中的任一个，这就违反了 **单一定义规则（One Definition Rule, ODR）**，即（原则上）任一个全程序可见的实体只能在一个编译单元中定义。如果是上面提到的特殊情况，则允许在不同的编译单元中分别有唯一且完全相同的定义；若定义不同则会引起 **UB**。通俗来讲，这意味着只有它们能在头文件中定义。通常，编译器只会保留一个定义。
+
+### 存储类型与链接性质
+
+**C++** 根据对象存储的生命周期（即什么时候它可以被访问，通常是指分配了内存），设计了一系列关键字来声明其 **存储类型（Storage Class）**，这些限定符通常修饰的是变量，因此我有时会简称为某变量的存储类型，而非某变量对应对象的存储类型。此外，根据标识符（变量、类等）是否可以和其它作用域的同名标识符指向相同定义，我们对其 **链接性（Linkage）** 也进行了分类。链接性和存储类型往往相关，让我们先从后者开始介绍：
+
+- **自动（Automatic）** 存储周期：从其所在代码块（即大括号包围的作用域）开始到结束。所有大括号中定义的不包含任何存储类型限定符的变量都是拥有自动存储周期。
+- **静态（Static）** 存储周期：从程序开始到结束。在全局作用域（或文件作用域）以及命名空间中用 `static` 限定符声明的变量拥有静态存储周期。
+- **线程（Thread）** 存储周期：从线程开始到结束。只有用 `thread_local` 限定符声明的变量拥有线程存储周期。
+- **动态（Dynamic）** 存储周期：从手动分配到手动释放。通过 **动态内存分配（Dynamic Memory Allocation）** 机制，如 `new` 表达式和标准库中的分配器、智能指针等都可以创建动态存储周期的对象。
+
+链接性则分为三种：
+
+- **无链接（No Linkage）**：即标识符不会进行任何链接，其名字只会于其所在作用域中使用。所有块作用域中的自动变量、类（即局部类）、别名、枚举类型和枚举量都是无链接的。
+- **内部链接（Internal Linkage）**：标识符可在当前编译单元的所有作用域中引用。用 `static` 声明的变量、用 `const` 修饰的非 `volatile` 非 `inline` 非模板且此前未经过 `extern` 声明的变量，以及匿名命名空间或匿名联合中的所有标识符都拥有内部链接。
+- **外部链接（External Linkage）**：即标识符可以被其它编译单元引用。理论上，其它编译单元不一定是 **C++** 编译得到的。所有在命名空间作用域（包括全局作用域但不包括匿名命名空间和声明为 `inline` 的命名空间）定义的，不属于无链接或内部链接类型的变量或函数、枚举类型、类以及其成员函数和静态成员与内部类和枚举类型，以及除了静态模板函数以外的所有模板。此外，一旦任意标识符在块作用域中首次声明为 `extern`，它会自动被认为拥有外部链接。
+
+说实话，上面这几段真的过于繁琐，如果本来没有一些认识的话，看一遍只会徒增困惑。这无疑是因为 **C++** 将关键字滥用（说的就是你，`static`），存在一些不显然的默认行为（如全局标识符自动声明为 `extern`，即拥有外部链接），且模板、类、作用域、命名空间等概念大量组合等原因导致的。本条目的目标就是将上面这几句话好好捋清楚。下面我会先将一些需要明确定义的点阐明：
+
+1. 标识符和名字：**标识符（Identifier）** 可以代表变量、函数、类、枚举、枚举量、模板等一切有 **名字（Name）** 的东西。我会不加区别地使用标识符和名字这两个词语。至于“标识符的名字”，顾名思义，就是这个标识符的名字（比如 `x` 是一个标识符，它的名字就是 `x`）。此外，我也会使用 **实体（Entity）** 代指标识符和它绑定的对象。
+
+2. 声明与定义：大多数语言中并不对这两个名词进行区别，但在 **C++** 中，**声明（Declaration）** 只给出了标识符的一些特征，比如其名字、类型，以及一些限定符。**定义（Definition）** 则特指让编译器为其分配内存的声明，通常带有一些详细的内容。为了不造成歧义，我有时会将不是定义的声明称为纯声明。
+
+   ```cpp
+   extern int i;              // 声明一个变量
+   extern void foo();         // 声明一个函数
+   struct Bar;                // 声明一个类
+   enum Baz;                  // 声明一个枚举类型
+   
+   extern int i = 42;         // 定义一个变量
+   extern int foo() {         // 定义一个函数
+       return 42;    
+   }    
+   struct Bar {               // 定义一个类
+       int num;               // 声明一个成员，成员只有在实例化一个对象时才会被定义，且不同对象拥有同一成员的不同定义
+       void func(int);        // 声明一个成员函数
+   };
+   enum Baz { X, Y, Z };      // 定义一个枚举类型
+   void Bar::func(int i) {    // 定义一个成员函数
+       printf("%d", i);
+   }
+   ```
+
+   上面的例子并非一定是最惯用的写法，有一些为了清楚展示而刻意使用的语法。可以发现，上面的定义中总是包含了声明中的所有内容（标识符的名字和类型，包括函数的参数列表和返回值等），且给出了新的信息，如变量的初值、函数的函数体、类的类体等。纯声明的一个意义在于，我们可以相对随意地组织标识符的定义，这在有循环引用时额外重要：
+
+   ```cpp
+   class Bar;                   // 声明了 Bar 类型，此后 Bar 会被认为是一个类，但它是不完整类型，只能使用它的指针或引用
+   class Foo {                  // 定义了 Foo 类型
+       Bar* bptr;               // 使用了 Bar 的指针类型，没有问题
+   };
+   class Bar {
+       Far* fptr;               // 这里使用 Foo 类型也是可以的，因为此前 Foo 已经被定义了
+   }
+   ```
+
+   此外，纯声明在头文件中占有巨大作用，这四十年（即截止到 **C++20** 标准）模块功能缺失的期间，**C++** 始终使用一种微妙且笨拙的方式暴露库的接口，我们会在后文讲到外部链接时着重介绍。
+
+3. **C++** 中的 **函数（Function）**、**运算符（Operator）** 与 **闭包（Closure）** 有较大区别，但作为可调用类型使用时我不对其进行区分（尤其是它们的定义有非常相似的语法）。
+
+4. **C++** 的 **类（Class）** 包含三种结构，其中两种 `struct` 和 `class` 除了默认的访问修饰等级以外性质完全一样，我们将不加以区分，但我在例子中主要使用 `struct`（因为其默认所有成员都是 `public` 的，就无需我在例子中多写一行字了）。此外，`union` 也属于类。当我不加额外说明时，类指的是上面三种结构中的任何一种。
+
+5. **C++** 的 **成员（Member）** 包括成员变量、成员函数、成员模板、别名等等一系列内容；由于它们的规则往往不通用（即不会出现对所有成员都成立的规则），我会将成员变量称为成员，其余名称不变。
+
+6. **C++** 的模板包括类模板、函数模板、别名模板、变量模板和 `concept`。由于后三种的性质和前两种有显著不同（实际上更好总结），当我提到模板时只包括类模板和函数模板；包含后面集中结构时我会特别列出。
+
+7. **C++** 的 **作用域（Scope）** 是一个标识符可以被引用的区域，通常由大括号来框定，我们可以将其分为下面几种：
+
+   1. 块作用域：所有复合语句的大括号，包括 `if`、`for`、`try` 等语句块和函数体等以内的标识符，其作用域到该语句块结束为止。
+   2. 函数参数作用域：从参数列表中被声明开始，延续到函数体的作用域结束为止。
+   3. 命名空间作用域：在命名空间中被声明开始，（通常）到该命名空间结束为止。虽然 **C++** 中的命名空间是可扩展的，即不同的文件中可以声明同样的命名空间，但每个编译单元中声明的命名空间的作用域只限于该文件中的部分。特别地，所有其它命名空间的外层也是一个命名空间，即 **全局命名空间（Global Namespace）**，其作用域被称为 **全局作用域（Global Scope）** 或 **文件作用域（File Scope）**，因为它受限于当前文件。此外，匿名的命名空间和声明为 `inline` 的命名空间中声明的标识符，其作用域到其外层命名空间的作用域结束为止。
+   4. 类作用域：类中声明的标识符的作用域为整个类体。这其实相当特殊，也导致类中容易出现 **UB**。为了在类外使用类作用域的标识符（即成员、成员函数等），可以使用 `.`、`->`、`::` 运算符。
+   5. 枚举作用域：对于无作用域枚举（即 `enum`），其中的枚举量的作用域从定义到枚举类型所在作用域结束为止。有作用域枚举（`enum class` 或 `enum struct`）中的枚举量的作用域则从定义到枚举类型定义结束为止。
+   6. 模板参数作用域：从定义开始到第一个模板声明（或定义结尾）。这导致模板模板参数中声明的模板参数在模板中不可见。
+
+   有关作用域开始的具体位置：**C++** 的标识符通常在其声明语句之后才可见。但这也不乏一些例外，使得我们可以在其初始化器中递归调用其本身：
+
+   ```cpp
+   int const i = 0;
+   {
+       int i = i;                        // 等号右侧的 i 是指在外部定义域定义的 i
+   }
+   int arr[] = { 0, arr[0], arr[1] };    // 任何情况下这里的 arr 都是指刚刚声明的 arr
+   std::function<int(int)> f = [](int n) { return n <= 0 ? 1 : f(n - 1) + n; }; // 任何情况下这里的 f 都是指刚刚声明的 f
+   struct S : CRTP<S> {};                // 任何情况下这里的 S 都是指刚刚声明的 S
+   enum E { 
+       X = sizeof(E),                    // 任何情况下这里的 E 都是指刚刚声明的 E
+       i = i;                            // 等号右侧的 i 是指外部作用域定义的 i
+   };
+   int const x = 10;
+   using T = int;
+   {
+       int x[x] = { 42, x[0] };           // 声明部分的 x 是在外部作用域
+       using T = T*;                      // 等号右侧的 T 是指在外部作用域定义的 T，即 int
+   }
+   auto [x, y, z] = arr;                  // 实际上，它们等式右侧开始就可见了，但是标准不允许在结构化绑定初始化器中引用这个语句中声明的标识符
+   template<typename T>
+   struct MyTemplate : CRTP<MyTemplate<T> {};    // MyTemplate<T> 可见，但是 MyTemplate，即注入类名（Injected Class Name）在类体中才可见
+   ```
+
+接下来，我将对 **C++** 各种实体在不同情况下的链接性进行讨论。
+
+#### 变量
+
+**C++** 的变量是一等公民，它们可以声明或定义在 *任何地方*。不加任何存储类型限定符时，它通常拥有自动存储类型；拥有命名空间作用域的变量则拥有静态存储类型，它们在程序的任何时刻都有定义；类作用域的变量（成员）则关联类的实例。这些其实比较好理解。
+
+```cpp
+// source.cpp
+int x = 42;			    // 全局作用域，静态存储类型
+namespace ns {
+    int x = 42;          // 命名空间作用域，静态存储类型
+}
+void foo(int x) {        // 函数参数作用域，自动存储类型
+    try {
+        int x = 42;      // 块作用域，自动存储类型
+        throw x;
+    }
+    catch (int x) {      // 块作用域，自动存储类型
+        std::cout << x;
+    }
+    enum E { x = 42 };   // 枚举作用域，自动存储类型
+}
+struct S {
+    int x;               // 类作用域，其存储类型由该类的实例化对象决定 
+};
+enum E { x = 42 };       // 枚举作用域，静态存储类型
+```
+
+当为变量声明了 `static` 修饰符后，情况甚至更加明朗：
+
+```cpp
+// source.cpp
+static int x = 42;        // 全局作用域，静态存储类型
+namespace ns {
+    static int x = 42;    // 命名空间作用域，静态存储类型
+}
+void foo(int x) {         // 函数参数作用域，不能声明为 static
+    static int x = 42;    // 块作用域，静态存储类型
+}
+struct S {
+    static int x;         // 类作用域，静态存储类型。注意这只是一个声明，我们需要定义它
+};
+int S::x = 42;            // 定义静态成员，这里不允许使用 static 限定符
+```
+
+命名空间、块、类三种作用域中，我们可以将变量声明为 `static`，此时变量一定是静态存储类型的。接下来让我们介绍混沌邪恶的 `extern`。顾名思义，它可以声明某个变量拥有外部链接。此前我们并没有给出 `static` 以及不加修饰符的情况下变量的链接性，实际上这是取决于是否使用 `extern` 的：
+
+```cpp
+// source.cpp
+int x = 10;                 // 总是外部链接
+extern int y;               // 声明一个外部链接的变量
+void foo() {
+    int y = 42;             // 仍然是无链接
+    extern int z;
+    int z = 42;             // 静态存储类型，外部链接
+}
+```
+
+
+
+参考资料：[Cpp Reference, Translation Phases](https://en.cppreference.com/w/cpp/language/translation_phases)、[Cpp Reference, Scope](https://en.cppreference.com/w/cpp/language/scope)
