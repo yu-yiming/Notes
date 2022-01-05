@@ -8,6 +8,7 @@
 $$
 \newcommand{\null}[0]{\operatorname{null}}
 \newcommand{\range}[0]{\operatorname{range}}
+\newcommand{\span}[0]{\operatorname{span}}
 $$
 
 
@@ -407,6 +408,7 @@ $$
 > - $\mathcal{L}(F^\infty, F^\infty)$ 上定义了变换 $T$，满足 $T(x_1, x_2, ...) = (x_2, ...)$。
 > - $\mathcal{L}(\R^2, \R^2)$ 上定义了旋转变换 $T_\theta$，满足 $T(x, y) = (x\cos\theta - y\sin\theta, x\sin\theta + y\cos\theta)$。
 > - $\mathcal{L}(F^n, F^m)$ 上定义了变换 $T$，满足 $T(x_1, ..., x_n) = (A_{11}x_1 + ... + A_{1n}x_n, ..., A_{m1}x_1 + ... + A_{mn}x_n)$，其中 $A_{ij}, i = 1,...,m, j = 1,...,n$ 是某些常数。
+> - $\mathcal{L}(M_{m\times n}{(F), M_{n\times m}}(F))$ 上定义了矩阵的转置变换 $T$，满足 $T(A) = A^\text{T}$。
 
 线性变换有一个非常重要的性质：
 
@@ -499,4 +501,19 @@ $$
 > $$
 > c_1v_1 + ... + c_nv_n \in \null T
 > $$
-> 由于 $u_1, ..., u_m$ 扩张成 $\null T$，且 $u_1, ...u_m, v_1, ...v_m$ 是线性无关的，因此上式中的 $c_1, ..., c_n = 0$。因此 $Tv_1, ..., Tv_n$ 线性无关，并构成 $\range T$ 的基，这也就有 $\dim \range V = n$ 了。
+> 由于 $u_1, ..., u_m$ 扩张成 $\null T$，且 $u_1, ...u_m, v_1, ...v_m$ 是线性无关的，因此上式中的 $c_1, ..., c_n = 0$。因此 $Tv_1, ..., Tv_n$ 线性无关，并构成 $\range T$ 的基，这也就有 $\dim \range T = n$ 了。
+
+由前面的结论，我们可以给出一系列等价命题；下面的命题中任一个成立时，其它也一定成立（下面假设 $T \in \mathcal{L}(V, W)$，其中 $V, W$ 均是有限维度向量空间）：
+
+- 线性变换 $T$ 是单射。
+- 线性变换 $T$ 是满射。
+- $\dim \range T = \dim V$。
+
+> **证**：前面我们已经证明过，当 $T$ 是单射时 $\null T = \{0\}$，因此由 $\dim\null T = 0$，因此根据线性变换基本定理有 $\dim\range T = \dim V$。
+
+我们可以利用线性变换寻找值域中的基：
+
+> **定理**：$V, W$ 是两个向量空间，$T \in \mathcal{L}(V, W)$ 是一个线性变换。如果 $v_1, ..., v_n$ 是 $V$ 上的一组基，则 $\span\{T(v_1), ..., T(v_n)\} = \range T$
+
+> **证**：由于 $T(v_1), ..., T(v_n) \in \range T$，且 $\range T$ 是一个向量空间，我们可以得到 $\span \{T(v_1), ..., T(v_n)\} \subseteq \range T$。另一方面，对于任意 $w \in \range T$ 我们总能找到 $v \in V$ 使得 $T(v) = w$。设 $v = a_1v_1 + ... + a_nv_n$，则有 $w = T(v) = a_1T(v_1) + ... + a_nT(v_n) \in \span\{T(v_1), ..., T(v_n)\}$，因此有 $\range T \subseteq \span\{T(v_1), ..., T(v_n)\}$。这样就得到了结论。
+
