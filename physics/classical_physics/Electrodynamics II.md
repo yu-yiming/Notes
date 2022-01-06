@@ -544,3 +544,47 @@ $$
 \mathbf{H}_\text{top}^\parallel - \mathbf{H}_\text{bottom}^\parallel = \mathbf{K}_f\times\unit{n} \tag{7.44}
 $$
 特别地，当线性介质中且不存在自由电荷或自由电流时，所有场都是连续的。
+
+
+
+## 守恒律
+
+本章我们将探索电动力学中守恒的量，即能量、动量和角动量。我们在此前应该已经见识过电荷的守恒性，这里再推导一遍。首先，单位时间内通过体积 $\mathcal{V}$ 的边界 $\mathcal{S}$ 的电荷量是：
+$$
+\begin{equation*}
+	\frac{dQ}{dt} = -\oint_\mathcal{S}\mathbf{J}\cdot d\mathbf{a}
+\end{equation*} \tag{8.1}
+$$
+利用 $dQ = \rho\,d\tau$ 以及散度定理，我们可以得到：
+$$
+\begin{equation*}
+	\int_\mathcal{V}\frac{\partial \rho}{\partial t}\,d\tau = -\int_\mathcal{V}\nabla\cdot\mathbf{J}\cdot d\tau
+\end{equation*} \tag{8.2}
+$$
+去掉两遍的积分，就有了电荷守恒定律：
+$$
+\begin{equation*}
+	\marginbox{\frac{\partial \rho}{\partial t} = -\nabla \cdot\mathbf{J}}
+\end{equation*} \tag{8.3} \label{conservation-of-charge}
+$$
+尽管我们是通过常识推出的这个结论，它也可以通过麦克斯韦方程推出（上一章中有提到过）。接下来，我们将使用类似地方法描述能量、动量和角动量的守恒性，因此需要建立例如“能量密度”、“动量密度”和“角动量密度”，以及“能量流”、“动量流”、“角动量流”这样的物理量来对应电荷和电流。
+
+### 能量守恒
+
+#### 波印廷定理
+
+在静电场的能量这一节中（参见上一篇笔记），我们推导出了静电荷分布在全空间的能量：
+$$
+W_e = \frac{\epsilon_0}{2}\int E^2\,d\tau
+$$
+我们也通过电磁感应推出了磁场在全空间的能量：
+$$
+W_m = \frac{1}{2\mu_0}\int B^2\,d\tau
+$$
+因此将两个公式综合起来就是电磁场在全空间的总能量：
+$$
+\begin{equation*}
+	u = \frac{1}{2}\left(\epsilon_0E^2 + \frac{1}{\mu_0}B^2\right)
+\end{equation*} \tag{8.4} \label{electromagnetic-energy-in-all-space}
+$$
+接下来我们讲独立地推导这个公式，并给出能量在电动力学的守恒律。
