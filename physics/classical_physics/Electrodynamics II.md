@@ -571,7 +571,7 @@ $$
 
 ### 能量守恒
 
-#### 波印廷定理
+#### 坡印廷定理
 
 在静电场的能量这一节中（参见上一篇笔记），我们推导出了静电荷分布在全空间的能量：
 $$
@@ -581,10 +581,91 @@ $$
 $$
 W_m = \frac{1}{2\mu_0}\int B^2\,d\tau
 $$
-因此将两个公式综合起来就是电磁场在全空间的总能量：
+因此将两个公式综合起来就是电磁场在全空间的能量密度：
 $$
 \begin{equation*}
-	u = \frac{1}{2}\left(\epsilon_0E^2 + \frac{1}{\mu_0}B^2\right)
+	\marginbox{u = \frac{1}{2}\left(\epsilon_0E^2 + \frac{1}{\mu_0}B^2\right)}
 \end{equation*} \tag{8.4} \label{electromagnetic-energy-in-all-space}
 $$
-接下来我们讲独立地推导这个公式，并给出能量在电动力学的守恒律。
+接下来我们将验证这个公式，并给出能量在电动力学的守恒律。假设给定一个电荷和电流的设置使得电磁场可以由两个时间相关的函数 $\mathbf{E}$ 和 $\mathbf{B}$ 描述。根据洛伦兹力定律，我们可以给出一个微元时间内电磁场对其中一个电荷 $q$ 的做功：
+$$
+dW = \mathbf{F}\cdot d\mathbf{l} = q(\mathbf{E} + \mathbf{v}\times\mathbf{B})\cdot \mathbf{v}\,dt = q\mathbf{E}\cdot\mathbf{v}\,dt
+$$
+这里再次展现出磁场力不做功的特性。对于电荷的微元，我们有 $dq = \rho\,d\tau$，且 $\rho\mathbf{v} = \mathbf{J}$。因此在体积 $\mathcal{V}$ 中的电荷受到做功的功率是：
+$$
+\begin{equation*}
+	\frac{dW}{dt} = \int_\mathcal{V}\mathbf{E}\cdot\mathbf{J}\,d\tau
+\end{equation*} \tag{8.5}
+$$
+从这个式子我们也可以看出单位时间内电磁场对单位体积中电荷的做功是 $\mathbf{E}\cdot\mathbf{J}$。利用安培-麦克斯韦定律 $(\ref{revised-ampere's-law})$，我们可以将 $\mathbf{J}$ 换为 $\mathbf{E}$ 和 $\mathbf{B}$：
+$$
+\mathbf{E}\cdot\mathbf{J} = \frac{1}{\mu_0}\mathbf{E}\cdot(\nabla\times\mathbf{B}) - \epsilon_0\mathbf{E}\cdot\frac{\partial \mathbf{E}}{\partial t} \tag{8.6}
+$$
+再由矢量微分的乘法定律：
+$$
+\nabla\times(\mathbf{E}\times\mathbf{B}) = \mathbf{B}\cdot(\nabla\times\mathbf{E}) - \mathbf{E}\cdot(\nabla\times\mathbf{B})
+$$
+利用法拉第定律 $(\ref{faraday's-law-differential})$，可以得到：
+$$
+\mathbf{E}\cdot(\nabla\times\mathbf{B}) = -\mathbf{B}\cdot\frac{\partial \mathbf{B}}{\partial t} - \nabla\cdot(\mathbf{E}\times\mathbf{B})
+$$
+注意到下面这个有趣的微分规则：
+$$
+\mathbf{F}\cdot\frac{\partial \mathbf{F}}{\partial t} = \frac{1}{2}\frac{\partial }{\partial t}(F^2)
+$$
+因此将我们可以将 $(8.6)$ 代换为：
+$$
+\begin{equation*}
+	\mathbf{E}\cdot\mathbf{J} = -\frac{1}{2}\frac{\partial}{\partial t}\left(\epsilon_0 E^2 + \frac{1}{\mu_0}B^2\right) - \frac{1}{\mu_0}\nabla\cdot(\mathbf{E}\times\mathbf{B})
+\end{equation*} \tag{8.7}
+$$
+从这个式子的形式我们就能意识到离最终结果很近了。对两边进行积分可以得到：
+$$
+\begin{equation*}
+	\frac{dW}{dt} = -\frac{d}{dt}\int_\mathcal{V}\frac{1}{2}\left(\epsilon_0 E^2 + \frac{1}{\mu_0}B^2\right) \,d\tau - \frac{1}{\mu_0}\oint_\mathcal{S}(\mathbf{E}\times\mathbf{B})\cdot d\mathbf{a}
+\end{equation*} \tag{8.8} \label{poynting's-theorem}
+$$
+这就是 **坡印廷定理（Poynting's Theorem）**，是电动力学中的功能原理。其中第一项就是体积 $\mathcal{V}$ 中电磁场的能量的变化率，而第二项（根据能量守恒的思想）显然应该反映了能量运出这个体积边界 $\mathcal{S}$ 的速率。我们将它的微分，也即单位时间内被电磁场从单位面积传送出去的能量称为 **坡印廷矢量（Poynting Vector）**：
+$$
+\begin{equation*}
+	\marginbox{\mathbf{S} \equiv \frac{1}{\mu_0}(\mathbf{E}\times\mathbf{B})}
+\end{equation*} \tag{8.9} \label{poynting-vector}
+$$
+因此 $\mathbf{S}\cdot d\mathbf{a}$ 就是通过某个微元面积的法矢量，即“能量通量”。所以我们也可以将 $\mathbf{S}$ 称为 **能量通量密度（Energy Flux Density）**。至此，电磁场的功率可以写成下面的形式：
+$$
+\begin{equation*}
+	\frac{dW}{dt} = -\frac{d}{dt}\int_\mathcal{V}u\,d\tau - \oint_\mathcal{S}\mathbf{S}\cdot d\mathbf{a}
+\end{equation*} \tag{8.10}
+$$
+当 $\mathcal{V}$ 以内不受功的影响，比如它除了边界之外不存在任何电荷时，我们实际上没有做任何功。此时：
+$$
+\int\frac{\partial u}{\partial t}\,d\tau = -\oint\mathbf{S}\cdot d\mathbf{a} = -\int\nabla\cdot \mathbf{S}\,d\tau
+$$
+去掉两边的积分，得到：
+$$
+\begin{equation*}
+	\marginbox{\frac{\partial u}{\partial t} = -\nabla\cdot \mathbf{S}}
+\end{equation*} \tag{8.12} \label{conservation-of-energy}
+$$
+这就是电磁场中的能量守恒定律。如果和电荷守恒定律进行对比，不难发现能量密度 $u$ 和电荷密度 $\rho$ 以及能量通量密度 $\mathbf{S}$ 和电流密度 $\mathbf{J}$ 之间的联系。
+
+当然，在大部分情况下，电磁能是没办法守恒的：只要存在任何电荷，就会对其做功，发生能量转换。
+
+### 动量守恒
+
+#### 电动力学中的牛顿第三定律
+
+如果你有过尝试构建简单的电动力学模型，就会发现磁场力似乎不满足牛顿第三定律：假设两个在某一时刻分别沿着 $x$ 和 $y$ 轴向原点移动的电荷 $q_1$ 和 $q_2$，它们受到对方产生的电场和磁场如下：
+
+<img src="graphs/ed2_8-1.png" alt="ed2_8-1" style="zoom:70%;" />
+
+电场力之间是方向相反的，但是磁场力并非如此……难道要抛弃牛顿第三定律？这就意味着我们也要抛弃动量守恒！我们不可能做出这样的妥协。为了让电动力学中的动量守恒，我们需要定义电磁场的动量。经历了电磁场的能量之后，这可能也没有多令人惊讶了。
+
+下面让我们从数学上推导电磁场对其中电荷的力，首先从洛伦兹力定律开始：
+$$
+\mathbf{F} = \int_\mathcal{V}(\mathbf{E} + \mathbf{v}\times\mathbf{B})\rho\,d\tau = \int_\mathcal{V}(\rho\mathbf{E} + \mathbf{J}\times\mathbf{B})\,d\tau
+$$
+我们将其中单位体积的力单独提出来分析。根据高斯定律和安培-麦克斯韦定律可以得到：
+$$
+\mathbf{f} = \epsilon_0(\nabla\cdot\mathbf{E})\mathbf{E} + \left(\frac{1}{\mu_0}\nabla\times\mathbf{B} - \epsilon_0\frac{\partial \mathbf{E}}{\partial t}\right)
+$$
