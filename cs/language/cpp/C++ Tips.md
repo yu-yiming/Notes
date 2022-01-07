@@ -15,7 +15,7 @@ void sort(RandomIt first, RandomIt last, Compare comp);
 
 这里是用值传递的，显然这是最保险的方式，因为值传递可以包揽所有情形：首先对于最常见的，使用 lambda 表达式或用标准库中 `std::less` 等在调用处当场构建对象的时候，作为纯右值它会移动传递到 `sort` 函数中；如果是一个左值那就只能复制进来了，对于一些复杂的仿函数这可能有点让人膈应。
 
-显然我们不应该以左值引用传递，因为这就直接封死了 lambda 表达式。那么常量左值引用（`const&`）如何呢？一开始我差点确信这个没什么问题了，因为常量左值引用一向作为万金油的参数传递方式：因为还有不少不允许复制操作的类型，但是没有任何类型不允许引用。刚改一两行码，突然意识到这样产生的问题：如果仿函数是通过 `const` 传进来的，那就不应该允许修改捕获变量了，这样对于声明为 `mutable` 的闭包可能会编译不过：
+显然我们不应该以左值引用传递，因为这就直接封死了 lambda 表达式。那么常量左值引用（`const&`）如何呢？一开始我差点确信这个没什么问题了，毕竟常量左值引用一向作为万金油的参数传递方式：因为还有不少不允许复制操作的类型，但是没有任何类型不允许引用。刚改一两行码，突然意识到这样产生的问题：如果仿函数是通过 `const` 传进来的，那就不应该允许修改捕获变量了，这样对于声明为 `mutable` 的闭包可能会编译不过：
 
 ```cpp
 template<typename F>
@@ -84,12 +84,14 @@ void foo(F const& f) {
 }
 class Functor {
 public:
-    Functor(int i, int& r) : m_i(i) {}
+    Functor(int i, int& r) : m_i(i), m_r(r) {}
     auto operator ()() const {
+        m_r += 10;
         return i += 10;
     }
 private:
     mutable int m_i;
+    int& m_r;
 };
 
 int main() {
@@ -414,7 +416,7 @@ int main() {
 }
 ```
 
-不过随机我想到 `std::string` 使用了 **小对象优化（Small Object Optimization）**，在字符串较短时在栈上存储字符数组。因此如果构造很短的字符串，移动操作和复制操作一样耗时。经过我的 benchmark 测试，上面列出的两种方法和我猜想一致：在字符串较长时值传递更高效，反之引用传递更高效。
+不过随即我想到 `std::string` 使用了 **小对象优化（Small Object Optimization）**，在字符串较短时在栈上存储字符数组。因此如果构造很短的字符串，移动操作和复制操作一样耗时。经过我的 benchmark 测试，上面列出的两种方法和我猜想一致：在字符串较长时值传递更高效，反之引用传递更高效。
 
 那么，有没有什么方法能够减少构造次数的同时不会受到字符串大小的影响呢？巧了，我们有 **C++17** 引入的 `std::string_view`。由于它是本质是一对指针（类似于 range），因此任何情况下它的构造都是轻量的；在 `Foo` 的构造函数中我们可以通过 `std::string_view` 构造 `std::string`：
 
@@ -786,6 +788,21 @@ int z = 42;
 
 - 虽然 `extern` 不能决定变量的存储类型，但从某种角度来说，它也隐含了对存储类型的要求，所有合法的 `extern` 使用最终都暗示其有外部或内部链接，也即自动存储类型的变量必然不能使用 `extern`。
 
+`thread_local` 是 **C++11** 新加入的存储类型限定符，它并不影响变量的链接性，是一个 *存粹的* 存储类型限定符，因此和 `static` 与 `extern` 作为内部链接/外部链接限定符时是正交的，可以一起使用。它只能用在命名空间作用域、块作用域中使用，或者类作用域中作为 `static` 成员：
+
+```cpp
+thread_local int i;              // 线程存储类型，外部链接
+thread_local static int j;       // 线程存储类型，内部链接
+struct Foo {
+    thread_local static int x;   // 线程存储类型，外部链接
+};
+void foo() {
+    thread_local static int x;   // 线程存储类型，无链接
+}
+```
+
+简而言之，`thread_local` 声明一个比静态存储类型略弱的存储类型，其生命周期跟随当前的进程（也因此，不同进程间的 `thread_local` 变量是相互独立的），其链接性取决于其它的限定符和拥有的作用域。
+
 自从 **C++17** 起，变量也可以被 `inline` 限定符修饰，由于它对变量的语义完全继承自其对函数的作用，我们将在后文介绍 `inline` 函数时再讨论。
 
 最后让我们谈谈 `const` 修饰符。**C** 中的 `const` 不会影响变量的链接性，但 **C++** 中没有预先声明为 `extern` 的变量默认为内部链接（特别注意的是 `constexpr` 默认被 `const` 修饰）：
@@ -861,7 +878,7 @@ static int bar();
 int bar() {}                 // 没有问题
 ```
 
-最后是混乱的 `inline`。它的本意是希望编译器在调用处展开其定义，编译器会对函数进行检查判断其是否适合内联。但是由于历史上编译器的限制，内联操作是在链接之前进行的，如果内联函数定义在不同编译单元，编译器就无法判断是否进行内联（因此就不进行内联了）。因此，内联函数常常写在头文件中；为了不触犯 **ODR**，即单一定义原则，编译器就把内联函数作为“特殊对待”的几个实体之一。多个编译单元中允许出现多个同名内联函数的定义，只要它们的定义完全一致就不会有 **UB**，编译器会删掉除了一个定义以外的所有定义。也因此，`inline` 被赋予了比其原本含义更加复杂的用法。
+最后，让我们讲讲混乱的 `inline`。它的本意是希望编译器在调用处展开其定义，编译器会对函数进行检查判断其是否适合内联。但是由于历史上编译器的限制，内联操作是在链接之前进行的，如果内联函数定义在不同编译单元，编译器就无法判断是否进行内联（因此就不进行内联了）。因此，内联函数常常写在头文件中；为了不触犯 **ODR**，即单一定义原则，编译器就把内联函数作为“特殊对待”的几个实体之一。多个编译单元中允许出现多个同名内联函数的定义，只要它们的定义完全一致就不会有 **UB**，编译器会删掉除了一个定义以外的所有定义。也因此，`inline` 被赋予了比其原本含义更加复杂的用法。
 
 **C++17** 之后加入的内联变量是内联函数的一个翻版，也同样写在头文件中以出现在使用者同一个编译单元里，且受到编译器的特殊照顾。自此，我们可以写出纯头文件的库了（内联函数很早就有，主要的问题还是变量定义必须在源文件中）。
 
@@ -1050,12 +1067,104 @@ namespace ns {
         int z;                // 内部链接
         extern int w;         // 内部链接
         namespace inner {     // 内部链接
-            
+            int x;            // 内部链接
         }
     }
 }
 ```
 
+匿名命名空间是 `static` 作为链接限定符的更为通用和强大的扩张。**C++03** 曾经弃用了命名空间作用域中的 `static` 限定符使用（可能是为了弥补它一词多义带来的迷惑），因为匿名命名空间可以霸道地将任何其中的标识符变为内部链接，包括无法用 `static` 修饰的类与模版类，这能保证相同语义使用统一的语法。不过 **C++11** 又将其移除弃用状态了，大概是因为 `static` 在 **C** 中的用法已经深入人心（指写了成千上万行历史代码）了吧。
+
+命名空间在 **C++** 的 **名字查找（Name Lookup）** 机制中有重要作用，但这不是本条目的重点了。
+
+#### 模版
+
+最后，让我们看看 **C++** 中以复杂著称的模版。除了被 `static` 修饰，还有匿名命名空间中的函数模版以及变量模版，其余的所有模版都拥有外部链接，这是因为它们只能在命名空间作用域或类作用域中声明或定义：
+
+```cpp
+template<typename T>
+void foo(T t);                // 函数模版，外部链接
+namespace ns {
+    template<typename T>
+    struct S {};              // 类模版，外部链接
+    template<typename T>
+    static size_t size = sizeof(S<T>);    // 变量模版，内部链接
+}
+```
+
+模版几乎总是定义在头文件当中，这和 `inline` 的理由基本一样：为了让编译器能够按照需求实例化模版，它需要在当前编译单元中看到模版的完整定义。因此模版也成为了受到编译器特殊照顾的大家庭的一员（前面介绍的有内联函数和变量以及类）。不过这也带来一个不必要的问题：每个编译单元都会实例化它们需要的模版，然后最后再让编译器从中删除多余的只剩下一个；可不可以让编译器预知到这一点，从一开始就只产生一个实例化呢？我们可以使用 **显式模版实例化声明（Explicit Template Instantiation Declaration）**，以减少重复实例化的成本：
+
+```cpp
+template<typename T>
+void foo(T t) {}
+template<typename T>
+struct Foo {
+    void foo() {}
+};
+template<typename T>
+size_t size = sizeof(Foo<T>);
+
+extern template             // extern 奇特用法 +1
+void foo(int i);            // 这是一个显式模版实例化，且只作为声明，提示编译器只进行一次实例化
+extern template
+void Foo<int>::foo();
+extern template
+size_t size<int>;
+```
+
+为了理解这个奇特的 `extern` 用法，我们可以尝试探究模版实例化的来龙去脉。众所周知，**C++** 的 *任何* 标识符都需要声明才能使用，模版的实例化也不例外：
+
+```cpp
+template<typename T>
+void foo(T t) {}
+template<typename T>
+struct Foo {
+    void foo();
+};
+
+template
+void foo<int>();            // 这就是一个显式模版实例化定义，编译器会在此处将 int 代入模版定义生成一个函数
+template
+struct Foo<int>;            // 显式模版实例化定义，编译器会在此处将 int 代入模版定义；需要注意，成员函数不会被实例化
+template
+void Foo<double>::foo();    // 这里首先进行的是隐式模版实例化，因为我们并没有定义过 template struct Foo<double>
+                            // C++ 中最常用的其实就是这种实例化方式，所以显示模版实例化定义反而比较少见
+                            // 随后对于 Foo<double> 中的 foo 成员函数进行隐式模版实例化定义
+```
+
+这些实例化定义 *不需要* 函数体等初始化结构，和变量的定义类似。因此，如果不希望编译器在每个使用实例化的编译单元中都生成定义（然后再删掉多余的），就是用和变量的声明一致的 `extern` 关键字。正如我们此前介绍那样，在显示模版实例化语句前加上 `extern` 即可。
+
+**模版特化（Template Specialization）** 是一个给予模版特殊的实例化规则的技巧。模版特化表现为一个类或函数的声明或定义，其 *完全* 等同于声明或定义一个类（除了它只能出现在块作用域中）：
+
+```cpp
+template<typename T>
+struct Foo {
+    T a, b, c;
+};
+
+template<>                  // 不要忘记加这一句，尖括号虽然是空的也不能省略
+struct Foo<int> {           // 定义了模版特化，它等同于定义了一个类 Foo<int>
+    int i;                  // 可以看到这个定义和通常的 Foo<T> 相去甚远
+};
+```
+
+由于类模版的成员函数有特殊的实例化机制，即只在需要实例化某个成员函数时才会实例化（而非在实例化类模版是直接实例化所有的成员函数），我们也可以为类模版的成员函数设计模版特化：
+
+```cpp
+template<typename T>
+struct Foo {
+    void foo();
+};
+template<>
+void Foo<int>::foo() {      // 只对一个成员函数进行特化
+    puts("Specialized foo");
+}
+```
+
+需要注意的是，由于模版特化的定义等同于类或函数的定义，因此函数模版以及类模版的成员函数进行特化时，要注意 **ODR**，将其定义在源文件或声明为 `inline`。
+
+### 模块与头文件
 
 
-参考资料：[Cpp Reference, Translation Phases](https://en.cppreference.com/w/cpp/language/translation_phases)、[Cpp Reference, Scope](https://en.cppreference.com/w/cpp/language/scope)、[C++ Standard, [dcl.stc]](https://eel.is/c++draft/dcl.stc)、[Stack Overflow, Why inline functions are defined in the header?](https://stackoverflow.com/questions/5057021/why-are-c-inline-functions-in-the-header)
+
+参考资料：[Cpp Reference, Translation Phases](https://en.cppreference.com/w/cpp/language/translation_phases)、[Cpp Reference, Scope](https://en.cppreference.com/w/cpp/language/scope)、[Cpp Reference, Class Template](https://en.cppreference.com/w/cpp/language/class_template)、[C++ Standard, [dcl.stc]](https://eel.is/c++draft/dcl.stc)、[Stack Overflow, Why inline functions are defined in the header?](https://stackoverflow.com/questions/5057021/why-are-c-inline-functions-in-the-header)
