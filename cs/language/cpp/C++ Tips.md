@@ -1129,7 +1129,7 @@ struct Foo<int>;            // 显式模版实例化定义，编译器会在此�
 template
 void Foo<double>::foo();    // 这里首先进行的是隐式模版实例化，因为我们并没有定义过 template struct Foo<double>
                             // C++ 中最常用的其实就是这种实例化方式，所以显示模版实例化定义反而比较少见
-                            // 随后对于 Foo<double> 中的 foo 成员函数进行隐式模版实例化定义
+                            // 随后对于 Foo<double> 中的 foo 成员函数进行显式模版实例化定义
 ```
 
 这些实例化定义 *不需要* 函数体等初始化结构，和变量的定义类似。因此，如果不希望编译器在每个使用实例化的编译单元中都生成定义（然后再删掉多余的），就是用和变量的声明一致的 `extern` 关键字。正如我们此前介绍那样，在显示模版实例化语句前加上 `extern` 即可。
@@ -1168,3 +1168,228 @@ void Foo<int>::foo() {      // 只对一个成员函数进行特化
 
 
 参考资料：[Cpp Reference, Translation Phases](https://en.cppreference.com/w/cpp/language/translation_phases)、[Cpp Reference, Scope](https://en.cppreference.com/w/cpp/language/scope)、[Cpp Reference, Class Template](https://en.cppreference.com/w/cpp/language/class_template)、[C++ Standard, [dcl.stc]](https://eel.is/c++draft/dcl.stc)、[Stack Overflow, Why inline functions are defined in the header?](https://stackoverflow.com/questions/5057021/why-are-c-inline-functions-in-the-header)
+
+## 运算符重载整活（2022/01/08）
+
+**C++** 的运算符重载虽然不算强大，但也已经足够大部分需求，它可以显著改善代码的可读性。偶尔它也可以用于整活：众所周知对于一个对象指针，如果我们要调用某个成员函数，应该使用 `->` 运算符。那么如果我们有一个成员函数指针，此时想要让某个对象调用时应该使用什么运算符呢？没错，`<-` 运算符！
+
+上面是骗人的，因为不存在 `<-` 运算符，但是我们可以尝试定义一个：
+
+```cpp
+template<typename T>
+struct Wrapper {
+    Wrapper(T& t_) : t(t_) {}
+    T& t;
+};
+template<typename T, typename R, typename... Args>
+auto operator <(R (T::* f)(Args...), Wrapper<T> w) {
+    return [f, w] (Args... args) -> R {
+        return (w.t.*f)(args...);
+    };
+}
+template<typename T>
+Wrapper<T> operator -(T& t) {
+    return { t };
+}
+struct Foo {
+    void f() {
+        puts("abc");
+    }
+    void g(int ct) {
+        while (ct --> 0) {              // 使用了 --> 运算符，让 ct 的值渐进于 0
+            puts("def");
+        }
+    }
+}
+int main() {
+    Foo foo{};
+    (&Foo::f<-foo)();
+    (&Foo::g<-foo)(3);
+    return 0;
+}
+```
+
+参考资料：[C++ Left Arrow Operator](http://www.atnnn.com/p/operator-larrow/)
+
+## 模板类型推导不会涉及隐式类型转换（2022/01/08）
+
+今天同学询问我 lambda 传入函数的问题，他的代码大致如下：
+
+```cpp
+template<typename T>
+std::vector<T> map(std::vector<T> const& v, T (*f)(T)) {
+    std::vector<int> result{};
+    result.reserve(v.size());
+    for (auto elem : v) {
+        result.push_back(f(elem));
+    }
+}
+int main() {
+    std::vector<int> const v1 = { 1, 2, 3 };
+    auto const v2 = map(v1, [](int i) { return i * i; }); // 错误！无法从闭包类型中推断出 T (*)(T)
+    return 0;
+}
+```
+
+我第一反应是闭包没办法隐式转换成函数指针（实际上是可以的！），所以建议他在 lambda 表达式前面加上 `+`，这样会把闭包转换为函数指针。这确实是有用的。随后，我同学抱怨课程 slides 里面的用法没法编译，其中使用的是 `std::function`：
+
+```cpp
+// slides 中没有使用模板，这也是它实际上没有问题的原因
+template<typename T>
+std::vector<T> map(std::vector<T> const& v, std::function<T (T)> f) {
+    // 这里就省略定义了，和前面一样
+}
+// 后面的调用方式和此前一样
+```
+
+我下意识认为这样肯定是可以过的，因为 `std::function` 可以接受任意可调用对象（函数指针、仿函数对象、闭包）。我自己试了试果然不行，错误还是无法从闭包类型推断出 `std::function<T (T)>`。即使加上 `+` 也会说无法从 `int (*)(int)` 类型推断出 `std::function<T (T)>`，看来编译器没法做这样的类型转换，即使 `T` 在本例中明明“已经”推断出来了。呃，似乎也不能这么说，因为 **C++** 的参数求值顺序是“未限定的”，编译器无从知晓 `T` 的类型，也就无心好意地执行隐式类型转换了。
+
+其它类似的例子如下：
+
+```cpp
+template<typename T>
+void foo(std::vector<T> const& v);
+template<typename T>
+void bar(T type_indicator, T* ptr);
+
+int main() {
+    auto list = { 1, 2, 3 };
+    foo(list);					// 错误，因为 list 的类型是 std::initializer_list<int>，虽然可以隐式转换为 std::vector<int>，
+                                  // 但编译器一开始就无从知晓这要转换成 std::vector<int> 而不是什么 std::vector<CrazyType<void*>>
+    bar(10, nullptr);             // 错误，虽然 10 让 T 的类型只可能是 int，且 nullptr 可以隐式转换为任意指针类型，但这不是编译器类型推导的工作
+                                  // 它只会发现 nullptr 怎么都没法和 T* 匹配上，于是 boom
+    return 0;
+}
+```
+
+## 深入理解 `const`（2022/01/10）
+
+**C++** 中的 `const` 修饰符有相当重要的地位，它在 **C++** 中被大量使用。
+
+```cpp
+int const i = 42;                  // 一个变量常量
+int* const none = nullptr;         // 一个指针常量
+extern void (* const)(int) fptr;   // 一个函数指针常量
+```
+
+当我们将某个变量类型中的某个地方加上 `const` 修饰符后，这个地方 *左侧* 的部分就不能通过该变量修改了。比如上面的例子中，`const` 修饰的均为变量“顶部”的类型（也即 **顶部 `const`（Top-Level Const）**），此时我们没有办法在初始化变量后对该变量进行赋值操作。除了修饰顶部类型外，我们也可以修饰低部类型（也即 **低部 `const`（Low-Level Const）**），也即通过层层解引用后得到的类型：
+
+```cpp
+int const* ptr = nullptr;
+int const& c = 42;
+int const (&arr)[42] = { 1, 2, 3 };
+int* const* const* ppptr = nullptr;
+```
+
+此时 `const` 修饰的并不是变量本身，而是变量指向的对象；原则上我们可以修改变量，因为它并没有被 `const` 修饰，但我们不可以修改解引用之后得到的引用。当然，引用类型是一个例外，它本身不具有可修改性，`int& const` 不是合法的类型（倒不如说它始终就是这个类型的，可以对比它和顶部 `const` 类型的声明要求），因此引用类型只存在低部 `const` 的说法。
+
+**C++** 的 `const` 只是一个编译期检查（实际上所有语言中的 `const` 都是这样），它并不是强制要求的不许修改，从它的用法中也可以看出来：
+
+```cpp
+iint i = 42;                        // 这个变量是可修改的
+int const& r = i;                  // r 声明为 int const&，并用 i 来初始化，此时仅仅是 r 不能用来修改引用的对象而已，i 不受到任何影响
+int* const cp = &i;                // 没有问题，现在 cp 本身是不能修改的，但是可以通过解引用修改指向的对象
+int const* pc = &i;                // 没有问题，现在 pc 本身允许修改，但是它始终不能修改解引用之后的对象
+```
+
+**C++** 还将 `const` 修饰符作为变量类型的一部分，这一定程度上确保了类型安全：
+
+```cpp
+void foo() {
+    int i = 42;
+    int const c = i;               // 没有问题，最顶层的 const 可以随意添加或消去，因为它们是通过复制语义传递的
+    int i2 = c;                    // 没有问题，右侧的顶部 const 会被忽略。这和 auto 类型推导有相同的特征。
+    int const* p = &i;             // 没有问题，等式右侧是 int* 类型，左侧是 int const*，为类型加上 const 总是安全的
+    int* p2 = p;                   // 错误！等式右侧是 int const* 类型，左侧是 int*，类型转换会丢失 const 修饰符，因此不允许
+    int const& r = i;              // 没有问题，等式右侧是 int 类型，左侧是 int const&，为类型加上 const 总是安全的
+    int& r2 = r;                   // 错误！
+}
+```
+
+不过从非 `const` 到 `const` 的隐式转换是有要求的。简单来说，如果从顶部开始一步步向低部走，除了顶部以外遇到的任一次 `const` 到非 `const` 转换都是不允许的。也就是，等式右侧类型除了顶部之外任何一处用 `const` 修饰的地方，左侧类型中也需要出现 `const` 修饰符，否则就不能隐式转换。
+
+```cpp
+extern int** pp1;                         // int**，原始类型
+int* const* pp2 = pp1;                    // 随意加 const 修饰符，没有问题
+int const** const pp3 = pp2;              // 错误！看起来 const 修饰符更多了，但是第二个指针处右侧有 const 但左侧没有，所以不行
+int const* const* pp3 = pp2;              // 没有问题
+```
+
+如果希望强制类型转换，需要用到 `const_cast`，但这个相当于直接推翻了 **C++** 的 `const` 系统，不是必须情况不建议使用。根据标准，使用 `const_cast` 后修改原来被 `const` 修饰的部分是一个 **UB**：
+
+```cpp
+extern int* const* pp1;
+int const** pp2 = const_cast<int const**>(pp1);
+int** pp3 = const_cast<int**>(pp2);
+```
+
+`const` 还可以用于修饰成员函数，此时它的语义略为微妙：
+
+```cpp
+void baz(int& r);
+struct Foo {
+    Foo(int i_, int& r_) : i(i_), r(r_) {}
+    void foo();
+    void foo() const {              // 可以通过使用 `const` 与否进行重载，相当于在一个 Foo const 对象中操作，里面所有的成员都加上了顶部 const 修饰
+        i = 42;                     // 错误！const 成员函数中不能修改其它成员
+        r = 42;                     // 没有问题，此处修改了引用的对象，并非引用本身（我们总是可以将引用理解为 & const）
+        this->bar();                // 错误！const 成员函数中不能调用任何非成员函数
+        baz(i);                     // 错误！相当于让 int& 绑定一个 const 的成员
+        baz(r);                     // 没有问题。
+    }
+    void bar();
+    int i;
+    int& r;
+};
+int main() {
+    Foo f1{};
+    Foo const f2{};
+    f1.foo();                       // 调用 Foo::foo
+    f2.foo();                       // 调用 Foo::foo const
+    return 0;
+}
+```
+
+可以看到 `const` 成员函数的一些性质：
+
+- 它具有一定的传播性：一个 `const` 成员函数只能调用 `const` 成员函数，以及将成员作为低部 `const` 引用的函数。
+- 它对引用没有效果：**C++** 的引用（以及指针）直接跳出了 `const` 限制的范畴，因为它的顶部 `const` 不是传播性的。
+
+第二条有一个例外，即 **C++** 要求 `const` 成员函数返回成员的引用或指针时必须以低部 `const` 形式传递，这其实是一方面是为了防止过于轻易地打破 `const` 修饰，另一方面也对 `const` 传播性的不完善进行了补全：
+
+```cpp
+struct Foo {
+    Foo(std::string& str_) : str(str_) {}
+    std::string const& foo() const {     // 作为引用返回时必须是一个低部 const
+        str = "abc";                     // 函数里面怎么改管不了
+        return str;
+    }
+    std::string const* bar() const {
+        return &str;                     // &str 的类型是 std::string*，照样要求转换成 std::string const* 再返回
+    }
+    std::string& str;
+};
+int main() {
+    Foo f{};
+    auto& str = f.foo();                 // 此时的 const 被传播到返回变量中了
+    str.resize(42);                      // 错误！str 是 std::string const& 类型
+}
+```
+
+回顾 `const` 成员函数，它更多的含义似乎是对调用端行为的限制：在调用端眼中的 `const` 成员函数理应是不修改对象状态的，因此其返回的内部对象（以及引用）也不应该被修改。即使如此，成员函数定义中依然可能修改某个状态（比如引用和指针指向的对象），其在严格意义上并不属于当前对象的状态。尤其是低部 `const` 的含义主要用于限制某个变量对对象的修改，而非描述对象真正的只读性；因此我们不应该强求编译器传播顶部 `const` 至低部，因为这很可能不符合我们的期望。
+
+即使不是引用或指针类型，我们也可以让成员在 `const` 成员函数中被修改，方法就是将它们声明为 `mutable`：
+
+```cpp
+struct Counter {
+    int count() const {
+        ++ct;
+        return count;
+    }
+    mutable int ct;
+};
+```
+
+不过 `mutable` 可以说是把 `const` 成员函数的老底都捅穿了，但它依然要优于随意使用 `const_cast`；后者是一种可以随处滥用的特权，前者只是特殊情况下规则的让步。
+
+最后，有一个对 `const` 传播性的手动补全，那就是我在 *2021/12/02* 就提到的 `std::propagate_const`。不过它目前还在 **TS** 里面。它的实现比较简单，其实就是利用到 `const` 对象调用的成员函数都是 `const` 修饰的这一特性；因此它作为成员时，在 `const` 成员函数中就表现为 `const`，因此只能调用自己的 `const` 成员函数。
