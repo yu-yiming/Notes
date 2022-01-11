@@ -9,6 +9,7 @@ $$
 \newcommand{\rcur}[0]{\mathscr{r}}
 \newcommand{\brcur}[0]{\boldsymbol{\mathscr{r}}}
 \newcommand{\unit}[1]{\hat{\boldsymbol{#1}}}
+\newcommand{\tensor}[1]{\overleftrightarrow{\boldsymbol{#1}}}
 $$
 
 ## 电动力学
@@ -585,7 +586,7 @@ $$
 $$
 \begin{equation*}
 	\marginbox{u = \frac{1}{2}\left(\epsilon_0E^2 + \frac{1}{\mu_0}B^2\right)}
-\end{equation*} \tag{8.4} \label{electromagnetic-energy-in-all-space}
+\end{equation*} \tag{8.4} \label{electromagnetic-energy-density}
 $$
 接下来我们将验证这个公式，并给出能量在电动力学的守恒律。假设给定一个电荷和电流的设置使得电磁场可以由两个时间相关的函数 $\mathbf{E}$ 和 $\mathbf{B}$ 描述。根据洛伦兹力定律，我们可以给出一个微元时间内电磁场对其中一个电荷 $q$ 的做功：
 $$
@@ -661,11 +662,106 @@ $$
 
 电场力之间是方向相反的，但是磁场力并非如此……难道要抛弃牛顿第三定律？这就意味着我们也要抛弃动量守恒！我们不可能做出这样的妥协。为了让电动力学中的动量守恒，我们需要定义电磁场的动量。经历了电磁场的能量之后，这可能也没有多令人惊讶了。
 
+#### 麦克斯韦应力张量
+
 下面让我们从数学上推导电磁场对其中电荷的力，首先从洛伦兹力定律开始：
 $$
-\mathbf{F} = \int_\mathcal{V}(\mathbf{E} + \mathbf{v}\times\mathbf{B})\rho\,d\tau = \int_\mathcal{V}(\rho\mathbf{E} + \mathbf{J}\times\mathbf{B})\,d\tau
+\mathbf{F} = \int_\mathcal{V}(\mathbf{E} + \mathbf{v}\times\mathbf{B})\rho\,d\tau = \int_\mathcal{V}(\rho\mathbf{E} + \mathbf{J}\times\mathbf{B})\,d\tau \tag{8.13}
 $$
 我们将其中单位体积的力单独提出来分析。根据高斯定律和安培-麦克斯韦定律可以得到：
 $$
-\mathbf{f} = \epsilon_0(\nabla\cdot\mathbf{E})\mathbf{E} + \left(\frac{1}{\mu_0}\nabla\times\mathbf{B} - \epsilon_0\frac{\partial \mathbf{E}}{\partial t}\right)
+\mathbf{f} = \epsilon_0(\nabla\cdot\mathbf{E})\mathbf{E} + \left(\frac{1}{\mu_0}\nabla\times\mathbf{B} - \epsilon_0\frac{\partial \mathbf{E}}{\partial t}\right)\times \mathbf{B}
 $$
+根据下面的等式：
+$$
+\frac{\partial}{\partial t}(\mathbf{E}\times\mathbf{B}) = \frac{\partial \mathbf{E}}{\partial t}\times\mathbf{B} + \mathbf{E}\times\frac{\partial \mathbf{B}}{\partial t}
+$$
+以及法拉第定律 $(\ref{faraday's-law-differential})$，我们有：
+$$
+\frac{\partial \mathbf{E}}{\partial t}\times\mathbf{B} = \frac{\partial }{\partial t}(\mathbf{E}\times\mathbf{B}) + \mathbf{E}\times(\nabla\times\mathbf{E})
+$$
+根据下面的等式：
+$$
+\mathbf{F}\times(\nabla\times\mathbf{F}) = \frac{1}{2}\nabla(F^2) - (\mathbf{F}\cdot\nabla)\mathbf{F}
+$$
+我们可以将 $\mathbf{E}$ 和 $\mathbf{B}$ 都代入里面的 $\mathbf{F}$。这样就得到了最后的等式：
+$$
+\mathbf{f} = \epsilon_0 [(\nabla\cdot\mathbf{E})\mathbf{E} + (\mathbf{E}\cdot\nabla)\mathbf{E}] + \frac{1}{\mu_0}[(\nabla\cdot\mathbf{B})\mathbf{B} + (\mathbf{B}\cdot\nabla)\mathbf{B}] - \frac{1}{2}\nabla\left(\epsilon_0 E^2 + \frac{1}{\mu_0}B^2\right) - \epsilon_0\frac{\partial}{\partial t}(\mathbf{E}\times\mathbf{B}) \tag{8.14}
+$$
+这也太复杂了……好在我们可以引入 **麦克斯韦应力张量（Maxwell Stress Tensor）** 来显著简化上面的式子。记：
+$$
+\begin{equation*}
+	T_{ij} \equiv \epsilon_0\left(E_iE_j - \frac{1}{2}\delta_{ij} E^2\right) + \frac{1}{\mu_0}\left(B_iB_j - \frac{1}{2}\delta_{ij} B^2\right)
+\end{equation*} \tag{8.15} \label{maxwell-stress-tensor}
+$$
+其中 $\delta_{ij}$ 被称为 **克罗内克符号（Kronecker Delta）**，它仅在 $i = j$ 时取 $1$，也即 $\delta_{xx} = \delta_{yy} = \delta_{zz} = 1$。是故：
+$$
+T_{xx} = \frac{1}{2}\epsilon_0(E_x^2 - E_y^2 - E_z^2) + \frac{1}{2\mu_0}(B_x^2 - B_y^2 - B_z^2) \\
+T_{xy} = \epsilon_0(E_xE_y) + \frac{1}{\mu_0}(B_xB_y)
+$$
+由于 $T_{ij}$ 有两个下标，相当于描述了两个方向（对比矢量只描述一个方向），我们将其称为二阶张量，并记为 $\tensor{T}$。二阶张量可以和矢量进行点积，但是两个方向得到的结果不同：
+$$
+\left(\mathbf{a}\cdot\tensor{T}\right)_j = \sum_{i = x, y, z} a_{i}T_{ij} \qquad \left(\tensor{T}\cdot\mathbf{a}\right)_j = \sum_{i = x, y, z}T_{ji}a_i \tag{8.16}
+$$
+从这个运算规则我们可以得到：
+$$
+\left(\nabla\cdot\tensor{T}\right)_j = \epsilon_0\left[(\nabla\cdot\mathbf{E})E_j + (\mathbf{E}\cdot\nabla)E_j - \frac{1}{2}\nabla_jE^2\right] + \frac{1}{\mu_0}\left[(\nabla\cdot\mathbf{B})B_j + (\mathbf{B}\cdot\nabla)B_j - \frac{1}{2}\nabla_jB^2\right]
+$$
+我们再和 $(8.14)$ 结合，得到：
+$$
+\begin{equation*}
+	\mathbf{f} = \nabla\cdot\tensor{T} - \epsilon_0\mu_0\frac{\partial \mathbf{S}}{\partial t}
+\end{equation*} \tag{8.17}
+$$
+对两边进行积分，回到我们一开始的洛伦兹力：
+$$
+\begin{equation*}
+	\mathbf{F} = \oint_\mathcal{S}\tensor{T}\cdot d\mathbf{a} - \epsilon_0\mu_0\frac{d}{dt}\int_\mathcal{V}\mathbf{S}\,d\tau
+\end{equation*} \tag{8.18}
+$$
+在静态情况下第二项（变化率）为零，此时力可以表示为体积 $\mathcal{V}$ 的边界 $\mathcal{S}$ 处张量 $\tensor{T}$ 的环面积分：
+$$
+\begin{equation*}
+	\mathbf{F} = \oint_\mathcal{S}\tensor{T}\cdot d\mathbf{a}
+\end{equation*} \tag{8.19}
+$$
+因此张量 $\tensor{T}$ 在物理上的意义是在某个平面书上单位面积的力，即 **应力（Stress）**。$T_{ij}$ 代表的是在 $i$ 方向单位面积的作用力对 $j$ 方向的平面分量的作用。因此 $T_{xx}, T_{yy}, T_{zz}$ 代表的是 $x, y, z$ 方向上的 **压强（Pressure）**，而 $T_{xy}, T_{yz}$ 等则代表了不同方向上的 **剪应力（Shear）**。
+
+#### 动量守恒
+
+牛顿第二定律将作用在某物体上的力描述为其动量的变化率，即：
+$$
+\mathbf{F} = \frac{d\mathbf{p_\text{mech}}}{dt} = -\epsilon_0\mu_0\frac{d}{dt}\int_\mathcal{V}\mathbf{S}\,d\tau + \oint_\mathcal{S}\tensor{T}\cdot d\mathbf{a} \tag{8.20}
+$$
+这里的 $\mathbf{p}_\text{mech}$ 指的是粒子在体积 $\mathcal{V}$ 中的机械动量。我们不难注意到它和坡印廷定理 $(\ref{poynting's-theorem})$ 的相似性，因此也可以进行类似的解释：第一个积分项代表了体积  $\mathcal{V}$ 中电磁场携带的动量：
+$$
+\begin{equation*}
+	\mathbf{p} = \mu_0\epsilon_0\int_\mathcal{V}\mathbf{S}\,d\tau
+\end{equation*} \tag{8.21}
+$$
+第二个积分项则是单位时间从边界 $\mathcal{S}$ 流出的动量。如果我们将单位体积电磁场的动量记为：
+$$
+\begin{equation*}
+	\mathbf{g} = \epsilon_0\mu_0\mathbf{S} = \epsilon_0(\mathbf{E}\times\mathbf{B})
+\end{equation*} \tag{8.22} \label{electromagnetic-momentum}
+$$
+随后不难得到：
+$$
+\begin{equation*}
+	\marginbox{\frac{\partial \mathbf{g}}{\partial t} = \nabla\cdot\tensor{T}}
+\end{equation*} \tag{8.23} \label{conservation-of-momentum}
+$$
+这就是电磁场中的动量守恒定律。如果探究这个式子左右的含义，就会发现 $\epsilon_0\mu_0\mathbf{S}$ 可以理解为单位体积电磁场的动量，同时 $\mathbf{S}$ 也是单位面积流出的能量（根据能量守恒式）；$-\tensor{T}$ 可以理解为单位面积流出的动量，但 $\tensor{T}$ 也是作用于某平面的应力（根据其定义）。
+
+#### 角动量
+
+至此我们已经得到了电磁场的能量公式 $(\ref{electromagnetic-energy-density})$ 以及动量公式 $(\ref{electromagnetic-momentum})$。角动量可以从动量计算得到：
+$$
+\begin{equation*}
+	\mathbf{\mathscr{l}} = \mathbf{r}\times\mathbf{g} = \epsilon_0\mathbf{r}\times(\mathbf{E}\times\mathbf{B})
+\end{equation*} \tag{8.24} \label{electromagnetic-anguar-momentum}
+$$
+不难发现即使是静态的电磁场依然有动量和角动量（因为 $\mathbf{E}\times\mathbf{B}$ 不为零）。因此只有将电磁场的这些量考虑进来，系统的总动量和总角动量才能守恒。这多少也解释了本节开头牛顿第三定律在电磁场中“不成立”的原因。
+
+#### 磁场不做功
+
