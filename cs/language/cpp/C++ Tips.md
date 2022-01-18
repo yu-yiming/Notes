@@ -523,7 +523,7 @@ private:
 
 需要注意的是，这里的静态变量在声明初就已经初始化了（默认初始化），此后我们做的是修改它的值。这对于包含 `const` 或引用类型变量的对象来说局限性很大，但我们随时都可以在声明处进行初始化。
 
-## 完全理解编译与链接（2022/01/04-2022/01/06）
+## 完全理解编译与链接（2022/01/04-2022/01/06）（持续更新中）
 
 **C++** 从 **C** 继承的编译与链接过程不可谓不复杂。虽然此前零零碎碎地有一些理解，但总还是有不清楚的地方（比如 `inline` 相关的简直一团乱麻）。此次我想把这个知识完全捋清楚。这一条目的内容可能会比之前条目多很多，所以我会用副标题来标明结构。
 
@@ -1242,7 +1242,7 @@ std::vector<T> map(std::vector<T> const& v, std::function<T (T)> f) {
 // 后面的调用方式和此前一样
 ```
 
-我下意识认为这样肯定是可以过的，因为 `std::function` 可以接受任意可调用对象（函数指针、仿函数对象、闭包）。我自己试了试果然不行，错误还是无法从闭包类型推断出 `std::function<T (T)>`。即使加上 `+` 也会说无法从 `int (*)(int)` 类型推断出 `std::function<T (T)>`，看来编译器没法做这样的类型转换，即使 `T` 在本例中明明“已经”推断出来了。呃，似乎也不能这么说，因为 **C++** 的参数求值顺序是“未限定的”，编译器无从知晓 `T` 的类型，也就无心好意地执行隐式类型转换了。
+我下意识认为这样肯定是可以过的，因为 `std::function` 可以接受任意可调用对象（函数指针、仿函数对象、闭包）。我自己试了试果然不行，错误还是无法从闭包类型推断出 `std::function<T (T)>`。即使加上 `+` 也会说无法从 `int (*)(int)` 类型推断出 `std::function<T (T)>`，看来编译器没法做这样的类型转换，即使 `T` 在本例中明明“已经”推断出来了。
 
 其它类似的例子如下：
 
@@ -1262,7 +1262,28 @@ int main() {
 }
 ```
 
-## 深入理解 `const`（2022/01/10）
+（2022/01/17 更新）这里唯一的例外是大括号初始化列表。它：
+
+- 任何时候都可以隐式转换为 `std::initializer_list`，即使其中涉及模板类型推导。
+- 当函数模板其它参数足以推断出某个参数的类型时，可以将大括号初始列表隐式转换为这个类型。
+
+下面是示例：
+
+```cpp
+template<typename T>
+void foo(std::initializer_list<T> list);
+template<typename T>
+void bar(std::vector<T> const& v, T type_indicator);
+
+int main() {
+    foo({1, 2, 3});               // 没有问题
+    bar({1, 2, 3}, 42);           // 没有问题
+    auto list = { 1, 2, 3 };
+    bar(list, 42);                // 错误，原理和之前讲述的一样。特例只有大括号初始化列表，以及它到 std::initializer_list 的转换
+}
+```
+
+## 深入理解 `const`（2022/01/10）（持续更新中）
 
 **C++** 中的 `const` 修饰符有相当重要的地位，它在 **C++** 中被大量使用。
 
@@ -1394,6 +1415,7 @@ struct Counter {
 
 最后，有一个对 `const` 传播性的手动补全，那就是我在 *2021/12/02* 就提到的 `std::propagate_const`。不过它目前还在 **TS** 里面。它的实现比较简单，其实就是利用到 `const` 对象调用的成员函数都是 `const` 修饰的这一特性；因此它作为成员时，在 `const` 成员函数中就表现为 `const`，因此只能调用自己的 `const` 成员函数。
 
+<<<<<<< Updated upstream
 ## **C++** 的值分类
 
 **C++** 中的所有表达式都有两个静态属性：类型和 **值分类（Value Category）**。过去，我们可以将所有表达式简单分为两种类别：**左值（Left Value）** 和 **右值（Right Value）**，顾名思义描述其能够放在等式的左侧还是右侧：
@@ -1468,4 +1490,88 @@ int main() {
 - 不能被 `const` 和 `volatile` 修饰符修饰，除非它是类或数组的对象，或者它被实质化为一个 `const` 或 `volatile` 修饰的对象的引用。
 - 不能有不完整类型，除了特殊情况下可能有 `void` 类型。
 - 不能有抽象类类型或它们的数组类型。
+=======
+## 妙用折叠表达式（2022/01/16）
+
+**C++17** 引入了 **折叠表达式（Fold Expressions）**，是对模板参数包的一个重要的功能补充，示例如下：
+
+```cpp
+auto sum(auto... args) {
+    return (args + ...);
+}
+void foo() {
+    sum(1, 2, 3);                     // 在 sum 中展开为 (1 + (2 + 3))
+}
+```
+
+它让我们免于递归调用函数，直接将传入的参数内联展开，高效且清晰。除了上面这种写法，折叠表达式还有三个变种：
+
+```cpp
+auto sum_1(auto... args) {
+    return (... + args);
+}
+auto sum_2(auto... args) {
+    return (args + ... + 42);
+}
+auto sum_3(auto... args) {
+    return (42 + ... + args);
+}
+void foo() {
+    sum_1(1, 2, 3);                  // 在 sum_1 中展开为 ((1 + 2) + 3)
+    sum_2(1, 2, 3);                  // 在 sum_2 中展开为 (1 + (2 + (3 + 42)))
+    sum_3(1, 2, 3);                  // 在 sum_3 中展开为 (((42 + 1) + 2) + 3)
+}
+```
+
+不过，以上都还尚未体现折叠表达式奇妙的地方。我们先不讨论折叠表达式，思考另一个问题：如何遍历一个 `std::tuple`？我们知道标准库中为 `std::tuple` 定义了一个 `get` 函数：
+
+```cpp
+template<std::size_t I, class... Types>
+constexpr std::tuple_element<I, std::tuple<Types...>>::type&
+get(std::tuple<Types...>& t) noexcept;
+```
+
+这样似乎就可以挨个访问其中的元素了：
+
+```cpp
+template<typename... Args>
+void visit(std::tuple<Args...>& tup) {
+    for (int i = 0; i < sizeof...(Args); ++i) {
+        auto& elem = std::get<i>(tup);
+        // do something with elem
+    }
+}
+```
+
+但显然这样写是错误的，因为 `std::get` 是一个模板函数，要求 `i` 是 `constexpr` 的。不过，`i` 根本没有办法声明为 `constexpr`，因为标准要求 `constexpr` 是无状态的。此时最巧妙的方法就是使用折叠表达式：
+
+```cpp
+template<typename... Args>
+void visit(std::tuple<Args...>& tup) {
+    [&tup]<auto... Is>(std::index_sequence<Is...>) {
+        auto f = [](auto& elem) {
+            // do something with elem
+        };
+        (f(std::get<Is>(tup)), ...);                  // 锵锵！operator , 在此简直奇用
+    }(std::make_index_sequence<sizeof...(Args)>{}); // make_integer_sequence 用于产生编译期的 integer 序列
+}
+void foo() {
+    auto tup = std::tuple(42, "abc", 1.0);
+    visit(tup);                   // visit 中展开为 (f(std::get<0>(tup)), (f(std::get<1>(tup)), f(std::get<2>(tup))))
+}
+```
+
+事实上标准库中的 `std::apply` 有非常类似的机理：
+
+```cpp
+#define fwd(x) std::forward<decltype(x)>(x)
+// 下面只是一种可能的实现
+template<class F, class Tuple>
+constexpr decltype(auto) apply(F&& f, Tuple&& tup) {
+    return []<auto... Is>(auto&& f, auto&& tup, std::index_sequence<Is...>) {
+        return std::invoke(fwd(f), std::get<Is>(fwd(tup))...);         // 这种用法自 C++11 就可以使用了
+    }(fwd(f), fwd(tup), std::make_index_sequence<std::tuple_size_v<std::remove_reference_t<Tuple>>>);
+}
+```
+>>>>>>> Stashed changes
 
