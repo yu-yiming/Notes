@@ -1489,8 +1489,7 @@ int main() {
 - 不具有多态性；其类型就是表达式的类型。
 - 不能被 `const` 和 `volatile` 修饰符修饰，除非它是类或数组的对象，或者它被实质化为一个 `const` 或 `volatile` 修饰的对象的引用。
 - 不能有不完整类型，除了特殊情况下可能有 `void` 类型。
-- 不能有抽象类类型或它们的数组类型。
-=======
+- 不能有抽象类类型或它们的数组类型
 ## 妙用折叠表达式（2022/01/16）
 
 **C++17** 引入了 **折叠表达式（Fold Expressions）**，是对模板参数包的一个重要的功能补充，示例如下：
@@ -1573,5 +1572,5 @@ constexpr decltype(auto) apply(F&& f, Tuple&& tup) {
     }(fwd(f), fwd(tup), std::make_index_sequence<std::tuple_size_v<std::remove_reference_t<Tuple>>>);
 }
 ```
->>>>>>> Stashed changes
+
 
