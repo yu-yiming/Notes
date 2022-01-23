@@ -20,3 +20,6 @@
 - [Work with C++20 Coroutines](https://www.scs.stanford.edu/~dm/blog/c++-coroutines.html)
 - [Why C++ Chooses Stackless Coroutine?](https://stackoverflow.com/questions/57163510/are-stackless-c20-coroutines-a-problem)
 
+### Unicode Support
+
+- [How to Process Unicode in C++?](https://stackoverflow.com/questions/55641/unicode-processing-in-c)
