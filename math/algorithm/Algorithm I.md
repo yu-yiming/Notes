@@ -524,7 +524,7 @@ procedure filter_greater_than(arr, n) where arr is Array of Int, n is Int
 
 ### 链表
 
-链表就是为了解决数组连续存储导致非结尾元素的插入删除低效而设计的结构。链表由多个 **结点（Node）** 组成，每个结点都存储着下一个结点的地址，这样就可以一步步遍历整个列表了。
+**链表（Linked List）** 是为了解决数组连续存储导致非结尾元素的插入删除低效而设计的结构。链表由多个 **结点（Node）** 组成，每个结点都存储着下一个结点的地址，这样就可以一步步遍历整个列表了。
 
 ```pseudocode
 type Node where
@@ -768,4 +768,40 @@ function BinaryTree.mirror(pos)
 ```
 
 
+
+## 抽象数据类型
+
+我们此前介绍的数据结构，它们的操作还不够丰富，用处也尚不明朗。很多时候我们需要用于特定用途的一些操作，此时就需要定义 **抽象数据类型（Abstract Data Type, ADT）** 了。一个抽象数据类型规定了一些特定的操作，但它底层的数据结构是未限定的，甚至可能同时利用了多种数据结构。因此有时一个 **ADT** 利用不同数据结构实现时，在不同情况下会有不同的优势。
+
+### 表
+
+**表（List）** 是用于存放一串数据的结构，其中的元素总能按照顺序排列为 $A_1, ..., A_N$ 的形式，此时这个表的大小是 $N$。我们称大小为 $0$，即没有任何元素的表为 **空表（Empty List）**。下面是这个结构的一些操作：
+
+```pseudocode
+type List where
+    /* Unspecified data structure */
+    data is Container of Object
+procedure List() return List
+    Initialize this.data with default configuration
+    
+function List.empty() return Bool
+    return this.data.empty()
+    
+function List.size() return Int
+    return this.data.size()
+    
+function List.front() return Object
+    return this.data.front()
+    
+function List.back() return Object
+    return this.data.back()
+    
+function List.at(idx) return Object
+                      where idx is Int
+    return this.data.at(idx)
+```
+
+这些操作的特点在于，只需要直接调用底层结构的相应函数即可。不过现在我们有必要定义一个特殊的 **ADT** 来表示表中元素的位置，以便于后面设计其它操作接口，这就是 **迭代器（Iterator）**。回忆之前在动态数组中我们使用序号来访问元素，而链表中使用结点的地址来访问元素；我们可以将它们抽象为一种类型，这个类型需要：
+
+- 访问元素：这是它最主要的功能。对于动态数组，我们可以用下标运算得到数据；对于链表，我们可以通过解引用得到数据。
 
