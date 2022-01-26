@@ -778,30 +778,101 @@ function BinaryTree.mirror(pos)
 **表（List）** 是用于存放一串数据的结构，其中的元素总能按照顺序排列为 $A_1, ..., A_N$ 的形式，此时这个表的大小是 $N$。我们称大小为 $0$，即没有任何元素的表为 **空表（Empty List）**。下面是这个结构的一些操作：
 
 ```pseudocode
-type List where
-    /* Unspecified data structure */
-    data is Container of Object
-procedure List() return List
-    Initialize this.data with default configuration
-    
-function List.empty() return Bool
-    return this.data.empty()
-    
-function List.size() return Int
-    return this.data.size()
-    
-function List.front() return Object
-    return this.data.front()
-    
-function List.back() return Object
-    return this.data.back()
-    
-function List.at(idx) return Object
-                      where idx is Int
-    return this.data.at(idx)
+class List where
+    function List.empty() return Bool
+    function List.size() return Int
+    function List.front() return Object
+    function List.back() return Object
+    function List.at(idx) return Object
+                          where idx is Int
+    function List.push_front(val) where val is Object
+    function List.pop_back()
+    function List.push_back(val) where val is Object
+    function List.pop_back()
 ```
 
 这些操作的特点在于，只需要直接调用底层结构的相应函数即可。不过现在我们有必要定义一个特殊的 **ADT** 来表示表中元素的位置，以便于后面设计其它操作接口，这就是 **迭代器（Iterator）**。回忆之前在动态数组中我们使用序号来访问元素，而链表中使用结点的地址来访问元素；我们可以将它们抽象为一种类型，这个类型需要：
 
 - 访问元素：这是它最主要的功能。对于动态数组，我们可以用下标运算得到数据；对于链表，我们可以通过解引用得到数据。
+- 前进到下一个元素：迭代器为了遍历整个数据结构，需要能够随时找到下一个元素的位置。对于动态数组，我们可以将地址加上元素的大小找到下一个元素的位置；对于链表，我们可以通过 `next` 成员得到下一个元素的位置。
+- 后退到上一个元素：我们也可以类似地将迭代器设计为可以倒序遍历数据结构。
 
+```pseudocode
+class Iterator Iter where
+    function Iter.get() return Object
+    function Iter.has_next() return Bool
+    function Iter.next() return Iter
+    function Iter.has_previous() return Bool
+    function Iter.previous() return Iter
+```
+
+有了迭代器的定义后，我们可以定义更多表支持的接口：
+
+```pseudocode
+class List where
+    function List.insert(pos, val) return pos
+                                   where pos is Iterator
+                                         val is Object
+    function List.erase(pos) where pos is Iterator
+```
+
+#### 表的其它实现
+
+我们此前已经介绍过动态数组和（双向）链表两种表的实现，除此之外，还有其它可能的数据结构：
+
+- **单链表（Singly Linked List）**：由头指针和只包含 `next` 的结点组成的链表。此时所有 `push_back` 和 `pop_back` 也变成 $O(n)$ 复杂度了。
+- **循环链表（Circular Linked List）**：由“头”指针和循环连接的单链结点或双链结点组成的链表。此时我们不需要额外存储尾指针就能访问表的末尾。
+- **游标链表（Cursor Linked List）**：给定结点数量上限，用下标代替地址的链表。某种角度来看这是一种数组形式的链表，我们下面会给出简单介绍。
+
+#### 游标链表
+
+在没有地址（**C** 中的指针或 **Java** 中的引用）概念的语言中，我们可以用游标列表来模仿链表的行为：
+
+```pseudocode
+type Node where
+    next is Int /* index of the next node */
+    prev is Int /* index of the previous node */
+    data is Object
+    
+type CursorLinkedList where
+    static cursor_space is Array of Node
+    head is Int /* index of the first node */
+```
+
+下面是游标列表对表 **ADT** 的实现：
+
+```pseudocode
+procedure CursorLinkedList() return CursorLinkedList
+    result is CursorLinkedList <- {}
+    next_idx <- 1
+    foreach elem in result.cursor_space
+        elem <- next_idx
+        next_idx <- next_idx + 1
+    Let last element in result.cursor_space be 0
+    head <- 0
+    return result
+    
+function CursorLinkedList.empty() return Bool
+    return this.head.next = 0
+```
+
+
+
+### 栈
+
+**栈（Stack）** 是将功能大幅限制之后的表。这个结构只提供对末尾元素的访问和增删操作，它得名于与其行为相似的栈结构。我们可以轻松地通过任意可以实现表的数据结构来实现栈：
+
+```pseudocode
+class Stack where
+    function Stack.empty() return Bool
+    function Stack.top() return Object
+    function Stack.push(val) where val is Object
+    function Stack.pop()
+```
+
+其中，`top` 操作对应了表 **ADT** 中的 `back` 操作；`push` 和 `pop` 则分别对应了表 **ADT** 中的 `push_back` 和 `pop_back` 操作。
+
+#### 栈的应用
+
+- 括号有效性检查：一篇语法正确的文章中，左右括号总是成对出现且相互匹配。在把所有括号以外的字符忽略后，例如 `(()[])()` 的模式是有效的，而例如 `(]{(})` 的模式是无效的。栈是简洁地解决这个问题的得力工具。我们只需要每次遇到左括号时将其 `push` 到栈当中，然后遇到右括号时和栈顶的元素对比，如果括号类型不对应则表明无效，否则将栈顶元素 `pop` 出来。最后，只要栈为空，括号就是有效的。
+- 后缀表达式计算：形如 `1 2 * 3 + 4 5 6 * + *` 的表达式被称为后缀表达式。
