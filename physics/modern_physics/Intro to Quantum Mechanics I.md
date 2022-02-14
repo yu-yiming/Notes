@@ -340,7 +340,7 @@ $$
 最后，将 $\varphi(t)$ 放回式子，就得到：
 $$
 \begin{equation*}
-	\Psi(x, t) = \sum_{n=1}^\infty c_n\psi_n(x)e^{-iE_ntt/\hbar} = \sum_{n=1}^\infty c_n\Psi_n(x, t)
+	\Psi(x, t) = \sum_{n=1}^\infty c_n\psi_n(x)e^{-iE_nt/\hbar} = \sum_{n=1}^\infty c_n\Psi_n(x, t)
 \end{equation*} \tag{2.15}
 $$
 其中：
@@ -412,5 +412,257 @@ $$
 $$
 \begin{equation*}
 	\psi_n(x) = \sqrt{\frac{2}{a}}\sin\left(\frac{n\pi x}{a}\right)
+\end{equation*}
+$$
+下面是在 $n = 1, 2, 3$ 时的图像：
+
+![qm1_2-1](graphs/qm1_2-1.png)
+
+可以看到，$n$ 对应着图像中波峰/波谷出现的数量。我们将 $n = 1$ 称为 **基态（Ground State）**，其它的情形则称为 **激发态（Excited State）**。这些状态之间有一些共同点：
+
+- 它们关于方井中心交替呈现 **奇性** 与 **偶性**，也即镜面对称和中心对称。比如 $\psi_1, \psi_3, ...$ 为偶，$\psi_2, \psi_4, ...$ 为奇。
+
+- 它们与 $0$ 的交点数量（称为 **结点**）逐个增加。
+
+- 它们之间相互 **正交（Orthogonal）**，定义为：
+  $$
+  \begin{equation*}
+  	\int\psi_m(x)^*\psi_n(x)\,dx = 0 \qquad (m \ne n)
+  \end{equation*}
+  $$
+  证明如下：
+  $$
+  \begin{align*}
+  	\int \psi_m(x)^*\psi_n(x)\,dx 
+  	&= \frac{2}{a}\int_0^a\sin\left(\frac{m\pi x}{a}\right)\sin\left(\frac{n\pi x}{a}\right)\,dx \\
+  	&= \frac{1}{a}\int_0^a\left[\cos\left(\frac{(m-n)\pi x}{a}\right) - \cos\left(\frac{(m+n)\pi x}{a}\right)\right]\,dx \\
+  	&= \left.\left[\cos\left(\frac{(m-n)\pi x}{a}\right) - \frac{1}{(m+n)\pi}\sin\left(\frac{(m+n)\pi x}{a}\right)\right]\right|_0^a \quad\text{(Suppose $m\ne n$)}\\
+  	&= \frac{1}{\pi}\left[\frac{\sin{[(m-n)\pi]}}{m-n} - \frac{\sin{[(m+n)\pi]}}{m+n}\right] \\
+  	&= 0
+  \end{align*}
+  $$
+  当 $m = n$ 时，上面的积分会得到 $1$。因此我们可以将其记为：
+  $$
+  \int \psi_m(x)^*\psi_n(x)\,dx = \delta_{mn}
+  $$
+  此处记号 $\delta_{mn}$ 是 **克罗内克函数**，定义为：
+  $$
+  \begin{equation*}
+  	\delta_{mn} =
+  	\begin{cases}
+  		0 & m \ne n \\
+  		1 & m = n
+  	\end{cases}
+  \end{equation*}
+  $$
+
+- 它们是 **完备的（Complete）**，即任何函数 $f(x)$ 都可以表示为它们的线性和（我们不在本篇笔记中证明这一点）：
+  $$
+  \begin{equation*}
+  	f(x) = \sum_{n=1}^\infty c_n\psi_n(x) = \sqrt{\frac{2}{a}}\sum_{n=1}^\infty c_n\sin\left(\frac{n\pi x}{a}\right)
+  \end{equation*}
+  $$
+  这种表示方式被称为 $f(x)$ 的 **傅立叶级数（Fourier Series）**。这个性质也被称为 **狄利克雷定理（Dirichlet's Theorem）**。为了确定这里的常数 $c_n$，我们需要用到一个小技巧：
+  $$
+  \int\psi_m(x)^*f(x)\,dx = \sum_{n=1}^\infty c_n\int\psi_m(x)^*\psi_n(x)\,dx = \sum_{n=1}^\infty c_n\delta_{mn} = c_m
+  $$
+
+上面这四个性质不仅对无限方井，对大多数的势能分布都满足。尤其是正交性和完备性非常有用，我们多数情况下会假设它们成立。
+
+至此，我们得到了无限方井的单个状态的通解（时间相关）：
+$$
+\begin{equation*}
+	\Psi_n(x, t) = \sqrt{\frac{2}{a}}\sin\left(\frac{n\pi x}{a}\right)\exp\left(-i\frac{n^2\pi^2\hbar}{2ma^2}t\right)
+\end{equation*}
+$$
+所有状态叠加起来的通解（时间相关）则是：
+$$
+\begin{equation*}
+	\Psi(x, t) = \sum_{n=1}^\infty c_n\sqrt{\frac{2}{a}}\sin\left(\frac{n\pi x}{a}\right)\exp\left(-i\frac{n^2\pi^2\hbar}{2ma^2}t\right)
+\end{equation*}
+$$
+为了得到 $c_n$，我们可以令 $t = 0$，然后根据正交性得到：
+$$
+\begin{equation*}
+	c_n = \sqrt{\frac{2}{a}}\int_0^a\sin\left(\frac{n\pi x}{a}\right)\Psi(x, 0)\,dx
+\end{equation*}
+$$
+这里的 $c_n$ 满足模平方之和为 $1$，我们可以通过归一化条件得到该结论：
+$$
+\begin{align*}
+	1 = \int |\Psi(x, 0)|^2\,dx
+	&= \int \left[\sum_{m=1}^\infty c_m\psi_m(x)\right]^*\left[\sum_{n=1}^\infty c_n\psi_n(x)\right]\,dx \\
+	&= \sum_{m=1}^\infty \sum_{n=1}^\infty c_m^*c_n\int\psi_m(x)^*\psi_n(x)\,dx \\
+	&= \sum_{m=1}^\infty \sum_{n=1}^\infty c_m^*c_n\delta_{mn} \\
+	&= \sum_{n=1}^\infty |c_n|^2
+\end{align*}
+$$
+同时能量的期望是：
+$$
+\begin{align*}
+	\langle H\rangle 
+	&= \int \Psi^* \hat{H}\Psi\,dx \\
+	&= \int \left(\sum c_m\psi_m\right)^*\hat{H}\left(\sum c_n\psi_n\right)\,dx \\
+	&= \sum\sum c_m^*c_nE_n \int \psi_m^*\psi_n\,dx \\
+	&= \sum|c_n|^2E_n
+\end{align*}
+$$
+
+### 有限方井
+
+一个类似无限方井的设定是 **有限方井（Finite Square Well）**，其势能分布如下：
+$$
+\begin{align*}
+	V(x) = 
+	\begin{cases}
+		-V_0 & -a \le x \le a \\
+		0 & |x| > a
+	\end{cases}
+\end{align*}
+$$
+此处 $V_0$ 是某个常数。针对 $E < 0$ 或 $E > 0$，我们可以将问题分为 **约束状态（Bound State）**和 **分散状态（Scattering State）**。我们先研究前一种情形。当 $x < -a$ 时，$V(x) = 0$，此时有：
+$$
+-\frac{\hbar^2}{2m}\frac{d^2\psi}{dx^2} = E\psi \implies \frac{d^2\psi}{dx^2} = \kappa^2\psi \quad \text{其中 $\kappa = \frac{\sqrt{-2mE}}{\hbar}$}
+$$
+它的通解是：
+$$
+\psi(x) = Ae^{-\kappa x} + Be^{\kappa x}
+$$
+由于第一项会在 $x \to \infty$ 时无意义，得到 $A = 0$。所以当 $x < -a$ 时有：
+$$
+\psi(x) = Be^{\kappa x}
+$$
+类似地，当 $x > a$ 时我们有：
+$$
+\psi(x) = Ce^{-\kappa x}
+$$
+在 $|x| \le a$ 时，$V(x) = -V_0$，此时有：
+$$
+-\frac{\hbar^2}{2m}\frac{d^2\psi}{dx^2} = (V_0 + E)\psi \implies \frac{d^2\psi}{dx^2} = -l^2\psi \quad \text{其中 $l = \frac{\sqrt{2m(E + V_0)}}{\hbar}$}
+$$
+它的通解是：
+$$
+\psi(x) = D\sin(lx) + E\cos(lx)
+$$
+考虑 $V$ 的对称性，为了让 $\psi$ 和 $\frac{d\psi}{dx}$ 在 $\pm a$ 处连续，我们最终得到的应该是类似于下面的结果（注意 $x$ 的范围和前面使用的不太一样）：
+$$
+\psi(x) = 
+\begin{cases}
+	Ce^{-\kappa x} & x > a \\
+	E\cos(lx) & 0 < x < a \\
+	\psi(-x) & x < 0
+\end{cases}
+$$
+其中第二项取余弦而非正弦是因为它在 $x = 0$ 处的梯度是连续的。将边界条件代入，有：
+$$
+\begin{align*}
+\begin{cases}
+	Ce^{-\kappa a} = E\cos(la)  \\
+	-\kappa Ce^{-\kappa a} = -lE\sin(la)
+\end{cases}
+\implies
+\kappa = l\tan{la}
+\end{align*}
+$$
+回忆 $l$ 是一个和 $E$ 相关的变量，因此这个公式给出了所有可能的 $E$。为了得到更好的形式，记 $z = la$，$z_0 = \frac{a}{\hbar}\sqrt{2mV_0}$。由我们对 $\kappa$ 和 $l$ 的定义，有 $\kappa^2 + l^2 = \frac{2mV_0}{\hbar^2}$，也即 $\kappa^2 + l^2 = (\frac{z_0}{a})^2$，将 $l = \frac{z}{a}$ 代入后得到：
+$$
+\tan{z} = \sqrt{\left(\frac{z_0}{z}\right)^2 - 1}
+$$
+再次回顾上式中变量的含义：$z_0$ 是和问题设置有关的常量，$z$ 是和 $E$ 相关的量。下面是当 $z_0 = 8$ 时的示意图：
+
+<img src="graphs/qm1_2-2.png" alt="qm1_2-2" style="zoom:80%;" />
+
+可以看到，只有 $\tan{z} = \sqrt{(z_0/z)^2-1}$ 的地方，$z$ 对应的能量才是允许取的值。让我们针对 $z_0$ 的两种极端情形讨论有限方井的性质：
+
+- 深且宽的方井：当 $z_0$ 很大时，上图中的 $\sqrt{(z_0/z)^2-1}$ 图像会向上移动到较高的地方，此时它与 $z$ 轴的交点也会大幅向右移动。观察 $\tan{z}$ 的图像，可以发现它和 $\sqrt{(z_0/z)^2 - 1}$ 的交点会在大约 $z_n = n\pi/2$ 的位置，此时对应的能量是：
+  $$
+  \begin{equation*}
+  	E_n + V_0 \approx \frac{n^2\pi^2\hbar^2}{2m(2a)^2} \quad \text{其中 $n$ 是奇数}
+  \end{equation*}
+  $$
+  等式右侧这个形式我们应该比较熟悉：它完美对应了宽度为 $2a$ 的无限方井中允许取的能量里一半的情形。这也符合我们的预期：当方井深度无限加大时（$V_0 \to \infty$），它就类似于一个无限方井。
+
+- 浅且窄的方井：当 $z_0$ 变小时，能取得的状态会越来越少；当 $z_0 < \frac{\pi}{2}$ 时只有一个。有趣的事，无论 $z_0$ 多么小，始终至少有一个合法的状态。
+
+现在研究 $E > 0$，即分散状态下的方井。此时对于 $x < -a$ 有：
+$$
+\begin{equation*}
+	\psi(x) = Ae^{ikx} + B^{-ikx} \qquad \text{其中 $k = \frac{\sqrt{2mE}}{\hbar}$}
+\end{equation*}
+$$
+
+
+### 自由粒子
+
+这一节讨论没有任何约束的环境，即：
+$$
+V(x) = 0
+$$
+此时薛定谔方程变为：
+$$
+-\frac{\hbar^2}{2m}\frac{d^2\psi}{dx^2} = E\psi \implies \frac{d^2\psi}{dx^2} = -k^2\psi \qquad \text{其中 $k = \frac{\sqrt{2mE}}{\hbar}$}
+$$
+其通解为（值得一提的是，我们使用了指数形式而非三角函数形式，其原因很快就会说明）：
+$$
+\begin{equation*}
+	\psi(x) = Ae^{ikx} + Be^{-ikx}
+\end{equation*}
+$$
+至此，一切和无限方井的情况相同，但现在我们没有任何边界条件，所以不需要确定 $A$ 和 $B$ 的值。时间相关的波函数解即是：
+$$
+\begin{equation*}
+	\Psi(x, t) = A^{ik\left(x - \frac{\hbar k}{2m}t\right)} + Be^{-ik\left(x + \frac{\hbar k}{2m}\right)}
+\end{equation*}
+$$
+对这个方程进行简单分析，可以看出第一项是一个从左向右传播的波，第二项是从右向左传播的波，它们速度相同方向相反（大小和 $k$ 有关）。因此我们可以根据 $k$ 的值确定波函数：
+$$
+\begin{equation*}
+	\Psi_k(x, t) = Ae^{i\left(kx - \frac{\hbar k^2}{2m}t\right)}
+\end{equation*}
+$$
+这里的 $k$ 是任何满足下列的常数：
+$$
+\begin{equation*}
+	k = \pm \frac{\sqrt{2mE}}{\hbar}
+\end{equation*}
+$$
+根据德布罗意公式 $p = \frac{2\pi\hbar}{\lambda}$，我们可以计算出波的动量：
+$$
+\begin{equation*}
+	p = \hbar k
+\end{equation*}
+$$
+波的传递速度是（通过求波函数中 $x$ 和 $t$ 的系数比值得到）：
+$$
+\begin{equation*}
+	v_\text{quantum} = \frac{\hbar |k|}{2m} = \sqrt{\frac{E}{2m}}
+\end{equation*}
+$$
+我们注意到它和经典物理中速度的区别（通过动能公式 $E = \frac{1}{2}mv^2$ 得到）：
+$$
+\begin{equation*}
+	v_\text{classical} = \sqrt{\frac{2E}{m}} = 2v_\text{quantum}
+\end{equation*}
+$$
+这个差异究竟是为什么？此外，如果我们尝试对自由粒子的波函数归一化，会发现无法完成：
+$$
+\begin{equation*}
+	\int_{-\infty}^\infty \Psi_k\Psi_k\,dx = |A|^2\int_{-\infty}^\infty\,dx = +\infty
+\end{equation*}
+$$
+对此的解释是，$\Psi_k$ 无法代表自由粒子的一个合理状态：这和无限方井是不同的。我们需要将所有 $k$ 的情形都考虑在内才能得到合理的状态。由于 $k$ 不是离散的，我们需要求积分而非求和：
+$$
+\begin{equation*}
+	\Psi(x, t) = \frac{1}{\sqrt{2\pi}}\int_{-\infty}^{\infty}\phi(k)e^{i(kx - \frac{\hbar k^2}{2m}t)}\,dk
+\end{equation*}
+$$
+上式中凭空出现的 $\frac{1}{\sqrt{2\pi}}\phi(k)$ 是用来对这个积分归一化的参数。为了算出这个 $\phi(k)$，我们只需要尝试将 $\Psi(x, 0)$ 归一化。根据 **普朗歇尔定理（Plancherel's Theorem）**，有：
+$$
+f(x) = \frac{1}{\sqrt{2\pi}}\int_{-\infty}^\infty F(k)e^{ikx}\,dk \Longleftrightarrow F(k) = \frac{1}{\sqrt{2\pi}}\int_{-\infty}^\infty f(x)e^{-ikx}\,dx
+$$
+这里 $F(k)$ 是 $f(x)$ 的 **傅立叶变换（Fourier Transform）**，$f(x)$ 是 $F(k)$ 的 **逆傅立叶变换（Inverse Fourier Tranform）**。这样我们就得到了 $\phi(k)$ 的公式：
+$$
+\begin{equation*}
+	\phi(k) = \frac{1}{\sqrt{2\pi}}\int_{-\infty}^\infty \Psi(x, 0)e^{-ikx}\,dx
 \end{equation*}
 $$
