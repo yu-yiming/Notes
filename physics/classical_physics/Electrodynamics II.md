@@ -383,7 +383,7 @@ $$
 $$
 \nabla\cdot \mathbf{J} = -\frac{\partial \rho}{\partial t} = -\frac{\partial}{\partial t}(\epsilon_0\nabla\cdot \mathbf{E}) = -\nabla\cdot\left(\epsilon_0\frac{\partial \mathbf{E}}{\partial t}\right)
 $$
-因此，安培定律可以被修正为：
+因此，安培定律可以被修正为 **安培-麦克斯韦定律（Ampere-Maxwell's Law）**：
 $$
 \begin{equation*}
 	\marginbox{\nabla\times\mathbf{B} = \mu_0\mathbf{J} + \mu_0\epsilon_0\frac{\partial \mathbf{E}}{\partial t}}
@@ -762,7 +762,7 @@ $$
 至此我们已经得到了电磁场的能量公式 $(\ref{electromagnetic-energy-density})$ 以及动量公式 $(\ref{electromagnetic-momentum})$。角动量可以从动量计算得到：
 $$
 \begin{equation*}
-	\mathbf{\mathscr{l}} = \mathbf{r}\times\mathbf{g} = \epsilon_0\mathbf{r}\times(\mathbf{E}\times\mathbf{B})
+	\boldsymbol{\ell} = \mathbf{r}\times\mathbf{g} = \epsilon_0\mathbf{r}\times(\mathbf{E}\times\mathbf{B})
 \end{equation*} \tag{8.24} \label{electromagnetic-anguar-momentum}
 $$
 不难发现即使是静态的电磁场依然有动量和角动量（因为 $\mathbf{E}\times\mathbf{B}$ 不为零）。因此只有将电磁场的这些量考虑进来，系统的总动量和总角动量才能守恒。这多少也解释了本节开头牛顿第三定律在电磁场中“不成立”的原因。
@@ -779,3 +779,239 @@ $$
 $$
 f(z, t) = f(z - vt, 0) = g(z - vt)
 $$
+因此，形如下面这样的函数是合理的波方程：
+
+- $f(z, t) = Ae^{-b(z-vt)^2}$
+- $A\sin[b(z - vt)]$
+
+任何 $z$ 和 $t$ 不能只以 $z - vt$ 形式组合的方程都不是我们要的波方程。
+
+下面，让我们尝试得到所有波都能满足的偏微分方程。让我们用一段绳子的波动模型来模拟任意波的特征，参考下面的示意图：
+
+<img src="graphs/ed2_9-1.png" alt="ed2_9-1" style="zoom:80%;" />
+
+对于一段绳子上的一点，其附近受到的拉力和该点受到的拉力可以近似为相同的 $T$。此时，绳子横向上变化的力是：
+$$
+\Delta F = T\sin\theta' - T\sin\theta
+$$
+这里假设 $\theta$ 是一个很小的量，此时 $\sin\theta \sim \tan\theta$，因此有：
+$$
+\Delta F \approx T\tan\theta' - T\tan\theta = T\left(\left.\frac{\partial f}{\partial z}\right|_{z + \Delta z} - \left.\frac{\partial f}{\partial z}\right|_z\right) = T\frac{\partial^2 f}{\partial z^2}\Delta z
+$$
+假设单位长度绳子的质量是 $\mu$，则根据牛顿第二定律：
+$$
+\Delta F = \mu\Delta z\frac{\partial^2 f}{\partial t^2}
+$$
+将前面两个式子结合，我们就得到了 **波方程（Wave Equation）**：
+$$
+\begin{equation*}
+	\frac{\partial^2 f}{\partial z^2} = \frac{1}{v^2}\frac{\partial^2 f}{\partial t^2}
+\end{equation*}
+$$
+其中 $v$ 是波的 **传播速度（Speed of Propagation）**，随后我们还有另一个称呼它的名字：
+$$
+\begin{equation*}
+	v = \sqrt{\frac{T}{\mu}}
+\end{equation*}
+$$
+解决这个方程的方法是我们在前一篇笔记中就用到的 **分离变量法（Separation of Variables）**：假设波方程的解可以表示为 $f(z, t) = g(z)h(t)$ 的形式，将 $g(z)$ 和 $h(t)$ 代入方程后得到：
+$$
+\frac{1}{g}\frac{d^2 g}{dz^2} = \frac{1}{v^2}\frac{1}{h}\frac{d^2 h}{dt^2} = -k^2
+$$
+其中 $k \in \mathbb{R}$ 是一个常数。此时可以分别解得两个常微分方程的解：
+$$
+\begin{align*}
+	g(z) &= Ae^{ikz} \\
+	h(t) &= Be^{i\omega t} + Ce^{-i\omega t}
+\end{align*}
+$$
+其中 **角频率（Angular Frequency）** $\omega = v|k|$，这个等式也被称为 **色散关系（Dispersion Relation）**。上面的两个解看起来并不对称。这是因为 $k$ 可以取正或负数，所以指数项只需要 $ikz$ 而不需要 $-ikz$；然而习惯上 $\omega$ 一定是正数，因此需要两项表示。将两者结合，我们就得到了一个通解：
+$$
+\begin{equation*}
+	f(z, t) = De^{i(kz + \omega t)} + Ee^{i(kz - \omega t)}
+\end{equation*}
+$$
+不难看出第一项是一个向 $-z$ 方向运动的波，而第二项是向 $z$ 方向运动的波。由于 $k$ 可以取 *任意的* 实数，波方程真正的通解应该是所有上面这样的 $f$ 的线性组合，也即下面这个形式：
+$$
+\begin{equation*}
+	f(z, t) = \int_{-\infty}^{\infty}\left( D(k)e^{i(kz - \omega(k)t)} + E(k)e^{i(kz + \omega(k)t)}\right)\,dk
+\end{equation*}
+$$
+至此我们对“常数” $D$ 和 $E$ 尚一无所知。不要忘记，我们的波函数一定是一个实数解！虚数解在当前没有任何意义。因此有一个很重要的限制：
+$$
+E(k) = D^*(-k)
+$$
+此条件成立时，前式中积分里的第二项就变成了第一项的共轭，此时有：
+$$
+\begin{align*}
+	f(z, t) &= \int_{-\infty}^\infty \left(D(k)e^{i(kz - \omega(k) t)} + D^*(k)e^{-i(kz - \omega(k)t)}\right)\,dk \\
+	&= 2\Re \int_{-\infty}^\infty D(k)e^{i(kz - \omega(k)t)}\,dk
+\end{align*}
+$$
+其中 $\Re$ 表示取复数的实数部分。在一些情况下，复数更易于操作，因此我们定义下面这个辅助波函数：
+$$
+\begin{equation*}
+	\tilde{f}(z, t) = \int_{-\infty}^{\infty}A(k)e^{i(kz - \omega(k)t)}\,dk
+\end{equation*}
+$$
+此处 $A(k) = 2D(k)$。这个定义下，有物理意义的波函数可以写为：
+$$
+\begin{equation*}
+	f(z, t) = \Re \tilde{f}(z, t)
+\end{equation*}
+$$
+在线性变换下，复数形式的波函数和实数形式是等价的，但计算到最后要记得取实数部分。特别地，下面这个波函数的复数解非常常见：
+$$
+\begin{equation*}
+	f(z, t) = Ae^{i(kz - \omega t)}
+\end{equation*}
+$$
+上面讨论的是一维空间的波方程和它的解，但是我们不难将其扩展到三维空间。这里不再深入说明。三维空间的波方程如下：
+$$
+\begin{equation*}
+	\nabla^2 f = \frac{1}{v^2}\frac{\partial^2 f}{\partial t^2}
+\end{equation*}
+$$
+它的复数解如下：
+$$
+\begin{equation*}
+	f(\mathbf{r}, t) = A(\mathbf{k})e^{i(\mathbf{k}\cdot\mathbf{r} - \omega t)}
+\end{equation*}
+$$
+其中，$\mathbf{k}$ 是描述波传播方向的向量，$\omega$ 依然满足之前定义的色散关系。
+
+### 真空中的电磁波
+
+现在让我们回到电磁场。回忆真空中的麦克斯韦方程组在 $\rho = 0$ 且 $\mathbf{J} = \mathbf{0}$ 的情形，此时 $\mathbf{E}$ 和 $\mathbf{B}$ 两个场的散度均为 $0$，但它们的旋度满足：
+$$
+\nabla \times \mathbf{E} = -\frac{\partial \mathbf{B}}{\partial t} \qquad \nabla \times \mathbf{B} = \mu_0\epsilon_0\frac{\partial \mathbf{E}}{\partial t}
+$$
+对它们分别再此求旋度，可以得到：
+$$
+\begin{equation*}
+	\nabla^2\mathbf{E} = \mu_0\epsilon_0\frac{\partial^2 \mathbf{E}}{\partial t^2} \qquad \nabla^2 \mathbf{B} = \mu_0\epsilon_0 \frac{\partial^2 \mathbf{B}}{\partial t^2}
+\end{equation*}
+$$
+它们完全满足波方程的定义；这里我们也见识到了位移电流的重要性（否则根本无法化到这样的形式）。特别地，这里的常数 $\mu_0\epsilon_0$ 满足下面的关系：
+$$
+\begin{equation*}
+	c = \frac{1}{\sqrt{\mu_0\epsilon_0}}
+\end{equation*}
+$$
+其中 $c$ 是光速。至此，我们得到了一个难以相信的巧合：电磁场在真空中以光速传播。要知道，$\epsilon_0$ 和 $\mu_0$ 是分别单独从实验中测试得出的，但是它们积居然是光速平方的倒数！这不禁暗示我们光也是某种形式的电磁波。
+
+值得注意的是，上面得到的两个波方程的解都是向量，因此在三维空间中每个都相当于是三个波方程。
+
+#### 单色平面波
+
+由上面的电磁波方程我们可以得到复数解：
+$$
+\begin{equation*}
+	\tilde{\mathbf{E}}(\mathbf{r}, t) = \tilde{\mathbf{E}}_0e^{i(\mathbf{k}\cdot\mathbf{r} - \omega t)} \qquad \tilde{\mathbf{B}}(\mathbf{r}, t) = \tilde{\mathbf{B}}_0e^{i(\mathbf{k}\cdot\mathbf{r} - \omega t)}
+\end{equation*}
+$$
+这里的常数 $\tilde{\mathbf{E}}_0$ 和 $\tilde{\mathbf{B}}_0$ 也是复数。一个将他们变成实数的常用方式是写成如下的形式：
+$$
+\begin{equation*}
+	\tilde{\mathbf{E}}_0 = \mathbf{E}_0e^{i\delta} \qquad \tilde{\mathbf{B}}_0 = \mathbf{B}_0e^{i\delta}
+\end{equation*}
+$$
+后面我们会再谈论这一点。现在为了找到电磁波的更多性质，让我们尝试将解再次代入麦克斯韦方程组。首先是测试它们的散度：
+$$
+\begin{align*}
+	\nabla \cdot \tilde{\mathbf{E}}
+	&= \nabla \cdot \tilde{\mathbf{E}}_0e^{i(\mathbf{k}\cdot\mathbf{r} - \omega t)} \\
+	&= \left(\tilde{\mathbf{E}}_0^x\frac{\partial}{\partial x} + \tilde{\mathbf{E}}_0^y\frac{\partial}{\partial y} + \tilde{\mathbf{E}}_0^z\frac{\partial}{\partial z} \right) e^{i(k_x\unit{x} + k_y\unit{y} + k_z\unit{z} - \omega t)} \\
+	&= \left(ik_x\tilde{\mathbf{E}}_0^x + ik_y\tilde{\mathbf{E}}_0^y + ik_z\tilde{\mathbf{E}}_0^z\right) e^{i(\mathbf{k}\cdot\mathbf{r} - \omega t)} \\
+	&= i\mathbf{k}\cdot \tilde{\mathbf{E}}_0 e^{i(\mathbf{k}\cdot\mathbf{r} - \omega t)}
+\end{align*}
+$$
+由于等式左侧一定是 $0$，因此我们得到 $\mathbf{k}\cdot\mathbf{E} = 0$。类似地，$\mathbf{B}$ 也和电磁波传播方向垂直。然后，我们再测试它的旋度：
+$$
+\begin{align*}
+	\nabla\times\tilde{\mathbf{E}}
+	&= \nabla \times \tilde{\mathbf{E}}_0e^{i(\mathbf{k}\cdot\mathbf{r} - \omega t)} \\
+	&= i\mathbf{k}\times\tilde{\mathbf{E}}_0e^{i(\mathbf{k}\cdot\mathbf{r} - \omega t)} \\
+	-\frac{\partial \tilde{\mathbf{B}}_0}{\partial t} &= \omega\tilde{\mathbf{B}}_0
+\end{align*}
+$$
+两个等式相等，因此有：
+$$
+\tilde{\mathbf{B}}_0 = i\frac{\mathbf{k}}{\omega}\times\tilde{\mathbf{E}}_0e^{i(\mathbf{k}\cdot\mathbf{r} - \omega t)}
+$$
+回忆此前利用相位差将复数写成实数乘以 $e^{i\delta}$ 的形式，对式子两边求绝对值并去掉所有 $e$ 的指数项（因为它们不影响绝对值大小），有：
+$$
+|\mathbf{B}_0| = \left|\frac{\mathbf{k}}{\omega}\times\mathbf{E}_0\right| = \frac{1}{c}|\mathbf{E}_0|
+$$
+如果设 $\mathbf{E}$ 方向的单位矢量为 $\unit{n}$，$\mathbf{B}$ 的方向就可以写成 $\unit{k}\times\unit{n}$。这样我们就得到下面的关系式：
+$$
+\begin{align*}
+	\tilde{\mathbf{E}}_0 &= \tilde{E}_0\unit{n} \qquad \tilde{\mathbf{B}}_0 = \frac{1}{c}\tilde{E}_0(\unit{k}\times\unit{n})
+\end{align*}
+$$
+从上面不难看出电磁波的传播方向、电场方向和磁场方向是相互垂直的，下图是这个结论的直观展示：
+
+<img src="graphs/ed2_9-2.png" alt="ed2_9-2" style="zoom:80%;" />
+
+最后，我们需要电磁场的实数解，因此要取解的实部：
+$$
+\mathbf{E} = E_0\unit{n}\cos(\mathbf{k}\cdot\mathbf{r} - \omega t + \delta) \qquad \mathbf{B} = \frac{1}{c}E_0(\unit{k}\times\unit{n})\cos(\mathbf{k}\cdot\mathbf{r} - \omega t + \delta)
+$$
+我们称上面这种形式的电磁波为 **单色平面波（Monochromatic Plane Wave）**，单色是因为其 $\omega$ 是一个（由 $\mathbf{k}$ 决定的）常数，其对应了固定的频率，在可见光中就是单种颜色。平面波则描述了其“每个垂直于其传播方向的平面上电磁场都处处匀强”这一特点。
+
+#### 电磁波的能量和动量
+
+回忆电磁场的能量密度 $u$ 和动量密度 $\mathbf{g}$。我们可以根据其定义迅速计算出电磁波的能量密度和动量密度：
+$$
+\begin{align*}
+	u &= \frac{1}{2}\left(\epsilon_0 E^2 + \frac{1}{\mu_0} B^2 \right) = \epsilon_0E^2 \\
+	\mathbf{g} &= \epsilon_0(\mathbf{E}\times\mathbf{B}) = \frac{1}{c}\epsilon_0E^2\unit{k} = \frac{1}{c}u\unit{k} \\
+	\mathbf{S} &= \frac{1}{\mu_0}(\mathbf{E}\times\mathbf{B}) = c\epsilon_0E^2\unit{k} = cu\unit{k}
+\end{align*}
+$$
+第三个式子可以写成 $\mathbf{S} = u\mathbf{c}$ 的形式，可以将其类比 $\mathbf{J} = \rho\mathbf{v}$。不过在现实问题中，由于光的波长极小（约数百纳米），我们通常不关心某一点，而是一段空间的能量和动量，此时我们需要的是它们的平均值。对于函数 $\cos^2 x$，我们可以简单估计其在多个周期的平均值为 $1/2$。因此：
+$$
+\begin{align*}
+	\langle u \rangle &= \frac{1}{2}\epsilon_0E^2 \\
+	\langle \mathbf{g} \rangle &= \frac{1}{2c}\epsilon_0E_0^2\unit{k} \\
+	\langle \mathbf{S} \rangle &= \frac{1}{2}c\epsilon_0E_0^2\unit{k} 
+\end{align*}
+$$
+特别地，记：
+$$
+\begin{equation*}
+	I = \langle S \rangle = \frac{1}{2}c\epsilon_0 E_0^2
+\end{equation*}
+$$
+为电磁波的 **强度（Intensity）**。值得一提的是光强度产生的 **辐射压（Radiation Pressure）**：当光线被平面 *完全* 吸收时，其动量会转换为对平面的压强：
+$$
+P = \frac{1}{A}\frac{\Delta p}{\Delta t} = \frac{1}{A}\frac{\langle \mathbf{g}\rangle A c\Delta t}{\Delta t} = \frac{1}{2}\epsilon_0E_0^2 = \frac{I}{c}
+$$
+如果光线被 *完全* 反射回去，则这个压强会翻倍（因为相当于动量被等量反向了）。如果单纯从电磁场受力的角度分析，可以认为电场让物体表面的电荷移动（方向为 $\unit{n}$），然后磁场对其产生方向为 $\mathbf{k}$ 的作用力。这就是压强的来源。
+
+### 物质中的电磁波
+
+#### 线性介质
+
+在线性介质中，我们有下面的本构关系：
+$$
+\mathbf{D} = \epsilon\mathbf{E} \qquad \mathbf{H} = \frac{1}{\mu}\mathbf{B}
+$$
+可以得到基本相同的波方程：
+$$
+\nabla^2\mathbf{E} = \mu\epsilon\frac{\partial^2 \mathbf{E}}{\partial t^2} \qquad \nabla^2\mathbf{B} = \mu\epsilon\frac{\partial \mathbf{B}}{\partial t^2}
+$$
+此时，电磁波的速度变成：
+$$
+\begin{equation*}
+	v = \frac{1}{\sqrt{\mu\epsilon}} = \frac{c}{n}
+\end{equation*}
+$$
+其中 **折射率（Index of Refraction）** 定义为：
+$$
+\begin{equation*}
+	n = \sqrt{\frac{\mu\epsilon}{\mu_0\epsilon_0}}
+\end{equation*}
+$$
+值得一提的是，由于在大多数介质中 $\mu \approx \mu_0$，因此 $n \approx \sqrt{\epsilon_r}$。
+
