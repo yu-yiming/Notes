@@ -1013,5 +1013,143 @@ $$
 	n = \sqrt{\frac{\mu\epsilon}{\mu_0\epsilon_0}}
 \end{equation*}
 $$
-值得一提的是，由于在大多数介质中 $\mu \approx \mu_0$，因此 $n \approx \sqrt{\epsilon_r}$。
+值得一提的是，由于在大多数介质中 $\mu \approx \mu_0$，因此 $n \approx \sqrt{\epsilon_r}$。通常 $\epsilon_r > 1$ ，此时 $v < c$。但在 X 射线范围的多数介质 $\epsilon_r < 1$，此时会得到 $v > c$！甚至有一些 **超材料（Meta Material）** 在微波范围内有 $n < 0$。这些“荒谬”的结论似乎违反了相对论，其实不然。我们在后文介绍吸收和色散时会再讲到这一点。
+
+在线性介质中，单色平面波的能量密度是：
+$$
+\begin{align*}
+	u &= \frac{1}{2}(\mathbf{D}\cdot\mathbf{E} + \mathbf{H}\cdot\mathbf{B}) \\
+	&= \frac{1}{2}\left(\epsilon E^2 + \frac{1}{\mu}B^2\right) \\
+	&= \epsilon E^2
+\end{align*}
+$$
+需要注意上面这种能量的计算方式没有考虑束缚电荷。此时得到的坡印廷矢量是：
+$$
+\begin{equation*}
+	\mathbf{S} = \frac{1}{\mu}\mathbf{E}\times\mathbf{B} = v\epsilon E^2\unit{k} = \frac{1}{n}cu\unit{k}
+\end{equation*}
+$$
+强度是：
+$$
+\begin{equation*}
+	I = \langle \mathbf{S} \rangle = \frac{1}{2n}cu\unit{k}
+\end{equation*}
+$$
+
+#### 电磁波的反射和透射
+
+现在让我们考虑电磁波在两种介质边界处的行为。假设一条电磁波在 $\epsilon_1$、$\mu_1$ 的介质中以一定角度射向 $\epsilon_2$、$\mu_2$ 的另一种介质。按照我们的常识，可以推测电磁波会发生反射，即以一定角度折回第一种介质；同时，也会有一部分电磁波透射到第二种介质中。让我们将 **入射波（Incident Wave）** 下标记为 $I$，**反射波（Reflected Wave）** 下标记为 $R$，**透射波（Transmissive Wave）** 下标记为 $T$。我们首先假设两种介质边界和 $z$ 轴垂直，参考下图：
+
+![ed2_9-3](graphs/ed2_9-3.png)
+
+此时我们可以列出下面的波方程解：
+$$
+\begin{align*}
+	\text{(I)}
+	\begin{cases}
+		\displaystyle
+		\tilde{\mathbf{E}}_I = \tilde{\mathbf{E}}_{I0}e^{i(\mathbf{k}_I\cdot\mathbf{r} - \omega t)} \\
+		\tilde{\mathbf{B}}_I = \dfrac{1}{v_1}\tilde{E}_{I0}\unit{y}e^{i(\mathbf{k}_I\cdot\mathbf{r} - \omega t)}
+	\end{cases} &&
+	\text{(R)}
+	\begin{cases}
+		\tilde{\mathbf{E}}_R = \tilde{\mathbf{E}}_{R0}e^{i(\mathbf{k}_R\cdot\mathbf{r} - \omega t)} \\
+		\tilde{\mathbf{B}}_R = -\dfrac{1}{v_1}\tilde{{E}}_{R0}\unit{y}e^{i(\mathbf{k}_R\cdot\mathbf{r} - \omega t)}
+	\end{cases} &&
+	\text{(T)}
+	\begin{cases}
+		\tilde{\mathbf{E}}_T = \tilde{\mathbf{E}}_{T0}e^{i(\mathbf{k}_T\cdot\mathbf{r} - \omega t)} \\
+		\tilde{\mathbf{B}}_T = \dfrac{1}{v_2}\tilde{{E}}_{T0}\unit{y}e^{i(\mathbf{k}_T\cdot\mathbf{r} - \omega t)}
+	\end{cases}
+\end{align*}
+$$
+其中入射和反射波满足 $|\mathbf{k}_I| = |\mathbf{k}_R| = \dfrac{\omega}{v_1}$。考虑介质中的边界条件：
+$$
+\begin{align*}
+	& \text{(i)} \quad \epsilon_1E_1^\perp - \epsilon_2E_2^\perp = \sigma_f = 0 \\
+	& \text{(ii)} \quad B_1^\perp - B_2^\perp = 0 \\
+	& \text{(iii)} \quad E_1^\parallel - E_2^\parallel = 0 \\
+	& \text{(iv)} \quad \frac{1}{\mu_1}\mathbf{B}_1^\parallel - \frac{1}{\mu_2}\mathbf{B}_2^\parallel = \mathbf{K}_f\times \unit{n} = \mathbf{0}
+\end{align*}
+$$
+代入第一条可以得到：
+$$
+\left.\epsilon_1\left(\tilde{E}_{I0}^z e^{i\mathbf{k}_I\cdot \mathbf{r}} + \tilde{E}_{R0}^z e^{i\mathbf{k}_R\cdot\mathbf{r}}\right)\right|_{z=0} = \left.\epsilon_2\tilde{E}_{T0^z}e^{i\mathbf{k}_T\cdot\mathbf{r}}\right|_{z=0}
+$$
+此处我们可以断言当 $z = 0$ 时有 $\mathbf{k}_I\cdot\mathbf{r} = \mathbf{k}_R\cdot\mathbf{r} = \mathbf{k}_T\cdot\mathbf{r}$；由于 $x$、$y$ 取值可以是任意的，因此我们得到：
+$$
+k_I^x = k_R^x = k_T^x \qquad k_I^y = k_R^y = k_T^y
+$$
+因此我们可以假设 $k_I^y = k_R^y = k_T^y = 0$，此时三条波都正好在 $x$-$z$ 平面上，我们称其为 **入射平面（Incidence Plane）**。此时如果让电场的方向在此平面上，我们称此为 **P 极化（P-Polarization）**，磁场方向就正好也在 $y$ 轴平行的方向。对于 $x$ 方向我们可以写出等价的式子：
+$$
+k_I\sin\theta_I = k_R\sin\theta_R = k_T\sin\theta_T
+$$
+由此可以得到两个重要的结论，即反射角等于入射角：
+$$
+\theta_I = \theta_R
+$$
+以及著名的 **斯涅耳定律（Snell's Law）**：
+$$
+n_1\sin\theta_I = n_2\sin\theta_T
+$$
+其暗示了电磁波平行于介质边界平面的速度分量在穿过边界前后不变。
+
+接下来让我们确定 $\tilde{E}_{I0}$ 和 $\tilde{E}_{R0}$ 与 $\tilde{E}_{T0}$ 之间的关系。将波方程解再次代入边界条件：
+$$
+\begin{align*}
+    \text{(i)} &\implies -\epsilon_1\tilde{E}_{I0}\sin\theta_I + \epsilon_1\tilde{E}_{R0}\sin\theta_I = -\epsilon_2\tilde{E}_{T0}\sin\theta_T \\
+    &\implies \tilde{E}_{I0} - \tilde{E}_{R0} = \beta\tilde{E}_{T0} \\
+    \text{(iii)} &\implies \tilde{E}_{I0}\cos\theta_I + \tilde{E}_{R0}\cos\theta_I = \tilde{E}_{T0}\cos\theta_T \\
+    &\implies \tilde{E}_{I0} + \tilde{E}_{R0} = \alpha\tilde{E}_{T0} \\
+\end{align*}
+$$
+其中 $\alpha$ 和 $\beta$ 是和设置相关的常数：
+$$
+\begin{align*}
+	\alpha = \frac{\cos\theta_T}{\cos\theta_I} \qquad \beta = \frac{\epsilon_2n_1}{\epsilon_1n_2} = \frac{\mu_1v_1}{\mu_2v_2}
+\end{align*}
+$$
+这样就可以得到下面的 **菲涅耳公式（Fresnel Formulae）**：
+$$
+\begin{align*}
+	\tilde{E}_{R0} = \frac{\alpha - \beta}{\alpha + \beta}\tilde{E}_{I0} \\
+	\tilde{E}_{T0} = \frac{2}{\alpha + \beta}\tilde{E}_{I0}
+\end{align*}
+$$
+需要注意的是，至此我们的结论都是以 P 极化作为前提，在 **S 极化（S-Polarization）**，即电场和入射平面垂直的时候，得到结果略有不同。注意到：
+$$
+\alpha = \frac{\sqrt{1 - \sin^2\theta_T}}{\cos\theta_I} = \frac{1}{\cos\theta_I}\sqrt{1 - \left(\frac{n_1}{n_2}\sin\theta_I\right)^2}
+$$
+当 $n_2 > n_1$ 时，如果 $\theta_I \to \pi/2$，我们得到 $\alpha \to \infty$，此时入射波几乎完全反射回去，$\tilde{E}_{R0} \gg \tilde{E}_{T0}$。此外，当 $\alpha = \beta$ 时，所有入射光都会转化为透射光，此时的入射角满足：
+$$
+\sin^2\theta_I = \frac{1 - \beta^2}{(n_1/n_2)^2 - \beta^2}
+$$
+我们称这个角度 $\theta_I = \theta_B$ 为 **布鲁斯特角（Brewster Angle）**。如之前所提到的，多数情况下 $\mu_1 \approx \mu_2 \approx \mu_0$，此时可以近似得到：
+$$
+\tan\theta_B = \frac{n_2}{n_1}
+$$
+最后，让我们观察三条波的强度关系。$z$ 方向上的强度是：
+$$
+\begin{align*}
+	I_I = \frac{1}{2}\epsilon_1v_1E_{I0}^2\cos\theta_I \\
+	I_R = \frac{1}{2}\epsilon_1v_1E_{R0}^2\cos\theta_I \\
+	I_T = \frac{1}{2}\epsilon_2v_2E_{T0}^2\cos\theta_T
+\end{align*}
+$$
+它们的比值是：
+$$
+R = \frac{I_R}{I_I} = \left(\frac{\alpha - \beta}{\alpha + \beta}\right)^2 \\
+T = \frac{I_T}{I_I} = \alpha\beta\left(\frac{2}{\alpha + \beta}\right)^2
+$$
+其中 $R$ 是 **反射系数（Reflection Coefficient）**，$T$ 是 **透射系数（Transmission Coefficient）**。不难观察得到：
+$$
+R + T = 1
+$$
+下面是这两个系数关于入射角的函数示意图：
+
+![ed2_9-4](graphs/ed2_9-4.png)
+
+### 导体中的电磁波
+
+
 
