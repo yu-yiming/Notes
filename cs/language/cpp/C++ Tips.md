@@ -1165,6 +1165,219 @@ void Foo<int>::foo() {      // 只对一个成员函数进行特化
 
 ### 模块与头文件
 
+数十年来，**C++** 都通过头文件的方式将标识符的声明、内联函数/变量、类与模板等信息引入源文件。某种角度来说它已经非常成熟，因为迄今为止几乎所有的 **C++**（以及 **C**）程序都是通过这种方式组织的。它让 **C++** 代码有文件层面的封装性，因为只有在头文件中的标识符才会被显式暴露出来，同时我们可以将标识符的定义隐藏在源文件中；但它也非常原始，其体现在下面几点：
+
+- 每个需要某头文件的源文件都会将其 *所有* 代码复制过来。这是预处理阶段进行的工作。这会导致源代码的大小膨胀，拖慢编译速度。即使是一个 Hello World 程序，由于引入了 `<iostream>` 头文件，在预处理后的代码多达数千行，其中大部分是不需要的代码。
+
+- 由于 `#include` 指令基本上是文本替换，如果重复引入头文件会违反 **ODR**。通常使用 **头文件保护符（Header Guard）** 或 `#pragma once` 来确保一个头文件只会被引入一次。详细如下：
+
+  - 头文件保护符利用了条件编译：
+
+    ```cpp
+    // header.hpp
+    #ifndef HEADER_HPP
+    #   define HEADER_HPP
+    // contents
+    #endif // #ifndef HEADER_HPP
+    ```
+
+    上面这个头文件在第一次引入时，编译器没有找到宏 `HEADER_HPP` 的定义，因此会进入条件编译的分支，首先定义这个宏，然后编译后面头文件的内容。如果再次引入 `header.hpp`，由于此时已经定义了 `HEADER_HPP`，就不会编译 `#ifndef` 中的内容。
+
+  - `#pragma once` 是更加美观的用法，它根据文件路径限定某个文件只会被引入一次：
+
+    ```cpp
+    // header.hpp
+    #pragma once
+    ```
+
+    不过如果同一个头文件的内容被复制到了多个路径，这个方法就无法避免重复引入了。
+
+  不要认为重复引入头文件很难发生。**C++** 中经常会出现“菱形依赖”，此时根据预处理的机制，一个头文件会先后被多个头文件引入，随后这些头文件再被某个文件引入时，就会发生重复引入。参考下面的例子：
+
+  ```cpp
+  // a.hpp
+  #include "header.hpp"
+  // b.hpp
+  #include "header.hpp"
+  // c.cpp
+  #include "a.hpp"    // 间接引入了 header.hpp
+  #include "b.hpp"    // 再次间接引入了 header.hpp
+  ```
+
+- 头文件的 *所有* 内容都会被引入到源文件中，这也导致在头文件中定义的宏会“污染”所有源文件。典型的例子是引入 `<Windows.h>` 时连带的 `min` 和 `max` 宏会让标准库中的函数无法正常工作。虽然也不是没有解决方法（使用 `#undef`），但非常不方便。此外，头文件中定义的静态变量与函数会在不同源文件中都生成一个实例，有时这并不是期望的行为。
+
+- 由于宏和条件编译的使用，头文件的引入顺序也会影响到程序行为。考虑下面的例子：
+
+  ```cpp
+  // a.hpp
+  #ifndef XXX
+  #   define XXX
+      void foo();
+  #endif // #ifndef XXX
+  // b.hpp
+  #ifndef XXX
+  #   define XXX
+      int foo(int);
+  #endif // #ifndef XXX
+  // c.cpp
+  #include "a.hpp"
+  #include "b.hpp"
+  ```
+
+  上面的例子中，先引入 `a.hpp` 或后引入 `a.hpp` 会产生完全不同的代码。这在一些情况下可能非常有用，但总体来说这有造成预料之外效果的可能性。为了避免这一点（包括此前的头文件保护符也需要避免重名），用作条件编译的宏大多名字和格式都很奇怪。
+
+头文件机制确实比较强大，但是上述提到的问题对新手来说非常令人迷惑。这也是这些年对模组化库的呼声这么高的原因之一。
+
+**C++20** 引入了 **模块（Module）**，一个独立于命名空间和文件的用于对代码分组的全新语言设施。我们必须在编译单元的第最开始（先于任何声明语句）选择是否声明模块。我们将声明了模块的文件称为 **模块单元（Module Unit）**，和此前的编译单元对应。其文件后缀常常是 `ixx` 等。和其它标识符不同，模块的名字中允许出现 `.` 但语义上不表示层级结构。比如 `A.B` 中的 `A` 和 `B` 并没有任何关系（实际上 `B` 在此没有含义，只有 `A.B` 才表示一个模块）。不过通常我们会通过 `.` 来暗示层级结构，比如 `std` 和 `std.math` 显然有那么一丝联系。
+
+**模块分划（Module Partition）** 是一个定义在模块内的模块单元，可以简单与命名空间中的命名空间类比。**C++** 使用 `:` 符号作为前缀来表示模块分划，比如 `A:B` 表示模块 `A` 的分划 `B`。我们可以在模块 `A` 中导入或导出 `:B`。和允许嵌套的命名空间不同的是，我们不能声明模块分划的分划。此外，模块分划仅对同一模块可视，其它模块无法导入这个模块的分划。
+
+实际编写模块时，我们会根据功能将一个模块分为 **模块接口单元（Module Interface Unit）** 和 **模块实现单元（Module Implementation Unit）** 两个部分（可能是两个文件）。前者用于将标识符导出，而后者具体声明标识符。不考虑模块分化时，一个模块只能拥有一个模块接口单元，但可能拥有多个模块实现单元（这也就意味着模块是比文件层级更大的单元）。
+
+多说无益，让我们来看一些使用模块的例子：
+
+```cpp
+// a.ixx
+export module A;        // 声明模块 A，且进行导出
+export import :B;       // 导入模块 A 的分划 :B，且进行导出
+export int foo();       // 声明函数 foo，且进行导出
+// a_b.ixx
+export module A:B;      // 声明模块 A 的分划 B，且进行导出
+import :Internal;       // 导入模块 A 的分划 :Internal
+export int bar() {      // 定义函数 bar，且进行导出
+    return baz() * 2;   // 这里的 baz 声明在分划 :Internal 中
+}
+// a_internal.ixx
+module A:Internal;      // 声明模块 A 的分划 Internal
+int bar();
+// a_impl.ixx
+module A;               // 声明模块 A
+import :Internal;       // 导入模块 A 的分划 :Internal
+int baz() {             // 定义函数 baz
+    return foo() + 1;   // 这里的 foo 声明在当前模块中了（在 a.ixx）
+}
+int foo() {             // 定义函数 foo
+    return 42;
+}
+```
+
+上面的模块 `A` 被分散定义在四个编译单元中。其中  `a.ixx` 是 **主要模块接口单元（Primary Module Interface Unit）**，用以导入 `A` 模块；`a_b.ixx` 是分划 `:B` 的模块接口单元，相当于将 `A` 模块中部分相关功能移出来单独设置接口，这里它提供的都是允许导出的接口；`a_internal.ixx` 同样也声明了一个分划，不过这里它没有提供允许导出的接口；`a_impl.ixx` 是一个模块实现单元，其实现了两个函数。
+
+我们可以看到，一个模块是由好几个编译单元组成的。我们将从模块声明开始到编译单元结束的代码称为 **模块单元范围（Module Unit Purview）**。一个 **模块范围（Module Purview）** 是由多个模块单元范围组成的，其构成了一整个模块。特别地，如果模块没有名字，它就开始了一个 **全局模块片段（Global Module Fragment）**，它可以类比常规模块的模块单元范围.但随后若出现常规模块声明，则全局模块片段中止。所有的全局模块片段构成了一整个 **全局模块（Global Module）**。全局模块用来引入头文件，相当于对不能导入的头文件提供过渡性支持。
+
+如果模块声明中没有使用 `export` 关键字（也即不进行导出），且不是一个模块分划，则会默认导入该模块的主要模块接口单元。
+
+```cpp
+// a_x.ixx
+module A:X;              // 不会隐式导入 A
+int foo();
+// a.ixx
+export module A;
+import :X;
+int n = foo();
+// a_y.ixx
+module A:Y;              // 不会隐式导入 A
+int& r1 = n;             // 错误！n 在此前没有声明
+// a_z.ixx
+module A:Z;              // 不会隐式导入 A
+import A;                // 导入 A
+int& r2 = n;             // 没问题
+// a_impl.ixx
+module A;                // 隐式导入 A
+int& r3 = n;             // 没问题
+```
+
+#### `export` 语句
+
+前面我们已经见到了 `export` 的使用，它只能用于命名空间作用域，用于导出拥有外部链接的标识符，也可以将导入的模块整个导出。针对标识符没有被 `export` 的情形，如果它不是内部链接（即被 `static` 关键字修饰或声明在匿名命名空间等情形），我们称其拥有 **模块链接（Module Linkage）**。它的链接“程度”大于内部链接但小于外部链接。模块链接的标识符在同一模块范围中可引用；当使用了 `export` 关键字后，标识符一定应该拥有外部链接。
+
+需要特别注意的是，`export` 修饰命名空间时，会默认将其中声明的所有标识符都修饰为 `export`。类似地，被 `export` 修饰的类，其所有静态成员、静态成员函数等都拥有外部链接。匿名命名空间不能被 `export` 修饰，且其中的所有标识符也不能被 `export` 修饰（因为它们都是内部链接）。类似地，`static` 修饰的标识符无法被 `export`。
+
+```cpp
+// a.hpp 头文件
+int foo();                         // 外部链接
+// b.hpp 可导入的头文件
+int bar();                         // 外部链接
+// x.ixx
+export module X;
+export int baz();                  // 外部链接
+// y.ixx
+module;                            // 全局模块
+#include "a.hpp"                   // 引入头文件
+export module Y;                   // Y 的模块范围
+import "b.hpp";                    // 导入头文件
+import X;                          // 导入其它模块
+export using ::foo, ::bar, ::baz;  // 导出标识符
+struct S;                          // 模块链接
+export using S;                    // 错误！无法导出模块链接的标识符
+export using T = S;                // 没问题，这里相当于导出一个别名，其指向拥有模块链接的 S
+export typedef S U;                // 也没有问题（但还是别用 typedef 了）
+namespace ns {
+    export int bee();              // 外部链接
+    static int bee(int);           // 内部链接
+}
+export using ns::bee;              // 错误！无法导出内部链接的标识符
+```
+
+如果每个标识符，包括变量、函数、类等都使用 `export` 未免过于繁琐，所以 **C++** 支持 `export` 代码块，其中所有声明的标识符均默认被 `export` 修饰：
+
+```cpp
+export module A;
+export {                   // 这个代码块依然维持此前的作用域和模块范围
+    int foo();             // 等同于 export int foo();
+    namespace ns {         // 等同于 export namespace ns
+        void bar();        // 等同于 export void bar();
+    }
+}
+```
+
+下面是一个详细的例子：
+
+```cpp
+// m.ixx
+export module M;
+export struct X {          // 外部链接
+    static void f();       // 外部链接
+    struct Y {};           // 外部链接
+};
+namespace {
+    struct S {};           // 内部链接
+}
+export void foo(S);        // 外部链接
+struct T {};               // 模块链接
+export {
+    void bar(T);           // 外部链接
+    struct A;              // 外部链接，但是不完整类型
+    int const c = 42;      // 外部链接！这或许有些出人意料，因为 export 似乎战胜了默认的内部链接（对比 static）
+}
+// m_impl.ixx
+module M;
+struct A {                 // 定义了 A
+    int val;
+};
+// main.cpp
+import M;
+int main() {
+    X::f();
+    X::Y y{};
+    A a{};                  // 错误！A 是不完整类型
+    return 0;
+}
+```
+
+#### `import` 语句
+
+`import` 语句只能用在全局作用域中，用于导入某个模块。所有包含 `import` 的语句必须出现在所有其它声明语句之前（也就说不能像 `#include` 指令那样可以随处乱插），其可以根据不同情形导入下面这些标识符：
+
+- 导入一个模块，如 `import A;` ：将 `A` 的所有模块接口单元导入。
+- 导入一个模块分划，如 `import :B;`：将该分划的模块接口单元导入。只能用于同一个模块范围。
+- 导入一个头文件，如 `import "header.hpp";`：将预处理（包括字符串处理等）后的合成头文件（称为 **头文件单元（Header Unit）**）导入。这个头文件中不能出现模块声明。头文件单元中的所有标识符都隐式声明为 `export`，且位于全局模块范围。需要注意的是，不是所有头文件都是 **可导入（Importable）** 的，这需要特殊的支持。**C++** 标准库的多数头文件都是可导入的（**C++20** 起）。
+- 在导入一个编译单元 `T`（可能是模块单元或头文件单元）时，会同时导入所有该编译单元导出的编译单元，即 `export import` 语句，此时我们称 `T` 导出了这些编译单元。
+
+#### 全局模块片段
+
+
+
 
 
 参考资料：[Cpp Reference, Translation Phases](https://en.cppreference.com/w/cpp/language/translation_phases)、[Cpp Reference, Scope](https://en.cppreference.com/w/cpp/language/scope)、[Cpp Reference, Class Template](https://en.cppreference.com/w/cpp/language/class_template)、[C++ Standard, [dcl.stc]](https://eel.is/c++draft/dcl.stc)、[Stack Overflow, Why inline functions are defined in the header?](https://stackoverflow.com/questions/5057021/why-are-c-inline-functions-in-the-header)
@@ -1415,7 +1628,6 @@ struct Counter {
 
 最后，有一个对 `const` 传播性的手动补全，那就是我在 *2021/12/02* 就提到的 `std::propagate_const`。不过它目前还在 **TS** 里面。它的实现比较简单，其实就是利用到 `const` 对象调用的成员函数都是 `const` 修饰的这一特性；因此它作为成员时，在 `const` 成员函数中就表现为 `const`，因此只能调用自己的 `const` 成员函数。
 
-<<<<<<< Updated upstream
 ## **C++** 的值分类
 
 **C++** 中的所有表达式都有两个静态属性：类型和 **值分类（Value Category）**。过去，我们可以将所有表达式简单分为两种类别：**左值（Left Value）** 和 **右值（Right Value）**，顾名思义描述其能够放在等式的左侧还是右侧：
@@ -1489,7 +1701,23 @@ int main() {
 - 不具有多态性；其类型就是表达式的类型。
 - 不能被 `const` 和 `volatile` 修饰符修饰，除非它是类或数组的对象，或者它被实质化为一个 `const` 或 `volatile` 修饰的对象的引用。
 - 不能有不完整类型，除了特殊情况下可能有 `void` 类型。
-- 不能有抽象类类型或它们的数组类型
+- 不能有抽象类类型或它们的数组类型。
+
+**将亡值**：
+
+- 返回右值引用的函数调用，包括重载的运算符。
+- 内置下标运算 `operator []`（参数为数组的右值引用）的返回值。
+- 内置解引用操作 `operator .*` 在对象是右值且指向非静态成员时的返回值。
+- 成员访问符 `operator .` 在对象是右值且使用非静态成员时的返回值。
+- 三元运算符 `operator ?:` 在一定条件下的返回值。
+- 转换为右值引用的强制类型转换表达式。
+- 临时实质化之后的表达式。
+
+将亡值的主要性质是：
+
+- 所有广义左值的性质。
+- 所有右值的性质。
+
 ## 妙用折叠表达式（2022/01/16）
 
 **C++17** 引入了 **折叠表达式（Fold Expressions）**，是对模板参数包的一个重要的功能补充，示例如下：
@@ -1581,22 +1809,102 @@ constexpr decltype(auto) apply(F&& f, Tuple&& tup) {
 
 计算机中，我们使用整数来表示字符。**字符编码（Character Encoding）** 规定了字符到数字的映射关系。由于计算机中数据都有有限的大小，不同的字符编码能够涵盖的 **字符集（Character Set）** 也不同。至今流行的 **ASCII** 编码是能表示 127 个字符的 8 位字符集，其中包括了拉丁字母和常见的符号与控制字符等（简单来说就是键盘上出现的字母和符号，以及退格、换行等控制指令）。
 
-## 如何设计一个类（2022/01/23）
-
-**将亡值**：
-
-- 返回右值引用的函数调用，包括重载的运算符。
-- 内置下标运算 `operator []`（参数为数组的右值引用）的返回值。
-- 内置解引用操作 `operator .*` 在对象是右值且指向非静态成员时的返回值。
-- 成员访问符 `operator .` 在对象是右值且使用非静态成员时的返回值。
-- 三元运算符 `operator ?:` 在一定条件下的返回值。
-- 转换为右值引用的强制类型转换表达式。
-- 临时实质化之后的表达式。
-
-将亡值的主要性质是：
-
-- 所有广义左值的性质。
-- 所有右值的性质。
 
 
+## 编译期断言（2022/02/05）
+
+一些函数中为了确保满足前置条件（或后置条件等），会使用 **断言（Assertion）**。当其中的谓词不满足时，会打印出错误信息并中止程序。不过，目前常用的 `assert` 宏（来自 `<cassert>` 头文件）并不是 `constexpr` 的。尽管 **C++** 提供了编译期断言 `static_assert`，但它只能对模板参数进行限制（即那些“绝对”编译期的常量），如果想要对 `constexpr` 函数参数的断言，应该怎么办？可以使用 `throw` 语句：
+
+```cpp
+constexpr void assert_in_range(std::pair<int, int> range, int val) noexcept {
+    auto const [first, last] = range;
+    if (val < first || val >= last) {
+        throw std::logic_error("Value out of range.");
+    }
+}
+```
+
+参考资料：[Stack Overflow](https://stackoverflow.com/questions/32401256/how-can-i-do-a-runtime-assert-in-a-constexpr-function)
+
+## `std::string_view` 并不以 `'\0'` 作结尾（2022/02/25）
+
+`std::string_view` 从设计上是不可能以 `'\0'` 结尾（Null Terminated）的字符串，其原因也很简单，即是为了做到真正的 ”non-owning“：
+
+```cpp
+void foo() {
+    std::string_view sv = "abcdefg";
+    auto sub_1 = sv.substr(1, 3);     // "bcd"
+    auto sub_2 = sv.substr(2, 4);     // "cdef"
+    char const* data = sv.data();     // 这个是 null terminated 的，没有问题
+    char const* seg_1 = sub_1.data(); // 危险！这个相当于 sv.data() + 1
+    char const* seg_2 = sub_2.data(); // 危险！这个相当于 sv.data() + 2
+}
+```
+
+由于 `std::string_view` 本身就是一个指针和长度信息，它无从知晓自己指向的是一整个还是一部分字符串。大多数情况下，我们也不会用到 `data` 这个成员函数，因为 `std::string_view` 可以和 `std::string` 做比较，如果只是测试子字符串性质的应用不会出现问题。然而，**C++** 标准库对 `std::string_view` 的支持尚不够，一些接口只接受 `std::string` 或 `char const*`，这就让人有点尴尬，这里点名 `std::ifstream`。让我把这次发现问题的代码大意贴上：
+
+```cpp
+namespace stdr = std::ranges;
+namespace stdv = std::ranges::views;
+
+void parse_line(std::string const& line) {
+    // 将一行按照空格分开，并去除空项
+    auto view = line | stdv::split(' ')
+                     | stdv::transform([](auto&& range) { return std::string_view(&range.begin(), stdr::distance(range)); })
+                     | stdv::filter([](auto&& sv) { return sv != "" });
+    std::vector<std::string_view> command(view.begin(), view.end());
+    
+    // 省略一些检查
+    
+    // 如果需要打开文件
+    if (command[0] == "open") {
+        std::ifstream ifs(command[1]);         // 错误！std::ifstream 不接受 std::string_view
+        std::ifstream ifs(command[1].data());  // 很可能是错误！如果 command 长度为 2 或以上且后续不为空，这就是错误的
+        std::ifstream ifs(std::string(command[1]));  // 有点尴尬…… 但是别无选择
+        // 省略后续内容
+    }
+}
+```
+
+这里还有一点值得一提，那就是在行内构建字符串且同时构建 `std::ifstream` 对象时，要注意小括号的使用（这其实有点偏题）：
+
+```cpp
+void read_file(std::string_view sv) {
+    std::ifstream ifs(std::string(sv));     // 呃，这声明了一个叫做 ifs 的函数，其接受一个 std::string_view 类型的参数 sv 并返回 std::ifstream
+    std::ifstream ifs{ std::string{sv} };   // 非常安全
+}
+```
+
+## 条件编译断言（2022/03/02）
+
+今天又遇到一个需要使用断言的地方，就是一系列 `if constexpr` 最后的那个 `else` 我希望报错。不是编译期的都不考虑。之前提到的 `throw` 当然也可以，不过我那个函数本身就不是 `noexcept` 的，而且我认为都已经全部是编译期常量了，为什么不能用 `static_assert` 呢？
+
+```cpp
+template<typename T>
+void foo(T const& arg) {
+    if constexpr (condition_1<T>) { /* ... */ }
+    else if constexpr (condition_2<T>) { /* ... */ }
+    else {
+        // 结果编译时无条件报错了…… 这大概是 static_assert 的偷懒机制？因为理论上这个分支在一些情况下根本不会编译才对。
+        static_assert(false, "This is invalid!");
+    }
+}
+```
+
+对于这个的解决方法，就是让 `static_assert` 的值在模板实例化的时候再得到，我们可以用一个模板变量延迟求值：
+
+```cpp
+template<bool val, typename... Ts>
+constexpr bool delayed_value = val;
+
+template<typename T>
+void foo(T const& arg) {
+    if constexpr (condition_1<T>) { /* ... */ }
+    else if constexpr (condition_2<T>) { /* ... */ }
+    else {
+        // delayed_value 在模板实例化的时候才会求值，彼时才会编译失败
+        static_assert(delayed_value<false, T>, "This is invalid!");
+    }
+}
+```
 
