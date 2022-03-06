@@ -174,7 +174,7 @@ $$
 \end{equation*} \tag{1.14}
 $$
 
-### 算子
+### 算符
 
 从此前得到的公式中我们可以得到波函数描述的位置期望值：
 $$
@@ -207,7 +207,7 @@ $$
 \end{split} \tag{1.18}
 \end{align*}
 $$
-此时，方括号包括的是一个 **算子（Operator）**，它会将后面的函数转换为另一个函数。这些公式除了算子以外的部分是完全相同的。因此我们可以通过算子来表示量子力学中的物理量。这里，我们不加证明地给出一个数学公式（可以将其看作公理）：
+此时，方括号包括的是一个 **算符（Operator）**，它会将后面的函数转换为另一个函数。这些公式除了算符以外的部分是完全相同的。因此我们可以通过算符来表示量子力学中的物理量。这里，我们不加证明地给出一个数学公式（可以将其看作公理）：
 $$
 \begin{equation*}
 	\bracket{Q(x, p)} = \int\Psi^*\left[Q\left(x, -i\hbar\frac{\partial}{\partial x}\right)\right]\Psi\,dx
@@ -298,7 +298,7 @@ $$
   $$
   H(x, p) = \frac{p^2}{2m} + V(x) \tag{2.10}
   $$
-  我们可以得到其对应的算子，即 **哈密顿算子（Hamiltonian Operator）**：
+  我们可以得到其对应的算符，即 **哈密顿算符（Hamiltonian Operator）**：
   $$
   \hat{H} = -\frac{\hbar^2}{2m}\frac{\partial^2}{\partial x^2} + V(x)
   $$
@@ -665,4 +665,212 @@ $$
 \begin{equation*}
 	\phi(k) = \frac{1}{\sqrt{2\pi}}\int_{-\infty}^\infty \Psi(x, 0)e^{-ikx}\,dx
 \end{equation*}
+$$
+
+## 数学形式
+
+前面两个章节中我们得到了一些在简单的量子系统中的有趣结论。其中有些可能比较巧合（比如简谐振子的能量均匀分布），但其它似乎可以一般化（比如测不准原理，还有静止状态的正交性）本章中我们会利用数学工具将这些结论拓展到更一般的形式。
+
+### 希尔伯特空间
+
+量子理论中的两个核心概念是波函数和算符。系统的 **状态（State）**由波函数描述，而 **可观测量（Observable）**由算符描述。数学上，我们可以将波函数通过 **矢量（Vector）**表示，算符则可以抽象为 **线性变换（Linear Transformation）**。因此，**线性代数（Linear Algebra）**是量子力学的“自然语言”。
+
+不过量子力学有它自己的个性，比起我们已经熟悉的矢量形式，它选择使用下面这种记号：
+$$
+\ket{\alpha} = \mathbf{a} = 
+\begin{pmatrix}
+	a_1 \\ a_2 \\ \vdots \\ a_N
+\end{pmatrix}
+$$
+其表示一个 $N$ 维空间的矢量，其中 $a_i \in \mathbb{C}$。矢量之间的 **内积（Inner Product）**定义为：
+$$
+\langle \alpha | \beta \rangle = a_1^*b_1 + a_2^*b_2 + \dots + a_N^*b_N
+$$
+矢量空间中的线性变换则（如前两章介绍过的）采用下面的记号：
+$$
+\ket{\alpha} = \hat{T}\ket{\alpha} \Leftrightarrow \mathbf{b} = T\mathbf{a} =
+\begin{pmatrix}
+	t_{11} & t_{12} & \dots & t_{1N} \\
+	t_{21} & t_{22} & \dots & t_{2N} \\
+	\vdots & \vdots & \ddots & \vdots \\
+	t_{N1} & t_{N2} & \dots & t_{NN}
+\end{pmatrix}
+\begin{pmatrix}
+	a_1 \\ a_2 \\ \vdots \\ a_N
+\end{pmatrix}
+$$
+不过，在无限维度矢量空间中，这种表示方式似乎有局限性，尤其是矢量的内积（无限和对应了积分）有可能不收敛；因此我们需要特别注意一些情况。
+
+理论上，所有关于 $x$ 的函数构成了一个矢量空间，但我们需要的仅仅是可以被归一化的函数空间，即：
+$$
+\left\{\Psi \mid \int|\Psi|^2\,dx = 1\right\}
+$$
+此外，所有在特定区间内 **平方可积（Square-Integrable）**的函数构成了一个更小的矢量空间：
+$$
+\left\{f(x) \mid\int_a^b |f(x)|^2\,dx < \infty \right\}
+$$
+我们将其称为 **希尔伯特空间（Hilbert Space）**，数学上记为 $L^2(a, b)$。所有的波函数都属于希尔伯特空间。两个函数的内积定义为：
+$$
+\begin{equation*}
+	\langle f|g\rangle = \int_a^b f^*(x)g(x)\,dx
+\end{equation*}
+$$
+通过 **施瓦尔兹不等式（Schwarz Inequality）**我们可以得到：
+$$
+\left|\int_a^b f^*(x)g(x)\,dx\right| \le \sqrt{\int_a^b |f(x)|^2\,dx \int_a^b|g(x)|^2\,dx}
+$$
+由于右式有限，我们可以保证希尔伯特空间中两个函数的内积一定存在。此外，不难观察到：
+$$
+\langle g|f \rangle = \langle f|g \rangle^*
+$$
+因此内积运算不可交换。函数和自己本身的内积是：
+$$
+\langle f|f \rangle = \int_a^b |f(x)|^2\,dx
+$$
+从物理角度来看，这个结果当且仅当 $f(x) = 0$ 时才为零（数学上我们可以构建仅在一系列特定点上不为零的病态函数，其积分也为零）。特别地，规定 $f = g$ 当且仅当 $\langle f - g|f - g\rangle = 0$。
+
+如果一个函数和自身的内积为 $1$，我们就称其是 **归一化的（Normalized）**（这完全符合我们最开始的定义）；如果两个函数的内积为 $0$，我们就称其 **正交（Orthogonal）**；一集归一化函数 $\{f_n\}$ 如果两两正交，则称它们是 **标准正交的（Orthonormal）**，也即下面等式成立：
+$$
+\begin{equation*}
+	\langle f_m|f_n \rangle = \delta_{mn}
+\end{equation*}
+$$
+对于一集标准正交函数，如果其线性组合能够得到指定的希尔伯特空间中的所有函数，就称其在该空间中 **完备（Complete）**，数学表示如下：
+$$
+\begin{equation*}
+	f(x) = \sum_{n=1}^\infty c_nf_n(x)
+\end{equation*}
+$$
+其中系数 $c_n$ 可以通过下面得到：
+$$
+\begin{equation*}
+	c_n = \langle f_n|f \rangle
+\end{equation*}
+$$
+至此，我们将[无限方井](#无限方井)小节中引入的概念拓展到了希尔伯特空间。可以看到，在无限方井和简谐振子模型中得到的波函数解分别是 $(0, a)$ 区间和 $(-\infty, \infty)$ 区间的标准正交函数集。
+
+### 可观测量
+
+回忆我们在第一章引入算符时给出的公式，对于任何可观测物理量 $Q(x, p)$，其期望值都可以通过下面公式来计算：
+$$
+\begin{equation*}
+	\langle Q \rangle = \int\Psi^*\hat{Q}\Psi\,dx
+\end{equation*}
+$$
+现在可以写成量子力学的数学形式：
+$$
+\begin{equation*}
+	\langle Q \rangle = \langle \Psi|\hat{Q}\Psi\rangle
+\end{equation*}
+$$
+考虑到期望值一定是实数，我们不难得到：
+$$
+\langle \Psi|\hat{Q}\Psi\rangle = \langle Q\rangle = \langle Q\rangle^* = \langle \hat{Q}\Psi|\Psi\rangle
+$$
+我们将这样的算符称为 **哈密顿算符（Hermitian Operator）**，后文中我们会简称为算符。量子力学中所有的可观测量都对应了一个算符。在有限维度矢量空间中，我们用 **哈密顿矩阵（Hermitian Matrix）**来表示一个算符，其满足下面的特性：
+$$
+T = T^\dagger \equiv \tilde{T}^*
+$$
+更一般地，我们可以将算符 $\hat{Q}$ 的 **哈密顿共轭（Hermitian Conjugate）**定义为满足下面要求的 $\unit{Q}^\dagger$：
+$$
+\begin{equation*}
+	\langle f|\unit{Q}g\rangle = \langle \hat{Q}^\dagger f|g\rangle
+\end{equation*}
+$$
+其中 $f$、$g$ 是希尔伯特空间中任意的函数。此时依然有：
+$$
+\hat{Q} = \hat{Q}^\dagger
+$$
+
+### 特征函数
+
+在量子系统中，对于完全相同的设定和状态 $\Psi$，每次观测某个可观测量 $Q$ 很可能得到不同的结果，这是由波函数的性质（概率分布）特性导致的。但是在特殊的设定下，我们可以保证每次观测都得到相同的结果，我们称此为 $Q$ 的 **确定状态（Determinate State）**，此时 $Q$ 的标准差应该是零，即：
+$$
+\sigma_Q^2 = \left\langle(Q - \langle Q\rangle)^2\right\rangle = \left\langle\Psi\mid (\hat{Q} - \langle Q\rangle)^2\Psi\right\rangle = \left\langle(\hat{Q} - \langle Q\rangle)\Psi\mid(\hat{Q} - \langle Q\rangle)\Psi\right\rangle = 0
+$$
+此时一定有：
+$$
+\begin{equation*}
+	\hat{Q}\Psi = \langle Q\rangle \Psi
+\end{equation*}
+$$
+这个等式被称为算符 $\hat{Q}$ 的 **特征值方程（Eigenvalue Equation）**，其中 $\Psi$ 是 $\hat{Q}$ 的 **特征函数（Eigenfunction）**，而 $\langle Q\rangle$ 是对应的 **特征值（Eigenvalue）**。量子力学中每个可观测量的确定状态都对应了其算符的特征函数。
+
+从上面的方程来看，特征函数的任意常数倍数依然是特征函数；$0$ 是平凡的特征值，也是平凡的特征函数，但我们决定将排除后者（否则在这种情况下任意实数都是特征值）。
+
+给定一个算符，其所有特征值的集合被称为 **光谱（Spectrum）**。如果多个线性无关的特征函数有相同的特征值，我们称这个光谱是 **退化的（Degenerate）**。通常我们可以将算符的光谱分为两种：离散或连续。前一种情况的特征函数一定在希尔伯特空间中且拥有实际的物理意义；后一种情况下，特征函数并不是可归一的，此时需要至少选取一段区间后才能得到可归一的函数。一些算符只有离散的光谱（比如简谐振子的哈密顿算符），一些只有连续的光谱（比如自由粒子的哈密顿算符），也有两者都有的（比如有限方井的哈密顿算符）。
+
+#### 离散光谱
+
+哈密顿算符的可归一的特征函数有两个重要的性质：
+
+> **定理**：它们对应的特征值是实数。
+
+> **证明**：假设 $\hat{Q}f = qf$，则：
+> $$
+> \langle f|\hat{Q}f\rangle = \langle \hat{Q}f|f\rangle
+> $$
+> 将系数 $q$ 提出来，得到：
+> $$
+> q\langle f|f\rangle = q^*\langle f|f\rangle
+> $$
+> 由于 $f$ 是可归一的，因此他和自己的内积不可能为 $0$，这就证明了 $q$ 是一个实数。
+
+这个性质意味着每次测量确定状态的例子时，总能得到一个实数。
+
+> **定理**：不同特征值对应的特征函数是正交的。
+
+> **证明**：假设 $\hat{Q}f = qf$，且存在 $q' \ne q$ 使得 $\hat{Q}g = q'g$。此时：
+> $$
+> \langle f|\hat{Q}g\rangle = \langle\hat{Q}f|g\rangle
+> $$
+> 将 $q$ 和 $q'$ 提出来，得到：
+> $$
+> q'\langle f|g\rangle = q^*\langle f|g\rangle
+> $$
+> 根据给定条件必有 $\langle f|g\rangle = 0$，因此两者正交。
+
+这个性质总结了此前我们在无限方井和简谐振子中得到的函数正交性。
+
+在退化的光谱中，即定理二中 $q = q'$ 时，我们可以用 **格拉姆-施密特正交化过程（Gram-Schmidt Orthogonalization Procedure）**来得到新的正交特征函数。因此即使在特征函数中存在退化现象，我们可以通过这个算法得到等价的标准正交函数集。所以我们总是可以假设这个过程已经完成了。这一点为我们此前“心安理得”使用函数正交性提供了更多保障。
+
+最后，让我们给出一个公理：
+
+> **公理**：可观测算符的特征函数集是完备的。即，希尔伯特空间中的任意函数都能表示成它们的线性组合。
+
+在一些情况下（比如静止状态），这个公理可以被证明出来。不过因为没有通用的证明方法（尤其是对于连续光谱），我们还是将它视作公理。
+
+#### 连续光谱
+
+如果哈密顿算符的光谱是连续的，其特征函数不能够归一化。此时离散情况下两个定理的证明就不成立了。不过我们依然希望它在某种角度来看是成立的，下面通过一个例子来说明。
+
+假设我们希望找到 $(-\infty, \infty)$ 区间动量算符的特征函数和特征值，设特征函数为 $f_p(x)$，$p$ 是特征值，则：
+$$
+-i\hbar\frac{d}{dx}f_p(x) = pf_p(x)
+$$
+其通解是：
+$$
+f_p(x) = Ae^{ipx/\hbar}
+$$
+显然对于任意 $p \in \mathbb{C}$ 它都不是可归一化的。不过我们可以探索稍差一些的结论：如果令 $p \in \mathbb{R}$，此时有：
+$$
+\langle f_{p'}|f_p\rangle = \int_{-\infty}^\infty f_{p'}^*(x)f_p(x)\,dx = |A|^2\int_{-\infty}^\infty e^{i(p - p')x/\hbar}\,dx = |A|2\pi\hbar\delta(p - p')
+$$
+取 $A = 1/\sqrt{2\pi \hbar}$，则：
+$$
+\begin{equation*}
+	f_p(x) = \frac{1}{\sqrt{2\pi\hbar}}e^{ipx/\hbar}
+\end{equation*}
+$$
+因此：
+$$
+\langle f_{p'}|f_p\rangle = \delta(p - p')
+$$
+这和我们前文中给出的标准正交性非常相似，我们可以称其为 **狄拉克标准正交性（Dirac Orthonormality）**。此时我们可以得到一种略有不同的完备性：任何平方可积的函数都能表示为上述特征函数的“线性积分”（把线性组合中的求和换为积分）：
+$$
+f(x) = \int_{-\infty}^\infty c(p)f_p(x)\,dp = \frac{1}{\sqrt{2\pi \hbar}}\int_{-\infty}^\infty c(p)e^{ipx/\hbar}\,dp
+$$
+我们使用类似的方式计算和 $p$ 相关的常数 $c(p)$：
+$$
+\langle f_{p'}|f\rangle = \int_{-\infty}^\infty c(p)\langle f_{p'}|f_p\rangle\,dp = \int_{-\infty}^\infty c(p)\delta(p - p')\,dp = c(p')
 $$
