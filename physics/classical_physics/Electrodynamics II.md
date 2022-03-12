@@ -369,10 +369,10 @@ $$
 至此，我们已经几乎引入了麦克斯韦方程组的所有内容。事实上这正是麦克斯韦之前的电磁场方程，其描述了电场和磁场的散度与梯度：
 $$
 \begin{align*}
-	\text{(i)}& \quad \nabla\cdot \mathbf{E} = \frac{1}{\epsilon_0}\rho \tag{高斯定律}\\
+	\text{(i)}& \quad \nabla\cdot \mathbf{E} = \frac{1}{\epsilon_0}\rho & & \text{（高斯定律）}\\
 	\text{(ii)}& \quad \nabla\cdot \mathbf{B} = 0 \\
-	\text{(iii)}& \quad \nabla\times \mathbf{E} = -\frac{\partial \mathbf{B}}{\partial t} \tag{法拉第定律} \\
-	\text{(iv)}& \quad \nabla\times \mathbf{B} = \mu_0\mathbf{J} \tag{安培定律}
+	\text{(iii)}& \quad \nabla\times \mathbf{E} = -\frac{\partial \mathbf{B}}{\partial t} & &\text{（法拉第定律）} \\
+	\text{(iv)}& \quad \nabla\times \mathbf{B} = \mu_0\mathbf{J} & & \text{（安培定律）}
 \end{align*}
 $$
 然而，这几个公式之间有不一致的地方：它们理应满足矢量微积分中的运算规律（如旋度的散度恒为 $0$），但考虑安培定律在非恒稳电流的情形（实际上此时该定律是失效的）：
@@ -417,7 +417,7 @@ $$
 	\text{(i)}& \quad \nabla\cdot \mathbf{E} = \frac{1}{\epsilon_0}\rho & \text{（高斯定律）}\\
 	\text{(ii)}& \quad \nabla\cdot \mathbf{B} = 0 \\
 	\text{(iii)}& \quad \nabla\times \mathbf{E} = -\frac{\partial \mathbf{B}}{\partial t} &  \text{（法拉第定律）} \\
-	\text{(iv)}& \quad \nabla\times \mathbf{B} = \mu_0\mathbf{J} + \mu_0\epsilon_0\frac{\partial \mathbf{E}}{\partial t} \qquad & \text{（麦克斯韦修正的安培定律）}
+	\text{(iv)}& \quad \nabla\times \mathbf{B} = \mu_0\mathbf{J} + \mu_0\epsilon_0\frac{\partial \mathbf{E}}{\partial t} \qquad & \text{（安培-麦克斯韦定律）}
 \end{split} \tag{7.31} \label{maxwell's-equations}
 $$
 再加上运动方程，即洛伦兹力定律：
@@ -1151,5 +1151,61 @@ $$
 
 ### 导体中的电磁波
 
-
+现在让我们考虑物质中存在自由电荷或电流的情形。事实上，当物质是导体时，电磁波中的电场会让其中立刻产生自由电流 $\mathbf{J}_f = \sigma\mathbf{E}$。麦克斯韦方程告诉我们（假设导体是线性介质）：
+$$
+\begin{align*}
+	&\text{(i)}\quad \nabla\cdot\mathbf{E} = \frac{1}{\epsilon}\rho_f & &\text{(iii)} \quad \nabla\times\mathbf{E} = -\frac{\partial \mathbf{B}}{\partial t} \\
+	&\text{(ii)}\quad \nabla\cdot\mathbf{B} = 0 & &\text{(iv)}\quad \nabla\times\mathbf{B} = \mu\sigma\mathbf{E} + \mu\epsilon\frac{\partial \mathbf{E}}{\partial t}
+\end{align*}
+$$
+同时由电荷的守恒定律有：
+$$
+\frac{\partial \rho_f}{\partial t} = -\nabla\cdot\mathbf{J}_f = -\sigma(\nabla\cdot\mathbf{E}) = -\frac{\sigma}{\epsilon}\rho_f
+$$
+这就能得到自由电荷随时间的变化式：
+$$
+\rho_f(t) = e^{-(\sigma/\epsilon) t}\rho_f(0)
+$$
+不难发现无论系统中开始时的自由电荷有多少，其都会随时间衰减。这符合我们的直觉，因为导体中的自由电荷都应该流向其边界。导体的导电性越强（即 $\sigma$ 越大），自由电荷衰减的速度就越快。对于“足够好”的导体，使得自由电荷衰减至可以忽略的时间应该足够小到可以忽略（比如在一个振动系统中，应该满足 $\epsilon/\sigma \ll 1/\omega$）。我们这里假设导体中不存在自由电荷（因为总是可以“快进”到自由电荷衰减到足够小的时刻），此时两个场的散度再次均为 $0$，其旋度则是：
+$$
+\nabla\times\mathbf{E} = -\frac{\partial \mathbf{B}}{\partial t} \qquad \nabla\times\mathbf{B} = \mu\epsilon\frac{\partial \mathbf{E}}{\partial t} + \mu\sigma\mathbf{E}
+$$
+对两式再次求旋度可以得到：
+$$
+\begin{equation*}
+	\nabla^2\mathbf{E} = \mu\epsilon\frac{\partial^2\mathbf{E}}{\partial t^2} + \mu\sigma\frac{\partial \mathbf{E}}{\partial t} \qquad \nabla^2\mathbf{B} = \mu\epsilon\frac{\partial^2\mathbf{B}}{\partial t^2} + \mu\sigma\frac{\partial \mathbf{B}}{\partial t}
+\end{equation*}
+$$
+我们在前几节中得到的平面波方程依然满足这个式子：
+$$
+\begin{equation*}
+	\tilde{\mathbf{E}}(z, t) = \tilde{\mathbf{E}}_0e^{i(\tilde{k}z - \omega t)} \qquad
+	\tilde{\mathbf{B}}(z, t) = \tilde{\mathbf{B}}_0e^{i(\tilde{k}z - \omega t)}
+\end{equation*}
+$$
+其中 $\tilde{k}^2 = \mu\epsilon\omega^2 + i\mu\sigma\omega$ 是一个复数。为了得到 $\tilde{k}$，我们可以设 $\tilde{k} = k + i\kappa$，通过解方程可以得到：
+$$
+\begin{align*}
+	k = \omega\sqrt{\frac{\epsilon\mu}{2}}\sqrt{\sqrt{1 + \left(\frac{\sigma}{\epsilon\omega}\right)^2} + 1} \qquad
+	\kappa = \omega\sqrt{\frac{\epsilon\mu}{2}}\sqrt{\sqrt{1 + \left(\frac{\sigma}{\epsilon\omega}\right)^2} - 1}
+\end{align*}
+$$
+其中的 $k$ 项依然代表了电磁波传播的性质，和它相关的量，比如波长、速度以及折射率都保持不变：
+$$
+\lambda = \frac{2\pi}{k} \quad v = \frac{\omega}{k} \quad n = \frac{ck}{\omega}
+$$
+至于 $\kappa$，注意到我们可以将前面的解写成：
+$$
+\begin{equation*}
+	\tilde{\mathbf{E}}(z, t) = \tilde{\mathbf{E}}_0e^{-\kappa z}e^{i(kz - \omega t)} \qquad
+	\tilde{\mathbf{B}}(z, t) = \tilde{\mathbf{B}}_0e^{-\kappa z}e^{i(kz - \omega t)}
+\end{equation*}
+$$
+因此 $\kappa$ 项会使得电磁波发生衰减。其衰减的速率（每衰减 $e^{-1}$ 所需的距离）被称为 **趋肤深度（Skin Depth）**：
+$$
+\begin{equation*}
+	d = \frac{1}{\kappa}
+\end{equation*}
+$$
+它描述了电磁波“穿透”到导体中的深度。
 
