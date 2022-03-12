@@ -862,7 +862,11 @@ $$
 	f_p(x) = \frac{1}{\sqrt{2\pi\hbar}}e^{ipx/\hbar}
 \end{equation*}
 $$
-因此：
+注意到这是一个周期函数，波长是：
+$$
+\lambda = \frac{2\pi\hbar}{p}
+$$
+这正是德布罗意公式！我们马上会对此做出解释，在此之前先注意下面的等式：
 $$
 \langle f_{p'}|f_p\rangle = \delta(p - p')
 $$
@@ -870,7 +874,130 @@ $$
 $$
 f(x) = \int_{-\infty}^\infty c(p)f_p(x)\,dp = \frac{1}{\sqrt{2\pi \hbar}}\int_{-\infty}^\infty c(p)e^{ipx/\hbar}\,dp
 $$
-我们使用类似的方式计算和 $p$ 相关的常数 $c(p)$：
+我们使用与此前类似的方式计算和 $p$ 相关的常数 $c(p)$：
 $$
 \langle f_{p'}|f\rangle = \int_{-\infty}^\infty c(p)\langle f_{p'}|f_p\rangle\,dp = \int_{-\infty}^\infty c(p)\delta(p - p')\,dp = c(p')
 $$
+当然，敏锐的同学可能已经发现前面的式子就是一个逆傅里叶变换，因此只需要用一次傅里叶变换就可以变成 $c(p)$ 相关的函数：
+$$
+c(p) = \frac{1}{\sqrt{2\pi\hbar}}\int_{-\infty}^\infty e^{-ipx/\hbar}\,dx
+$$
+现在让我们回到德布罗意公式，现在可以知道，其描述的粒子（拥有确定动量的粒子）实际上不存在，但我们总可以选取一段范围内的动量形成的可归一化的 **波包（Wave Packet）** 来描述，这也是它们存在波长的原因。
+
+作为总结，动量算符的特征函数不在希尔伯特空间中，但它们的集合（一个区间）拥有某种角度而言的可归一化性质。事实上，所有连续的哈密顿算子（即拥有连续光谱），其对应的特征函数集都是狄拉克标准正交，且在积分意义上完备的。
+
+### 通用的统计解释
+
+经过了前面诸多铺垫之后，我们终于可以给出一个对量子力学的完整统计解释。
+
+> **量子力学的通用统计解释**：在测量一个状态为 $\Psi(x, t)$ 的粒子的某个可观测量 $Q(x, p)$ 时，一定会得到哈密顿算符
+> $$
+> \hat{Q} = \left(x, -i\hbar\frac{d}{dx}\right)
+> $$
+> 的*一个*特征值。如果 $\hat{Q}$ 的光谱，即特征值分布是离散的，则得到和标准正交特征函数 $f_n(x)$ 对应的某个特征值 $q_n$ 的概率是：
+> $$
+> |c_n|^2 \qquad \text{其中}\ c_n = \langle f_n|\Psi \rangle
+> $$
+> 相反，如果 $\hat{Q}$ 的光谱是连续的，则在区间 $dz$ 中得到和狄拉克标准正交的特征函数 $f_z(x)$ 对应的某个特征值 $q(z)$ 的概率是：
+> $$
+> |c(z)|^2\,dz \qquad \text{其中}\ c(z) = \langle f_z|\Psi\rangle
+> $$
+> 在观测发生时，波函数会坍缩为对应的特征状态。对于连续光谱，则根据测量仪器的精度坍缩为一段极小区间的叠加状态。
+
+在离散光谱中，我们不难验证概率的归一性：
+$$
+\begin{align*}
+	\sum_n |c_n|^2 
+	&= \sum_n c_n^*c_n \\
+	&= \sum_{m}\sum_nc_{m}^*c_n\delta_{mn} \\
+	&= \sum_{m}\sum_nc_{m}^*c_n\langle f_{m}|f_{n}\rangle \\
+	&= \left\langle\left.\left(\sum_mc_mf_m\right)\right|\left(\sum_nc_nf_n\right)\right\rangle 
+	= \langle\Psi|\Psi\rangle = 1
+\end{align*}
+$$
+此外，可观测量的期望值是：
+$$
+\begin{align*}
+	\langle Q \rangle = \langle \Psi|\hat{Q}\Psi\rangle
+	&= \left\langle\left.\left(\sum_mc_mf_m\right)\right|\hat{Q}\left(\sum_nc_nf_n\right)\right\rangle \\
+	&= \sum_m\sum_nc_m^*c_n\langle f_m|\hat{Q}f_n\rangle \\ 
+	&= \sum_m\sum_nc_m^*c_nq_n\langle f_m|f_n\rangle \\
+	&= \sum_m\sum_nc_m^*c_nq_n\delta_{mn} \\
+	&= \sum_nq_n|c_n|^2
+\end{align*}
+$$
+至于连续光谱，我们可以特别地对 $x$ 和 $p$ 进行验证。在上一小节中我们已经认识到：
+$$
+\begin{align*}
+	c(x) &= \langle g_x|\Psi\rangle = \int_{-\infty}^\infty \delta(y - x)\Psi(y, t)\,dy = \Psi(x, t) \\
+	c(p) &= \langle f_p|\Psi\rangle = \frac{1}{\sqrt{2\pi\hbar}}\int_{-\infty}^\infty e^{-ipx/\hbar}\Psi(x, t)\,dx
+\end{align*}
+$$
+我们将第二个式子称为 **动量空间波函数（Momentum Space Wave Function）**，其正好对应了“位置空间”波函数，也就是 $\Psi(x, t)$；两者可以通过傅里叶变换和逆傅里叶变换相互转化：
+$$
+\begin{align*}
+	\Phi(p, t) = \frac{1}{\sqrt{2\pi\hbar}}\int_{-\infty}^\infty e^{-ipx/\hbar}\Psi(x, t)\,dx \\
+	\Psi(x, t) = \frac{1}{\sqrt{2\pi\hbar}}\int_{-\infty}^\infty e^{-ipx/\hbar}\Phi(x, t)\,dp
+\end{align*}
+$$
+
+### 测不准原理
+
+我们在第一章中提到过位置和动量的测不准原理，现在让我们尝试证明它。有了上一节完整的统计解释后，我们可以看向更一般的情形：对于任意可观测量 $A$，其方差为：
+$$
+\sigma_A^2 = \left\langle\left.\left(\hat{A} - \langle A\rangle\right)\Psi\right|\left(\hat{A} - \langle A\rangle\right)\Psi\right\rangle = \langle f|f\rangle
+$$
+其中记 $f \equiv \left(\hat{A} - \langle A\rangle\right)\Psi$。 类似地，对于另一个可观测量 $B$，以及 $g \equiv \left(\hat{B} - \langle B\rangle\right)\Psi$，我们有：
+$$
+\sigma_B = \langle g|g\rangle
+$$
+此时：
+$$
+\sigma_A^2\sigma_B^2 = \langle f|f\rangle\langle g|g\rangle \ge |\langle f|g\rangle|^2
+$$
+对任意复数 $z$，我们都有：
+$$
+|z|^2 = \mathscr{R}^2z + \mathscr{I}^2z \ge \mathscr{I}^2z = \left[\frac{1}{2i}(z - z^*)\right]^2
+$$
+因此对于 $\langle f|g\rangle$：
+$$
+\sigma_A^2\sigma_B^2 \ge \left[\frac{1}{2i}(\langle f|g\rangle - \langle g|f\rangle)\right]^2
+$$
+同时：
+$$
+\begin{align*}
+	\langle f|g\rangle
+	&= \left\langle\left.\left(\hat{A} - \langle A\rangle\right)\Psi\right|\left(\hat{B} - \langle B\rangle\right)\Psi\right\rangle \\
+	&= \left\langle\Psi\left|\left(\hat{A} - \langle A\rangle\right)\left(\hat{B} - \langle B\rangle\right)\Psi\right.\right\rangle \\
+	&= \left\langle \Psi\left|\hat{A}\hat{B}\Psi\right.\right\rangle - \left\langle\Psi\left|\hat{A}\Psi\right.\right\rangle \langle B\rangle - \langle A\rangle \left\langle \Psi\left|\hat{B}\Psi\right.\right\rangle + \langle A\rangle\langle B\rangle \Big\langle \Psi\Big|\Psi\Big\rangle \\
+	&= \langle \hat{A}\hat{B}\rangle - \langle A\rangle\langle B\rangle - \langle A\rangle\langle B\rangle + \langle A\rangle\langle B\rangle \\
+	&= \langle\hat{A}\hat{B}\rangle - \langle A\rangle\langle B\rangle
+\end{align*}
+$$
+类似地有：
+$$
+\langle g|f\rangle = \langle \hat{B}\hat{A}\rangle - \langle A\rangle\langle B\rangle
+$$
+因此两者的差是：
+$$
+\langle f|g\rangle - \langle g|f\rangle = \langle{\hat{A}\hat{B}}\rangle -  \langle\hat{B}\hat{A}\rangle = [\langle\hat{A}\hat{B}\rangle, \langle\hat{B}\hat{A}\rangle] = \langle[\hat{A}, \hat{B}]\rangle
+$$
+回忆上面出现的交换子定义为：
+$$
+[\hat{A}, \hat{B}] = \hat{A}\hat{B} - \hat{B}\hat{A}
+$$
+这样我们就得到了最终的结论：
+$$
+\sigma_A^2\sigma_B^2 \ge \left(\frac{1}{2i}\left\langle\left[\hat{A}, \hat{B}\right]\right\rangle\right)^2
+$$
+这也被称为一般化的 **测不准原理**。特别地，取 $A = x$，$B = p$ 时我们有：
+$$
+\sigma_x^2\sigma_p^2 \ge \left(\frac{1}{2i}[\hat{x}, \hat{p}]\right)^2 = \left(\frac{1}{2i}i\hbar\right)^2 = \frac{\hbar^2}{4}
+$$
+这也就是我们在第一章得到的结论：
+$$
+\sigma_x\sigma_p \ge \frac{\hbar}{2}
+$$
+不难发现在一般化的测不准原理中，右式在两个算符可交换时是 $0$，此时我们称这两个可观测量是 **兼容的（Compatible）**。换句话说，所有 **不兼容的（Incompatible）**算符之间都存在测不准的现象。比如氢原子中的哈密顿量、角动量大小和角动量的 $z$ 方向分量是相互兼容的，因此它们三个拥有相同的特征状态（也即令这几个量都确定的特征状态）。
+
+测不准原理是量子力学的统计解释推出的结论，它对实验中可观测量之间的不可兼容性做出了数学上的解释。每次观测都会导致波函数坍缩，但是只有两次测量的量可兼容时，它们才能对应一致的结果。作为例子，我们观测粒子位置时，波函数会坍缩为一个尖峰（其对应的波长有无数种，动量同理）；随后如果我们观测粒子动量，波函数会坍缩为一个正弦曲线，此时波长（以及对应的动量）是确定的，但粒子的位置不再是我们此前测量得到的了。相反，如果观测的两个量拥有相同的特征状态，第二次观测时波函数会坍缩成与之前完全相同的形状，因此上一次测量的结果依然有效。
