@@ -1209,3 +1209,189 @@ $$
 $$
 它描述了电磁波“穿透”到导体中的深度。
 
+随后，和之前分析真空中电磁波类似，我们也可以得到 $\mathbf{E}$、$\mathbf{B}$ 与 $\unit{z}$ 相互垂直的结论，给出下面的式子：
+$$
+\begin{equation*}
+	\tilde{\mathbf{E}}(z, t) = \tilde{E}_0e^{-\kappa z}e^{i(kz - \omega t)}\unit{x} \qquad
+	\tilde{\mathbf{B}}(z, t) = \frac{\tilde{k}}{\omega}\tilde{E}_0e^{-\kappa z}e^{i(kz - \omega t)}\unit{y}
+\end{equation*}
+$$
+我们还可以将 $\tilde{k}$ 变成实数 $K$ 乘以一个相位变换，即令 $\tilde{k} = Ke^{i\phi}$，其中 $\phi = \tan^{-1}(\kappa/k)$。此时有：
+$$
+K = |\tilde{k}| = \sqrt{k^2 + \kappa^2} = \omega\sqrt{\epsilon\mu\sqrt{1 + \left(\frac{\sigma}{\epsilon\omega}\right)^2}}
+$$
+如果再将 $\tilde{E}_0$ 和 $\tilde{B}_0$ 变为类似的形式，就有：
+$$
+B_0e^{i\delta_B} = \frac{Ke^{i\phi}}{\omega}E_0e^{i\delta_E} \implies \delta_B - \delta_E = \phi
+$$
+由此我们可以得到 $\mathbf{E}$ 和 $\mathbf{B}$ 的数量关系：
+$$
+\frac{B_0}{E_0} = \frac{K}{\omega} = \sqrt{\epsilon\mu\sqrt{1 + \left(\frac{\sigma}{\epsilon\omega}\right)^2}}
+$$
+我们最终的结论便是：
+$$
+\begin{align*}
+	\mathbf{E}(z, t) &= \phantom{xx|}E_0e^{-\kappa z}\unit{x}\cos(kz - \omega t + \delta_E) \\
+	\mathbf{B}(z, t) &= \frac{K}{\omega}E_0e^{-\kappa z}\unit{y}\cos(kz - \omega t + \delta_E + \phi)
+\end{align*}
+$$
+下面是一个示意图：
+
+![ed2_9-5](graphs/ed2_9-5.png)
+
+#### 导体面上的反射
+
+
+
+## 势与场
+
+本章将探索麦克斯韦方程组的通解。此前在静电场与静磁场中，我们通过引入电势和磁矢势，以解泊松方程的方式变相得到电磁场的解；现在我们需要时间相关的方程解。
+
+### 势的数学形式
+
+#### 标量势与矢量势
+
+给定了电荷分布 $\rho(\mathbf{r}, t)$ 与电流分布 $\mathbf{J}(\mathbf{r}, t)$，究竟如何得到 $\mathbf{E}(\mathbf{r}, t)$ 和 $\mathbf{B}(\mathbf{r}, t)$？当设定为静电场或静磁场时，我们可以通过库仑定律和毕奥·萨伐特定律得到结果，但这并不适用于麦克斯韦方程组。
+
+我们依然从数学规律中找到突破点。静电场旋度为零，因而我们把它设置为一个梯度场；静磁场散度为零，因而我们把它设置为一个旋度场。现在在一般的情形下，电场的旋度并不为零，但磁场散度依然是零，所以突破口就在这里：
+$$
+\mathbf{B} = \nabla\times\mathbf{A} \tag{10.1} \label{magnetic-field-from-potential}
+$$
+将其代入法拉第定律：
+$$
+\nabla\times\mathbf{E} = -\frac{\partial}{\partial t}(\nabla\times\mathbf{A})
+$$
+这样就得到了一个旋度为零的场：
+$$
+\nabla\times\left(\mathbf{E} + \frac{\partial \mathbf{A}}{\partial t}\right) = \mathbf{0}
+$$
+我们将它设为一个梯度场 $-\nabla V$，就得到电场的表达式了：
+$$
+\mathbf{E} = -\nabla V - \frac{\partial \mathbf{A}}{\partial t} \tag{10.2} \label{electric-field-from-potential}
+$$
+现在，让我们把用 $\mathbf{A}$ 和 $V$ 表示的 $\mathbf{E}$ 与 $\mathbf{B}$ 代入高斯定律和安培-麦克斯韦定律中，可以分别得到：
+$$
+\begin{align*}
+	\nabla^2V + \frac{\partial }{\partial t}(\nabla\cdot \mathbf{A}) &= -\frac{1}{\epsilon_0}\rho \tag{10.3} \\
+	\left(\nabla^2\mathbf{A} - \mu_0\epsilon_0\frac{\partial^2\mathbf{A}}{\partial t^2}\right) - \nabla\left(\nabla\cdot\mathbf{A} + \mu_0\epsilon_0\frac{\partial V}{\partial t}\right) &= -\mu_0\mathbf{J} \tag{10.4}
+\end{align*}
+$$
+（注意这里我们不再假设 $\nabla\cdot\mathbf{A} = 0$）可以说是丑到极致了。我们依稀还能从中看到一些泊松方程的影子，但依然难以想象能够得到这种东西的通解。好在，我们某种程度上确实简化了原来的方程：$\mathbf{E}$ 和 $\mathbf{B}$ 需要解六个方程（因为每个分量都需要），但现在只需要解四个（标量 $V$ 和矢量 $\mathbf{A}$ 的三个方向）。
+
+#### 规范变换
+
+根据 $V$ 和 $\mathbf{A}$ 定义上的特点，我们可以为 $V$ 加上任意的常数，为 $\mathbf{A}$ 加上任何旋度为零的场，上面两个方程依然可能成立（正如我们在电势和磁矢势章节中提到过的）。这就让我们有一些操作空间了。
+
+设 $\boldsymbol{\alpha}$ 和 $\beta$ 是我们对两个势场 $\mathbf{A}$ 和 $V$ 的平移量：
+$$
+\mathbf{A}' = \mathbf{A} + \boldsymbol{\alpha} \qquad V' = V + \beta \tag{10.5}
+$$
+这两个平移量满足：
+$$
+\nabla \times \boldsymbol{\alpha} = \mathbf{0} \implies \boldsymbol{\alpha} = \nabla\lambda
+$$
+其中 $\lambda$ 是某个标量场。为了让 $\mathbf{E}$ 保持不变，还有一个重要的约束：
+$$
+\nabla\beta + \frac{\partial \boldsymbol{\alpha}}{\partial t} = \mathbf{0} \implies \nabla\left(\beta + \frac{\partial \lambda}{\partial t}\right) = \mathbf{0}
+$$
+不难看出括号内的量是和位置无关的，但它可以和时间相关，因此设：
+$$
+\beta = -\frac{\partial \lambda}{\partial t} + k(t) \tag{10.6}
+$$
+为了保持公式的简洁，我们可以将 $k$ 并入 $\lambda$ 中，也即为 $\lambda$ 加上 $\int_0^t k(t')\,dt'$。最后得到的式子是：
+$$
+\left\{
+\begin{align*}
+	\mathbf{A}' &= \mathbf{A} + \nabla \lambda \\
+	V' &= V - \frac{\partial \lambda}{\partial t}
+\end{align*}\right. \tag{10.7}
+$$
+其中 $\lambda(\mathbf{r}, t)$ 是 *任选的* 标量场。任何时候如果为 $\mathbf{A}$ 加上 $\nabla \lambda$，只需同时为 $V$ 减去 $\partial_t \lambda$ 就能保证电磁场的前后一致。我们将这个变换称为 **规范变换（Gauge Transformation）**。接下来，我们会介绍两种重要的规范，它们对前面的两个丑陋不堪的公式进行了显著的美化。
+
+#### 库仑规范与洛伦茨规范
+
+**库仑规范（The Coulomb Gauge）** 中假定：
+$$
+\nabla\cdot\mathbf{A} = 0 \tag{10.8}
+$$
+这也是我们在上一篇笔记中磁矢势章节里面假设的。此时 $V$ 会变得非常简洁：
+$$
+\nabla^2 V = -\frac{1}{\epsilon_0}\rho \tag{10.9}
+$$
+这就是我们已经熟悉的泊松方程。当假设 $V$ 在无穷远处为 $0$ 时，它的解是：
+$$
+V(\mathbf{r}, t) = \frac{1}{4\pi\epsilon_0}\int\frac{\rho(\mathbf{r}', t)}{\mathscr{r}}\,d\tau' \tag{10.10}
+$$
+相对地，$\mathbf{A}$ 的表达式依然丑陋：
+$$
+\nabla^2\mathbf{A} - \mu_0\epsilon_0\frac{\partial \mathbf{A}}{\partial t^2} = -\mu_0\mathbf{J} + \mu_0\epsilon_0\nabla\left(\frac{\partial V}{\partial t}\right) \tag{10.11}
+$$
+此外，由于 $V$ 可以被电荷分布直接影响，它不能很好地适应相对论；当我们移动电荷时，即使是远处的电势都仿佛在一瞬间产生了变化一样，这是不合理的。讲到底，$V$ 并不是一个可测量的物理量，真正有效的物理量是 $\mathbf{E}$，它在电荷分布变化时会以电磁波的形式（不超过光速）传递这个变化到远处；但它需要 $\mathbf{A}$ 的同时参与（而 $\mathbf{A}$ 在库仑规范中非常复杂）。
+
+**洛伦茨规范（The Lorenz Gauge）** 中假定：
+$$
+\nabla\cdot \mathbf{A} = -\mu_0\epsilon_0\frac{\partial V}{\partial t} \tag{10.12}
+$$
+此时关于 $V$ 和 $\mathbf{A}$ 的公式可以写成：
+$$
+\left\{
+\begin{align*}
+	\nabla^2V - \mu_0\epsilon_0\frac{\partial^2 V}{\partial t^2} = -\frac{1}{\epsilon_0}\rho \\
+	\nabla^2\mathbf{A} - \mu_0\epsilon_0\frac{\partial^2 \mathbf{A}}{\partial t^2} = -\mu_0\mathbf{J}
+\end{align*}\right. \tag{10.13}
+$$
+这个规律是显而易见的，我们可以定义一个微分算符来简化等式左侧：
+$$
+\square^2 = \nabla^2 - \mu_0\epsilon_0\frac{\partial^2}{\partial t^2} \tag{10.14}
+$$
+我们称其为 **达朗贝尔算符（d'Alembertian）**。上面的公式变为：
+$$
+\left\{
+\begin{align*}
+	\operatorname{\square^2}V &= -\frac{1}{\epsilon_0}\rho \\
+	\operatorname{\square^2}\mathbf{A} &= -\mu_0\mathbf{J}
+\end{align*}\right. \tag{10.15}
+$$
+至此，我们成功将电磁场求解问题完全转化为泊松方程的求解问题，从中我们也能看出电磁场数学上的高度对称性。后文中我们几乎只会使用洛伦茨规范，因此除非特殊说明，均假设 $(10.12)$ 为已知条件。
+
+#### 洛伦兹力
+
+我们可以顺便了解洛伦兹力在势场的形式下变成什么样：
+$$
+\mathbf{F} = q(\mathbf{E} + \mathbf{v}\times\mathbf{B}) = q\left(-\nabla V - \frac{\partial \mathbf{A}}{\partial t} + \mathbf{v}\times(\nabla\times\mathbf{A})\right)
+$$
+回忆 $\nabla(\mathbf{v}\cdot\mathbf{A}) = \mathbf{v}\times(\nabla\times\mathbf{A}) + (\mathbf{v}\cdot\nabla)\mathbf{A}$，因此：
+$$
+\frac{d\mathbf{p}}{dt} = -q\left(\frac{\partial \mathbf{A}}{\partial t} + (\mathbf{v}\cdot\nabla)\mathbf{A} + \nabla(V - \mathbf{v}\cdot\mathbf{A})\right)
+$$
+考虑 $\mathbf{A}$ 在时间微元 $dt$ 内的变化：
+$$
+\begin{align*}
+	d\mathbf{A} &= \mathbf{A}(\mathbf{r} + \mathbf{v}\,dt, t + dt) - \mathbf{A}(\mathbf{r}, t) \\
+	&= \nabla\mathbf{A}\cdot \mathbf{v}\,dt + \frac{\partial \mathbf{A}}{\partial t}\,dt
+\end{align*}
+$$
+因此：
+$$
+\frac{d\mathbf{A}}{dt} = \nabla\mathbf{A}\cdot\mathbf{v} + \frac{\partial \mathbf{A}}{\partial t}
+$$
+代入到上面的式子中，就得到了：
+$$
+\frac{d}{dt}(\mathbf{p} + q\mathbf{A}) = -\nabla[q(V - \mathbf{v}\cdot\mathbf{A})]
+$$
+如果仿照经典力学中，将动量的变化率（力）写作势能的梯度：
+$$
+\frac{d\mathbf{p}}{dt} = -\nabla U
+$$
+我们就可以得到 **正则动量（Canonical Momentum）** 的式子：
+$$
+\mathbf{p}_\text{can} = \mathbf{p} + q\mathbf{A}
+$$
+其中 $U$ 取的是速度相关量：
+$$
+U_\text{vel} = q(V - \mathbf{v}\cdot\mathbf{A})
+$$
+如果再加上动能，例子的总能量变化率满足：
+$$
+\frac{d}{dt}(T + qV) = \frac{\partial}{\partial t}[q(V - \mathbf{v}\cdot\mathbf{A})]
+$$
