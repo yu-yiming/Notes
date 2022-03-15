@@ -943,6 +943,8 @@ $$
 
 ### 测不准原理
 
+#### 广义测不准原理
+
 我们在第一章中提到过位置和动量的测不准原理，现在让我们尝试证明它。有了上一节完整的统计解释后，我们可以看向更一般的情形：对于任意可观测量 $A$，其方差为：
 $$
 \sigma_A^2 = \left\langle\left.\left(\hat{A} - \langle A\rangle\right)\Psi\right|\left(\hat{A} - \langle A\rangle\right)\Psi\right\rangle = \langle f|f\rangle
@@ -951,7 +953,7 @@ $$
 $$
 \sigma_B = \langle g|g\rangle
 $$
-此时：
+此时根据施瓦尔兹不等式：
 $$
 \sigma_A^2\sigma_B^2 = \langle f|f\rangle\langle g|g\rangle \ge |\langle f|g\rangle|^2
 $$
@@ -1001,3 +1003,107 @@ $$
 不难发现在一般化的测不准原理中，右式在两个算符可交换时是 $0$，此时我们称这两个可观测量是 **兼容的（Compatible）**。换句话说，所有 **不兼容的（Incompatible）**算符之间都存在测不准的现象。比如氢原子中的哈密顿量、角动量大小和角动量的 $z$ 方向分量是相互兼容的，因此它们三个拥有相同的特征状态（也即令这几个量都确定的特征状态）。
 
 测不准原理是量子力学的统计解释推出的结论，它对实验中可观测量之间的不可兼容性做出了数学上的解释。每次观测都会导致波函数坍缩，但是只有两次测量的量可兼容时，它们才能对应一致的结果。作为例子，我们观测粒子位置时，波函数会坍缩为一个尖峰（其对应的波长有无数种，动量同理）；随后如果我们观测粒子动量，波函数会坍缩为一个正弦曲线，此时波长（以及对应的动量）是确定的，但粒子的位置不再是我们此前测量得到的了。相反，如果观测的两个量拥有相同的特征状态，第二次观测时波函数会坍缩成与之前完全相同的形状，因此上一次测量的结果依然有效。
+
+#### 最小不确定性波包
+
+我们此前已经遇到过波函数正好位于测不准原理的边界的情形（简谐振子），我们对于这种情况的普遍情况更加感兴趣：什么条件下这种 **最小不确定性波包（Minimum-Uncertainty Wave Packet）** 会成立？观察我们上一节对广义测不准原理的推导，会发现其中的不等号在两个式子中出现，其一是施瓦尔兹不等式，另外一个是将复数化为虚部。如果想要这两步的不等号写成等号，函数 $f$ 和 $g$ 需要满足：
+$$
+g(x) = iaf(x)
+$$
+其中 $a \in \mathbb{R}$。令 $f = (\hat{p} - \langle p\rangle)$ 及 $g = (\hat{x} - \langle x\rangle)$，有：
+$$
+\left(-i\hbar\frac{d}{dx} - \langle p\rangle\right)\Psi = ia(x - \langle x\rangle)\Psi
+$$
+它的通解是：
+$$
+\Psi(x) = Ae^{-a(x - \langle x\rangle)^2/(2\hbar)}e^{i\langle p\rangle x/\hbar}
+$$
+可以看出这个波包是一个高斯函数，我们此前在简谐振子处得到的结果也是一个高斯函数。
+
+#### 能量-时间测不准原理
+
+我们已经熟悉的位置-动量测不准原理实际上对于同等系统重复测量的描述有些不严谨。通常它会跟着另一个测不准原理一起出现，即 **能量-时间测不准原理（Energy-Time Uncertainty Principle）**：
+$$
+\Delta t\Delta E \ge \frac{\hbar}{2}
+$$
+从狭义相对论角度来看，这两个测不准原理是高度一致的，因为位置和时间（$\mathbf{x}$ 和 $ct$）形成了位置-时间四元矢量；动量和能量（$\mathbf{p}$ 和 $E/c$）则形成了动量-能量四元矢量。不过本篇笔记并不涉及相对论（注意到薛定谔方程中 $x$ 和 $t$ 的迥异地位），因此这两个式子不能混为一谈。事实上，我们接下来要尝试推导能量-时间测不准原理，从中会发现它们是非常不同的。
+
+首先我们注意到，在非相对论的语境中，$t$ 和 $x$、$p$、$E$ 是完全不同的；我们可以测量某一时刻的其它物理量，但时间没有办法测量：它是一个独立存在的量。我们没有办法测量多次时间，然后取其标准差；反过来说，正是因为时间的变化，我们才能测量其它物理量并计算得到它们的标准差。
+
+为了测量一个系统变化的速率，我们可以取某个物理量 $Q$ 的期望值的平均值：
+$$
+\begin{align*}
+	\frac{d}{dt}\langle Q\rangle 
+	= \frac{d}{dt}\left\langle \Psi\left|\hat{Q}\Psi\right.\right\rangle 
+	&= \left\langle\left.\frac{\partial \Psi}{\partial t}\right|\hat{Q}\Psi\right\rangle +
+	\left\langle\Psi\left|\frac{\partial \hat{Q}}{\partial t}\Psi\right.\right\rangle + 
+	\left\langle\Psi\left|\hat{Q}\frac{\partial \Psi}{\partial t}\right.\right\rangle \\
+	&= -\frac{1}{i\hbar}\left\langle \hat{H}\Psi\left|\hat{Q}\Psi\right.\right\rangle +
+	\left\langle\frac{\partial \hat{Q}}{\partial t}\right\rangle + 
+	\frac{1}{i\hbar}\left\langle\Psi\left|\hat{Q}\hat{H}\Psi\right.\right\rangle \\
+	&= \frac{i}{\hbar}\left\langle\Psi\left|(\hat{H}\hat{Q} - \hat{Q}\hat{H})\Psi\right.\right\rangle + 
+	\left\langle\frac{\partial \hat{Q}}{\partial t}\right\rangle \\&
+	= \frac{i}{\hbar}\left\langle\left[\hat{H}, \hat{Q}\right]\right\rangle + \left\langle\frac{\partial \hat{Q}}{\partial t}\right\rangle
+\end{align*}
+$$
+我们将其称为 **广义埃伦费斯特定理（Generalized Ehrenfest Theorem）**。当算符与时间无关时（我们通常假设这一点成立），其对应的物理量期望值的变化率只和该算符与哈密顿算符的交换子有关；特别地，当 $\hat{Q}$ 和 $\hat{H}$ 兼容时，$Q$ 是一个保守的物理量。如果我们将上面的公式代入广义测不准原理，有：
+$$
+\sigma_H^2\sigma_Q^2 \ge \left(\frac{1}{2i}\left\langle\left[\hat{H}, \hat{Q}\right]\right\rangle\right)^2 = \frac{\hbar^2}{4}\left(\frac{d\langle Q\rangle}{dt}\right)^2
+\implies \sigma_H\sigma_Q \ge \frac{\hbar}{2}\left|\frac{d\langle Q\rangle}{dt}\right|
+$$
+现在记 $\Delta E = \sigma_H$，且如果设：
+$$
+\Delta t = \frac{\sigma_Q}{|d\langle Q\rangle/dt|}
+$$
+此时就有：
+$$
+\Delta E\Delta t \ge \frac{\hbar}{2}
+$$
+可以看到，我们的 $\Delta t$，其物理意义是 $\langle Q\rangle$ 变化一个标准差 $\sigma_Q$ 所需的时间，因此它依赖于 $Q$ ，对于不同的可观测量会有不同的大小。当 $\Delta E$ 非常大的时候，说明 $Q$ 的变化非常迅速，也就是所需时间很小；否则 $Q$ 就是缓慢变化，其对应的时间就很长。
+
+### 矢量和算符
+
+在矢量分析中，我们学过将空间中的矢量拆分为某个基上基矢量的加权和。比如在三维空间中，任意矢量 $\mathbf{A}$ 都可以写作：
+$$
+\mathbf{A} = A_x\unit{x} + A_y\unit{y} + A_z\unit{z} = (\mathbf{A}\cdot\unit{x})\unit{x} + (\mathbf{A}\cdot\unit{y})\unit{y} + (\mathbf{A}\cdot\unit{z})\unit{z}
+$$
+（这里的 $\unit{x}$ 符号代表的是单位矢量）在量子力学中，我们有类似于 $\mathbf{A}\cdot\unit{x}$ 的写法：
+$$
+\Psi(x, t) = \langle x|\mathcal{S}(t)\rangle
+$$
+其中 $|\mathcal{S}(t)\rangle$ 表示希尔伯特空间中的一个矢量，而 $\Psi(x, t)$ 表示了其 $x$ 方向的分量。$|x\rangle$ 表示特征值为 $x$ 的位置特征函数。类似地，同一个矢量的特征值为 $p$ 的动量特征函数是：
+$$
+\Phi(p, t) = \langle p|\mathcal{S}(t)\rangle
+$$
+如果以能量特征函数为基，根据不同的 $n$ 可以得到：
+$$
+c_n(t) = \langle n|\mathcal{S}(t)\rangle
+$$
+需要意识到的是，上面这三种不同的分量表示方法描述的其实都是同一个矢量：
+$$
+|\mathcal{S}(t)\rangle = \int \Psi(y, t)\delta(x - y)\,dy = \int \Phi(p, t)\frac{1}{\sqrt{2\pi\hbar}}e^{ipx/\hbar}\,dp = \sum_n^\infty c_ne^{-iE_nt/\hbar}\psi_n(x)
+$$
+算符是希尔伯特空间中的线性变换，它将一个矢量变换为另一个矢量：
+$$
+|\beta\rangle = \hat{Q}|\alpha\rangle
+$$
+如果设 $|\alpha\rangle = \sum a_n|e_n\rangle$，$|\beta\rangle = \sum b_n|e_n\rangle$，其分量为：
+$$
+a_n = \langle e_n|\alpha \rangle \qquad b_n = \langle e_n|\beta\rangle
+$$
+此时我们可以将前面的式子写成：
+$$
+\sum_n b_n|e_n\rangle = \sum_n a_n\hat{Q}|e_n\rangle
+$$
+我们可以将算符 $\hat{Q}$ 表示为：
+$$
+Q_{mn} = \left\langle e_m\bigg|\ \hat{Q}\ \bigg|\ e_n\right\rangle
+$$
+这样就有：
+$$
+\sum_n b_n\langle e_m|e_n\rangle = \sum_na_n\left\langle e_m\bigg|\ \hat{Q}\ \bigg|\ e_n\right\rangle
+$$
+注意到 $\langle e_m|e_n \rangle = \delta_{mn}$，因此就有：
+$$
+b_m = \sum_nQ_{mn}a_n
+$$
