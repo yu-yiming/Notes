@@ -1245,7 +1245,7 @@ $$
 
 ## 势与场
 
-本章将探索麦克斯韦方程组的通解。此前在静电场与静磁场中，我们通过引入电势和磁矢势，以解泊松方程的方式变相得到电磁场的解；现在我们需要时间相关的方程解。
+本章将探索麦克斯韦方程组的通解。此前在静电场与静磁场中，我们通过引入电势和磁矢势，以解泊松方程的方式变相得到电磁场的解；现在我们需要时间相关的方程解，此时我们的电势和磁矢势不再和时间无关了。
 
 ### 势的数学形式
 
@@ -1257,7 +1257,7 @@ $$
 $$
 \mathbf{B} = \nabla\times\mathbf{A} \tag{10.1} \label{magnetic-field-from-potential}
 $$
-将其代入法拉第定律：
+这和我们之前定义的磁矢势一致。将其代入法拉第定律：
 $$
 \nabla\times\mathbf{E} = -\frac{\partial}{\partial t}(\nabla\times\mathbf{A})
 $$
@@ -1395,3 +1395,5 @@ $$
 $$
 \frac{d}{dt}(T + qV) = \frac{\partial}{\partial t}[q(V - \mathbf{v}\cdot\mathbf{A})]
 $$
+
+
