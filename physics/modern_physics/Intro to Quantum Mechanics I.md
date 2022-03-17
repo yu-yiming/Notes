@@ -767,11 +767,11 @@ $$
 $$
 \langle \Psi|\hat{Q}\Psi\rangle = \langle Q\rangle = \langle Q\rangle^* = \langle \hat{Q}\Psi|\Psi\rangle
 $$
-我们将这样的算符称为 **哈密顿算符（Hermitian Operator）**，后文中我们会简称为算符。量子力学中所有的可观测量都对应了一个算符。在有限维度矢量空间中，我们用 **哈密顿矩阵（Hermitian Matrix）**来表示一个算符，其满足下面的特性：
+我们将这样的算符称为 **厄米特算符（Hermitian Operator）**，后文中我们会简称为算符。量子力学中所有的可观测量都对应了一个算符。在有限维度矢量空间中，我们用 **厄米特矩阵（Hermitian Matrix）**来表示一个算符，其满足下面的特性：
 $$
 T = T^\dagger \equiv \tilde{T}^*
 $$
-更一般地，我们可以将算符 $\hat{Q}$ 的 **哈密顿共轭（Hermitian Conjugate）**定义为满足下面要求的 $\unit{Q}^\dagger$：
+更一般地，我们可以将算符 $\hat{Q}$ 的 **厄米特共轭（Hermitian Conjugate）**定义为满足下面要求的 $\unit{Q}^\dagger$：
 $$
 \begin{equation*}
 	\langle f|\unit{Q}g\rangle = \langle \hat{Q}^\dagger f|g\rangle
@@ -1063,6 +1063,8 @@ $$
 
 ### 矢量和算符
 
+#### 希尔伯特空间的基矢量
+
 在矢量分析中，我们学过将空间中的矢量拆分为某个基上基矢量的加权和。比如在三维空间中，任意矢量 $\mathbf{A}$ 都可以写作：
 $$
 \mathbf{A} = A_x\unit{x} + A_y\unit{y} + A_z\unit{z} = (\mathbf{A}\cdot\unit{x})\unit{x} + (\mathbf{A}\cdot\unit{y})\unit{y} + (\mathbf{A}\cdot\unit{z})\unit{z}
@@ -1106,4 +1108,254 @@ $$
 注意到 $\langle e_m|e_n \rangle = \delta_{mn}$，因此就有：
 $$
 b_m = \sum_nQ_{mn}a_n
+$$
+就好像矢量和矩阵在不同基中的形式不同一样，算符在不同分量表示中的形式也是不同的。回忆我们此前对 $\Phi(x, t)$ 和 $\Phi(p, t)$ 的称呼（位置空间波函数和动量动量空间波函数，我们可以将某个基扩张成的空间这样称呼），在这两种情况下的位置算符和动量算符是不一样的：
+$$
+\begin{align*}
+	\hat{x} = \begin{cases} x & \text{（位置空间）} \\ i\hbar\partial_p & \text{（动量空间）} \end{cases} \qquad
+	\hat{p} = \begin{cases} -i\hbar\partial_x & \text{（位置空间）} \\ p & \text{（动量空间）} \end{cases}
+\end{align*}
+$$
+因此当提到某个算符时，最严谨的说法是“在某个空间”中的算符，不过由于我们主要只关注位置空间的波函数，也即 $\Psi(x, t)$，我们默认情况下讨论的均为位置空间。
+
+最后值得提一下算符的运算。由于它们对应着矢量空间的矩阵，其运算规律和矩阵完全一致：
+$$
+\left(\hat{Q} + \hat{R}\right)|\alpha\rangle = \hat{Q}|\alpha\rangle + \hat{R}|\alpha\rangle \\
+\left(\hat{Q}\hat{R}\right)|\alpha\rangle = \hat{Q}\left(\hat{R}|\alpha\rangle\right)
+$$
+有时我们会将函数作用于算符上，物理中这个等价于用其幂级数展开：
+$$
+e^{\hat{Q}} = \hat{I} + \hat{Q} + \frac{1}{2}\hat{Q}^2 + \frac{1}{3!}\hat{Q}^3 + \dots \\
+\frac{1}{1 - \hat{Q}} = \hat{I} + \hat{Q} + \hat{Q}^2 + \hat{Q}^3 + \dots \\
+\ln\left(1 + \hat{Q}\right) = \hat{Q} - \frac{1}{2}\hat{Q}^2 + \frac{1}{3}\hat{Q}^3 - \frac{1}{4}\hat{Q}^4 + \dots
+$$
+
+
+#### 一个二维系统
+
+在一些简单的系统中，$n$ 能取的值是有限的，此时 $|S(t)\rangle$ 就是一个 $N$ 维矢量，$\hat{Q}$ 对应的就是一个 $N\times N$ 的矢量。最简单的情形是下面这个只有两个线性无关状态的系统：
+$$
+|0\rangle = \begin{pmatrix} 1 \\ 0 \end{pmatrix} \qquad |1\rangle = \begin{pmatrix} 0 \\ 1 \end{pmatrix}
+$$
+此时任意的状态 $|S\rangle$ 都可以表示为：
+$$
+|S\rangle = a|0\rangle + b|1\rangle = \begin{pmatrix} a \\ b \end{pmatrix}
+$$
+其中需要 $|a|^2 + |b|^2 = 1$，$a, b \in \mathbb{C}$。假设该系统中的哈密顿算符可以写成：
+$$
+\hat{H} = \begin{pmatrix} h & g \\ g & h \end{pmatrix}
+$$
+其中 $g, h \in \mathbb{R}$，此时它显然是一个厄米特矩阵。回忆时间相关的薛定谔方程：
+$$
+i\hbar\frac{d}{dt}|\mathcal{S}(t)\rangle = \hat{H}|\mathcal{S}(t)\rangle
+$$
+和此前使用的方法一样，我们先求解时间无关的薛定谔方程：
+$$
+\hat{H}|s\rangle = E|s\rangle
+$$
+这一步实际上在求解 $\hat{H}$ 的特征矢量和特征值：
+$$
+\det(h - EI) = 
+\det\begin{pmatrix}
+	h - E & g \\ g & h - E
+\end{pmatrix}
+= (h - E)^2 - g^2 = 0
+$$
+我们可以得到两个特征值：$E_\pm = h \pm g$。同时也就得到两个特征矢量（归一化后）：
+$$
+|s_\pm\rangle = \frac{1}{\sqrt{2}}\begin{pmatrix} 1 \\ \pm 1 \end{pmatrix}
+$$
+现在，我们可以将初始状态表示为这两个特征矢量的线性组合：
+$$
+|\mathcal{S}(0)\rangle = \begin{pmatrix} 1 \\ 0 \end{pmatrix} = \frac{1}{\sqrt{2}}(|s_+\rangle + |s_-\rangle)
+$$
+对于任意时刻 $t$，我们只需乘上一个 $\exp(-iE_n t/\hbar)$：
+$$
+\begin{align*}
+	|\mathcal{S}(t)\rangle
+	&= \frac{1}{\sqrt{2}}\left[e^{-i(h+g)t/\hbar}|s_+\rangle + e^{-i(h-g)t/\hbar}|s_-\rangle\right] \\
+	&= \frac{1}{2}e^{-iht/\hbar}\left[e^{-igt/\hbar}\begin{pmatrix} 1 \\ 1 \end{pmatrix} + e^{igh/\hbar}\begin{pmatrix} 1 \\ -1 \end{pmatrix}\right] \\
+	&= \frac{1}{2}e^{-iht/\hbar}\begin{pmatrix} e^{-igh/\hbar} + e^{igh\hbar} \\ e^{-igh/\hbar} - e^{igt/\hbar} \end{pmatrix} \\
+	&= e^{-iht/\hbar}\begin{pmatrix} \cos(gt/\hbar) \\ -i\sin(gt/\hbar) \end{pmatrix}
+\end{align*}
+$$
+
+#### 狄拉克符号
+
+**狄拉克符号（Dirac Notation）** 是将内积符号 $\langle \alpha | \beta \rangle$ 拆开后的记法，即 **左矢（Bra）** $\langle \alpha|$ 和 **右矢（Ket）** $|\beta\rangle$。我们已经知道右矢是一个矢量：
+$$
+|\beta\rangle = \begin{pmatrix} b_1 \\ b_2 \\ \vdots \\ b_n \end{pmatrix}
+$$
+我们可以适当地定义左矢，使得它们的内积满足 $\langle \alpha |\beta\rangle = \langle \alpha| \cdot |\beta \rangle$：
+$$
+\langle\alpha| = \begin{pmatrix}
+	a_1^* & a_2^* & \dots & a_n^*
+\end{pmatrix}
+$$
+通过观察不难发现左矢的集合也能形成一个矢量空间，我们称其为 **对偶空间（Dual Space）**。当左矢和右矢的维度相同时，我们可以将它们交换顺序利用矩阵乘法得到一个方阵，特别地，我们将一个归一化的右矢乘其右矢称为 **投影算符（Projection Operator）**：
+$$
+\hat{P} = |\alpha\rangle\langle \alpha|
+$$
+观察下面的式子：
+$$
+\hat{P}|\beta\rangle = \langle \alpha|\beta\rangle|\alpha\rangle
+$$
+类比矢量分析中的 $(\mathbf{a}\cdot\mathbf{b})\mathbf{a}$，不难看出这是矢量 $|\beta\rangle$ 在 $|\alpha\rangle$ 方向上的投影，这也是 $\hat{P}$ 名称的由来。特别地，对于标准正交基 $\{|e_n\rangle\}$，有：
+$$
+\sum_n|e_n\rangle\langle e_n| = \hat{I}
+$$
+此处 $\hat{I}$ 是单位算符。为了认识到这一点，可以考虑一个任意的矢量 $|\alpha\rangle = \sum a_n|e_n\rangle$：
+$$
+\begin{align*}
+	\left(\sum_n|e_n\rangle\langle e_n|\right)|\alpha\rangle
+	&= \sum_m\sum_n a_m\langle e_n|e_m\rangle|e_n\rangle \\
+	&= \sum_m\sum_n \delta_{mn}a_m|e_n\rangle \\
+	&= \sum_na_n|e_n\rangle \\
+	&= |\alpha\rangle
+\end{align*}
+$$
+对狄拉克标准正交基也有类似的结论，对于 $\{|e_z\rangle\}$ 有：
+$$
+\int|e_z\rangle\langle e_z|\,dz = \hat{I}
+$$
+最后我们需要重新审视这个记号系统。$|\alpha\rangle$ 中的 $\alpha$ 只是一个名字，只有在利用狄拉克符号的时候才变成一个矢量。因此如果回顾此前给出的等式：
+$$
+\left\langle f\left|\hat{Q}f\right.\right\rangle = \left\langle\left. \hat{Q}f\right|f\right\rangle
+$$
+其中的 $\hat{Q}f$ 似乎没有任何意义，因为 $f$ 本身没有任何意义。我们可以将等式左侧写成熟悉的形式：
+$$
+\left\langle f\left|\hat{Q}f\right.\right\rangle \equiv \Big\langle f\ \Big| \hat{Q} \Big| f \Big\rangle
+$$
+右式则没有更好的简化形式；其含义是 $\hat{Q}|f\rangle$ 对应的左矢，我们之后就保持这样的写法。
+
+#### 基变换
+
+狄拉克符号的好处在于，其中不包含任何特定的基，且使我们能轻松地在不同基间切换。回忆我们对投影算符的定义，下面我们会着重考察位置特征状态、动量特征状态和能量特征状态间的变换。首先让我们回顾状态矢量 $|\mathcal{S}(t)\rangle$ 在这些空间中的表示：
+$$
+\begin{align*}
+	|\mathcal{S}(t)\rangle 
+	&= \int \Psi(x, t)|x\rangle\,dx = \int \langle x|\mathcal{S}(t)\rangle|x\rangle\,dx \\
+	&= \int \Phi(p, t)|p\rangle\,dp = \int \langle p|\mathcal{S}(t)\rangle|p\rangle\,dp \\
+	&= \sum_nc_n(t)|n\rangle = \sum_n\langle n|\mathcal{S}(t)\rangle|n\rangle
+\end{align*}
+$$
+在不同空间中，我们只需要取相应的算符即可。比如在位置空间和动量空间中的位置算符：
+$$
+\big\langle x \big|\hat{x}\big|\mathcal{S}(t)\big\rangle = x\Psi(x, t) \\
+\big\langle p \big|\hat{x}\big|\mathcal{S}(t)\big\rangle = i\hbar\frac{\partial \Psi(p, t)}{\partial t}
+$$
+动量算符则是：
+$$
+\begin{align*}
+	\big\langle p \big|\hat{x}\big|\mathcal{S}(t)\big\rangle 
+	&= \left\langle p \left|\hat{x}\int\,dx\right|x\right\rangle\langle x||\mathcal{S}(t)\rangle \\
+	&= \int\langle p|x|x \rangle\langle x|\mathcal{S}(t)\rangle\,dx \\
+	\big\langle p\big|\hat{x}\big|\mathcal{S}(t)\big\rangle
+    &= \int x\langle p|x\rangle \Psi(x, t)\,dx \\
+    &= \int x\frac{e^{-ipx/\hbar}}{\sqrt{2\pi\hbar}} \Psi(x, t)\,dx \\
+    &= i\hbar\frac{\partial}{\partial p}\int \frac{e^{-ipx/\hbar}}{\sqrt{2\pi\hbar}}\Psi(x, t)\,dx
+\end{align*}
+$$
+回忆此前我们给出的位置空间中的动量波函数，可以看到是一致的。
+
+
+
+## 三维中的薛定谔方程
+
+### 薛定谔方程
+
+我们此前研究的都是一维空间；如果在三维空间中，我们需要对动量做一些调整。回忆经典力学中的哈密顿量：
+$$
+H = \frac{1}{2}mv^2 + V = \frac{1}{2m}\left(p_x^2 + p_y^2 + p_z^2\right) + V
+$$
+我们同时考虑三个方向上的动量，因此三维中的动量算符是：
+$$
+\hat{\mathbf{p}} = -ih\unit{x}\frac{\partial}{\partial x} -ih\unit{y}\frac{\partial}{\partial y} -ih\unit{z}\frac{\partial}{\partial z} = -ih\nabla
+$$
+同时，薛定谔方程变为下面的形式：
+$$
+i\hbar\frac{\partial \Psi}{\partial t} = \hat{H}\Psi = -\frac{\hbar}{2m}\nabla^2\Psi + V\Psi
+$$
+三维中的归一化也要确保三个方向都顾及到：
+$$
+\int|\Psi|^2\,d^3\mathbf{r} = 1
+$$
+其中记号 $d^3\mathbf{r} = dx\,dy\,dz$ 代表一个体积微元。和此前类似地，我们可以通过分离变量法，将时间无关的薛定谔方程从原方程中提取出来：
+$$
+-\frac{\hbar^2}{2m}\nabla^2\psi + V\psi = E\psi
+$$
+这个方程的解 $\psi_n(\mathbf{r})$ 可以建立薛定谔方程的解：
+$$
+\Psi_n(\mathbf{r}, t) = \psi_n(\mathbf{r})e^{-iE_nt/\hbar}
+$$
+三维中薛定谔方程的通解是：
+$$
+\Psi(\mathbf{r}, t) = \sum_n c_n\psi_n(\mathbf{r})e^{-iE_nt/\hbar}
+$$
+
+#### 球坐标中的解
+
+球坐标中的拉普拉斯算子简直是梦魇：
+$$
+\nabla^2 = \frac{1}{r^2}\frac{\partial}{\partial r}\left(r^2\frac{\partial}{\partial r}\right) + \frac{1}{r^2\sin\theta}\frac{\partial}{\partial \theta}\left(\sin\theta\frac{\partial}{\partial \theta}\right) + \frac{1}{r^2\sin^2\theta}\left(\frac{\partial^2}{\partial \phi^2}\right)
+$$
+但我们依然可以通过分离变量法解决这个麻烦。假设所有时间无关解都可以分为两个部分：
+$$
+\psi(r, \theta, \phi) = R(r)Y(\theta, \phi)
+$$
+经过一些计算，我们可以得到一个等式：
+$$
+\frac{1}{R}\frac{d}{dr}\left(r^2\frac{dR}{dr}\right) - \frac{2mr^2}{\hbar^2}[V(r) - E] 
+= -\frac{1}{Y}\left[\frac{1}{\sin\theta}\frac{\partial}{\partial \theta}\left(\sin\theta\frac{\partial Y}{\partial \theta}\right) + \frac{1}{\sin^2\theta}\frac{\partial^2 Y}{\partial \phi^2}\right]
+= \ell(\ell + 1)
+$$
+这里的 $\ell \in \mathbb{C}$ 是任取的。下面我们将求解这两个常微分方程。
+
+首先是角方程 $Y(\theta, \phi)$：
+$$
+\sin\theta\frac{\partial}{\partial \theta}\left(\sin\theta\frac{\partial Y}{\partial \theta}\right) + \frac{\partial^2 Y}{\partial \phi^2} = -\ell(\ell + 1)\sin^2\theta Y
+$$
+我们依然用分离变量法，设：
+$$
+Y(\theta, \phi) = \Theta(\theta)\Phi(\phi)
+$$
+再次经过一些计算，我们得到：
+$$
+\frac{1}{\Theta}\left[
+	\sin\theta\frac{d}{d\theta}
+	\left(
+		\sin\theta\frac{d\Theta}{d\theta}
+	\right)
+\right]
++ \ell(\ell + 1)\sin^2\theta = -\frac{1}{\Phi}\frac{d^2\Phi}{d\phi^2} = m^2
+$$
+这里的 $m\in \mathbb{C}$ 是任取的。这里的 $\Phi$ 可以轻松送求解出来：
+$$
+\Psi(\phi) = e^{im\phi}
+$$
+这里其实还有另外一项 $e^{-im\phi}$，但只需让 $m$ 可以取负，两者就是等价的；常系数则可以让 $\Theta$ 吸收掉。在电动力学中我们求解电势的在球坐标系中的泊松方程时同样使用了分离变量法，不过彼时我们将角方程的解写成三角函数的形式，那是因为电动力学中不存在复数值。
+
+由于 $\phi$ 的周期性，$\Phi$ 理应是一个周期函数，即：
+$$
+\Phi(\phi + 2\pi) = \Phi(\phi) \implies e^{im(\phi + 2\pi)} = e^{im\phi} \implies e^{2m\pi i} = 1
+$$
+所以 $m$ 必须是一个整数。另一边，$\Theta$ 的方程：
+$$
+\sin\theta\frac{d}{d\theta}\left(\sin\theta\frac{d\Theta}{d\theta}\right) + \left[\ell(\ell + 1) - m^2\right]\Theta = 0
+$$
+其解如下：
+$$
+\Theta(\theta) = AP_\ell^m(\cos\theta)
+$$
+其中 $P_\ell^m$ 是 **勒让德函数（Legendre Function）**，定义如下：
+$$
+P_\ell^m(x) = (-1)^m(1 - x^2)^{m/2}\left(\frac{d}{dx}\right)^mP_\ell(x)
+$$
+其中 $P_\ell(x)$ 被称为 **勒让德多项式（Legendre Polynomial）**，我们可以通过 **罗德里格斯公式（Rodrigues Formula）** 计算：
+$$
+P_\ell(x) = \frac{1}{2^\ell \ell!}\left(\frac{d}{dx}\right)^\ell(x^2 - 1)^\ell
+$$
+
+$$
+
 $$
