@@ -1347,7 +1347,7 @@ $$
 $$
 \Theta(\theta) = AP_\ell^m(\cos\theta)
 $$
-其中 $P_\ell^m$ 是 **勒让德函数（Legendre Function）**，定义如下：
+其中 $P_\ell^m$ 是 **关联勒让德函数（Associated Legendre Function）**，$\ell \in \mathbb{Z}$，定义如下：
 $$
 P_\ell^m(x) = (-1)^m(1 - x^2)^{m/2}\left(\frac{d}{dx}\right)^mP_\ell(x)
 $$
@@ -1355,7 +1355,18 @@ $$
 $$
 P_\ell(x) = \frac{1}{2^\ell \ell!}\left(\frac{d}{dx}\right)^\ell(x^2 - 1)^\ell
 $$
-
+下面罗列了 $\ell = 0$ 到 $\ell = 5$ 时勒让德多项式的定义：
 $$
-
+\begin{align*}
+	P_0 &= 1 \\
+	P_1 &= x \\
+	P_2 &= \frac{1}{2}(3x^2 - 1) \\
+	P_3 &= \frac{1}{3}(5x^3 - 3x) \\
+	P_4 &= \frac{1}{8}(35x^4 - 30x^2 + 3) \\
+	P_5 &= \frac{1}{8}(63x^5 - 70x^3 + 15x)
+\end{align*}
 $$
+截取 $[-1, 1]$ 区间后，他们的图像如下：
+
+<img src="graphs/qm1_4-1.png" alt="qm1_4-1" style="zoom:50%;" />
+
