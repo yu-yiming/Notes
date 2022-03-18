@@ -1264,6 +1264,8 @@ $$
 
 ### 薛定谔方程
 
+#### 笛卡尔坐标
+
 我们此前研究的都是一维空间；如果在三维空间中，我们需要对动量做一些调整。回忆经典力学中的哈密顿量：
 $$
 H = \frac{1}{2}mv^2 + V = \frac{1}{2m}\left(p_x^2 + p_y^2 + p_z^2\right) + V
@@ -1293,7 +1295,7 @@ $$
 \Psi(\mathbf{r}, t) = \sum_n c_n\psi_n(\mathbf{r})e^{-iE_nt/\hbar}
 $$
 
-#### 球坐标中的解
+#### 球坐标
 
 球坐标中的拉普拉斯算子简直是梦魇：
 $$
@@ -1347,7 +1349,7 @@ $$
 $$
 \Theta(\theta) = AP_\ell^m(\cos\theta)
 $$
-其中 $P_\ell^m$ 是 **关联勒让德函数（Associated Legendre Function）**，$\ell \in \mathbb{Z}$，定义如下：
+其中 $P_\ell^m$ 是 **关联勒让德函数（Associated Legendre Function）**，$\ell \in \mathbb{Z}^+\cup\{0\}$，其定义如下：
 $$
 P_\ell^m(x) = (-1)^m(1 - x^2)^{m/2}\left(\frac{d}{dx}\right)^mP_\ell(x)
 $$
@@ -1370,3 +1372,53 @@ $$
 
 <img src="graphs/qm1_4-1.png" alt="qm1_4-1" style="zoom:50%;" />
 
+至于关联勒让德函数，其形式不再是一个多项式，我们可以以 $\ell = 2$ 为例：
+$$
+\begin{align*}
+	P_2^0(x) &= \frac{1}{2}(3x^2 - 1) \\
+	P_2^1(x) &= -3x\sqrt{1 - x^2} \\
+	P_2^2(x) &= 3(1 - x^2) 
+\end{align*}
+$$
+在 $\Theta$ 的解中，我们需要对 $\cos\theta$ 调用这个函数，此时 $\sqrt{1 - \cos\theta}$ 会得到 $\sin\theta$。因此，$\Theta(\theta)$ 是一系列 $\sin\theta$ 和 $\cos\theta$ 组成的“多项式”。下面是更多的例子：
+$$
+\begin{align*}
+	P_0^0 &= 1 & P_1^0 &= \cos\theta & P_3^0 &= \frac{1}{2}(5\cos^2\theta - 3\cos\theta) \\
+	P_1^1 &= -\sin\theta & P_3^1 &= \frac{3}{2}\sin\theta(5\cos^2\theta - 1) & P_3^2 &= 15\sin^2\theta\cos\theta \\
+	P_3^3 &= -15\sin\theta(1 - \cos\theta)
+\end{align*}
+$$
+从定义中不难看出 $m > \ell$ 时 $P_\ell^m = 0$，因此对于任何 $\ell$，有效的 $m$ 只在下面的整数中取：
+$$
+m = 0, \pm 1, \pm 2, \dots, \pm (\ell - 1), \pm \ell
+$$
+需要注意，由于 $\Theta(\theta)$ 是一个二次常微分方程的解，因此理论上我们应该还有一个解；事实证明另一个解不满足我们需要的物理性质（它会在 $\theta = 0$ 或 $\theta = \pi$ 处无意义），因此我们只研究关联勒让德函数。
+
+最后让我们确保这个解是归一化的，也就是确定系数 $A$ 的值：
+$$
+\int|\psi|^2r^2\sin\theta\,dr\,d\theta\,d\phi = 1 \implies \int|R|^2r\,dr\int|Y|^2\sin\theta\,d\theta\,d\phi = 1
+$$
+一个简单的处理方法是将两个积分都设为 $1$。我们最终得到的解是：
+$$
+Y_\ell^m(\theta, \phi) = \sqrt{\frac{(2\ell + 1)(\ell - m)!}{4\pi(\ell + m)!}}e^{im\phi}P_\ell^m(\cos\theta)
+$$
+我们随后会认识到，这个函数是正交的：
+$$
+\int_0^{2\pi}\int_0^\pi [Y_\ell^m(\theta, \phi)]^*[Y_{\ell'}^{m'}(\theta, \phi)]\sin\theta\,d\theta\,d\phi = \delta_{\ell\ell'}\delta_{mm'}
+$$
+当势能 $V$ 在球坐标中对称（角度上）时，它只会对 $R$ 的方程产生影响，此时我们的方程是：
+$$
+\frac{d}{dr}\left(r^2\frac{dR}{dr}\right) - \frac{2mr^2}{\hbar^2}(V(r) - E)R = \ell(\ell + 1)R
+$$
+这里令 $u(r) = rR(r)$，就可以将上面的方程变为等价的 **极性方程（Radical Equation）**：
+$$
+-\frac{\hbar^2}{2m}\frac{d^2u}{dr^2} + \left[V + \frac{\hbar^2}{2m}\frac{\ell(\ell + 1)}{r^2}\right]u = Eu
+$$
+可以看到它和时间无关的薛定谔方程几乎完全一致，只不过这里的势能是 **有效势能（Effective Potential）**：
+$$
+V_\text{eff} = V + \frac{\hbar^2}{2m}\frac{\ell(\ell + 1)}{r^2}
+$$
+这里的第二项称为 **离心项（Centrifugal Term）**，其可以类比经典力学中的离心力，它是一个伪力，让粒子倾向于远离原点。我们依然需要归一化成立：
+$$
+\int_0^\infty |u|^2\,dr = 1
+$$
