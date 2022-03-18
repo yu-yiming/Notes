@@ -228,11 +228,13 @@ namespace arguments {
     template<int64_t i> struct _;
 }
 
-template<typename Expr> struct lambda;
+template<typename... Args> 
+struct lambda {
+    template<typename...> struct apply;
+};
 
 struct fibonacci {
-    template<typename Expr>  
-};
     
+};
 ```
 
