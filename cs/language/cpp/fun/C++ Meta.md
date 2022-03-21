@@ -104,6 +104,14 @@ struct ratio {
 };
 ```
 
+最后，值得一提的是 **Meta** 中提供的标准非法值，`undefined`，它和 **Haskell** 中同名的对象一致，在求值时会产生错误：
+
+```cpp
+struct undefined {};
+```
+
+
+
 ### 列表结构
 
 **Meta** 中的列表结构是指所有模板参数列表为：`template<typename...>` 的模板类。在 **Meta** 中很多地方对列表的要求只需要这一点。我们将以 `tuple` 为例子进行讲解：
@@ -228,13 +236,18 @@ namespace arguments {
     template<int64_t i> struct _;
 }
 
-template<typename... Args> 
+template<typename Args, typename Expr> 
 struct lambda {
     template<typename...> struct apply;
 };
 
-struct fibonacci {
-    
-};
+using fibonacci = lambda<
+    $(x), match<
+    	pattern<$(x), I(0)>, I(0),
+        pattern<$(x), I(1)>, I(1),
+        otherwise, add<I(sub<$(x), I(1)>), I(sub<$(x), I(2)>)>>>;
 ```
 
+这里我们用到了很多还没有介绍的模板，如 `match` 对应了 **Haskell** 中的 `case`...`of` 表达式，**Meta** 中则按照模式、表达式这样的顺序间隔排列。此外，`I` 是一个宏，用来代替 `Integer`；其它的基本类型也有这样的宏表示。
+
+接下来让我们主要讨论函数的柯里化
