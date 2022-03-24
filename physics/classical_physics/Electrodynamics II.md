@@ -1345,6 +1345,8 @@ $$
 
 ### 导波
 
+#### 波导
+
 此前我们研究的都是无限空间中电磁波的传播；现在让我们考虑一个“管道”中的电磁波，称为 **波导（Wave Guide）**。它由完美导体制成，因此在其内部 $\mathbf{E}$ 和 $\mathbf{B}$ 均为零（后者实际上仅在超导体中成立，不过传统情形下我们可以这么假设）。因此在波导附近有（根据边界条件）：
 $$
 \mathbf{E}^\parallel = \mathbf{0} \qquad B^\perp = 0
@@ -1372,7 +1374,7 @@ $$
 	ik\tilde{B}_x - \dfrac{\partial \tilde{B}_z}{\partial x} = -\dfrac{i\omega}{c^2}\tilde{E}_y
 \end{cases}
 $$
-得到的解如下：
+得到的解是 $\tilde{E}_z$ 和 $\tilde{B}_z$ 相关的式子：
 $$
 \tilde{E}_x = \frac{i}{(\omega/c)^2 - k^2}\left(k\frac{\partial \tilde{E}_z}{\partial x} + \omega\frac{\partial \tilde{B}_z}{\partial y}\right) \\
 \tilde{E}_y = \frac{i}{(\omega/c)^2 - k^2}\left(k\frac{\partial \tilde{E}_z}{\partial y} - \omega\frac{\partial \tilde{B}_z}{\partial y}\right) \\
@@ -1380,6 +1382,124 @@ $$
 \tilde{B}_y = \frac{i}{(\omega/c)^2 - k^2}\left(k\frac{\partial \tilde{B}_z}{\partial z} + \frac{\omega}{c^2}\frac{\partial \tilde{E}_z}{\partial x}\right)
 $$
 
+将这些等式代入波方程中，可以得到：
+$$
+\left[\frac{\partial^2}{\partial x^2} + \frac{\partial^2}{\partial y^2} + \frac{\omega^2}{c^2} - k^2\right]E_z(x, y) = 0 \\
+\left[\frac{\partial^2}{\partial x^2} + \frac{\partial^2}{\partial y^2} + \frac{\omega^2}{c^2} - k^2\right]B_z(x, y) = 0 \\
+$$
+特别地，当 $E_z = 0$ 时，我们称其为 **横电波（Traverse Electric Wave, TE Wave）**，如果 $B_z = 0$ 则称为 **横磁波（Traverse Magnetic Wave, TM Wave）**，两者都为零则称为 **横电磁波（Traverse EM Wave, TEM Wave）**。在空腔波导中 **TEM** 波不会出现。
+
+#### 长方形波导中的 **TE** 波
+
+此时只需解磁场的方程。根据分离变量法，设：
+$$
+B_z(x, y) = X(x)Y(y)
+$$
+则有：
+$$
+Y\frac{d^2X}{dx^2} + X\frac{d^2Y}{dy^2} + \left[\frac{\omega^2}{c^2} - k^2\right]XY = 0
+$$
+令：
+$$
+\frac{1}{X}\frac{d^2X}{dx^2} = -k_x^2 \qquad \frac{1}{Y}\frac{d^2Y}{dy^2} = -k_y^2
+$$
+其中 $k_x, k_y$ 满足 $-k_x^2 + k_y^2 +(\omega/c)^2 - k^2 = 0$。不难得到这两个常微分方程的解：
+$$
+X(x) = A\sin(k_xx) + B\cos(k_xx) \\
+Y(y) = C\sin(k_yy) + B\cos(k_yy)
+$$
+根据边界条件，即 $x = 0$ 或 $x = a$ 时 $B^\perp = B_x = B_y = 0$，因此根据前面的等式关系有：
+$$
+\left.\frac{\partial B_z}{\partial x}\right|_{x=0} = \left.\frac{\partial B_z}{\partial y}\right|_{y=0} = 0 \implies
+\begin{cases}
+	\left.(Ak_x\cos(k_xx) - Bk_x\sin(k_xx))\right|_{x=0} = 0 \\\\
+	\left.(Ck_x\cos(k_yy) - Dk_y\sin(k_yy))\right|_{y=0} = 0
+\end{cases} \implies
+A = C = 0
+$$
+同时：
+$$
+\left.\frac{\partial B_z}{\partial x}\right|_{x=a} = \left.\frac{\partial B_z}{\partial y}\right|_{y=a} = 0 \implies
+\begin{cases}
+	-k_xB\sin(k_xa) = 0 \\\\
+	-k_yD\sin(k_ya) = 0
+\end{cases} \implies
+\begin{cases}
+	k_x = \dfrac{m\pi}{a} \\\\
+	k_y = \dfrac{n\pi}{b}
+\end{cases}
+$$
+其中 $m, n$ 都是整数，且习惯上有 $a \ge b$。至此我们就得到了 TE 波的通解：
+$$
+B_z(x, y) = B_0\cos\left(\frac{m\pi x}{a}\right)\cos\left(\frac{n\pi y}{b}\right)
+$$
+对于特定的 $m, n$，我们称这个解为一个 **横电模（TE Mode）**。它还有一个比较复杂的色散关系：
+$$
+k = \sqrt{\left(\frac{\omega}{c}\right)^2 - \left(\frac{m\pi}{a}\right)^2 - \left(\frac{n\pi}{b}\right)^2}
+$$
+为了让 $k$ 保持为实数，我们需要让 $\omega > \omega_{mn}$，其中 $\omega_{mn}$ 称为模 $m, n$ 的 **截止频率（Cutoff Frequency）**：
+$$
+\omega_{mn} = c\pi\sqrt{\left(\frac{m}{a}\right)^2 + \left(\frac{n}{b}\right)^2}
+$$
+如果 $\omega$ 小于这个频率，我们就没法得到一个稳定传播的波，而是（像之前遇到的一些那样）变成一个指数衰减的波。我们因此可以将色散关系写成：
+$$
+k = \frac{1}{c}\sqrt{\omega^2 - \omega_{mn}^2}
+$$
+可以看到，和之前我们见到的许多色散关系不同，导波的色散方程是非线性的，因此它具有很强的色散特征。
+
+TE 波的最小截止频率来自于模 $(1, 0)$：
+$$
+\omega_{10} = \frac{c\pi}{a}
+$$
+也就是说，所有比这个频率小的横电波根本不会传播。你或许会疑惑为什么最小截止频率不是 $0$，即模 $(0, 0)$；事实上，此时由于 $k = \omega/c$，我们在[上一节](#波导)推出的公式根本不成立（分母为零）。
+
+最后让我们计算 TE 波的传播速度
+$$
+v = \frac{\omega}{k} = \frac{c}{\sqrt{1 - (\omega_{mn}/\omega)^2}} > c \\
+v_g = \frac{d\omega}{dk} = c\sqrt{1 - \left(\frac{\omega_{mn}}{\omega}\right)^2} < c
+$$
+这里相速再一次超越了光速，看来已经不是稀事了。
+
+#### 长方形波导中的 **TM** 波
+
+我们采用和上一节中完全一致的方程解法，得到下面的通解：
+$$
+E_z(x, y) = E_0\sin\left(\frac{m\pi x}{a}\right)\sin\left(\frac{n\pi y}{b}\right)
+$$
+类似地，我们称其为 $m, n$ 的 **横磁模（TM Model）**，它的截止频率和 TE 波完全一致。不过在这里，最小的截止频率出现在 $(1, 1)$：
+$$
+\omega_{11} = c\pi\sqrt{\left(\frac{1}{a}\right)^2 + \left(\frac{1}{b}\right)^2}
+$$
+值得一提的是最小横磁频率和最小横电频率之比：
+$$
+\frac{\omega_{\text{TM}, 11}}{\omega_{\text{TE}, 10}} = \frac{c\pi\sqrt{(1/a)^2 + (1/b)^2}}{c\pi/a} = \sqrt{1 + \left(\frac{a}{b}\right)^2}
+$$
+
+#### 共鸣腔
+
+一个 **共鸣腔（Resonant Cavity）**是一个固定体积的波导（也就是将延伸方向截断了），此时不存在所谓的传播方向，三个方向拥有相同的权重：
+$$
+\tilde{\mathbf{E}} = \mathbf{E}(x, y, z)e^{-i\omega t} \qquad \tilde{\mathbf{B}} = \mathbf{B}(x, y, z)e^{-i\omega t}
+$$
+将这两个等式代入波方程，可以得到：
+$$
+\nabla^2 \mathbf{E} = -k^2\mathbf{E} \qquad \nabla^2\mathbf{B} = -k^2\mathbf{B}
+$$
+其中色散关系为 $k = \omega/c$。上面这两个式子实际上表示了六个方程，每个方程都包含电磁场的一个分量（如 $E_x$）在三个方向上的极化情况。我们可以先解决其中一个分量。和往常一样，利用分离变量法，设 $E_x = X(x)Y(y)Z(z)$，此时有：
+$$
+\frac{1}{X}\frac{d^2X}{dx^2} = -k_x^2 \qquad \frac{1}{Y}\frac{d^2Y}{dy^2} = -k_y^2 \qquad \frac{1}{Z}\frac{d^2Z}{dz^2} = -k_z^2
+$$
+其中 $k_x, k_y, k_z$ 满足：
+$$
+k_x^2 + k_y^2 + k_z^2 = k^2
+$$
+通解是下面的形式：
+$$
+X(x) = A\cos(k_xx) + B\sin(k_xx) \\
+Y(y) = C\cos(k_yy) + D\sin(k_yy) \\
+Z(z) = E\cos(k_zz) + F\sin(k_zz)
+$$
+根据边界条件，即 $y = 0, y = b$ 或 $z = 0, z = c$ 时 $E_x = 0$，我们可以得到 $C = E = 0$。
 
 
 
