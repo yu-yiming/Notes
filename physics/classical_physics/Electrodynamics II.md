@@ -1149,7 +1149,7 @@ $$
 
 ![ed2_9-4](graphs/ed2_9-4.png)
 
-### 导体中的电磁波
+#### 导体中的电磁波
 
 现在让我们考虑物质中存在自由电荷或电流的情形。事实上，当物质是导体时，电磁波中的电场会让其中立刻产生自由电流 $\mathbf{J}_f = \sigma\mathbf{E}$。麦克斯韦方程告诉我们（假设导体是线性介质）：
 $$
@@ -1239,7 +1239,147 @@ $$
 
 ![ed2_9-5](graphs/ed2_9-5.png)
 
+可以看到导体会自发地（以指数级）削弱其中传播的电磁波。
+
 #### 导体面上的反射
+
+
+
+#### 波吸收与色散
+
+现在让我们假设介电系数 $\epsilon$ （以及磁导率 $\mu$）不再是常数，而是一个和电磁波角频率 $\omega$ 相关的函数：
+$$
+\epsilon = \epsilon(\omega) \qquad \mu = \mu(\omega)
+$$
+这样的介质我们称为 **色散的（Dispersive）**；当 $\omega$ 不同时，波的传播速度 $v = \omega/|k|$ 是不同的，这也就导致不同颜色的光会分散开来（这也是 **色散（Dispersion）** 得名原因）。同时，回忆我们曾将角频率、速度和波数的关系称为色散关系，其来源也于此。
+
+我们前面提到过，$\mu$ 由于常常和 $\mu_0$ 相当，因此可以被忽略；$\epsilon$ 的来源则是电极化率 $\chi_e$：后者则用于描述物质被极化的能力，它可以用于描述电偶极矩：
+$$
+\mathbf{p} = \epsilon_0\chi_e\mathbf{E}
+$$
+当用于描述一个原子的被极化能力时，这里的 $\epsilon_0\chi_e$ 也可以记为 $\alpha$，被称为原子极性（可以回顾上一篇笔记的第四章）。我们可以将其理解为一个原子受到特定电场时被“拉伸”的程度。为了计算这个系数（在我们的假设下它不再是一个常数），我们需要分析原子的势能 $U = U(x)$。量子力学中对于氢原子的分析非常透彻，但相对（过于）繁琐；这里我们依然采用经典力学的分析方法，它可以得到完全一样的结论。首先，利用泰勒级数展开势能：
+$$
+U(x) = U(0) + xU'(0) + \frac{1}{2}x^2U''(x) + \dots
+$$
+第一项是一个可以刻意忽略的常数，因为我们可以取任一点为零势能点。第二项则在平衡点附近为零（因为势能的梯度是力）。第三项现在成为了势能中显著的一项；让我们记 $k = m\omega_0^2 = U''(x)$，则：
+$$
+U(x) \approx \frac{1}kx^2 = \frac{1}{2}m\omega_0^2x^2
+$$
+注意到这个分析方法其实就是经典力学中对弹簧的分析；它隐含了一个回复力 $F = -kx = -m\omega_0^2x^2$。
+
+考虑存在阻尼力（原因可能是辐射，我们后面章节中会提到）：
+$$
+F_\text{damping} = -m\gamma\frac{dx}{dt}
+$$
+同时也考虑存在源于电磁场的驱动力：
+$$
+F_\text{driving} = qE_0\cos(\omega t)
+$$
+可以看到我们特地用 $\omega_0$ 来区分这里电磁场的频率 $\omega$。至此我们得到了所有的外力，根据牛顿第二定律：
+$$
+m\frac{d^2x}{dt^2} = -m\omega_0^2x^2 - m\gamma\frac{dx}{dt} + qE_0\cos(\omega t)
+$$
+为了便于计算，我们将这个方程拓展到复数域：
+$$
+m\frac{d^2\tilde{x}}{dt^2} + m\gamma\frac{d\tilde{x}}{dt} + m\omega_0\tilde{x}^2 = qE_0e^{-i\omega t}
+$$
+该方程的通解是：
+$$
+\tilde{x}(t) = \tilde{x}_0e^{-i\omega t}
+$$
+将这个解代入原方程后可以得到 $\tilde{x}_0$：
+$$
+\tilde{x}_0 = \frac{q/m}{\omega_0^2 - \omega^2 - i\omega\gamma}E_0
+$$
+回到开头的原子极性，我们最终可以算出电偶极矩为：
+$$
+\tilde{p}(t) = \frac{q^2/m}{\omega_0^2 - \omega^2 - i\omega\gamma}E_0e^{-i\omega t}
+$$
+这里，分母中的复数项暗示了 $p$ 和 $\mathbf{E}$ 之间的相位差，这个值确切来说是：
+$$
+\Delta \phi = \tan^{-1}\frac{\gamma\omega}{\omega_0^2 - \omega^2}
+$$
+当 $\omega \ll \omega_0$ 时，这个角度可以忽略不计；反之，如果 $\omega \gg \omega_0$，这个角度就约等于 $\pi$。
+
+现在对于单位体积中原子数量为 $N$ 的物质，我们可以粗略估计其极化为：
+$$
+\tilde{\mathbf{P}} = n\tilde{\mathbf{p}} = \frac{Nq^2/m}{\omega_0^2 - \omega^2 - i\omega\gamma}\tilde{E}(t)
+$$
+此外，电极化率满足：
+$$
+\tilde{\chi}_e = \frac{Nq^2/(\epsilon_0m)}{\omega_0^2 - \omega^2 - i\omega\gamma}
+$$
+同时有介电常数：
+$$
+\tilde{\epsilon}_r = 1 + \tilde{\chi}_e
+$$
+现在考虑色散介质中的波方程：
+$$
+\nabla^2\tilde{\mathbf{E}} = \tilde{\epsilon}\mu_0\frac{\partial^2 \tilde{\mathbf{E}}}{\partial t^2}
+$$
+得到的解依然是平面波：
+$$
+\tilde{\mathbf{E}}(z, t) = \tilde{\mathbf{E}}_0e^{i(\tilde{k}z - \omega t)}
+$$
+其中的波数 $\tilde{k}$ 依然可以写成实部加虚部的形式 $\tilde{k} = k + i\kappa$。此时可以得到类似导体中电磁波的方程：
+$$
+\tilde{E}(z, t) = \tilde{E}_0e^{-\kappa z}e^{i(kz - \omega t)}
+$$
+考虑到波的强度正比于电场的平方，因此取：
+$$
+\alpha = 2\kappa
+$$
+作为 **吸收系数（Absorption Coefficient）**，其描述了电磁波在某介质中强度衰减的程度。此外，根据色散关系有：
+$$
+\tilde{k} = \sqrt{\tilde{\epsilon}\mu_0}\omega
+$$
+回忆折射率满足 $n = c/v$，因此有：
+$$
+\tilde{n} = c\sqrt{\tilde{\epsilon}\mu_0}\omega = \sqrt{\tilde{\epsilon}_r} = \sqrt{1 + \tilde{\chi}_e} = \sqrt{1 + \frac{Nq^2/(\epsilon_0m)}{\omega_0^2 - \omega^2 -i\omega\gamma}}
+$$
+值得注意的是，在很多情况下 $\Re{\tilde{n}} < 1$，这意味着 $v > c$。不过这并不违反狭义相对论；电磁波中的能量和信息并不是以 $v$ 传播的；波的正弦曲线上的点可能有很高的传播速度 $v$，称为 **相速（Phase Velocity）**，但其中波包，即波的形状的传播速度 $v_g$ ，称为 **群速（Group Velocity）** 会慢一些。[维基](https://en.wikipedia.org/wiki/Group_velocity)上有非常清晰的动态图演示以对比两者。群速的定义如下：
+$$
+v_g = \frac{d\omega}{dk}
+$$
+不过即使是群速，在特殊情况下也可能超越光速，这依然不违反狭义相对论：无论是相速还是群速都不描述实际物体或信息的传播速度，它们都是某种“特征”的速度，其依然限制于电磁波的传播速度 $c$；类似这种人为定义的速度取到多高都是有可能的。
+
+### 导波
+
+此前我们研究的都是无限空间中电磁波的传播；现在让我们考虑一个“管道”中的电磁波，称为 **波导（Wave Guide）**。它由完美导体制成，因此在其内部 $\mathbf{E}$ 和 $\mathbf{B}$ 均为零（后者实际上仅在超导体中成立，不过传统情形下我们可以这么假设）。因此在波导附近有（根据边界条件）：
+$$
+\mathbf{E}^\parallel = \mathbf{0} \qquad B^\perp = 0
+$$
+假设波导的延伸方向为 $\unit{z}$，则电磁场的通用解为：
+$$
+\tilde{\mathbf{E}}(x, y, t) = \tilde{\mathbf{E}}_0(x, y) e^{i(kz - \omega t)} \\
+\tilde{\mathbf{B}}(x, y, t) = \tilde{\mathbf{B}}_0(x, y) e^{i(kz - \omega t)}
+$$
+本节中我们只考虑 $k$ 为实数的情形，因此上面我没有加波浪号。$\tilde{\mathbf{E}}_0$ 和 $\tilde{\mathbf{B}}_0$ 是和 $x$、$y$ 有关的值：
+$$
+\tilde{\mathbf{E}}_0(x, y) = \tilde{E}_x(x, y)\unit{x} + \tilde{E}_y(x, y)\unit{y} + \tilde{E}_z(x, y)\unit{z} \\
+\tilde{\mathbf{B}}_0(x, y) = \tilde{B}_x(x, y)\unit{x} + \tilde{B}_y(x, y)\unit{y} + \tilde{B}_z(x, y)\unit{z}
+$$
+根据法拉第定律和安培-麦克斯韦定律，可以得到关于这些分量的方程组：
+$$
+\begin{cases}
+	\dfrac{\partial \tilde{E}_y}{\partial x} - \dfrac{\partial \tilde{E}_x}{\partial y} = i\omega \tilde{B}_z \\
+	\dfrac{\partial \tilde{E}_z}{\partial y} - ik\tilde{E}_y = i\omega \tilde{B}_x \\
+	ik\tilde{E}_x - \dfrac{\partial \tilde{E}_z}{\partial x} = i\omega \tilde{B}_y
+\end{cases} \qquad
+\begin{cases}
+	\dfrac{\partial \tilde{B}_y}{\partial x} - \dfrac{\partial \tilde{B}_x}{\partial y} = -\dfrac{i\omega}{c^2}\tilde{E}_z \\
+	\dfrac{\partial \tilde{B}_z}{\partial y} - ik\tilde{B}_y = -\dfrac{i\omega}{c^2}\tilde{E}_x \\
+	ik\tilde{B}_x - \dfrac{\partial \tilde{B}_z}{\partial x} = -\dfrac{i\omega}{c^2}\tilde{E}_y
+\end{cases}
+$$
+得到的解如下：
+$$
+\tilde{E}_x = \frac{i}{(\omega/c)^2 - k^2}\left(k\frac{\partial \tilde{E}_z}{\partial x} + \omega\frac{\partial \tilde{B}_z}{\partial y}\right) \\
+\tilde{E}_y = \frac{i}{(\omega/c)^2 - k^2}\left(k\frac{\partial \tilde{E}_z}{\partial y} - \omega\frac{\partial \tilde{B}_z}{\partial y}\right) \\
+\tilde{B}_x = \frac{i}{(\omega/c)^2 - k^2}\left(k\frac{\partial \tilde{B}_z}{\partial x} - \frac{\omega}{c^2}\frac{\partial \tilde{E}_z}{\partial y}\right) \\
+\tilde{B}_y = \frac{i}{(\omega/c)^2 - k^2}\left(k\frac{\partial \tilde{B}_z}{\partial z} + \frac{\omega}{c^2}\frac{\partial \tilde{E}_z}{\partial x}\right)
+$$
+
 
 
 
@@ -1358,7 +1498,7 @@ $$
 
 我们可以顺便了解洛伦兹力在势场的形式下变成什么样：
 $$
-\mathbf{F} = q(\mathbf{E} + \mathbf{v}\times\mathbf{B}) = q\left(-\nabla V - \frac{\partial \mathbf{A}}{\partial t} + \mathbf{v}\times(\nabla\times\mathbf{A})\right)
+\mathbf{F} = q(\mathbf{E} + \mathbf{v}\times\mathbf{B}) = q\left(-\nabla V - \frac{\partial \mathbf{A}}{\partial t} + \mathbf{v}\times(\nabla\times\mathbf{A})\right) \tag{10.16}
 $$
 回忆 $\nabla(\mathbf{v}\cdot\mathbf{A}) = \mathbf{v}\times(\nabla\times\mathbf{A}) + (\mathbf{v}\cdot\nabla)\mathbf{A}$，因此：
 $$
@@ -1373,11 +1513,11 @@ $$
 $$
 因此：
 $$
-\frac{d\mathbf{A}}{dt} = \nabla\mathbf{A}\cdot\mathbf{v} + \frac{\partial \mathbf{A}}{\partial t}
+\frac{d\mathbf{A}}{dt} = \nabla\mathbf{A}\cdot\mathbf{v} + \frac{\partial \mathbf{A}}{\partial t} \tag{10.17}
 $$
 代入到上面的式子中，就得到了：
 $$
-\frac{d}{dt}(\mathbf{p} + q\mathbf{A}) = -\nabla[q(V - \mathbf{v}\cdot\mathbf{A})]
+\frac{d}{dt}(\mathbf{p} + q\mathbf{A}) = -\nabla[q(V - \mathbf{v}\cdot\mathbf{A})] \tag{10.18}
 $$
 如果仿照经典力学中，将动量的变化率（力）写作势能的梯度：
 $$
@@ -1385,15 +1525,131 @@ $$
 $$
 我们就可以得到 **正则动量（Canonical Momentum）** 的式子：
 $$
-\mathbf{p}_\text{can} = \mathbf{p} + q\mathbf{A}
+\mathbf{p}_\text{can} = \mathbf{p} + q\mathbf{A} \tag{10.19} \label{canonical-momentum}
 $$
 其中 $U$ 取的是速度相关量：
 $$
-U_\text{vel} = q(V - \mathbf{v}\cdot\mathbf{A})
+U_\text{vel} = q(V - \mathbf{v}\cdot\mathbf{A}) \tag{10.20}
 $$
 如果再加上动能，例子的总能量变化率满足：
 $$
-\frac{d}{dt}(T + qV) = \frac{\partial}{\partial t}[q(V - \mathbf{v}\cdot\mathbf{A})]
+\frac{d}{dt}(T + qV) = \frac{\partial}{\partial t}[q(V - \mathbf{v}\cdot\mathbf{A})] \tag{10.21}
 $$
 
+如果把该式和 $(10.18)$ 对比，可以看到动能与动量、势能与 $\mathbf{A}$ 的对应；从这个角度，我们可以将 $\mathbf{A}$ 理解为单位电荷的“势动量”。
 
+### 连续分布
+
+#### 推迟势
+
+在静态系统中，$(10.15)$ 会转化为四个维度的泊松方程：
+$$
+\nabla^2 V = -\frac{1}{\epsilon_0}\rho \qquad \nabla^2\mathbf{A} = -\mu_0\mathbf{J}
+$$
+其解如下：
+$$
+V(\mathbf{r}) = \frac{1}{4\pi\epsilon_0}\int\frac{\rho(\mathbf{r}')}{\mathscr{r}}\,d\tau' \qquad \mathbf{A}(\mathbf{r}) = \frac{\mu_0}{4\pi}\int\frac{\mathbf{J}(\mathbf{r}')}{\mathscr{r}}\,d\tau'
+$$
+对于时间有关的系统，现在假设 $V$ 和 $\mathbf{A}$ 都以光速 $c$ 传播，则在 $\mathscr{r}$ 处某一时刻 $t$ 时，受到的其实是之前的一个时刻 $t_r$ 时场的影响，我们称其为 **推迟时间（Retarded Time）**：
+$$
+t_r = t - \frac{\mathscr{r}}{c}
+$$
+此时得到的解理应是下面的形式：
+$$
+V(\mathbf{r}, t) = \frac{1}{4\pi\epsilon_0}\int\frac{\rho(\mathbf{r}', t_r)}{\mathscr{r}}\,d\tau' \qquad \mathbf{A}(\mathbf{r}, t) = \frac{\mu_0}{4\pi}\int\frac{\mathbf{J}(\mathbf{r}', t_r)}{\mathscr{r}}\,d\tau'
+$$
+我们称其为 **推迟势（Retarded Potential）**。不过我们需要把这两个解代入原方程 $(10.15)$ 以验证其正确性（我们的逻辑推断数学上实际上非常不严谨，同样的逻辑无法应用于 $\mathbf{E}$ 和 $\mathbf{B}$ 场）。此处省略这个略冗长的证明。
+
+数学上，我们也可以定义 **提前时间（Advanced Potential）** 和 **提前势（Advanced Potential）**，虽然它们依然满足洛伦茨规范的势能方程，但它们违反了相对论中重要的 **因果（Causality）** 原理，因此没有物理意义。
+
+#### 杰斐缅柯方程组
+
+本节中让我们给出考虑推迟时间的电磁场方程。回忆由势场给出的电场方程 $(\ref{electric-field-from-potential})$ 和磁场方程 $(\ref{magnetic-field-from-potential})$，时间相关的电场方程不难给出：
+$$
+\begin{equation*}
+	\mathbf{E}(\mathbf{r}, t) 
+	= \frac{1}{4\pi\epsilon_0}\int\left[
+		\frac{\rho(\mathbf{r}', t_r)}{\mathscr{r}^2}\unit{\mathscr{r}} + 
+		\frac{\dot{\rho}(\mathbf{r}', t_r)}{c\mathscr{r}}\unit{\mathscr{r}} - 
+		\frac{\dot{\mathbf{J}}(\mathbf{r}', t_r)}{c^2\mathscr{r}}
+	\right]\,d\tau'
+\end{equation*}
+$$
+对于磁场，我们可以将其分成两个项：
+$$
+\nabla\times\mathbf{A} = \frac{\mu_0}{4\pi}\int\left[
+	\frac{1}{\mathscr{r}}\nabla\times\mathbf{J} -
+	\mathbf{J}\times\nabla\frac{1}{\mathscr{r}}
+\right]\,d\tau'
+$$
+其中的 $\nabla\times\mathbf{J}$ 可以进一步变化：
+$$
+\begin{align*}
+	(\nabla\times\mathbf{J})_x 
+	&= \frac{\partial J_z}{\partial y} - \frac{\partial J_y}{\partial z}  \\
+	&= \dot{J}_z\frac{\partial t_r}{\partial y} - \dot{J}_y\frac{\partial t_r}{\partial z} \\
+	&= \left(-\frac{1}{c}\dot{J}_z\frac{\partial \mathscr{r}}{\partial y}\right) - \left(-\frac{1}{c}\dot{J}_y\frac{\partial \mathscr{r}}{\partial z}\right) \\
+	&= \frac{1}{c}(\dot{J}_y\frac{\partial}{\partial z} - \dot{J}_z\frac{\partial}{\partial y})\mathscr{r} \\
+	\implies \nabla\times\mathbf{J} 
+	&= \frac{1}{c}\dot{\mathbf{J}}\times\unit{\mathscr{r}}
+\end{align*}
+$$
+由此我们得到时间相关的磁场方程：
+$$
+\begin{equation*}
+	\mathbf{B}(\mathbf{r}, t) = \frac{\mu_0}{4\pi}\int\left[
+		\frac{\mathbf{J}(\mathbf{r}', t_r)}{\mathscr{r}^2} + \frac{\dot{\mathbf{J}}(\mathbf{r}', t_r)}{c\mathscr{r}}
+	\right]\times\unit{\mathscr{r}}\,d\tau'
+\end{equation*}
+$$
+上面这两个式子是麦克斯韦方程组的通解，我们称其为 **杰斐缅柯方程组（Jefimenko's Equations）**，其让麦克斯韦的电磁学理论得到了完善。不过现实中这两个方程很少被应用，因为更方便的方式还是计算推迟势，然后通过它们的微分得到电磁场。
+
+### 点电荷
+
+#### Lienard-Wiechert 势
+
+本节分析单个点电荷以特定路径移动时产生的推迟势。首先，我们不能想当然地认为单个点电荷产生的势就是：
+$$
+\frac{1}{4\pi\epsilon_0}\frac{q}{\mathscr{r}}
+$$
+因为我们依然要考虑推迟时间的影响（考虑一个运动的点电荷，其电荷量虽然不变，但是全空间中的电荷密度 $\rho$ 是随时间变化的，此时我们需要调整 $\mathscr{r}$）：
+$$
+\int\rho(\mathbf{r}', t_r)\,d\tau' = \frac{q}{1 - \unit{\mathscr{r}}\cdot\mathbf{v}/c}
+$$
+这一点的论证其实非常初等（熟悉狭义相对论的话可能会联想到那里，不过此处和它没有关系），首先考虑一个以速度 $v$ 移动的长棍：
+
+<img src="graphs/ed2_10-1.png" alt="ed2_10-1" style="zoom:70%;" />
+
+由于光传递的速度有限，长棍在远处反射的光相比近处需要更多的时间才能传到观测者处。因此观测者看到的长棍要比实际上要长。下面等式成立：
+$$
+\frac{L'\cos\theta}{c} = \frac{L' - L}{v} \implies L' = \frac{1}{1 - v\cos\theta/c}L
+$$
+特别地，如果将 $\unit{\mathscr{r}}$ 设为观察者的注射方向，我们就得到了和前面一样的系数。需要注意 *只有* 和速度方向一样的维度才会受这个效应影响，因此观测到的体积依然满足这个系数关系：
+$$
+\tau' = \frac{\tau}{1 - \unit{\mathscr{r}}\cdot\mathbf{v}/c}
+$$
+这也就推出了我们此前的结论。
+
+现在假设点电荷的运动轨迹为 $\mathbf{w}(t)$，则我们可以通过下式确定对某点 $\mathbf{r}$ 的推迟时间：
+$$
+|\mathbf{r} - \mathbf{w}(t_r)| = c(t - t_r)
+$$
+让我们记 $\boldsymbol{\mathscr{r}} = \mathbf{r} - \mathbf{w}(t_r)$。需要注意的是对于任意时刻 $t$，$\mathbf{w}(t_r)$（我们可以称为 **推迟点（Retarded Point）**) 都是唯一的；否则，可以假设有两个对应的点和两个推迟时间：
+$$
+\mathscr{r}_1 = c(t - t_1) \qquad \mathscr{r}_2 = c(t - t_2)
+$$
+此时我们有 $\mathscr{r}_1 - \mathscr{r}_2 = c(t_2 - t_1)$，可以发现无论点电荷实际运动方向如何，在 $\mathbf{r}$ 方向的速度分量都是 $c$，这在一般情形下是不可能的。因此我们只能得到 $t_1 = t_2$。
+
+随即我们得到了点电荷的标量势：
+$$
+\begin{equation*}
+	V(\mathbf{r}, t) = \frac{1}{4\pi\epsilon_0}\frac{qc}{\mathscr{r}c - \boldsymbol{\mathscr{r}}\cdot\mathbf{v}}
+\end{equation*}
+$$
+以及矢量势：
+$$
+\begin{equation*}
+	\mathbf{A}(\mathbf{r}, t) = \frac{\mu_0}{4\pi}\frac{qc\mathbf{v}}{\mathscr{r}c - \boldsymbol{\mathscr{r}}\cdot\mathbf{v}} = \frac{\mathbf{v}}{c^2}V(\mathbf{r}, t)
+\end{equation*}
+$$
+我们将上面两个方程给出的物理量称为 **Lienard-Wiechert 势（Lienard-Wiechert Potentials）**。
