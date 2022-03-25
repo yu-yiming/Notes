@@ -774,6 +774,122 @@ $$
 
 在量子力学中也有类似的结论。不过由于此时“小车”不再拥有确定的位置，它可以出现在任何能量大于势能的地方。因此，小车完全可能“穿过”斜坡到山坡另一侧的地方，我们称其为 **隧穿（Tunnelling）**。至于小车是否会跑到无穷远处，可以通过比较 $E$ 和 $V(\pm \infty)$ 确定。如果 $E$ 比两边都小，那么系统就处于 **束缚态（Bound State）**，否则处于 **散射态（Scattering State）**。
 
+定义 **狄拉克 Delta 函数（Dirac Delta Function）** 为在原点处无穷大，其余点均为零的函数，即：
+$$
+\delta(x) = 
+\begin{cases}
+	0 & x \ne 0 \\
+	\infty & x = 0
+\end{cases}
+$$
+此外，它还要求：
+$$
+\int_{-\infty}^\infty\delta(x)\,dx = 1
+$$
+这个函数在理论物理中非常受欢迎，比如质点在空间中的密度分布，或点电荷在空间中的电荷密度分布都只能用 $\delta$ 函数描述。严格意义上来讲它是一个分布，而非常规的函数。至于对其积分的要求，下面这个定义或许更好理解：
+$$
+\delta(x) = \lim_{a\to0}
+\begin{cases}
+	\dfrac{1}{a} & |x| < \dfrac{a}{2} \\
+	0 & |x| \ge \dfrac{a}{2}
+\end{cases}
+$$
+$\delta$ 函数有一个非常重要的性质：
+$$
+f(x)\delta(x - a) = f(a)\delta(x - a)
+$$
+这点并不难理解，因为除了 $x = a$ 外的点都被 $\delta$ 函数置零了；这个性质的直接结论是：
+$$
+\int_{-\infty}^\infty f(x)\delta(x - a)\,dx = f(a)
+$$
+因此，$\delta$ 函数常用于从函数中“取出”特定点上的值。
+
+现在，考虑势能分布如下的系统：
+$$
+V(x) = -\alpha \delta(x)
+$$
+其中 $\alpha$ 是一个正实数。此时，时间无关的薛定谔方程变为：
+$$
+-\frac{\hbar^2}{2m}\frac{d^2\psi}{dx^2} - \alpha\delta(x)\psi = E\psi
+$$
+对于束缚态（$E < 0$）的情形，在 $x \ne 0$ 的区域，设：
+$$
+\frac{d^2\psi}{dx^2} = -\frac{2mE}{\hbar^2}\psi = \kappa^2\psi \qquad \text{其中 $\kappa = \frac{\sqrt{-2mE}}{\hbar}$}
+$$
+上面这个方程的通解是（对于 $x <0$ 或 $x > 0$）：
+$$
+\psi(x) = Ae^{-\kappa x} + Be^{\kappa x}
+$$
+之后的过程和我们在[有限方井](#有限方井)中的非常相似，由于波函数的连续性和这个系统的对称性，不难得到：
+$$
+\psi(x) = Be^{-\kappa|x|}
+$$
+呃，我们似乎还没有利用 $\delta$ 函数这个条件；显然我们可以消除上面这个方程中的 $B$ 或者 $\kappa$。因此我们需要应用另一个波函数的性质：在 $V \ne \infty$ 的地方 $d\psi/dx$ 连续。为了更好处理 $\delta$ 函数，让我们首先考虑一个区间 $[-\epsilon, \epsilon]$。在此区间中对时间无关的薛定谔方程积分：
+$$
+-\frac{\hbar^2}{2m}\int_{-\epsilon}^\epsilon \frac{d^2\psi}{dx^2}\,dx + \int_{-\epsilon}^\epsilon V(x)\psi(x)\,dx = E\int_{-\epsilon}^\epsilon \psi(x)\,dx 
+$$
+第一个积分得到的就是 $d\psi/dx$，最后一个积分则应该得到 $0$。至于第二个积分，我们可以通过 $\delta$ 函数的性质得到 $\alpha\psi(0)$，综合起来就是：
+$$
+\lim_{\epsilon\to 0}\left(\left.\frac{\partial \psi}{\partial x}\right|_{+\epsilon} - \left.\frac{\partial \psi}{\partial x}\right|_{-\epsilon}\right) = -\frac{2m\alpha}{\hbar^2}\psi(0)
+$$
+将我们之前得到的解代入，就得到：
+$$
+B = \psi(0) \qquad \kappa = \frac{m\alpha}{\hbar^2}
+$$
+其对应的能量是：
+$$
+E = -\frac{m\alpha^2}{2\hbar^2}
+$$
+将波函数归一化：
+$$
+\int_{-\infty}^\infty |\psi(x)|^2\,dx = 2|B|^2\int_0^\infty e^{-2\kappa x}\,dx = \frac{|B|^2}{\kappa} = 1 \implies B = \sqrt{\kappa}
+$$
+最终得到波函数：
+$$
+\psi(x) = \frac{\sqrt{m\alpha}}{\hbar}e^{-m\alpha|x|/\hbar^2}
+$$
+对于散射态（$E > 0$）的情形，设（$x \ne 0$）：
+$$
+\frac{d^2\psi}{dx^2} = -\frac{2mE}{\hbar^2}\psi = -k^2\psi \qquad \text{其中 $k = \frac{\sqrt{2mE}}{\hbar}$}
+$$
+这个方程的通解是：
+$$
+\psi(x) = 
+\begin{cases}
+	Ae^{ikx} + Be^{-ikx} & x < 0 \\
+	Fe^{ikx} + Ge^{-ikx} & x > 0
+\end{cases}
+$$
+这里我们把他们分开是有特殊用处的。为了在 $x = 0$ 处连续，我们需要满足 $F + G = A + B$。至于 $d\psi/dx$，我们需要满足和束缚态类似的要求：
+$$
+\left.\frac{d\psi}{dx}\right|_{x=0^-} - \left.\frac{d\psi}{dx}\right|_{x=0^+} = -\frac{2m\alpha}{\hbar^2}(A + B) \\
+\implies F - G= A(1 + 2i\beta) - B(1 - 2i\beta) \qquad \text{其中 $\beta = \frac{m\alpha}{\hbar^2k}$}
+$$
+如果将波函数的每个指数项都理解为一个波，则 $ikx$ 可以理解为向右的波，$-ikx$ 则是向左的波；$A$、$B$、$F$、$G$ 则是这些波的幅度。下图是一个直观的展示：
+
+<img src="graphs/qm1_2-3.png" alt="qm1_2-3" style="zoom:80%;" />
+
+通常在散射实验中，粒子会从左侧射出，因此设 $G = 0$。这时我们就构建了一个类似于波经过不同介质边界的模型。将 $Ae^{ikx}$ 称为 **入射波（Incident Wave）**，$Be^{-ikx}$ 称为 **反射波（Reflected Wave）**，$Fe^{ikx}$ 称为 **透射波（Transmitted Wave）**，我们可以得到：
+$$
+B = \frac{i\beta}{1 - i\beta} A \qquad F = \frac{1}{1 - i\beta}A
+$$
+虽然我们得到的解并不能归一化，但是它依然能给出和概率相关的结论。考虑反射波和入射波的能量比：
+$$
+R = \frac{|B|^2}{|A|^2} = \frac{\beta^2}{1 + \beta^2}
+$$
+这反映了粒子被“反射”回来的概率。类似地，透射波和入射波的能量比：
+$$
+T = \frac{|F|^2}{|A|^2} = \frac{1}{1 + \beta^2}
+$$
+观察到 $R + T = 1$，这也是理所当然的。将 $\beta$ 用已知量代换，就得到：
+$$
+\begin{align*}
+	R = \frac{1}{1 + 2\hbar^2E/(m\alpha^2)} \\
+	T = \frac{1}{1 + m\alpha^2/(2\hbar^2E)}
+\end{align*}
+$$
+因此能量 $E$ 越大，粒子越倾向于透射过去。
+
 
 
 ## 数学形式
