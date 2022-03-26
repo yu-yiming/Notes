@@ -1479,7 +1479,8 @@ $$
 
 一个 **共鸣腔（Resonant Cavity）**是一个固定体积的波导（也就是将延伸方向截断了），此时不存在所谓的传播方向，三个方向拥有相同的权重：
 $$
-\tilde{\mathbf{E}} = \mathbf{E}(x, y, z)e^{-i\omega t} \qquad \tilde{\mathbf{B}} = \mathbf{B}(x, y, z)e^{-i\omega t}
+\tilde{\mathbf{E}}(x, y, z, t) = \mathbf{E}(x, y, z)e^{-i\omega t} \\
+\tilde{\mathbf{B}}(x, y, z, t) = \mathbf{B}(x, y, z)e^{-i\omega t}
 $$
 将这两个等式代入波方程，可以得到：
 $$
