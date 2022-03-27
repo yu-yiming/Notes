@@ -1177,12 +1177,17 @@ $$
 当对易子为零时，我们就称这两个算符 **互易（Commutable）**。对易的算符之间有很好的性质，我们在下一节中就会讲到。现在，让我们给出一些对易子之间的运算规则：
 
 - $[\hat{A}, \hat{A}] = 0$：可对易的自反性。
-- $[\hat{A}, \hat{B}] = -[\hat{B}, \hat{A}]$：逆交换律。
+- $[\hat{A}, \hat{B}] = -[\hat{B}, \hat{A}]$：反交换律。
 - $[\hat{A} + \hat{B}, \hat{C}] = [\hat{A}, \hat{C}] + [\hat{B}, \hat{C}]$：对加法的分配律。
 - $[\hat{A}\hat{B}, \hat{C}] = \hat{A}[\hat{B}, \hat{C}] + [\hat{A}, \hat{C}]\hat{B}$：对乘法的分配律。
 - $[\lambda\hat{A}, \hat{B}] = \lambda[\hat{A}, \hat{B}]$。
 - $[\hat{A}, [\hat{B}, \hat{C}]] + [\hat{B}, [\hat{C}, \hat{A}]] + [\hat{C}, [\hat{A}, \hat{B}]] = 0$：雅可比等式。
 - $[\hat{A}, f(\hat{A})] = 0$。
+
+此外，一些常见的算符之间满足下面的对易关系，也被称为 **标准对易关系（Canonical Commutation Relation）**：
+
+- $[r_i, p_j] = i\hbar\delta_{ij}$。
+- $[r_i, r_j] = [p_i, p_j] = 0$。
 
 #### 广义测不准原理
 
@@ -1225,7 +1230,7 @@ $$
 $$
 \langle f|g\rangle - \langle g|f\rangle = \langle{\hat{A}\hat{B}}\rangle -  \langle\hat{B}\hat{A}\rangle = [\langle\hat{A}\hat{B}\rangle, \langle\hat{B}\hat{A}\rangle] = \langle[\hat{A}, \hat{B}]\rangle
 $$
-这样我们就得到了最终的结论：
+回忆其中的方括号是我们上节中引入的对易子。这样我们就得到了最终的结论：
 $$
 \sigma_A^2\sigma_B^2 \ge \left(\frac{1}{2i}\left\langle\left[\hat{A}, \hat{B}\right]\right\rangle\right)^2
 $$
@@ -1639,7 +1644,7 @@ $$
 $$
 Y_\ell^m(\theta, \phi) = \sqrt{\frac{(2\ell + 1)(\ell - m)!}{4\pi(\ell + m)!}}e^{im\phi}P_\ell^m(\cos\theta)
 $$
-我们随后会认识到，这个函数是正交的：
+它被称为 **球谐函数（Spherical Harmonics）**。我们随后会认识到，这个函数是正交的：
 $$
 \int_0^{2\pi}\int_0^\pi [Y_\ell^m(\theta, \phi)]^*[Y_{\ell'}^{m'}(\theta, \phi)]\sin\theta\,d\theta\,d\phi = \delta_{\ell\ell'}\delta_{mm'}
 $$
@@ -1686,3 +1691,154 @@ $$
 	&= [yp_z, zp_x] - [yp_z, xp_z] - [zp_y, zp_x] + [zp_y, xp_z]
 \end{align*}
 $$
+回忆在[前面章节](#可对易性)中介绍过的标准对易关系，上面所有方向不同的位置与动量都互易，因此剩下的是：
+$$
+[L_x, L_y] = yp_x[p_z, z] + xp_y[z, p_z] = i\hbar(xp_y - yp_x) = i\hbar L_z
+$$
+根据对称性，我们得到了下面这样简介的结论：
+$$
+[L_x, L_y] = i\hbar L_z \qquad [L_y, L_z] = i\hbar L_x \qquad [L_z, L_x] = i\hbar L_y
+$$
+这就是三维空间中角动量的基本对易关系；和 $\mathbf{r}$ 与 $\mathbf{p}$ 不同的是，它的不同分量之间并不对易。根据广义测不准原理，我们有下面的结论（以 $x$、$y$ 方向为例）：
+$$
+\sigma_{L_x}\sigma_{L_y} \ge \frac{\hbar}{2}|\langle L_z\rangle|
+$$
+同时也就不存在同时为不同方向上角动量的特征函数。不过，这些分量的平方和，$L^2 = L_x^2 + L_y^2 + L_z^2$ 和每个分量一一对易（以 $x$ 方向为例）：
+$$
+\begin{align*}
+	[L^2, L_x]
+	&= [L_x^2, L_x] + [L_y^2, L_x] + [L_z^2, L_x] \\
+	&= L_y[L_y, L_x], [L_y, L_x]L_y + L_z[L_z, L_x] + [L_z, L_x]L_z \\
+	&= L_y(-i\hbar L_z) + (-i\hbar L_z)L_y + L_z(i\hbar L_y) + (i\hbar L_y)L_z \\
+	&= 0
+\end{align*}
+$$
+这进一步告诉我们：
+$$
+[L^2, \mathbf{L}] = 0
+$$
+此外，可能存在同时为 $L^2$ 和 $L_z$ 的特征函数 $f$，即：
+$$
+L^2f = \lambda f \qquad L_zf = \mu f
+$$
+注意到 $L_z^2f = \mu^2f$，因此：
+$$
+(L_x^2 + L_y^2)f = (\lambda - \mu^2)f
+$$
+左侧是两个算符的平方和；为了便于分析，我们引入两个共轭的算符，从初等代数的角度来看其积为 $L_x^2 + L_y^2$（但作为算符时其积要加上和交换子相关的项，我们后面会再次提到）：
+$$
+L_\pm = L_x \pm iL_y
+$$
+我们称其为 **阶梯算符（Ladder Operator）**。它们和 $L_z$ 与 $L^2$ 的对易关系不难计算：
+$$
+\begin{align*}
+	[L_z, L_\pm] 
+	&= [L_z, L_x] \pm i[L_z, L_y] \\
+	&= i\hbar(L_y \mp i\hbar L_x) \\
+	&= \pm \hbar L_\pm \\
+	[L^2, L_\pm]
+	&= [L^2, L_x] \pm i[L^2, L_y] \\
+	&= 0
+\end{align*}
+$$
+观察到 $L_\pm f$ 函数满足：
+$$
+\begin{align*}
+	L^2(L_\pm f) &= L_\pm (L^2f) \\
+	&= L_\pm(\lambda f) \\
+	&= \lambda (L_\pm f) \\
+	L_z(L_\pm f) &= [L_z, L_\pm]f + L_\pm L_zf \\
+	&= \pm \hbar L_\pm f + L_\pm (\mu f) \\
+	&= (\mu\pm \hbar)L_\pm f
+\end{align*}
+$$
+因此 $L_\pm f$ 也是 $L^2$ 和 $L_z$ 的特征函数，其对应的特征值分别为 $\lambda$（不变）和 $\mu \pm \hbar$（相差一个常数）。这个“增减”的特性让我们也将 $L_+$ 和 $L_-$ 分别称为 **上升算符（Raising Operator）** 和 **下降算符（Lowering Operator）**。对于任何已知的特征值 $\mu$，我们都可以得到一系列特征函数和特征值。需要注意的是，为了保证 $\lambda \ge \mu^2$，一定存在一个最大的特征值，设其为 $\ell\hbar$，对应的特征函数为 $f_t$，则有：
+$$
+L^2f_t = \lambda f_t \qquad L_zf_t = \hbar\ell f_t
+$$
+现在让我们分析两个阶梯函数的积：
+$$
+\begin{align*}
+	L_\pm L_\mp
+	&= (L_x \pm iL_y)(L_x \mp iL_y) \\
+	&= L_x^2 + L_y^2 \mp i(L_xL_y - L_yL_x) \\
+	&= L^2 - L_z^2 \pm \hbar L_z
+\end{align*}
+$$
+因此我们可以将 $L^2$ 表示为阶梯函数的形式：
+$$
+L^2 = L_\pm L_\mp + L_z^2 \mp \hbar L_z
+$$
+对于 $f_t$，应有：
+$$
+\begin{align*}
+	L^2f_t
+	&= (L_-L_+ + L_z^2 + \hbar L_z)f_t \\
+	&= L_-(L_+f_t) + \hbar^2\ell^2 f_t + \hbar^2\ell f_t \\
+	&= \hbar^2\ell(\ell + 1)f_t
+\end{align*}
+$$
+这里我们设 $L_+f_t = 0$（这只是一个假设，也可能有 $L_+f_t = \infty$，不过那是另一种情况了）。因此我们得到：
+$$
+\lambda = \hbar^2\ell(\ell+1)
+$$
+类似地（为了保证 $\lambda \ge \mu^2$），一定也存在一个最小的特征值 $\bar{\ell}\hbar$，对应了特征函数 $f_b$，则有：
+$$
+L^2f_b = \lambda f_b \qquad L_zf_b = \hbar\bar{\ell}f_b
+$$
+同样将 $L^2$ 替换为阶梯函数：
+$$
+\begin{align*}
+	L^2f_b &= (L_+L_- + L_z^2 - \hbar L_z)f_b \\
+	&= L_+(L_-f_b) + \hbar^2\bar{\ell}^2f_b - \hbar^2\bar{\ell}f_b \\
+	&= \hbar^2\bar{\ell}(\ell - 1)f_b
+\end{align*}
+$$
+因此：
+$$
+\lambda = \hbar\bar{\ell}(\bar{\ell} - 1)
+$$
+对比之前得到的等式，可以解得 $\bar{\ell} = -\ell$。至此，我们得到了一个高度对称的结果，即 $L_z$ 的特征值是从 $-\hbar\ell$ 到 $\hbar\ell$ 的一系列数。我们将其记为下面的形式：
+$$
+L^2f_\ell^m = \hbar^2\ell(\ell + 1)f_\ell^m \qquad L_zf_\ell^m = \hbar mf_\ell^m
+$$
+其中 $\ell$ 是一系列半正整数，即 $0, 1/2, 1, 3/2, 2, \dots$，而 $m$ 是夹在 $\pm \ell$ 中的半整数，即 $0, \pm 1, \dots, \pm (\ell -1), \pm \ell$。
+
+听起来有些神奇，因为我们在对特征函数一无所知的情况下就解出了特征值；这也是阶梯算符的一个独特之处。事实上，我们下一节中将要求解的交动量的特征函数正是前面我们接触过的球谐函数 $Y_\ell^m$（实际上从上下标的使用就可以隐约猜到它们的联系）。
+
+#### 特征函数
+
+本节中我们将以解析形式构建上节中的算符。首先，球坐标系中的角动量是：
+$$
+\mathbf{L} = -i\hbar(\mathbf{r}\times\nabla)
+$$
+将球坐标系上的 Del 算符代入：
+$$
+\nabla = \unit{r}\frac{\partial}{\partial r} + \unit{\theta}\frac{1}{r}\frac{\partial}{\partial \theta} + \unit{\phi}\frac{1}{r\sin\theta}\frac{\partial}{\partial \phi}
+$$
+得到：
+$$
+\begin{align*}
+	\mathbf{L}
+	&= -i\hbar\left[r(\unit{r}\times\unit{r})\frac{\partial}{\partial r} + (\unit{r}\times\unit{\theta})\frac{\partial}{\partial \theta} + (\unit{r}\times\unit{\phi})\frac{\partial}{\partial \phi}\right] \\
+	&= -i\hbar\left(\unit{\phi}\frac{\partial}{\partial \theta} - \unit{\theta}\frac{1}{\sin\theta}\frac{\partial}{\partial \phi}\right) \\
+	&= -i\hbar\left[
+		(-\unit{x}\sin\phi + \unit{y}\cos\phi)\frac{\partial}{\partial \theta} - (\unit{x}\cos\theta\cos\phi + \unit{y}\cos\theta\sin\phi - \unit{z}\sin\theta)\frac{1}{\sin\theta}\frac{\partial}{\partial\phi}
+	\right] \\
+	& \implies
+	\begin{cases}
+		L_x &= -i\hbar\left(-\sin\phi\dfrac{\partial}{\partial \theta} - \cos\phi\cot\theta\dfrac{\partial}{\partial\phi}\right) \\
+		L_y &= -i\hbar\left(+\cos\phi\dfrac{\partial}{\partial \theta} - \sin\phi\cot\theta\dfrac{\partial}{\partial \phi}\right) \\
+		L_z &= -i\hbar\dfrac{\partial}{\partial \phi}
+	\end{cases}
+\end{align*}
+$$
+随即就能得到阶梯算符的解析形式：
+$$
+\begin{align*}
+	L_\pm
+    &= -i\hbar\left[(-\sin\phi \pm i\cos\phi)\frac{\partial}{\partial} - (\cos\phi \pm i\sin\phi)\cot\theta\frac{\partial}{\partial \phi}\right] \\
+	&= -\hbar e^{\pm i\phi}\left(\frac{\partial}{\partial \theta} \pm i\cot\theta\frac{\partial }{\partial \phi}\right)
+\end{align*}
+$$
+它们
