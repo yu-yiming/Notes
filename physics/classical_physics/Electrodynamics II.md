@@ -1745,7 +1745,7 @@ $$
 $$
 \frac{L'\cos\theta}{c} = \frac{L' - L}{v} \implies L' = \frac{1}{1 - v\cos\theta/c}L
 $$
-特别地，如果将 $\unit{\mathscr{r}}$ 设为观察者的注射方向，我们就得到了和前面一样的系数。需要注意 *只有* 和速度方向一样的维度才会受这个效应影响，因此观测到的体积依然满足这个系数关系：
+特别地，如果将 $\unit{\mathscr{r}}$ 设为观察者的注视方向，我们就得到了和前面一样的系数。需要注意 *只有* 和速度方向一样的维度才会受这个效应影响，因此观测到的体积依然满足这个系数关系：
 $$
 \tau' = \frac{\tau}{1 - \unit{\mathscr{r}}\cdot\mathbf{v}/c}
 $$
@@ -1774,3 +1774,90 @@ $$
 \end{equation*}
 $$
 我们将上面两个方程给出的物理量称为 **Lienard-Wiechert 势（Lienard-Wiechert Potentials）**。
+
+#### 运动电荷的电磁场
+
+现在，我们可以通过 Lienard-Wiechert 势求解点电荷的电磁场。回忆 $\mathbf{E}$ 和 $\mathbf{B}$ 场满足的等式：
+$$
+\mathbf{E} = -\nabla V - \frac{\partial \mathbf{A}}{\partial t} \qquad \mathbf{B} = \nabla \times \mathbf{A}
+$$
+让我们首先计算 $\nabla V$：
+$$
+\begin{align*}
+	\nabla V
+		&= \frac{qc}{4\pi\epsilon_0}\frac{-1}{(\rcur c - \brcur\cdot\mathbf{v})^2}\nabla(\rcur c - \brcur\cdot\mathbf{v}) \\
+	\nabla \rcur
+		&= -c\nabla t_r \\
+	\nabla (\brcur\cdot\mathbf{v})
+		&= (\brcur\cdot\nabla)\mathbf{v} + (\mathbf{v}\cdot\nabla)\brcur + \brcur\times(\nabla\times\mathbf{v}) + \mathbf{v}\times(\nabla\times\brcur) \\
+		&= \underbrace{\left(\rcur_x\frac{\partial}{\partial x} + \rcur_y\frac{\partial}{\partial y} + \rcur_z\frac{\partial}{\partial z}\right)\mathbf{v}(t_r)}_{(\brcur\cdot\nabla)\mathbf{v}}	 + \underbrace{\left(v_x\frac{\partial}{\partial x} + v_y\frac{\partial}{\partial y} + v_z\frac{\partial}{\partial z}\right)\left(v_x\unit{x} + v_y\unit{y} + v_z\unit{z}\right)}_{(\mathbf{v}\cdot\nabla)\mathbf{r}}  - \\
+		&\phantom{xx} \underbrace{\left(v_x\frac{\partial}{\partial x} + v_y\frac{\partial}{\partial y} + v_z\frac{\partial}{\partial z}\right)\mathbf{w}}_{(\mathbf{v}\cdot\nabla)\mathbf{w}} + \underbrace{\brcur\times\left[\left(\frac{\partial v_z}{\partial y} - \frac{\partial v_y}{\partial z}\right)\unit{x} + \left(\frac{\partial v_x}{\partial z} - \frac{\partial v_z}{\partial x}\right)\unit{y} + \left(\frac{\partial v_y}{\partial x} + \frac{\partial v_x}{\partial y}\right)\unit{z}\right]}_{\brcur\times(\nabla\times\mathbf{v})} + \\
+		&\phantom{xxx} \mathbf{v}\times(\nabla\times\mathbf{r}) - \underbrace{\mathbf{v}\times\left[\left(\frac{\partial w_z}{\partial y} - \frac{\partial w_y}{\partial z}\right)\unit{x} + \left(\frac{\partial w_x}{\partial z} - \frac{\partial w_z}{\partial x}\right)\unit{y} + \left(\frac{\partial w_y}{\partial x} - \frac{\partial w_x}{\partial y}\right)\unit{z}\right]}_{\mathbf{v}\times(\nabla\times\mathbf{w})} \\
+		
+		&= \underbrace{\rcur_x\frac{d\mathbf{v}}{dt_r}\frac{\partial t_r}{\partial x} + \rcur_y\frac{d\mathbf{v}}{dt}\frac{\partial t_r}{\partial y} + \rcur_z\frac{d\mathbf{v}}{dt_r}\frac{\partial t_r}{\partial z}}_{(\brcur\cdot\nabla)\mathbf{v}} + \underbrace{v_x\unit{x} + v_y\unit{y} + v_z\unit{z}}_{(\mathbf{v}\cdot\nabla)\mathbf{r}} + \underbrace{v_x\frac{d\mathbf{w}}{dt_r}\frac{\partial t_r}{\partial x} + v_y\frac{d\mathbf{w}}{dt_r}\frac{\partial t_r}{\partial y} + v_z\frac{d\mathbf{w}}{dt_r}\frac{\partial t_r}{\partial z}}_{(\mathbf{v}\cdot\nabla)\mathbf{w}} + \\
+		&\phantom{xxx} \underbrace{\brcur\times\left[\left(\frac{dv_z}{dt_r}\frac{\partial t_r}{\partial y} - \frac{\partial v_y}{\partial t_r}{\partial z}\right)\unit{x} + \left(\frac{dv_x}{dt_r}\frac{\partial t_r}{\partial z} - \frac{dv_z}{dt_r}\frac{\partial t_r}{\partial x}\right)\unit{y} + \left(\frac{dv_z}{dt_r}\frac{\partial t_r}{\partial x} - \frac{dv_x}{dt_r}\frac{\partial t_r}{\partial y}\right)\unit{z}\right]}_{\brcur\times(\nabla\times\mathbf{v})} + \mathbf{0} + \\
+		&\phantom{xxx} \underbrace{\mathbf{v}\times\left[\left(\frac{d\rcur_z}{dt_r}\frac{\partial t_r}{\partial y} - \frac{\partial \rcur_y}{\partial t_r}{\partial z}\right)\unit{x} + \left(\frac{d\rcur_x}{dt_r}\frac{\partial t_r}{\partial z} - \frac{d\rcur_z}{dt_r}\frac{\partial t_r}{\partial x}\right)\unit{y} + \left(\frac{d\rcur_z}{dt_r}\frac{\partial t_r}{\partial x} - \frac{d\rcur_x}{dt_r}\frac{\partial t_r}{\partial y}\right)\unit{z}\right]}_{\mathbf{v}\times(\nabla\times\brcur)} \\
+		
+		&= \dot{\mathbf{v}}(\brcur\cdot\nabla t_r) + \mathbf{v} + \mathbf{v}(\mathbf{v}\cdot\nabla t_r) - \brcur\times(\dot{\mathbf{v}}\times\nabla t_r) - \mathbf{v}\times(\mathbf{v}\times\nabla t_r) \\
+		
+		&= \mathbf{v} + (\brcur\cdot\dot{\mathbf{v}} - v^2)\nabla t_r \\
+	-c\nabla t_r
+		&= \nabla \rcur = \nabla\sqrt{\brcur\cdot\brcur} = \frac{2\sqrt{\brcur\cdot\brcur}}\nabla(\brcur\cdot\brcur) \\
+		&= \frac{1}{\rcur}[(\brcur\cdot\nabla)\brcur + \brcur\times(\nabla\times\brcur)] \\
+		&= \frac{1}{\rcur}[\brcur - (\brcur\cdot\mathbf{v})\nabla t_r] \qquad \text{（这一步参考了前面对 $(\brcur\cdot\nabla)\mathbf{v}$ 和 $\brcur\times(\nabla\times\mathbf{v})$ 的简化）} \\
+	\nabla t_r
+		&= -\frac{\brcur}{\rcur c - \brcur\cdot\mathbf{v}}
+\end{align*}
+$$
+最终我们得到的等式是：
+$$
+\nabla V = \frac{1}{4\pi\epsilon_0}\frac{qc}{(\rcur c - \brcur\cdot\mathbf{v})^3}\left[(\rcur c - \brcur\cdot\mathbf{v})\mathbf{v} - (c^2 - v^2 + \brcur\cdot\dot{\mathbf{v}})\brcur\right]
+$$
+经过类似（极度繁琐）的约化过程，我们也可以得到 $\mathbf{A}$ 的变化率：
+$$
+\frac{\partial \mathbf{A}}{\partial t} = \frac{1}{4\pi\epsilon_0}\frac{qc}{\rcur c - \brcur\cdot\mathbf{v})^3}\left[(\rcur c - \brcur\cdot\mathbf{v})(-\mathbf{v} + \rcur\dot{\mathbf{v}}/c) + \rcur(c^2 - v^2 + \brcur\cdot\dot{\mathbf{v}})\mathbf{v}/c\right]
+$$
+如果记 $\mathbf{a} = \dot{\mathbf{v}}$，且 $\mathbf{u} = c\unit{\rcur} - \mathbf{v}$，就可以得到 $\mathbf{E}$ 场如下的表达式：
+$$
+\mathbf{E}(\mathbf{r}, t) = \frac{q}{4\pi\epsilon_0}\frac{\rcur}{(\brcur\cdot\mathbf{u})^3}\left[(c^2 - v^2)\mathbf{u} + \brcur\times(\mathbf{u}\times\mathbf{a})\right]
+$$
+对这个式子求旋度，再经过一些化简可以得到：
+$$
+\mathbf{B}(\mathbf{r}, t) = \frac{1}{c}\unit{\rcur}\times\mathbf{E}(\mathbf{r}, t)
+$$
+我们将这个新得到的 $\mathbf{E}$ 场拆分开来，其中第一项称为 **广义库仑场（Generalized Coulomb Field）**：
+$$
+\mathbf{E} = \frac{1}{4\pi\epsilon_0}\frac{\rcur}{(\brcur\cdot\mathbf{u})^3}(c^2 - v^2)\mathbf{u}
+$$
+我们也将其称为 **速度场（Velocity Field）**，和等式中第二项相对：其称为 **加速度场（Acceleration Field）**，因为它和加速度有关：
+$$
+\mathbf{E} = \frac{1}{4\pi\epsilon_0}\frac{\rcur}{(\brcur\cdot\mathbf{u})^3}\brcur\times(\mathbf{u}\times\mathbf{a})
+$$
+这一项由于多乘了一个距离 $\rcur$，因此在远距的情况下会成为 $\mathbf{E}$ 场的主要部分。它对电磁辐射有较大意义，因此我们也称其为 **辐射场（Radiation Field）**。
+
+最后，让我们用洛伦兹力结束这一节：
+$$
+\mathbf{F} = \frac{qQ}{4\pi\epsilon_0}\frac{\rcur}{(\brcur\cdot\mathbf{u})^3}\bigg\{
+	\underbrace{(c^2 - v^2)\mathbf{u} + \brcur\times(\mathbf{u}\times\mathbf{a})}_{\mathbf{E} 相关项} + \frac{\mathbf{V}}{c}\times\underbrace{\left[\brcur\times[(c^2 - v^2)\mathbf{u} + \brcur\times(\mathbf{u}\times\mathbf{a})]\right]}_{\mathbf{B} 相关项}
+\bigg\}
+$$
+其中 $\mathbf{V}$ 是测试电荷 $Q$ 的速度，而 $\brcur$、$\mathbf{u}$、$\mathbf{v}$ 和 $\mathbf{a}$ 都是在推迟时间处测量的量。至此，我们已经将电动力学的经典理论介绍完毕。回忆第一篇笔记开头时，我们说过电动力学是研究不同运动状态的电荷之间作用的学科；上面的公式就是不考虑相对论效应的终极描述。
+
+
+
+## 辐射
+
+电动力学中的 **辐射（Radiation）** 描述了电磁场传递能量（这个能量假定为不可逆地传递到无穷远处，否则就不称为辐射）的性质；所有坡印廷矢量不为零的场中都存在电磁辐射：
+$$
+P(r, t) = \oint \mathbf{S}\cdot d\mathbf{a} = \frac{1}{\mu_0}\oint(\mathbf{E}\times\mathbf{B})\cdot d\mathbf{a}
+$$
+由于能量传递的速度受束于光速，某一时刻 $t$ 某一点的能量其实来自于 $t_0 = t - r/c$ 时刻的源，即：
+$$
+P_\text{rad}(t_0) = \lim_{r\to\infty} P\left(r, t_0 + \frac{r}{c}\right)
+$$
+注意到对于离源点等距的曲面（即球面）的面积正比与 $r^2$，因此辐射的强度必须以 $1/r^2$（或更慢的速度）衰减，否则 $P_\text{rad}$ 很快就会跌为 $0$，此时不存在辐射。我们可以首先考虑静态的情形；由于 $\mathbf{E}$ 和 $\mathbf{B}$ 都正比于 $1/r^2$，坡印廷矢量正比于 $1/r^4$，因此静态系统中无辐射。相比之下，时间相关的系统中（根据杰斐缅柯方程组）电磁场存在与 $1/r$ 成正比的项，此时很有可能存在电磁辐射。
+
+本章中，我们会研究一些时间相关的电磁场分布，得到坡印廷矢量后在无穷远处对一个球面积分，最终的结果就是这个系统的辐射。
+
+### 偶极子辐射
+
