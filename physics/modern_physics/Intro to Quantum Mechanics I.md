@@ -1025,7 +1025,7 @@ $$
 
 给定一个算符，其所有特征值的集合被称为 **光谱（Spectrum）**。如果多个线性无关的特征函数有相同的特征值，我们称这个光谱是 **退化的（Degenerate）**。通常我们可以将算符的光谱分为两种：离散或连续。前一种情况的特征函数一定在希尔伯特空间中且拥有实际的物理意义；后一种情况下，特征函数并不是可归一的，此时需要至少选取一段区间后才能得到可归一的函数。一些算符只有离散的光谱（比如简谐振子的哈密顿算符），一些只有连续的光谱（比如自由粒子的哈密顿算符），也有两者都有的（比如有限方井的哈密顿算符）。
 
-#### 离散光谱
+#### ![image-20220404144021922](graphs/image-20220404144021922.png)离散光谱
 
 哈密顿算符的可归一的特征函数有两个重要的性质：
 
@@ -1166,6 +1166,233 @@ $$
 \end{align*}
 $$
 
+### 矢量和算符
+
+本节将沿着上一节得到的结论，探索不同空间下波函数的数学本质，并最终得到在不同空间之间相互转化的方式。
+
+#### 希尔伯特空间的基矢量
+
+在矢量分析中，我们学过将空间中的矢量拆分为某个基上基矢量的加权和。比如在三维空间中，任意矢量 $\mathbf{A}$ 都可以写作：
+$$
+\mathbf{A} = A_x\unit{x} + A_y\unit{y} + A_z\unit{z} = (\mathbf{A}\cdot\unit{x})\unit{x} + (\mathbf{A}\cdot\unit{y})\unit{y} + (\mathbf{A}\cdot\unit{z})\unit{z}
+$$
+（这里的 $\unit{x}$ 符号代表的是单位矢量）在量子力学中，我们有类似于 $\mathbf{A}\cdot\unit{x}$ 的写法：
+$$
+\Psi(x, t) = \langle x|\mathcal{S}(t)\rangle
+$$
+其中 $|\mathcal{S}(t)\rangle$ 表示希尔伯特空间中的一个矢量，而 $\Psi(x, t)$ 表示了其 $x$ 方向的分量。$|x\rangle$ 表示特征值为 $x$ 的位置特征函数。类似地，同一个矢量的特征值为 $p$ 的动量特征函数是：
+$$
+\Phi(p, t) = \langle p|\mathcal{S}(t)\rangle
+$$
+如果以能量特征函数为基，根据不同的 $n$ 可以得到：
+$$
+c_n(t) = \langle n|\mathcal{S}(t)\rangle
+$$
+需要意识到的是，上面这三种不同的分量表示方法描述的其实都是同一个矢量：
+$$
+|\mathcal{S}(t)\rangle = \int \Psi(y, t)\delta(x - y)\,dy = \int \Phi(p, t)\frac{1}{\sqrt{2\pi\hbar}}e^{ipx/\hbar}\,dp = \sum_n^\infty c_ne^{-iE_nt/\hbar}\psi_n(x)
+$$
+算符是希尔伯特空间中的线性变换，它将一个矢量变换为另一个矢量：
+$$
+|\beta\rangle = \hat{Q}|\alpha\rangle
+$$
+如果设 $|\alpha\rangle = \sum a_n|e_n\rangle$，$|\beta\rangle = \sum b_n|e_n\rangle$，其分量为：
+$$
+a_n = \langle e_n|\alpha \rangle \qquad b_n = \langle e_n|\beta\rangle
+$$
+此时我们可以将前面的式子写成：
+$$
+\sum_n b_n|e_n\rangle = \sum_n a_n\hat{Q}|e_n\rangle
+$$
+我们可以将算符 $\hat{Q}$ 表示为：
+$$
+Q_{mn} = \left\langle e_m\bigg|\ \hat{Q}\ \bigg|\ e_n\right\rangle
+$$
+这样就有：
+$$
+\sum_n b_n\langle e_m|e_n\rangle = \sum_na_n\left\langle e_m\bigg|\ \hat{Q}\ \bigg|\ e_n\right\rangle
+$$
+注意到 $\langle e_m|e_n \rangle = \delta_{mn}$，因此就有：
+$$
+b_m = \sum_nQ_{mn}a_n
+$$
+就好像矢量和矩阵在不同基中的形式不同一样，算符在不同分量表示中的形式也是不同的。回忆我们此前对 $\Phi(x, t)$ 和 $\Phi(p, t)$ 的称呼（位置空间波函数和动量动量空间波函数，我们可以将某个基扩张成的空间这样称呼），在这两种情况下的位置算符和动量算符是不一样的：
+$$
+\begin{align*}
+	\hat{x} = \begin{cases} x & \text{（位置空间）} \\ i\hbar\partial_p & \text{（动量空间）} \end{cases} \qquad
+	\hat{p} = \begin{cases} -i\hbar\partial_x & \text{（位置空间）} \\ p & \text{（动量空间）} \end{cases}
+\end{align*}
+$$
+因此当提到某个算符时，最严谨的说法是“在某个空间”中的算符，不过由于我们主要只关注位置空间的波函数，也即 $\Psi(x, t)$，我们默认情况下讨论的均为位置空间。
+
+最后值得提一下算符的运算。由于它们对应着矢量空间的矩阵，其运算规律和矩阵完全一致：
+$$
+\left(\hat{Q} + \hat{R}\right)|\alpha\rangle = \hat{Q}|\alpha\rangle + \hat{R}|\alpha\rangle \\
+\left(\hat{Q}\hat{R}\right)|\alpha\rangle = \hat{Q}\left(\hat{R}|\alpha\rangle\right)
+$$
+有时我们会将函数作用于算符上，物理中这个等价于用其幂级数展开：
+$$
+e^{\hat{Q}} = \hat{I} + \hat{Q} + \frac{1}{2}\hat{Q}^2 + \frac{1}{3!}\hat{Q}^3 + \dots \\
+\frac{1}{1 - \hat{Q}} = \hat{I} + \hat{Q} + \hat{Q}^2 + \hat{Q}^3 + \dots \\
+\ln\left(1 + \hat{Q}\right) = \hat{Q} - \frac{1}{2}\hat{Q}^2 + \frac{1}{3}\hat{Q}^3 - \frac{1}{4}\hat{Q}^4 + \dots
+$$
+
+
+
+#### 一个二维系统
+
+在一些简单的系统中，$n$ 能取的值是有限的，此时 $|S(t)\rangle$ 就是一个 $N$ 维矢量，$\hat{Q}$ 对应的就是一个 $N\times N$ 的矢量。最简单的情形是下面这个只有两个线性无关状态的系统：
+$$
+|0\rangle = \begin{pmatrix} 1 \\ 0 \end{pmatrix} \qquad |1\rangle = \begin{pmatrix} 0 \\ 1 \end{pmatrix}
+$$
+此时任意的状态 $|S\rangle$ 都可以表示为：
+$$
+|S\rangle = a|0\rangle + b|1\rangle = \begin{pmatrix} a \\ b \end{pmatrix}
+$$
+其中需要 $|a|^2 + |b|^2 = 1$，$a, b \in \mathbb{C}$。假设该系统中的哈密顿算符可以写成：
+$$
+\hat{H} = \begin{pmatrix} h & g \\ g & h \end{pmatrix}
+$$
+其中 $g, h \in \mathbb{R}$，此时它显然是一个厄米特矩阵。回忆时间相关的薛定谔方程：
+$$
+i\hbar\frac{d}{dt}|\mathcal{S}(t)\rangle = \hat{H}|\mathcal{S}(t)\rangle
+$$
+和此前使用的方法一样，我们先求解时间无关的薛定谔方程：
+$$
+\hat{H}|s\rangle = E|s\rangle
+$$
+这一步实际上在求解 $\hat{H}$ 的特征矢量和特征值：
+$$
+\det(h - EI) = 
+\det\begin{pmatrix}
+	h - E & g \\ g & h - E
+\end{pmatrix}
+= (h - E)^2 - g^2 = 0
+$$
+我们可以得到两个特征值：$E_\pm = h \pm g$。同时也就得到两个特征矢量（归一化后）：
+$$
+|s_\pm\rangle = \frac{1}{\sqrt{2}}\begin{pmatrix} 1 \\ \pm 1 \end{pmatrix}
+$$
+现在，我们可以将初始状态表示为这两个特征矢量的线性组合：
+$$
+|\mathcal{S}(0)\rangle = \begin{pmatrix} 1 \\ 0 \end{pmatrix} = \frac{1}{\sqrt{2}}(|s_+\rangle + |s_-\rangle)
+$$
+对于任意时刻 $t$，我们只需乘上一个 $\exp(-iE_n t/\hbar)$：
+$$
+\begin{align*}
+	|\mathcal{S}(t)\rangle
+	&= \frac{1}{\sqrt{2}}\left[e^{-i(h+g)t/\hbar}|s_+\rangle + e^{-i(h-g)t/\hbar}|s_-\rangle\right] \\
+	&= \frac{1}{2}e^{-iht/\hbar}\left[e^{-igt/\hbar}\begin{pmatrix} 1 \\ 1 \end{pmatrix} + e^{igh/\hbar}\begin{pmatrix} 1 \\ -1 \end{pmatrix}\right] \\
+	&= \frac{1}{2}e^{-iht/\hbar}\begin{pmatrix} e^{-igh/\hbar} + e^{igh\hbar} \\ e^{-igh/\hbar} - e^{igt/\hbar} \end{pmatrix} \\
+	&= e^{-iht/\hbar}\begin{pmatrix} \cos(gt/\hbar) \\ -i\sin(gt/\hbar) \end{pmatrix}
+\end{align*}
+$$
+
+#### 狄拉克符号
+
+**狄拉克符号（Dirac Notation）** 是将内积符号 $\langle \alpha | \beta \rangle$ 拆开后的记法，即 **左矢（Bra）** $\langle \alpha|$ 和 **右矢（Ket）** $|\beta\rangle$。我们已经知道右矢是一个矢量：
+$$
+|\beta\rangle = \begin{pmatrix} b_1 \\ b_2 \\ \vdots \\ b_n \end{pmatrix}
+$$
+我们可以适当地定义左矢，使得它们的内积满足 $\langle \alpha |\beta\rangle = \langle \alpha| \cdot |\beta \rangle$：
+$$
+\langle\alpha| = \begin{pmatrix}
+	a_1^* & a_2^* & \dots & a_n^*
+\end{pmatrix}
+$$
+通过观察不难发现左矢的集合也能形成一个矢量空间，我们称其为 **对偶空间（Dual Space）**。当左矢和右矢的维度相同时，我们可以将它们交换顺序利用矩阵乘法得到一个方阵，特别地，我们将一个归一化的右矢乘其对应的左矢称为 **投影算符（Projection Operator）**：
+$$
+\hat{P} = |\alpha\rangle\langle \alpha|
+$$
+观察下面的式子：
+$$
+\hat{P}|\beta\rangle = (|\alpha\rangle\langle \alpha|)|\beta\rangle = \langle \alpha|\beta\rangle|\alpha\rangle
+$$
+类比矢量分析中的 $(\mathbf{a}\cdot\mathbf{b})\mathbf{a}$，不难看出这是矢量 $|\beta\rangle$ 在 $|\alpha\rangle$ 方向上的投影，这也是 $\hat{P}$ 名称的由来。特别地，对于标准正交基 $\{|e_n\rangle\}$，有：
+$$
+\sum_n|e_n\rangle\langle e_n| = \hat{I}
+$$
+此处 $\hat{I}$ 是单位算符。为了认识到这一点，可以考虑一个任意的矢量 $|\alpha\rangle = \sum a_n|e_n\rangle$：
+$$
+\begin{align*}
+	\left(\sum_n|e_n\rangle\langle e_n|\right)|\alpha\rangle
+	&= \sum_m\sum_n a_m\langle e_n|e_m\rangle|e_n\rangle \\
+	&= \sum_m\sum_n \delta_{mn}a_m|e_n\rangle \\
+	&= \sum_na_n|e_n\rangle \\
+	&= |\alpha\rangle
+\end{align*}
+$$
+对狄拉克标准正交基也有类似的结论，对于 $\{|e_z\rangle\}$ 有：
+$$
+\int|e_z\rangle\langle e_z|\,dz = \hat{I}
+$$
+最后我们需要重新审视这个记号系统。$|\alpha\rangle$ 中的 $\alpha$ 只是一个名字，只有在利用狄拉克符号的时候才变成一个矢量。因此如果回顾此前给出的等式：
+$$
+\left\langle f\left|\hat{Q}f\right.\right\rangle = \left\langle\left. \hat{Q}f\right|f\right\rangle
+$$
+其中的 $\hat{Q}f$ 似乎没有任何意义，因为 $f$ 本身没有任何意义。我们可以将等式左侧写成熟悉的形式：
+$$
+\left\langle f\left|\hat{Q}f\right.\right\rangle \equiv \Big\langle f\ \Big| \hat{Q} \Big| f \Big\rangle
+$$
+右式则没有更好的简化形式；其含义是 $\hat{Q}|f\rangle$ 对应的左矢，我们之后就保持这样的写法。
+
+#### 基变换
+
+狄拉克符号的好处在于，其中不包含任何特定的基，且使我们能轻松地在不同基间切换。回忆我们对投影算符的定义，下面我们会着重考察位置特征状态、动量特征状态和能量特征状态间的变换。首先让我们回顾状态矢量 $|\mathcal{S}(t)\rangle$ 在这些空间中的表示：
+$$
+\begin{align*}
+	|\mathcal{S}(t)\rangle 
+	&= \int \Psi(x, t)|x\rangle\,dx = \int \langle x|\mathcal{S}(t)\rangle|x\rangle\,dx \\
+	&= \int \Phi(p, t)|p\rangle\,dp = \int \langle p|\mathcal{S}(t)\rangle|p\rangle\,dp \\
+	&= \sum_nc_n(t)|n\rangle = \sum_n\langle n|\mathcal{S}(t)\rangle|n\rangle
+\end{align*}
+$$
+在不同空间中，我们只需要取相应的算符即可。比如在位置空间和动量空间中的位置算符：
+$$
+\big\langle x \big|\hat{x}\big|\mathcal{S}(t)\big\rangle = x\Psi(x, t) \\
+\big\langle p \big|\hat{x}\big|\mathcal{S}(t)\big\rangle = i\hbar\frac{\partial \Psi(p, t)}{\partial t}
+$$
+动量算符则是：
+$$
+\begin{align*}
+	\big\langle p \big|\hat{x}\big|\mathcal{S}(t)\big\rangle 
+	&= \left\langle p \left|\hat{x}\int\,dx\right|x\right\rangle\langle x||\mathcal{S}(t)\rangle \\
+	&= \int\langle p|x|x \rangle\langle x|\mathcal{S}(t)\rangle\,dx \\
+	\big\langle p\big|\hat{x}\big|\mathcal{S}(t)\big\rangle
+    &= \int x\langle p|x\rangle \Psi(x, t)\,dx \\
+    &= \int x\frac{e^{-ipx/\hbar}}{\sqrt{2\pi\hbar}} \Psi(x, t)\,dx \\
+    &= i\hbar\frac{\partial}{\partial p}\int \frac{e^{-ipx/\hbar}}{\sqrt{2\pi\hbar}}\Psi(x, t)\,dx
+\end{align*}
+$$
+回忆此前我们给出的位置空间中的动量波函数，可以看到是一致的。
+
+#### 厄米特算符的矩阵形式
+
+假设一个厄米特算符 $\hat{A}$ 的特征值为 $a_n$，且对于任意 $n \ne m$ 都有 $a_n \ne a_m$。此时考虑 $\hat{A}$ 在 $|a_n\rangle$ 上的分量：
+$$
+\langle a_m|\hat{A}|a_n\rangle = \langle a_m|a_n|a_n\rangle = a_n\delta_{mn}
+$$
+这意味着 $\hat{A}$ 的矩阵形式是：
+$$
+\hat{A} =
+\begin{pmatrix}
+	a_1 & 0 & \dots \\
+	0 & a_2 & \dots \\
+	\vdots & \vdots & \ddots
+\end{pmatrix}
+$$
+回忆投影算符的定义，可以将这个矩阵构建出来：
+$$
+\hat{A} = \sum_{j}a_j|a_j\rangle\langle a_j|
+$$
+我们可以将其代回去验证：
+$$
+\left(\sum_j a_j|a_j\rangle\langle a_j|\right)|a_n\rangle = \sum_j a_j |a_j\rangle\langle a_j|a_n\rangle = \sum_j a_j|a_j\rangle\delta_{jn} = a_n|a_n\rangle
+$$
+根据厄米特算符特征状态的正交性，我们知道前者等价于 $\hat{A}$ 本身。
+
+
+
 ### 测不准原理
 
 #### 可对易性
@@ -1186,8 +1413,104 @@ $$
 
 此外，一些常见的算符之间满足下面的对易关系，也被称为 **标准对易关系（Canonical Commutation Relation）**：
 
-- $[r_i, p_j] = i\hbar\delta_{ij}$。
-- $[r_i, r_j] = [p_i, p_j] = 0$。
+- $[\hat{r}_i, \hat{p}_j] = i\hbar\delta_{ij}$。
+- $[\hat{r}_i, \hat{r}_j] = [\hat{p}_i, \hat{p}_j] = 0$。
+
+我们可以对一些简单的情形进行证明，比如一维空间中 $[x, p] = i\hbar$，证明如下：
+$$
+[\hat{x}, \hat{p}]f(x) = [x, -i\hbar\partial_x]f(x) = -xi\hbar\frac{\partial f}{\partial x} + i\hbar\left(\frac{\partial x}{\partial x}f + x\frac{\partial f}{\partial x} \right) = i\hbar f(x)
+$$
+可以看到我们引入了一个辅助函数 $f(x)$ 用来推导算符的等式，这颇有助于避免出错。值得强调的是，对易子的值与使用的空间无关。我们上面的推导使用的是位置空间，下面将要使用的动量空间中可以得到同样的结果：
+$$
+[\hat{x}, \hat{p}]f(p) = [i\hbar\partial_p, p]f(p) = i\hbar\left(\frac{\partial p}{\partial p}f + p\frac{\partial f}{\partial p}\right) - i\hbar p\frac{\partial f}{\partial p} = i\hbar f(p)
+$$
+
+#### Baker–Campbell–Hausdorff 公式
+
+此前我们曾提到，可以将算符运用于函数中。但是由于它的特殊性质，我们可能会得到意料之外的结果。考虑下面的等式：
+$$
+e^{\hat{A}}e^{\hat{B}} = e^{\hat{A} + \hat{B}}
+$$
+它并不一定成立！其原因不难看出：
+$$
+\begin{align*}
+    e^\hat{A}e^\hat{B}
+    	&= (1 + \hat{A} + \hat{A}^2 + \dots)(1 + \hat{B} + \hat{B}^2 + \dots) \\
+    	&= 1 + \hat{A} + \hat{A}^2 + \dots + \hat{B} + \hat{A}\hat{B} \dots + \hat{B}^2 \\
+    e^{\hat{A} + \hat{B}}
+    	&= (1 + (\hat{A} + \hat{B}) + (\hat{A} + \hat{B})^2 + \dots) \\
+    	&= 1 + \hat{A} + \hat{B} + \hat{A}^2 + \hat{B}\hat{A} + \hat{A}\hat{B} + \hat{B}^2 + \dots
+\end{align*}
+$$
+下面，我们假设对于任两个算符，它们自身和它们的对易子互易：
+$$
+[\hat{A}, [\hat{A}, \hat{B}]] = [\hat{B}, [\hat{A}, \hat{B}]] = 0
+$$
+如果将上面的等式展开，就能得到：
+$$
+\hat{A}^2\hat{B} + \hat{B}^2\hat{A} = 2\hat{A}\hat{B}\hat{A} \qquad \hat{A}\hat{B}^2 + \hat{B}\hat{A}^2 = 2\hat{B}\hat{A}\hat{B}
+$$
+现在考虑 $[\hat{A}, \hat{B}^n]$，我们有：
+$$
+\begin{align*}
+	[\hat{A}, \hat{B}^n] = [\hat{A}, \hat{B}]\hat{B}^{n-1} + \hat{B}[\hat{A}, \hat{B}^{n-1}]
+\end{align*}
+$$
+发现它可以写为递归的形式，因此或许有更加简洁的通项公式。现在用数学归纳法证明 $[\hat{A}, \hat{B}^n] = n\hat{B}^{n-1}[\hat{A}, \hat{B}]$。对于 $n = 0$ 的情形，这是显然的。现在假设对于 $n = 0, 1, 2, \dots, k$ 都成立，则在 $n = k + 1$ 时：
+$$
+\begin{align*}
+	[\hat{A}，\hat{B}^{k+1}] 
+		&= [\hat{A}, \hat{B}^k]\hat{B} + \hat{B}^{k}[\hat{A}, \hat{B}] \\
+		&= k\hat{B}^{k-1}[\hat{A}, \hat{B}]\hat{B} + \hat{B}^{k}[\hat{A}, \hat{B}] \\
+		&= (k + 1)\hat{B}^k[\hat{A}, \hat{B}]
+\end{align*}
+$$
+这样就证明了上面的等式。随后考虑一个存在泰勒级数的函数 $F$ 以及 $[\hat{A}, F(\hat{B})]$。如果将函数用泰勒级数展开为：
+$$
+F(\hat{B}) = F(0) + F'(0)\hat{B} + \frac{1}{2}F''(0)\hat{B}^2 + \frac{1}{6}F'''(0)\hat{B}^3 + \dots
+$$
+根据对易子对加法的分配律，我们有：
+$$
+\begin{align*}
+	[\hat{A}, F(\hat{B})]
+    	&= F'(0)[\hat{A}, \hat{B}] + \frac{1}{2}F''(0)[\hat{A}, \hat{B}^2] + \frac{1}{6}F'''(0)[\hat{A}, \hat{B}^3] + \dots \\
+    	&= F'(0)[\hat{A}, \hat{B}] + \frac{1}{2}F''(0)\cdot 2\hat{B}[\hat{A}, \hat{B}] + \frac{1}{6}F'''(0)\cdot 3\hat{B}^2[\hat{A}, \hat{B}] + \dots \\
+    	&= \frac{d}{d\hat{B}}(F'(0)\hat{B} + \frac{1}{2}F''(0)\hat{B}^2 + \frac{1}{6}F'''(0)\hat{B}^3 + \dots)[\hat{A}, \hat{B}] \\
+    	&= \frac{dF}{d\hat{B}}[\hat{A}, \hat{B}]
+\end{align*}
+$$
+特别地，对于 $F(x) = e^x$，我们有 $[\hat{A}, e^{\hat{B}}] = e^\hat{B}[\hat{A}, \hat{B}]$。
+
+现在考虑函数 $f(\lambda) = e^{\lambda\hat{A}}e^{\lambda\hat{B}}$，其关于 $\lambda$ 的导数为：
+$$
+\frac{df}{d\lambda} = \hat{A}e^{\lambda\hat{A}}e^{\lambda\hat{B}} + e^{\lambda\hat{A}}\hat{B}e^{\lambda\hat{B}}
+$$
+我们将其中的 $e^{\lambda\hat{A}}\hat{B}$ 代换为 $-[\hat{B}, e^{\lambda\hat{A}}] + Be^{\lambda\hat{A}}$，随后有：
+$$
+e^{\lambda\hat{A}}\hat{B} = -\lambda e^{\lambda\hat{A}}[\hat{B}, \hat{A}] + Be^{\lambda\hat{A}} = \lambda e^{\lambda\hat{A}}[\hat{A}, \hat{B}] + \hat{B}e^{\lambda\hat{A}}
+$$
+因此：
+$$
+\begin{align*}
+	\frac{df}{d\lambda} 
+		&= \hat{A}e^{\lambda\hat{A}}{e^{\lambda\hat{B}}} + \lambda e^{\lambda\hat{A}}[\hat{A}, \hat{B}]e^{\lambda\hat{B}} + \hat{B}e^{\lambda\hat{A}}e^{\lambda\hat{B}} \\
+		&= (\hat{A} + \hat{B} + \lambda[\hat{A}, \hat{B}])e^{\lambda\hat{A}}e^{\lambda\hat{B}} \\
+		&= (\hat{A} + \hat{B} + \lambda[\hat{A}, \hat{B}])f
+\end{align*}
+$$
+其中我们用到了 $e^{\lambda\hat{A}}$ 与 $[\hat{A}, \hat{B}]$ 相易的事实，这点可以通过将前者泰勒级数展开，然后再利用 $[\hat{A}, [\hat{A}, \hat{B}]] = 0$ 得到。最后，我们需要求出这个微分方程的解。不难验证 $e^{\lambda(\hat{A} + \hat{B})}e^{\lambda^2[\hat{A}, \hat{B}]/2}$ 是一个解：
+$$
+\begin{align*}
+	\frac{df}{d\lambda}
+		&= (\hat{A} + \hat{B})e^{\lambda(\hat{A} + \hat{B})}e^{\lambda^2[\hat{A}, \hat{B}]/2} + e^{\lambda(\hat{A} + \hat{B})}\lambda e^{\lambda^2[\hat{A}, \hat{B}]/2} \\
+		&= (\hat{A} + \hat{B} + \lambda[\hat{A}, \hat{B}])e^{\lambda(\hat{A} + \hat{B})}e^{\lambda^2[\hat{A}, \hat{B}]/2}
+\end{align*}
+$$
+ 取 $\lambda = 1$ 时，我们就得到了 **Baker-Campbell-Hausdorff 公式**：
+$$
+e^{\hat{A}}e^{\hat{B}} = e^{\hat{A} + \hat{B}}e^{[\hat{A}, \hat{B}]/2}
+$$
+
 
 #### 广义测不准原理
 
@@ -1302,203 +1625,6 @@ $$
 \Delta E\Delta t \ge \frac{\hbar}{2}
 $$
 可以看到，我们的 $\Delta t$，其物理意义是 $\langle Q\rangle$ 变化一个标准差 $\sigma_Q$ 所需的时间，因此它依赖于 $Q$ ，对于不同的可观测量会有不同的大小。当 $\Delta E$ 非常大的时候，说明 $Q$ 的变化非常迅速，也就是所需时间很小；否则 $Q$ 就是缓慢变化，其对应的时间就很长。
-
-### 矢量和算符
-
-#### 希尔伯特空间的基矢量
-
-在矢量分析中，我们学过将空间中的矢量拆分为某个基上基矢量的加权和。比如在三维空间中，任意矢量 $\mathbf{A}$ 都可以写作：
-$$
-\mathbf{A} = A_x\unit{x} + A_y\unit{y} + A_z\unit{z} = (\mathbf{A}\cdot\unit{x})\unit{x} + (\mathbf{A}\cdot\unit{y})\unit{y} + (\mathbf{A}\cdot\unit{z})\unit{z}
-$$
-（这里的 $\unit{x}$ 符号代表的是单位矢量）在量子力学中，我们有类似于 $\mathbf{A}\cdot\unit{x}$ 的写法：
-$$
-\Psi(x, t) = \langle x|\mathcal{S}(t)\rangle
-$$
-其中 $|\mathcal{S}(t)\rangle$ 表示希尔伯特空间中的一个矢量，而 $\Psi(x, t)$ 表示了其 $x$ 方向的分量。$|x\rangle$ 表示特征值为 $x$ 的位置特征函数。类似地，同一个矢量的特征值为 $p$ 的动量特征函数是：
-$$
-\Phi(p, t) = \langle p|\mathcal{S}(t)\rangle
-$$
-如果以能量特征函数为基，根据不同的 $n$ 可以得到：
-$$
-c_n(t) = \langle n|\mathcal{S}(t)\rangle
-$$
-需要意识到的是，上面这三种不同的分量表示方法描述的其实都是同一个矢量：
-$$
-|\mathcal{S}(t)\rangle = \int \Psi(y, t)\delta(x - y)\,dy = \int \Phi(p, t)\frac{1}{\sqrt{2\pi\hbar}}e^{ipx/\hbar}\,dp = \sum_n^\infty c_ne^{-iE_nt/\hbar}\psi_n(x)
-$$
-算符是希尔伯特空间中的线性变换，它将一个矢量变换为另一个矢量：
-$$
-|\beta\rangle = \hat{Q}|\alpha\rangle
-$$
-如果设 $|\alpha\rangle = \sum a_n|e_n\rangle$，$|\beta\rangle = \sum b_n|e_n\rangle$，其分量为：
-$$
-a_n = \langle e_n|\alpha \rangle \qquad b_n = \langle e_n|\beta\rangle
-$$
-此时我们可以将前面的式子写成：
-$$
-\sum_n b_n|e_n\rangle = \sum_n a_n\hat{Q}|e_n\rangle
-$$
-我们可以将算符 $\hat{Q}$ 表示为：
-$$
-Q_{mn} = \left\langle e_m\bigg|\ \hat{Q}\ \bigg|\ e_n\right\rangle
-$$
-这样就有：
-$$
-\sum_n b_n\langle e_m|e_n\rangle = \sum_na_n\left\langle e_m\bigg|\ \hat{Q}\ \bigg|\ e_n\right\rangle
-$$
-注意到 $\langle e_m|e_n \rangle = \delta_{mn}$，因此就有：
-$$
-b_m = \sum_nQ_{mn}a_n
-$$
-就好像矢量和矩阵在不同基中的形式不同一样，算符在不同分量表示中的形式也是不同的。回忆我们此前对 $\Phi(x, t)$ 和 $\Phi(p, t)$ 的称呼（位置空间波函数和动量动量空间波函数，我们可以将某个基扩张成的空间这样称呼），在这两种情况下的位置算符和动量算符是不一样的：
-$$
-\begin{align*}
-	\hat{x} = \begin{cases} x & \text{（位置空间）} \\ i\hbar\partial_p & \text{（动量空间）} \end{cases} \qquad
-	\hat{p} = \begin{cases} -i\hbar\partial_x & \text{（位置空间）} \\ p & \text{（动量空间）} \end{cases}
-\end{align*}
-$$
-因此当提到某个算符时，最严谨的说法是“在某个空间”中的算符，不过由于我们主要只关注位置空间的波函数，也即 $\Psi(x, t)$，我们默认情况下讨论的均为位置空间。
-
-最后值得提一下算符的运算。由于它们对应着矢量空间的矩阵，其运算规律和矩阵完全一致：
-$$
-\left(\hat{Q} + \hat{R}\right)|\alpha\rangle = \hat{Q}|\alpha\rangle + \hat{R}|\alpha\rangle \\
-\left(\hat{Q}\hat{R}\right)|\alpha\rangle = \hat{Q}\left(\hat{R}|\alpha\rangle\right)
-$$
-有时我们会将函数作用于算符上，物理中这个等价于用其幂级数展开：
-$$
-e^{\hat{Q}} = \hat{I} + \hat{Q} + \frac{1}{2}\hat{Q}^2 + \frac{1}{3!}\hat{Q}^3 + \dots \\
-\frac{1}{1 - \hat{Q}} = \hat{I} + \hat{Q} + \hat{Q}^2 + \hat{Q}^3 + \dots \\
-\ln\left(1 + \hat{Q}\right) = \hat{Q} - \frac{1}{2}\hat{Q}^2 + \frac{1}{3}\hat{Q}^3 - \frac{1}{4}\hat{Q}^4 + \dots
-$$
-
-
-#### 一个二维系统
-
-在一些简单的系统中，$n$ 能取的值是有限的，此时 $|S(t)\rangle$ 就是一个 $N$ 维矢量，$\hat{Q}$ 对应的就是一个 $N\times N$ 的矢量。最简单的情形是下面这个只有两个线性无关状态的系统：
-$$
-|0\rangle = \begin{pmatrix} 1 \\ 0 \end{pmatrix} \qquad |1\rangle = \begin{pmatrix} 0 \\ 1 \end{pmatrix}
-$$
-此时任意的状态 $|S\rangle$ 都可以表示为：
-$$
-|S\rangle = a|0\rangle + b|1\rangle = \begin{pmatrix} a \\ b \end{pmatrix}
-$$
-其中需要 $|a|^2 + |b|^2 = 1$，$a, b \in \mathbb{C}$。假设该系统中的哈密顿算符可以写成：
-$$
-\hat{H} = \begin{pmatrix} h & g \\ g & h \end{pmatrix}
-$$
-其中 $g, h \in \mathbb{R}$，此时它显然是一个厄米特矩阵。回忆时间相关的薛定谔方程：
-$$
-i\hbar\frac{d}{dt}|\mathcal{S}(t)\rangle = \hat{H}|\mathcal{S}(t)\rangle
-$$
-和此前使用的方法一样，我们先求解时间无关的薛定谔方程：
-$$
-\hat{H}|s\rangle = E|s\rangle
-$$
-这一步实际上在求解 $\hat{H}$ 的特征矢量和特征值：
-$$
-\det(h - EI) = 
-\det\begin{pmatrix}
-	h - E & g \\ g & h - E
-\end{pmatrix}
-= (h - E)^2 - g^2 = 0
-$$
-我们可以得到两个特征值：$E_\pm = h \pm g$。同时也就得到两个特征矢量（归一化后）：
-$$
-|s_\pm\rangle = \frac{1}{\sqrt{2}}\begin{pmatrix} 1 \\ \pm 1 \end{pmatrix}
-$$
-现在，我们可以将初始状态表示为这两个特征矢量的线性组合：
-$$
-|\mathcal{S}(0)\rangle = \begin{pmatrix} 1 \\ 0 \end{pmatrix} = \frac{1}{\sqrt{2}}(|s_+\rangle + |s_-\rangle)
-$$
-对于任意时刻 $t$，我们只需乘上一个 $\exp(-iE_n t/\hbar)$：
-$$
-\begin{align*}
-	|\mathcal{S}(t)\rangle
-	&= \frac{1}{\sqrt{2}}\left[e^{-i(h+g)t/\hbar}|s_+\rangle + e^{-i(h-g)t/\hbar}|s_-\rangle\right] \\
-	&= \frac{1}{2}e^{-iht/\hbar}\left[e^{-igt/\hbar}\begin{pmatrix} 1 \\ 1 \end{pmatrix} + e^{igh/\hbar}\begin{pmatrix} 1 \\ -1 \end{pmatrix}\right] \\
-	&= \frac{1}{2}e^{-iht/\hbar}\begin{pmatrix} e^{-igh/\hbar} + e^{igh\hbar} \\ e^{-igh/\hbar} - e^{igt/\hbar} \end{pmatrix} \\
-	&= e^{-iht/\hbar}\begin{pmatrix} \cos(gt/\hbar) \\ -i\sin(gt/\hbar) \end{pmatrix}
-\end{align*}
-$$
-
-#### 狄拉克符号
-
-**狄拉克符号（Dirac Notation）** 是将内积符号 $\langle \alpha | \beta \rangle$ 拆开后的记法，即 **左矢（Bra）** $\langle \alpha|$ 和 **右矢（Ket）** $|\beta\rangle$。我们已经知道右矢是一个矢量：
-$$
-|\beta\rangle = \begin{pmatrix} b_1 \\ b_2 \\ \vdots \\ b_n \end{pmatrix}
-$$
-我们可以适当地定义左矢，使得它们的内积满足 $\langle \alpha |\beta\rangle = \langle \alpha| \cdot |\beta \rangle$：
-$$
-\langle\alpha| = \begin{pmatrix}
-	a_1^* & a_2^* & \dots & a_n^*
-\end{pmatrix}
-$$
-通过观察不难发现左矢的集合也能形成一个矢量空间，我们称其为 **对偶空间（Dual Space）**。当左矢和右矢的维度相同时，我们可以将它们交换顺序利用矩阵乘法得到一个方阵，特别地，我们将一个归一化的右矢乘其右矢称为 **投影算符（Projection Operator）**：
-$$
-\hat{P} = |\alpha\rangle\langle \alpha|
-$$
-观察下面的式子：
-$$
-\hat{P}|\beta\rangle = \langle \alpha|\beta\rangle|\alpha\rangle
-$$
-类比矢量分析中的 $(\mathbf{a}\cdot\mathbf{b})\mathbf{a}$，不难看出这是矢量 $|\beta\rangle$ 在 $|\alpha\rangle$ 方向上的投影，这也是 $\hat{P}$ 名称的由来。特别地，对于标准正交基 $\{|e_n\rangle\}$，有：
-$$
-\sum_n|e_n\rangle\langle e_n| = \hat{I}
-$$
-此处 $\hat{I}$ 是单位算符。为了认识到这一点，可以考虑一个任意的矢量 $|\alpha\rangle = \sum a_n|e_n\rangle$：
-$$
-\begin{align*}
-	\left(\sum_n|e_n\rangle\langle e_n|\right)|\alpha\rangle
-	&= \sum_m\sum_n a_m\langle e_n|e_m\rangle|e_n\rangle \\
-	&= \sum_m\sum_n \delta_{mn}a_m|e_n\rangle \\
-	&= \sum_na_n|e_n\rangle \\
-	&= |\alpha\rangle
-\end{align*}
-$$
-对狄拉克标准正交基也有类似的结论，对于 $\{|e_z\rangle\}$ 有：
-$$
-\int|e_z\rangle\langle e_z|\,dz = \hat{I}
-$$
-最后我们需要重新审视这个记号系统。$|\alpha\rangle$ 中的 $\alpha$ 只是一个名字，只有在利用狄拉克符号的时候才变成一个矢量。因此如果回顾此前给出的等式：
-$$
-\left\langle f\left|\hat{Q}f\right.\right\rangle = \left\langle\left. \hat{Q}f\right|f\right\rangle
-$$
-其中的 $\hat{Q}f$ 似乎没有任何意义，因为 $f$ 本身没有任何意义。我们可以将等式左侧写成熟悉的形式：
-$$
-\left\langle f\left|\hat{Q}f\right.\right\rangle \equiv \Big\langle f\ \Big| \hat{Q} \Big| f \Big\rangle
-$$
-右式则没有更好的简化形式；其含义是 $\hat{Q}|f\rangle$ 对应的左矢，我们之后就保持这样的写法。
-
-#### 基变换
-
-狄拉克符号的好处在于，其中不包含任何特定的基，且使我们能轻松地在不同基间切换。回忆我们对投影算符的定义，下面我们会着重考察位置特征状态、动量特征状态和能量特征状态间的变换。首先让我们回顾状态矢量 $|\mathcal{S}(t)\rangle$ 在这些空间中的表示：
-$$
-\begin{align*}
-	|\mathcal{S}(t)\rangle 
-	&= \int \Psi(x, t)|x\rangle\,dx = \int \langle x|\mathcal{S}(t)\rangle|x\rangle\,dx \\
-	&= \int \Phi(p, t)|p\rangle\,dp = \int \langle p|\mathcal{S}(t)\rangle|p\rangle\,dp \\
-	&= \sum_nc_n(t)|n\rangle = \sum_n\langle n|\mathcal{S}(t)\rangle|n\rangle
-\end{align*}
-$$
-在不同空间中，我们只需要取相应的算符即可。比如在位置空间和动量空间中的位置算符：
-$$
-\big\langle x \big|\hat{x}\big|\mathcal{S}(t)\big\rangle = x\Psi(x, t) \\
-\big\langle p \big|\hat{x}\big|\mathcal{S}(t)\big\rangle = i\hbar\frac{\partial \Psi(p, t)}{\partial t}
-$$
-动量算符则是：
-$$
-\begin{align*}
-	\big\langle p \big|\hat{x}\big|\mathcal{S}(t)\big\rangle 
-	&= \left\langle p \left|\hat{x}\int\,dx\right|x\right\rangle\langle x||\mathcal{S}(t)\rangle \\
-	&= \int\langle p|x|x \rangle\langle x|\mathcal{S}(t)\rangle\,dx \\
-	\big\langle p\big|\hat{x}\big|\mathcal{S}(t)\big\rangle
-    &= \int x\langle p|x\rangle \Psi(x, t)\,dx \\
-    &= \int x\frac{e^{-ipx/\hbar}}{\sqrt{2\pi\hbar}} \Psi(x, t)\,dx \\
-    &= i\hbar\frac{\partial}{\partial p}\int \frac{e^{-ipx/\hbar}}{\sqrt{2\pi\hbar}}\Psi(x, t)\,dx
-\end{align*}
-$$
-回忆此前我们给出的位置空间中的动量波函数，可以看到是一致的。
 
 
 
@@ -1804,7 +1930,7 @@ L^2f_\ell^m = \hbar^2\ell(\ell + 1)f_\ell^m \qquad L_zf_\ell^m = \hbar mf_\ell^m
 $$
 其中 $\ell$ 是一系列半正整数，即 $0, 1/2, 1, 3/2, 2, \dots$，而 $m$ 是夹在 $\pm \ell$ 中的半整数，即 $0, \pm 1, \dots, \pm (\ell -1), \pm \ell$。
 
-听起来有些神奇，因为我们在对特征函数一无所知的情况下就解出了特征值；这也是阶梯算符的一个独特之处。事实上，我们下一节中将要求解的交动量的特征函数正是前面我们接触过的球谐函数 $Y_\ell^m$（实际上从上下标的使用就可以隐约猜到它们的联系）。
+听起来有些神奇，因为我们在对特征函数一无所知的情况下就解出了特征值；这也是阶梯算符的一个独特之处。事实上，我们下一节中将要求解的角动量的特征函数正是前面我们接触过的球谐函数 $Y_\ell^m$（实际上从上下标的使用就可以隐约猜到它们的联系）。
 
 #### 特征函数
 
@@ -1841,4 +1967,206 @@ $$
 	&= -\hbar e^{\pm i\phi}\left(\frac{\partial}{\partial \theta} \pm i\cot\theta\frac{\partial }{\partial \phi}\right)
 \end{align*}
 $$
-它们
+它们的积是：
+$$
+L_+L_- = -\hbar^2\left(\frac{\partial^2}{\partial \theta^2} + \cot\theta\frac{\partial}{\partial \theta} + \cot^2\theta\frac{\partial^2}{\partial\phi^2} + i\frac{\partial}{\partial \phi}\right)
+$$
+
+之后我们可以得到 $L^2$ 的解析形式：
+$$
+L^2 = -\hbar^2\left[\frac{1}{\sin\theta}\frac{\partial}{\partial\theta}\left(\sin\theta\frac{\partial}{\partial \theta}\right) + \frac{1}{\sin^2\theta}\frac{\partial^2}{\partial \phi^2}\right]
+$$
+
+根据上一节中得到的 $L^2$ 的特征值 $\hbar^2\ell(\ell + 1)$，因此：
+$$
+-\hbar^2\left[\frac{1}{\sin\theta}\frac{\partial}{\partial\theta}\left(\sin\theta\frac{\partial}{\partial \theta}\right) + \frac{1}{\sin^2\theta}\frac{\partial^2}{\partial \phi^2}\right]f_\ell^m = \hbar^2\ell(\ell + 1)f_\ell^m
+$$
+
+我们惊奇地发现，这个方程和此前的角方程 $Y(\theta, \phi)$ 完全一致；同时由于 $f_\ell^m$ 也是 $L_z$ 的特征函数，就有：
+$$
+-i\hbar\frac{\partial f_\ell^m}{\partial \phi} = \hbar mf_\ell^m
+$$
+
+这个形式和此前遇到的方位角方程 $\Phi(\phi)$ 有一样的形式。所以，角动量的特征函数就是我们已经解决了的球谐函数。
+作为总结，球谐函数是 $L^2$ 和 $L_z$ 的特征函数；在求解 $Y_\ell^m(\theta, \phi)$ 的同时，我们同时得到了下面三个方程的特征函数：
+$$
+H\psi = E\psi \quad L^2\psi = \hbar\ell(\ell + 1)\psi \qquad L_z\psi = \hbar m\psi
+$$
+
+我们实际上可以利用 $L^2$ 来重写球坐标中的薛定谔方程：
+$$
+\frac{1}{2mr^2} \left[ -\hbar^2\frac{\partial}{\partial r} \left( r^2\frac{\partial}{\partial r} \right) + L^2 \right]\psi + V\psi = E\psi
+$$
+
+最后值得一提的是，球谐函数中我们要求 $m$ 是一个整数，但角动量特征函数中的 $m$ 可以一个半整数，因此半整数理应被舍弃才对。这个差别比较微妙，我们在下一节中会单独讲半整数情况下的重要意义。
+
+### 自旋
+在经典力学中，刚体只有两种角动量：质心运动或其绕着质心旋转。前者称为 **轨道的（Orbital）** 通过 $\mathbf{L} = \mathbf{r}\times\mathbf{p}$ 得到，后者则被称为 **自旋（Spin）**，通过 $\mathbf{S} = I\boldsymbol{\omega}$ 得到。比如地球沿轨道绕太阳做公转产生一年四季，绕质心自转则产生白昼黑夜。通常我们不认为两者有本质的不同，因为自转其实只是地球上的物质绕着轴旋转；但量子力学中完全类似的情形没法做这样的理解：比如电子绕中心轴旋转时，因为它没法进一步分解，我们只能将其理解为不同类型的自旋。因此，基本粒子的自旋展示出一种 **内在的（Intrinsic）**角动量，即自旋；反之，绕轨道的旋转是 **外在的（Extrinsic）**角动量，这也就是我们上一节中研究的 $\mathbf{L}$。
+作为自旋的公理，下面的这些基本对易关系完全照搬自角动量：
+$$
+[S_x, S_y] = i\hbar S_z \qquad [S_y, S_z] = i\hbar S_x \qquad [S_z, S_x] = i\hbar S_y
+$$
+
+通过和此前类似的推导过程，我们可以得到：
+$$
+S^2|s\ m\rangle = \hbar^2s(s + 1)|s\ m\rangle
+$$
+
+这里我们使用狄拉克符号来表示自旋的特征状态，因为它不是一个函数。此外，定义 $S_\pm = S_x \pm iS_y$，可以得到和角动量几乎一致的结论：
+$$
+S^2|s\ m\rangle = \hbar s(s + 1)|s\ m\rangle \qquad S_z|s\ m\rangle = \hbar m|s\ m\rangle
+$$
+
+其中的 $s = 0, 1/2, 1, 3/2, \dots$ 而 $m = -s, -s + 1, \dots, s - 1, s$。此时由于特征状态不再是球谐函数，我们没有理由舍弃半整数解。
+现实世界中，我们发现每个基本粒子都有唯一的自旋数 $s$。比如 $\pi$ 介子的自旋是 $0$、电子的自旋是 $1/2$、光子的自旋是 $1$、$\Delta$ 重子的自旋是 $3/2$、引力子的自旋是 $2$。相比之下，轨道角动量的量子数 $\ell$ 可以取任意的整数，且在同一个系统中会因为微扰发生改变。因此，自旋是一个相对简单的话题，这对我们来说是个好消息。
+#### 1/2 自旋
+最重要的自旋数是 s = 1/2，它是所有构成物质的常见粒子的自旋，如质子、中子和电子（还有所有的夸克和轻子）。在 1/2 自旋的系统中，只可能有两种状态，$|\frac{1}{2}\  \frac{1}{2}\rangle$ 和 $|\frac{1}{2}\ \text{\emph{-}}\frac{1}{2}\rangle$，分别称为 **上自旋（Spin Up）** 和 下自旋（Spin Down）。它们的矢量定义是：
+$$
+\chi_+ = \begin{pmatrix} 1 \\ 0 \end{pmatrix} \qquad \chi_- = \begin{pmatrix} 0 \\ 1 \end{pmatrix}
+$$
+
+它们两个扩张成的空间中任意的矢量以下的形式（称为 **旋量（Spinor）**）：
+$$
+\chi = \begin{pmatrix} a \\ b \end{pmatrix} = a\chi_+ + b\chi_-
+$$
+
+这个空间中的算符是一系列 $2\times 2$ 矩阵。下面让我们尝试得到 $S^2$ 和 $S_z$ 的矩阵形式。由特征方程，我们有：
+$$
+S_{\chi_+}^2 = \frac{3}{4}\hbar^2\chi_+ \qquad S_{\chi_-}^2 = \frac{3}{4}\hbar^2\chi_-
+$$
+
+现在设 $S^2$ 为任意的 $2\times 2$ 矩阵：
+$$
+S^2 = \begin{pmatrix} c & d \\ e & f \end{pmatrix}
+$$
+
+代入前面的两个式子有：
+$$
+\begin{align*} \begin{pmatrix} c & d \\ e & f \end{pmatrix} \begin{pmatrix} 1 \\ 0 \end{pmatrix} = \frac{3}{4}\hbar^2 \begin{pmatrix} 1 \\ 0 \end{pmatrix} \implies \begin{pmatrix} c \\ e \end{pmatrix} = \begin{pmatrix} \frac{3}{4}\hbar^2 \\ 0 \end{pmatrix} \\ \begin{pmatrix} c & d \\ e & f \end{pmatrix} \begin{pmatrix} 0 \\ 1 \end{pmatrix} = \frac{3}{4}\hbar^2 \begin{pmatrix} 0 \\ 1 \end{pmatrix} \implies \begin{pmatrix} c \\ e \end{pmatrix} = \begin{pmatrix} 0 \\ \frac{3}{4}\hbar^2 \end{pmatrix} \end{align*}
+$$
+
+因此：
+$$
+S^2 = \frac{3}{4}\hbar^2 \begin{pmatrix} 1 & 0 \\ 0 & 1 \end{pmatrix}
+$$
+
+类似地由 $S_z$ 的特征方程：
+$$
+S_z\chi_+ = \frac{\hbar}{2}\chi_+ \qquad S_z\chi_- = \frac{\hbar}{2}\chi_-
+$$
+
+我们可以得到：
+$$
+S_z = \frac{\hbar}{2} \begin{pmatrix} 1 & 0 \\ 0 & -1 \end{pmatrix}
+$$
+
+最后由 $S_\pm$ 的特征方程：
+$$
+S_+\chi_- = \hbar\chi_+ \qquad S_-\chi_+ = \hbar\chi_- \qquad S_+\chi_+ = 0 \qquad S_-\chi_- = 0
+$$
+得到：
+$$
+S_+ = \hbar \begin{pmatrix} 0 & 1 \\ 0 & 0 \end{pmatrix} \qquad S_- = \hbar \begin{pmatrix} 0 & 0 \\ 1 & 0 \end{pmatrix}
+$$
+
+根据 $S_\pm = S_x \pm iS_y$，我们就得到了另外两个方向上自旋算符的矩阵形式：
+$$
+S_x = \frac{\hbar}{2} \begin{pmatrix} 0 & 1 \\ 1 & 0 \end{pmatrix} \qquad S_y = \frac{\hbar}{2} \begin{pmatrix} 0 & -i \\ i & \phantom{x}0 \end{pmatrix}
+$$
+
+发现三个方向的自旋矩阵有相同的系数，因此一个习惯的写法是令 $S = (\hbar/2)\sigma$，其中 $\sigma$ 的分量定义如下：
+$$
+\sigma_x = \begin{pmatrix} 0 & 1 \\ 1 & 0 \end{pmatrix} \qquad \sigma_y = \begin{pmatrix} 0 & -i \\ i & 0 \end{pmatrix} \qquad \sigma_z = \begin{pmatrix} 1 & 0 \\ 0 & -1 \end{pmatrix}
+$$
+
+我们称它们为 **泡利自旋矩阵（Pauli Spin Matrices）**。和预想中一致地，$S_x$、$S_y$、$S_z$ 以及 $S^2$ 都是厄米特矩阵（因为它们都是可观测量），而 $S_\pm$ 并非厄米特矩阵。
+如果我们要观测 $S_z$，因为它的特征旋量是 $\chi_+$ 和 $\chi_-$（对应特征值 $\frac{\hbar}{2}$ 和 $-\frac{\hbar}{2}$），所以我们分别有 $|a|^2$ 的概率和 $|b|^2$ 的概率得到 $\frac{\hbar}{2}$ 或 $-\frac{\hbar}{2}$。因为这是唯二的情形，我们有：
+$$
+|a|^2 + |b|^2 = 1
+$$
+
+这也暗示了旋量本身是归一化的，即 $\chi_\pm^\dagger\chi_\pm = 1$。
+如果我们要观测 $S_x$，可以先计算它可能的特征值；不出意外地，我们得到的依然是 $\pm \frac{\hbar}{2}$：
+$$
+\begin{vmatrix} -\lambda & \hbar/2 \\ \hbar/2 & -\lambda \end{vmatrix} = 0 \implies \lambda^2 = \left(\frac{\hbar}{2}\right)^2 \implies \lambda = \pm \frac{\hbar}{2}
+$$
+
+然后，设特征旋量为 $(\alpha\ \ \beta)^T$，则：
+$$
+\frac{\hbar}{2} \begin{pmatrix} 0 & 1 \\ 1 & 0 \end{pmatrix} \begin{pmatrix} \alpha \\ \beta \end{pmatrix} = \pm\frac{\hbar}{2} \begin{pmatrix} \alpha \\ \beta \end{pmatrix} \implies \begin{pmatrix} \beta \\ \alpha \end{pmatrix} = \pm \begin{pmatrix} \alpha \\ \beta \end{pmatrix}
+$$
+
+不难解得特征旋量为：
+$$
+\chi_+^x = \begin{pmatrix} 1/\sqrt{2} \\ 1/\sqrt{2} \end{pmatrix} \qquad \chi_-^x = \begin{pmatrix} 1/\sqrt{2} \\ -1/\sqrt{2} \end{pmatrix} 
+$$
+
+因此在 $S_x$ 空间中的旋量都可以写成：
+$$
+\chi = \frac{a + b}{\sqrt{2}}\chi_+^x + \frac{a - b}{\sqrt{2}}\chi_-^x
+$$
+
+测量得到 $\chi_+^x$ 和 $\chi_-^x$ 的概率分别为 $|a+b|^2/2$ 和 $|a-b|^2/2$（使用绝对值是因为这里的 $a$, $b$ 均为复数）。不难发现它们的和依然是 1，符合我们的认知。类似地，$S_y $的特征旋量是：
+$$
+\chi_+^y = \begin{pmatrix} 1/\sqrt{2} \\ i/\sqrt{2} \end{pmatrix} \qquad \chi_-^y = \begin{pmatrix} 1/\sqrt{2} \\ -i/\sqrt{2} \end{pmatrix}
+$$
+
+在 $S_y$ 空间的旋量都可以写为：
+$$
+\chi = \frac{a + ib}{\sqrt{2}}\chi_+^y + \frac{a - ib}{\sqrt{2}}\chi_-^y
+$$
+
+#### 磁场中的电子
+带电粒子的自旋会产生 **磁偶极矩（Magnetic Dipole Moment）**：
+$$
+\boldsymbol{\mu} = \gamma\mathbf{S}
+$$
+
+其中 $\gamma$ 是 **旋磁比（Gyromagnetic Ratio）**。我们可以通过将传统的磁偶极矩（绕轴运动的电荷）的半径逼近为零来计算这个值：
+$$
+\boldsymbol{\mu} = I\mathbf{a} = \frac{qv}{2\pi r}\pi r^2\unit{a} = \frac{q}{2m}\mathbf{r}\times m\mathbf{v} = \frac{q}{2m}\mathbf{L}
+$$
+
+当 $r\to 0$ 时，我们认为上式依然满足，此时 $\mathbf{L}$ 变为 $\mathbf{S}$，因此 $\gamma = q/2m$。注意这只在非相对论情形下成立。
+磁场中的磁偶极矩会受到一个力矩 $\boldsymbol{\mu}\times\mathbf{B}$，令其最终和磁场方向相同（我们在电动力学的第一篇笔记中讨论了这个情形）。这个力矩中的能量是（假设粒子静止不动，否则我们需要考虑动能，以及洛伦兹力的影响）：
+$$
+H = -\boldsymbol{\mu}\cdot\mathbf{B} = -\gamma \mathbf{B}\cdot\mathbf{S}
+$$
+
+因此这也是磁场中带电自旋粒子的哈密顿矩阵。$\mathbf{S}$ 则对应了 $S_x$、$S_y$、$S_z$ 三个方向上自旋中的一个。
+下面我们重点讨论一个匀强磁场 $\mathbf{B}$ 中 1/2 自旋的粒子。假设磁场的方向是 $\unit{z}$：
+$$
+\mathbf{B} = B_0\unit{z}
+$$
+
+因此这个系统的哈密顿量是：
+$$
+H = -\gamma B_0S_z = -\frac{\gamma B_0\hbar}{2} \begin{pmatrix} 1 & 0 \\ 0 & -1 \end{pmatrix}
+$$
+
+其特征状态和 $S_z$ 完全一样（即 $\chi_\pm$），只不过对应的特征值是 $\mp (\gamma B_0 \hbar)/2$。当磁偶极矩和磁场平行时，达到最小能量。现在考虑时间相关的薛定谔方程：
+$$
+i\hbar \frac{\partial \chi}{\partial t} = H\chi
+$$
+
+其解为：
+$$
+\chi(t) = a\chi_+e^{-iE_+t/\hbar} + b\chi_-e^{-iE_-t/\hbar} = \begin{pmatrix} ae^{i\gamma B_0t/2} \\ be^{-i\gamma B_0t/2} \end{pmatrix}
+$$
+
+这里的 $a$、$b$ 需要满足 $|a|^2 + |b|^2 = 1$。因此我们实际上可以将它们简化为一个变量；设 $a = \cos(\alpha /2)$，则有：
+$$
+\chi(t) = \begin{pmatrix} \cos\frac{\alpha}{2}e^{i\gamma B_0t/2} \\ \sin\frac{\alpha}{2}e^{i\gamma B_0t/2} \end{pmatrix}
+$$
+
+如果尝试计算自旋三个分量的期望值：
+$$
+\begin{align*} \langle S_x\rangle &= \chi^\dagger(t)S_x\chi(t) = \phantom{x}\frac{\hbar}{2}\sin\alpha\cos(\gamma B_0 t) \\ \langle S_y\rangle &= \chi^\dagger(t)S_y\chi(t) = -\frac{\hbar}{2}\sin\alpha\sin(\gamma B_0 t) \\ \langle S_z\rangle &= \chi^\dagger(t)S_z\chi(t) = \phantom{x|}\frac{\hbar}{2}\cos\alpha \end{align*}
+$$
+
+可以猜测到 $\langle \mathbf{S}\rangle$ 和 z 轴倾斜 $\alpha$ 度角，且以一定频率进行进动，我们将其称为 **拉莫尔频率（Larmor Frequency）**：
+$$
+\omega = \gamma B_0
+$$
+
+这和经典力学中的行为是一致的；这也是埃伦费斯特定理的一个体现（即量子力学中的物理量取期望值后在经典力学中的公式中依然有效）。
