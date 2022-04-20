@@ -1835,7 +1835,7 @@ $$
 $$
 \mathbf{E} = \frac{1}{4\pi\epsilon_0}\frac{\rcur}{(\brcur\cdot\mathbf{u})^3}\brcur\times(\mathbf{u}\times\mathbf{a})
 $$
-这一项由于多乘了一个距离 $\rcur$，因此在远距的情况下会成为 $\mathbf{E}$ 场的主要部分。它对电磁辐射有较大意义，因此我们也称其为 **辐射场（Radiation Field）**。
+这一项由于多乘了一个距离 $\rcur$，因此在远距的情况下会成为 $\mathbf{E}$ 场的主要部分。它对电磁辐射有较大意义，因此我们也称其为 **辐射场（Radiation Field）**。注意：它和 $1/\mathscr{r}$ 成正比，我们在下一章中将要提到这点的特殊性。
 
 最后，让我们用洛伦兹力结束这一节：
 $$
@@ -1863,3 +1863,171 @@ $$
 
 ### 偶极子辐射
 
+#### 电偶极子
+
+回忆电偶极子是一对电量相反的电荷组成的结构，其电偶极矩和时间相关：
+$$
+\mathbf{p}(t) = p_0\cos(\omega t)\unit{z}
+$$
+我们可以将其理解为固定距离的一组电荷，其电荷量随时间变化 $q = q_0\cos(\omega t)$。此时推迟势是：
+$$
+V(\mathbf{r}, t) = \frac{q_0}{4\pi\epsilon_0}\left\{\frac{\cos{[\omega(t - \rcur_+/c)]}}{\rcur_+} - \frac{\cos{[\omega(t - \rcur_-/c)]}}{\rcur_-}\right\}
+$$
+示意图如下：
+
+![ed2_11-1](graphs/ed2_11-1.png)
+
+这里的距离 $\rcur_\pm$ 满足下面的关系（根据余弦定理）：
+$$
+\rcur_\pm = \sqrt{r^2 \mp rd\cos\theta + (d/2)^2}
+$$
+为了让这个偶极子变为完美偶极子，我们需要假设 $d \ll r$，此时便有：
+$$
+\rcur_\pm \approx r\left(1 \mp \frac{d}{2r}\cos\theta\right) \implies \frac{1}{\rcur_\pm} \approx \frac{1}{r}\left(1 \pm \frac{d}{2r}\cos\theta\right)
+$$
+同时：
+$$
+\begin{align*}
+	\cos{[\omega(t - \rcur_\pm /c )]}
+		&= \cos\left[\omega(t - r/c) \pm \frac{\omega d}{2c}\cos\theta\right] \\
+		&= \cos{[\omega(t - r/c)]}\cos\left(\frac{\omega d}{2c}\cos\theta\right) \mp
+		   \sin{[\omega(t - r/c)]}\sin\left(\frac{\omega d}{2c})\cos\theta\right)
+\end{align*}
+$$
+当 $d$ 足够小时，我们也同时假定 $d \ll \frac{c}{\omega} \propto \lambda$，此时可以将上面的式子进一步简化：
+$$
+\cos{[\omega(t - \rcur_\pm/c)]} \approx \cos{[\omega(t - r/c)]} \mp \frac{\omega d}{2c}\cos\theta \sin{[\omega(t - r/c)]}
+$$
+最后，确保距离足够远时，我们可以让 $\frac{c}{\omega} \ll r$。将一切代回最开始的 $V(\mathbf{r}, t)$，我们可以得到：
+$$
+V(r, \theta, t) = -\frac{p_0\omega}{4\pi\epsilon_0c}\left(\frac{\cos\theta}{r}\right)\sin{[\omega(t - r/c)]}
+$$
+此外，为了确定 $\mathbf{A}$ 场，回忆其计算公式：
+$$
+\mathbf{A}(\mathbf{r}, t) = \frac{\mu_0}{4\pi}\int\frac{\mathbf{J}}{\rcur}\,d\tau
+$$
+我们当前的例子中只存在一个线电流：
+$$
+\mathbf{I}(t) = \frac{dq}{dt}\unit{z} = -q_0\omega\sin(\omega t)\unit{z}
+$$
+因此：
+$$
+\mathbf{A}(\mathbf{r}, t) = \frac{\mu_0}{4\pi}\unit{z}\int_{-d/2}^{d/2}\frac{-q_0\omega\sin{[\omega(t - \rcur/c)]}}{\rcur}\,dz
+$$
+由于 $d$ 是一个很小的值，我们可以认为上面的 $\mathbf{A}$ 取的就是 $\mathbf{r}$ 处的值：
+$$
+\mathbf{A}(r, \theta, t) = -\frac{\mu_0p_0\omega}{4\pi r}\sin{[\omega(t - r/c)]}\unit{z}
+$$
+接下来可以通过两个势场得到电磁场：
+$$
+\begin{align*}
+	\nabla V
+		&= \frac{\partial v}{\partial r}\unit{r} + \frac{1}{r}\frac{\partial V}{\partial \theta}\unit{\theta} \\
+		&= -\frac{p_0\omega}{4\pi\epsilon_0c}\left\{\cos\theta\left(
+			-\frac{1}{r^2}\sin{[\omega(t - r/c)]} - \frac{\omega}{rc}\cos{[\omega(t - r/c)]}
+		\right)\unit{r} - \frac{\sin\theta}{r^2}\sin{[\omega(t - r/c)]}\right\} \\
+		&\approx \frac{p_0\omega^2}{4\pi\epsilon_0c^2}\left(\frac{\cos\theta}{r}\right)\cos{[\omega(t - r/c)]}\unit{r} \\
+    \frac{\partial \mathbf{A}}{\partial t}
+        &= -\frac{\mu_0p_0\omega^2}{4\pi r}\cos{[\omega(t - r/c)]}(\cos\theta\unit{r} - \sin\theta\unit{\theta}) \\
+    \nabla\times\mathbf{A} 
+    	&= \frac{1}{r}\left[\frac{\partial}{\partial t}(rA_\theta) - \frac{\partial A_r}{\partial \theta}\right]\unit{\phi} \\
+    	&= -\frac{\mu_0p_0\omega}{4\pi r}\left\{
+    		\frac{\omega}{c}\sin\theta\cos{[\omega(t - r/c)]} + \frac{\sin\theta}{r}\sin{[\omega(t - r/c)]}
+    		\right\}\unit{\phi}
+\end{align*}
+$$
+因而：
+$$
+\begin{align*}
+	\mathbf{E} &= -\nabla V - \frac{\partial \mathbf{A}}{\partial t} = -\frac{\mu_0p_0\omega^2}{4\pi}\left(\frac{\sin\theta}{r}\right)\cos{[\omega(t - r/c)]}\unit{\theta} \\
+	\mathbf{B} &= \nabla\times\mathbf{A} = -\frac{\mu_0p_0\omega^2}{4\pi c}\left(\frac{\sin\theta}{r}\right)\cos{[\omega(t - r/c)]}\unit{\phi}
+\end{align*}
+$$
+不难看出这是一个单色波，频率为 $\omega$。不过它们不是平面波，而是 **球波（Spherical Wave）**，随距离反比衰减；当 $r$ 足够大时，它们会近似于一个平面波。
+
+接下来可以算出辐射的能量通量密度：
+$$
+\mathbf{S}(\mathbf{r}, t) = \frac{1}{\mu_0}(\mathbf{E}\times\mathbf{B}) = \frac{\mu_0}{c}\left\{\frac{p_0\omega^2}{4\pi}\left(\frac{\sin\theta}{r}\right)\cos{[\omega(t - r/c)]}\right\}^2\unit{r}
+$$
+一个时间周期下，平均传递的能量是：
+$$
+\langle \mathbf{S} \rangle = \left(\frac{\mu_0p_0^2\omega^4}{32\pi^2 c}\right)\frac{\sin^2\theta}{r^2}\unit{r}
+$$
+有趣的是在电偶极子的轴方向没有能量传递；因此我们大致可以用一个甜甜圈来可视化它的强度分布。如果对以同心的球体为范围，可以积分得到其中总共辐射的能量：
+$$
+\langle P \rangle = \int\langle \mathbf{S} \rangle\cdot d\mathbf{a} = \frac{\mu_0p_0^2\omega^4}{32\pi^2 c}\iint\frac{\sin^2\theta}{r^2}r^2\sin\theta\,d\theta\,d\phi = \frac{\mu_0p_0^2\omega^4}{12\pi c}
+$$
+
+#### 磁偶极子
+
+磁偶极子可以理解为一个半径为 $b$ 的电流环路，其电流随时间周期变化：
+$$
+I(t) = I_0\cos(\omega t)
+$$
+因此磁偶极矩也跟着变化：
+$$
+\mathbf{m}(t) = \pi b^2I(t)\unit{z} = m_0\cos(\omega t)\unit{z}
+$$
+我们不难得到它的推迟势：
+$$
+\mathbf{A}(\mathbf{r}, t) = \frac{\mu_0}{4\pi}\int \frac{I_0\cos{[\omega(t - \rcur/c)]}}{\rcur}\,d\mathbf{l}'
+$$
+示意图如下：
+
+![ed2_11-2](graphs/ed2_11-2.png)
+
+我们只需要考虑 $\unit{y}$ 方向的 $\mathbf{A}$，因为和 $x$-$z$ 平面对称的部分会将 $\unit{x}$ 方向分量抵消：
+$$
+\mathbf{A}(\mathbf{r}, t) = \frac{\mu_0I_0b}{4\pi}\unit{y}\int_0^{2\pi}\frac{\cos{[\omega(t - \rcur/c)]}}{\rcur}\cos\phi'\,d\phi'
+$$
+这里的距离 $\rcur$ 满足下面的关系（余弦定理）：
+$$
+\rcur = \sqrt{r^2 + b^2 - 2rb\cos\psi}
+$$
+和之前一样，为了让这个偶极子变为完美偶极子，我们需要下面的近似：
+$$
+b \ll \frac{c}{\omega} \ll r
+$$
+经过一番计算可以得到：
+$$
+\mathbf{A}(r, \theta, t) = -\frac{\mu_0m_0\omega}{4\pi c}\left(\frac{\sin\theta}{r}\right)\sin{[\omega(t - r/c)]}\unit{\phi}
+$$
+经此可以计算出电磁场：
+$$
+\begin{align*}
+	\mathbf{E} &= -\frac{\partial \mathbf{A}}{\partial t} = \frac{\mu_0m_0\omega^2}{4\pi c}\left(\frac{\sin\theta}{r}\right)\cos{[\omega(t - r/c)]}\unit{\phi} \\
+	\mathbf{B} &= \nabla\times\mathbf{A} = -\frac{\mu_0m_0\omega^2}{4\pi c^2}\left(\frac{\sin\theta}{r}\right)\cos{[\omega(t - r/c)]}\unit{\theta}
+\end{align*}
+$$
+这回我们得到的依然是一个单色球波。其能量通量密度为：
+$$
+\mathbf{S}(\mathbf{r}, t) = \frac{1}{\mu_0}(\mathbf{E}\times\mathbf{B}) = \frac{\mu_0}{c}\left\{\frac{m_0\omega^2}{4\pi c}\left(\frac{\sin\theta}{r}\right)\cos{[\omega(t - r/c)]}\right\}^2\unit{r}
+$$
+强度为：
+$$
+\langle \mathbf{S} \rangle = \left(\frac{\mu_0m_0^2\omega^4}{32\pi^2c^3}\right)\frac{\sin^2\theta}{r^2}\unit{r}
+$$
+总辐射功率为：
+$$
+\langle P \rangle = \frac{\mu_0m_0^2\omega^4}{12\pi c^3}
+$$
+可以看到，磁偶极子的辐射和电偶极子非常相似（同样也是甜甜圈形状，并和 $\omega^4$ 成正比），但其要比后者微弱许多。两者辐射功率的比值为：
+$$
+\frac{P_\text{magnetic}}{P_\text{electric}} = \left(\frac{m_0}{p_0c}\right)^2 = \left(\frac{\pi b^2I_0}{q_0d}\right)^2 \underset{d = \pi b}{\overset{I_0 = q_0\omega}{=\mathrel{\mkern-3mu}=\mathrel{\mkern-3mu}=\mathrel{\mkern-3mu}=\mathrel{\mkern-3mu}=}} \left(\frac{\omega b}{c}\right)^2
+$$
+但根据我们的近似，这个比值应该是几乎为零。因此，（基本上）任何有电偶极子辐射的系统中，我们都可以忽略磁偶极子的作用。
+
+#### 任意源的辐射
+
+现在让我们看向一般的情形。假设在原点附近的空间中存在一个不断变化的电荷分布 $\rho$，其推迟势为：
+$$
+V(\mathbf{r}, t) = \frac{1}{4\pi\epsilon_0}\int\frac{\rho(\mathbf{r}', t - \rcur/c)}{\rcur}\,d\tau'
+$$
+其中 $\rcur = \sqrt{r^2 + r'^2 - 2\mathbf{r}\cdot\mathbf{r}'}$，示意图如下：
+
+![ed2_11-3](graphs/ed2_11-3.png)
+
+首先让我们假设 $\mathbf{r} \gg \mathbf{r}'$，这意味着 $\mathbf{r}$ 远大于电荷分布的半径。此时有：
+$$
+\rcur \approx r\left(1 - \frac{\mathbf{r}\cdot\mathbf{r}'}{r^2}\right) \implies \frac{1}{\rcur} \approx \frac{1}{r}\left(1 + \frac{\mathbf{r}\cdot\mathbf{r}'}{r^2}\right)
+$$

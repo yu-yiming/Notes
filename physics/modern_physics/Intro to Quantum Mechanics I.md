@@ -1,6 +1,6 @@
 # Intro to Quantum Mechanics I
 
-本篇是对应 *UIUC PHYS 486 Quantum Physics I* 的学习笔记，其中包括了波函数等知识。参考书籍是 *Introduction to Quantum Mechanics, 3rd Edition: David J. Griffiths*。
+本篇是对应 *UIUC PHYS 486 Quantum Physics I* 的学习笔记，其中包括了波函数、希尔伯特空间、算符、自旋等知识。参考书籍是 *Introduction to Quantum Mechanics, 3rd Edition: David J. Griffiths*。
 
 [TOC]
 
@@ -709,7 +709,7 @@ $$
 $$
 这样就将原方程转化为：
 $$
-\frac{d^2\psi}{d\xi^2} = \left(\xi^2 - \frac{2E}{\hbar\omega}\right)\psi = (\xi^2 - K)\psi
+\frac{d^2\psi}{d\xi^2} = \left(\xi^2 - \frac{2E}{\hbar\omega}\right)\psi = (\xi^2 - K)\psi \qquad \text{其中 $K = \frac{2E}{\hbar\omega}$}
 $$
 注意到当 $\xi$ 非常大（也即 $x$ 非常大）时，等式右侧约等于 $\xi^2\psi$，这就得到了一个近似的方程解：
 $$
@@ -1025,7 +1025,7 @@ $$
 
 给定一个算符，其所有特征值的集合被称为 **光谱（Spectrum）**。如果多个线性无关的特征函数有相同的特征值，我们称这个光谱是 **退化的（Degenerate）**。通常我们可以将算符的光谱分为两种：离散或连续。前一种情况的特征函数一定在希尔伯特空间中且拥有实际的物理意义；后一种情况下，特征函数并不是可归一的，此时需要至少选取一段区间后才能得到可归一的函数。一些算符只有离散的光谱（比如简谐振子的哈密顿算符），一些只有连续的光谱（比如自由粒子的哈密顿算符），也有两者都有的（比如有限方井的哈密顿算符）。
 
-#### ![image-20220404144021922](graphs/image-20220404144021922.png)离散光谱
+#### 离散光谱
 
 哈密顿算符的可归一的特征函数有两个重要的性质：
 
@@ -1778,7 +1778,7 @@ $$
 $$
 \frac{d}{dr}\left(r^2\frac{dR}{dr}\right) - \frac{2mr^2}{\hbar^2}(V(r) - E)R = \ell(\ell + 1)R
 $$
-这里令 $u(r) = rR(r)$，就可以将上面的方程变为等价的 **极性方程（Radical Equation）**：
+这里令 $u(r) = rR(r)$，就可以将上面的方程变为等价的 **径向方程（Radical Equation）**：
 $$
 -\frac{\hbar^2}{2m}\frac{d^2u}{dr^2} + \left[V + \frac{\hbar^2}{2m}\frac{\ell(\ell + 1)}{r^2}\right]u = Eu
 $$
@@ -2169,4 +2169,281 @@ $$
 \omega = \gamma B_0
 $$
 
-这和经典力学中的行为是一致的；这也是埃伦费斯特定理的一个体现（即量子力学中的物理量取期望值后在经典力学中的公式中依然有效）。
+这和经典力学中的行为是一致的。
+
+### 氢原子
+
+本节中我们将分析量子力学中一个典型的研究对象，氢原子。它包含一个相对静止，带有正电 $e$ 的原子核（我们将其置于原点）和一个轻得多的，带有负电 $-e$ 的电子围绕它运动。根据经典电磁学的库仑定律，电子的势能是：
+$$
+V(r) = -\frac{e^2}{4\pi\epsilon_0}\frac{1}{r}
+$$
+所以它的径向方程是：
+$$
+\begin{equation*}
+	-\frac{\hbar^2}{2m_e}\frac{d^2u}{dr^2} + \left[-\frac{e^2}{4\pi\epsilon_0}\frac{1}{r} + \frac{\hbar^2}{2m_e}\frac{\ell(\ell + 1)}{r^2}\right]u = Eu
+\end{equation*}
+$$
+我们将尝试用简谐振子的解析解法攻克这个方程。
+
+首先设：
+$$
+\kappa = \frac{\sqrt{-2m_eE}}{\hbar}
+$$
+其中 $E < 0$，因此可以看出我们采用的是离散的束缚态。此时径向方程变为：
+$$
+\frac{1}{\kappa^2}\frac{d^2u}{dr^2} = \left[1 - \frac{m_ee^2}{2\pi\epsilon_0\hbar^2\kappa}\frac{1}{\kappa r} + \frac{\ell(\ell + 1)}{(\kappa r)^2}\right]u
+$$
+这里设：
+$$
+\rho = \kappa r \qquad \rho_0 = \frac{m_ee^2}{2\pi\epsilon_0\hbar^2\kappa}
+$$
+就可以进一步简化为：
+$$
+\begin{equation*}
+	\frac{d^2u}{d\rho^2} = \left[1 - \frac{\rho_0}{\rho} + \frac{\ell(\ell + 1)}{\rho^2}\right]u
+\end{equation*}
+$$
+接下来，让我们猜测一下解析解的近似形式。由于当 $\rho \to \infty$ 时，上面方程右侧趋近于 $u$，因此我们可以假设通解在 $\rho$ 很大时满足（另一项 $e^\rho$ 会炸掉，因此系数取零）： 
+$$
+u(\rho) \sim Ae^{-\rho}
+$$
+当 $\rho \to 0$ 时，反比平方的项占主导，因此通解满足（另一项 $e^{-\ell}$ 会炸掉，因此系数取零）：
+$$
+u(\rho) \sim B\rho^{\ell + 1}
+$$
+我们接下来的任务就是将这两个近似糅合在一起。引入新的函数 $v(\rho)$：
+$$
+v(\rho) = \frac{1}{\rho^{\ell + 1}e^{-\rho}}u(\rho)
+$$
+此时 $u$ 的导数可以表示为 $v$ 的形式：
+$$
+\frac{du}{d\rho} = \rho^{\ell}e^{-\rho}\left[(\ell + 1 - \rho)v + \rho\frac{dv}{d\rho}\right] \\
+\frac{d^2u}{d\rho^2} = \rho^{\ell}e^{-\rho}\left\{\left[-2(\ell + 1) + \rho + \frac{\ell(\ell + 1)}{\rho}\right]v + 2(\ell + 1 - \rho)\frac{dv}{d\rho} + \rho\frac{d^2v}{d\rho^2}\right\}
+$$
+将其代入径向方程：
+$$
+\begin{equation*}
+	\rho\frac{d^2v}{d\rho^2} + 2(\ell + 1 - \rho)\frac{dv}{d\rho} + [\rho_0 - 2(\ell + 1)]v = 0
+\end{equation*}
+$$
+现在，让我们假设其通解可以写为幂级数的形式：
+$$
+v(\rho) = \sum_{j=0}^\infty c_j\rho^j
+$$
+其导数为：
+$$
+\frac{dv}{d\rho} = \sum_{j=0}^\infty (j + 1)c_{j + 1}\rho^j \\
+\frac{d^2v}{d\rho^2} = \sum_{j=0}^\infty j(j + 1)c_{j + 1}\rho^{j - 1}
+$$
+代到径向方程后让合并的幂级数系数为零，最终可以得到递推公式：
+$$
+c_{j+1} = \frac{2(j + \ell + 1) - \rho_0}{(j + 1)(j + 2\ell + 2)}c_j
+$$
+当 $\rho$ 很大时，$c_j$ 中 $j$ 更大的占主导，此时有：
+$$
+c_{j + 1} \approx \frac{2j}{j(j + 1)}c_j = \frac{2}{j + 1}c_j
+$$
+因此需要满足：
+$$
+c_j \approx \frac{2^j}{j!}c_0
+$$
+如果假设这就是准确的递推公式，则：
+$$
+v(\rho) = c_0\sum_{j=0}^\infty \frac{2^j}{j!}\rho^j = c_0e^{2\rho}
+$$
+推出原本 $u$ 的解：
+$$
+u(\rho) = c_0\rho^{\ell + 1}e^\rho
+$$
+呃，有点尴尬，这在 $\rho \to \infty$（我们这几步的前提）时直接炸掉了。因此 $c_j$ 必须在某个地方开始归零。假设 $c_N$ 是第一个归零的系数，观察递推公式不难得到：
+$$
+2(N + \ell) = \rho_0
+$$
+如果设 $n = N + \ell$，就可以通过 $n$ 来表示 $\rho_0$ 以及与其相联系的 $E$ 了：
+$$
+E = -\frac{\hbar^2\kappa^2}{2m_e} = -\frac{m_ee^4}{8\pi^2\epsilon_0^2\hbar^2\rho_0^2}
+$$
+根据 $n$ 的取值，我们得到离散的能量特征值：
+$$
+\begin{equation*}
+	E_n = -\left[\frac{m_e}{2\hbar^2}\left(\frac{e^2}{4\pi\epsilon}\right)\right]\frac{1}{n^2} = \frac{E_1}{n^2} \qquad \text{其中 $n = 1, 2, 3, \dots$}
+\end{equation*}
+$$
+这个公式被称为 **波尔公式（Bohr Formula）**，它是量子力学中最重要的结果。二十世纪初，波尔通过经典物理和尚不成熟的量子理论（当时还没有薛定谔方程！）推出了同样的公式。
+
+我们记 **波尔半径（Bohr Radius）** 为：
+$$
+a = \frac{4\pi\epsilon_0\hbar^2}{m_ee^2} \approx 0.529 \times 10^{-10}\ \text{m}
+$$
+它和 $\rho$ 的关系是：
+$$
+\rho = \frac{r}{an}
+$$
+最终，我们得到的解（将球谐函数考虑进来）是：
+$$
+\begin{align*}
+	\psi_{n\ell m}(r, \theta, \phi) 
+		&= R_{n\ell}(r)Y_\ell^m(\theta, \phi) \\
+		&= \frac{1}{r}\rho^{\ell + 1}e^{-\rho}v(\rho)Y_\ell^m(\theta, \phi) \\
+		&= \frac{1}{r}\rho^{\ell + 1}e^{-\rho}\left(\sum_{j=0}^{n - \ell - 1} c_j\rho^j\right)Y_\ell^m(\theta, \phi)
+\end{align*}
+$$
+这里面的三个参数 $n$、$\ell$、$m$ 分别被称为 **主量子数（Principal Quantum Number）**、**方位角量子数（Azimuthal Quantum Number）** 和 **磁量子数（Magnetic Quantum Number）**。第一个数和电子的能量有关（正如我们前面给出的能量特征值所述）；如果你足够敏锐，会发现后面这两个和电子的角动量有关（我们采用了完全相同的符号）。
+
+电子的基态能量位于 $n = 1$ 的情形：
+$$
+E_1 = -\left[\frac{m_e}{2\hbar^2}\left(\frac{e^2}{4\pi\epsilon_0}\right)^2\right] = -13.6\ \text{eV}
+$$
+因此，氢原子的 **结合能（Binding Energy）**，也即将其电子从基态脱出的能量是 $13.6\ \text{eV}$。此时将波函数归一化后可以得到：
+$$
+\psi_{100}(r, \theta, \phi) = \frac{1}{\sqrt{\pi a^3}}e^{-r/a}
+$$
+电子的第一个激发态位于 $n = 2$ 的情形：
+$$
+E_2 = -3.4\ \text{eV}
+$$
+回忆球谐函数中的 $\ell$ 和 $m$ 的范围，此时 $\ell$ 可以是 $0$ 或 $1$，相对应地 $m$ 可以是 $0$ 或 $0$、$\pm 1$。事实上给定某个主量子数 $n$，对于每个可能的方位角量子数 $\ell = 0, 1, 2, \dots, n - 1$，都存在 $2\ell + 1$ 个可能的 $m$，其总共的退化数量是：
+$$
+d(n) = \sum_{\ell = 0}^{n - 1}(2\ell + 1) = n^2
+$$
+可以看到和无线方井相比，库仑势能会带有更多的退化情形。
+
+下面让我们尝试给出 $v(\rho)$ 的非求和形式。事实上，数学中有简洁表示它的函数：
+$$
+v(\rho) = L_{n - \ell - 1}^{2\ell + 1}(2\rho)
+$$
+我们称 $L_q^p$ 为 **关联拉盖尔多项式（Associated Laguerre Polynomial）**，定义为：
+$$
+\begin{equation*}
+	L_q^p(x) = (-1)^p\left(\frac{d}{dx}\right)^pL_{p+q}(x)
+\end{equation*}
+$$
+这里的 $L_q$ 则是 **拉盖尔多项式（Laguerre Polynomial）**：
+$$
+\begin{equation*}
+	L_q(x) = \frac{e^x}{q!}\left(\frac{d}{dx}\right)(e^{-x}x^q)
+\end{equation*}
+$$
+下面罗列了 $q = 0$ 到 $q = 5$ 时拉盖尔多项式的值：
+$$
+\begin{align*}
+	L_0(x) &= 1 \\
+	L_1(x) &= -x + 1 \\
+	L_2(x) &= \frac{1}{2}x^2 - 2x + 1 \\
+	L_3(x) &= -\frac{1}{6}x^3 + \frac{3}{2}x^2 - 3x + 1 \\
+	L_4(x) &= \frac{1}{24}x^4 - \frac{2}{3}x^3 + 3x^2 - 4x + 1 \\
+	L_5(x) &= -\frac{1}{120}x^5 + \frac{5}{24}x^4 - \frac{5}{3}x^3 + 5x^2 - 5x + 1
+\end{align*}
+$$
+下面是一张示意图：
+
+<img src="graphs/qm1_4-2.png" alt="image-20220410114841258" style="zoom:50%;" />
+
+最终，我们得到了下面（归一化后）的波函数：
+$$
+\begin{equation*}
+	\psi_{n\ell m} = \sqrt{\left(\frac{2}{na}\right)^3\frac{(n - \ell - 1)!}{2n(n + \ell)!}}\ e^{-r/na}\left(\frac{2r}{na}\right)^\ell L_{n - \ell - 1}^{2\ell + 1}\left(\frac{2r}{na}\right)Y_\ell^m(\theta, \phi)
+\end{equation*}
+$$
+虽然说实话，这个结果相当丑陋，但是这是现实世界中为数不多的可以完全描述系统的方程解。波函数中关于三个量子数都是正交的：
+$$
+\iint\psi_{n\ell m}^*\psi_{n'\ell'm'}r^2\,dr\,d\Omega = \delta_{nn'}\delta_{\ell\ell'}\delta_{mm'}
+$$
+通常，一个氢原子会固定在一个静止状态 $\Psi_{n\ell m}$ 中，但如果让它产生能量交换，比如和其它原子进行碰撞时，就会发生 **量子跃迁（Quantum Jump）**，从当前的状态转移到另一个状态。在这个过程中，放出的能量是通过 **光子（Photon）** 传递的。根据 **普朗克公式（Planck Formula）**，光子的能量和它的频率有关：
+$$
+E_\gamma = h\nu
+$$
+因此光子的波长 $\lambda$ 可以通过下面的式子得出：
+$$
+\frac{1}{\lambda} = \mathcal{R}\left(\frac{1}{n_f^2} - \frac{1}{n_i^2}\right)
+$$
+其中 $\mathcal{R}$ 是 **Rydberg 常数（Rydberg Constant）**，满足下面的 **Rydberg 公式（Rydberg Formula）**：
+$$
+\mathcal{R} = \frac{m_e}{4\pi c\hbar^3}\left(\frac{e^2}{4\pi\epsilon_0}\right)^2 = 1.097\times 10^7\ \text{m}^{-1}
+$$
+这个常数的值在 19 世纪就通过实验得到了，但是上面这个公式是波尔通过量子力学得到的。这某种程度上验证了量子力学的正确性。
+
+
+
+## 相同粒子的系统
+
+### 两个粒子的系统
+
+此前我们研究的都是单独粒子的系统，其（在位置空间中）用波函数 $\Psi(\mathbf{r}, t)$ 描述。本章开始我们将探索一些多粒子的系统，其中最简单的便是双粒子系统，我们可以用两个位矢和一个时间参数来构建其波函数：
+$$
+\Psi(\mathbf{r}_1, \mathbf{r}_2, t)
+$$
+它依然满足时间相关的薛定谔方程：
+$$
+i\hbar\frac{\partial \Psi}{\partial t} = \hat{H}\Psi
+$$
+其中的哈密顿量 $\hat{H}$ 需要定义为整个系统的能量：
+$$
+\hat{H} = -\frac{\hbar^2}{2m_1}\nabla_1^2 - \frac{\hbar^2}{2m}\nabla_2^2 + V(\mathbf{r}_1, \mathbf{r}_2, t)
+$$
+这里我们用 $\nabla_1$ 和 $\nabla_2$ 分别表示两个粒子所在坐标系中的微分算符。此时，在某一微元体积 $d^3\mathbf{r}_1$ 中找到第一个粒子，在微元体积 $d^2\mathbf{r}_2$ 中找到第二个粒子的概率是：
+$$
+|\Psi(\mathbf{r}_1, \mathbf{r}_2, t)|^2\,d^3\mathbf{r}_1\,d^2\mathbf{r}_2
+$$
+为了保证归一化，需要有：
+$$
+\iint|\Psi(\mathbf{r}_1, \mathbf{r}_2, t)|^2\,d\mathbf{r}_1\,d\mathbf{r}_2 = 1
+$$
+如果已经得到了时间无关的解 $\psi(\mathbf{r}_1, \mathbf{r}_2)$，我们可以通过和此前一样的方式得到时间相关的解：
+$$
+\Psi(\mathbf{r}_1, \mathbf{r}_2, t) = \psi(\mathbf{r}_1, \mathbf{r}_2)e^{-iEt/h}
+$$
+这里的 $\psi$ 是下面时间无关方程的解：
+$$
+\frac{\hbar^2}{2m_1}\nabla_1^2\psi - \frac{\hbar^2}{2m_2}\nabla_2^2\psi + V\psi = E\psi
+$$
+其中 $E$ 是系统的总能量。这个方程很难解，不过我们可以处理一些特殊情况：
+
+- 两个粒子之间没有相互作用：假设两个粒子没有相互作用，但它们都受到了外部力。比如它们可能各自连接到一根弹簧上，此时总势能为两者势能之和：
+  $$
+  V(\mathbf{r}_1, \mathbf{r}_2) = V_1(\mathbf{r}_1) + V_2(\mathbf{r}_2)
+  $$
+  我们依然用分离变量法解方程：
+  $$
+  \psi(\mathbf{r}_1, \mathbf{r}_2) = \psi_a(\mathbf{r}_1)\psi(\mathbf{r}_2)
+  $$
+  插入时间无关的薛定谔方程，得到一个方程组：
+  $$
+  -\frac{\hbar^2}{2m_1}\nabla_1^2 \psi_a(\mathbf{r}_1) + V_1(\mathbf{r}_1)\psi_a(\mathbf{r}_1) = E_a\psi_a(\mathbf{r}_1) \\
+  -\frac{\hbar^2}{2m_2}\nabla_2^2 \psi_b(\mathbf{r}_2) + V_2(\mathbf{r}_2)\psi_b(\mathbf{r}_2) = E_b\psi_b(\mathbf{r}_2)
+  $$
+  根据 $E = E_a + E_b$，时间相关的解就是两个粒子各自时间相关解的积：
+  $$
+  \Psi(\mathbf{r}_1, \mathbf{r}_2, t) = \psi_a(\mathbf{r}_1)\psi_b(\mathbf{r}_2)e^{-i(E_a + E_b)/\hbar} = \left(\psi_a(\mathbf{r}_1)e^{-iE_at/\hbar}\right)\left(\psi_b(\mathbf{r}_2)e^{-iE_bt/\hbar}\right) = \Psi_a(\mathbf{r}, t)\Psi_b(\mathbf{r}_2, t)
+  $$
+  此时我们可以说，第一个粒子处于 $a$ 状态，且第二个粒子处于 $b$ 状态中。通解应该是所有这样的乘积只和，比如可能是：
+  $$
+  \Psi(\mathbf{r}_1, \mathbf{r}_2, t) = \frac{3}{5}\Psi_a(\mathbf{r}_1, t)\Psi_b(\mathbf{r}_1, t) + \frac{4}{5}\Psi_c(\mathbf{r}_1, t)\Psi_d(\mathbf{r}_2, t)
+  $$
+  这个波函数说明有 $9/25$ 的情况下，第一个粒子处于 $\Psi_a$ 且第二个粒子处于 $\Psi_b$；$16/25$ 的情况下，第一个粒子处于 $\Psi_c$ 且第二个粒子处于 $\Psi_d$。我们将这种相互关联的现象称为 **纠缠（Entanglement）**。处于纠缠态的两个粒子没有办法写成两个单粒子状态的积。一个经典的例子是两个 1/2 自旋粒子组成的系统。
+
+- 有心势能。假设两个粒子只在相互之间存在作用，此时势能只和两者之间的径矢有关：
+  $$
+  V(\mathbf{r}_1, \mathbf{r}_2) = V(|\mathbf{r}_1 - \mathbf{r}_2|)
+  $$
+  氢原子就是一个例子（此时我们将质子的运动也考虑进来了）。此时我们可以用经典力学中类似的方法，将其变为一个等价的单体问题。
+
+不过一般情况下，两个粒子之间以及外部都存在力，因此我们的分析会复杂很多。比如考虑一个氦原子，其中有两个电子，它们之间会相互排斥；同时它们都受到原子核的吸引：
+$$
+V(\mathbf{r}_1, \mathbf{r}_2) = \frac{1}{4\pi\epsilon_0}\left(-\frac{2e^2}{|\mathbf{r}_1|} - \frac{2e^2}{|\mathbf{r}_2|} + \frac{e^2}{|\mathbf{r}_1 - \mathbf{r}_2|}\right)
+$$
+我们会在本章后续解决这个问题。
+
+### 玻色子和费米子
+
+假设有两个没有相互作用的粒子，一个处于 $\psi_a(\mathbf{r}_1)$ 状态，另一个处于 $\psi_b(\mathbf{r}_2)$ 状态。和经典力学不同的是，任意时刻看到这两个状态时，我们无法确定是哪个粒子处于其中的某个状态，我们只能说这两个粒子分别处于其中的一个状态。因此下面这个公式描述了所有可能的情形：
+$$
+\psi_\pm(\mathbf{r}_1, \mathbf{r}_2) = A[\psi_a(\mathbf{r}_1)\psi_b(\mathbf{r}_2) \pm \psi_b(\mathbf{r}_1)\psi_a(\mathbf{r}_2)]
+$$
+这实际上说明了有两种类型的粒子对：**玻色子（Boson）** 和 **费米子（Fermion）**，前者取加号，后者取减号。玻色子的特点是两个粒子是 **对称（Symmetric）** 的，即 $\psi_+(\mathbf{r}_2, \mathbf{r}_1) = \psi_+(\mathbf{r}_1, \mathbf{r}_2)$。相反地，费米子的两个粒子是 **反对陈（Antisymmetric）** 的，即 $\psi_-(\mathbf{r}_2, \mathbf{r}_1) = -\psi_-(\mathbf{r}_1, \mathbf{r}_2)$。
+
+统计上我们发现，玻色子是所有拥有整数自旋的粒子，而费米子是所有拥有半整数自旋的粒子。这个 **自旋与统计的联系（Connection between Spin and Statistics）** 在考虑相对论效应的量子力学中可以证明出来，这里我们不深入说明，仅将其视作公理。玻色子和费米子的统计性质有很大的不同，其中一个重要的结论是，两个相同的费米子（比如电子）不能同时拥有相同的状态。这一点实际上很好验证，因为假如 $\psi_a = \psi_b$，则：
+$$
+\psi_-(\mathbf{r}_1, \mathbf{r}_2) = A[\psi_a(\mathbf{r}_1)\psi_a(\mathbf{r}_2) - \psi_a(\mathbf{r}_1)\psi_a(\mathbf{r}_2)] = 0
+$$
+此时就不存在任何波函数了。我们将这个效应称为 **泡利不相容原理（Pauli Exclusion Principle）**

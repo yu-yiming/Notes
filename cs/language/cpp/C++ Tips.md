@@ -1930,3 +1930,463 @@ int randint(int start, int stop) {
 ![image-20220406165414337](graphs/image-20220406165414337.png)
 
 可以看到 `std::random_device` 绝对的 MVP！这真的慢到离谱了。此外，`std::mt19937` 也相当耗时。所以我的解决方法是，让这两个耗时的东西只在程序中创建一次，可以通过加上 `static` 限定符来实现。
+
+## 那些说不出名字的类型（2022/04/15）
+
+今天在 Reddit 上看到一个有趣的帖子（[链接](https://www.reddit.com/r/cpp/comments/u3od7z/returning_stdoptional_from_a_function_type/)），里面吐槽了 **C++** 返回值类型推断在遇到 range 时的无力感（我觉得写 **C++** 时无力感是无处不在的）。我们最后再谈这个问题；这一小节中，让我先整理一下 **C++** 中那些“说不出名字”的类型。
+
+首先说明，“说不出名字”并不代表没有类型，毕竟 **C++** 是一个静态类型语言；同时，它可能有显式的类型，只不过因为繁琐，我们不希望将其写出来（这也就是 `auto` 为什么拯救了一大批人）。
+
+### 闭包
+
+要说 `auto` 不得不引入的一个理由，那就是因为我们需要省略闭包的类型。每一个 lambda 表达式的类型是独立的，即使完全相同的 lambda 表达式也会有不同的类型：
+
+```cpp
+auto const l1 = [](auto x) { return x; };
+auto const l2 = [](auto x) { return x; };
+void foo() {
+    std::cout << typeid(l1) == typeid(l2);	// 输出 0
+}
+```
+
+同时，即使可以通过 `decltype` 得到闭包的类型，由于（在 **C++20** 前）它从来不会有默认构造函数（且不允许重新赋值），所以得到了类型我们也什么都做不了。
+
+当闭包没有捕获时，我们可以将其类型转换为一个函数指针；这可能会给人一种它有显式类型的错觉：
+
+```cpp
+void delegate(int, bool);
+using Foo = decltype(&delegate);
+Foo l = [](int x, bool b) { return b ? x : x + 1; };
+```
+
+不过这种用法比较局限，比如如果是泛型 lambda 表达式就没办法这么写；即使有了 **C++20** 的模板 lambda 表达式，依然没办法用简洁的方式将其转换为函数指针类型。一个有点怪的解决方式是用 **C++17** 的模板变量：
+
+```cpp
+template<typename T>
+using Foo = T (*)(T, bool);
+template<typename T>
+Foo<T> l = [](T arg, bool b) { return b ? arg : T{}; };
+```
+
+但是这种情况下，每次调用 `l` 就必须要指定模板参数类型了，好不麻烦。
+
+### 嵌套类型
+
+大家可以感受一下 **C++11** 之前，我们如何遍历一个 `std::list`：
+
+```cpp
+void foo() {
+    extern std::list<int> l;
+    std::list<int>::const_iterator it;
+    for (it = l.cbegin(); it != l.cend(); ++it) {
+        // 省略细节
+    }
+}
+```
+
+可以看到这个非常微妙的 `std::list<int>::const_iterator`，作为类型未免太长了一些。更不要说类似于下面这种丧心病狂的嵌套类型：
+
+- `std::experimental::propagate_const<std::optional<std::reference_wrapper<T>>>`：想象一个返回这个类型的函数，明明一个 `auto ret = foo();` 就能解决的问题，非要你写出它的类型。
+
+这方面，同为 **C++11** 引入的 `decltype` 也有大功劳。你可能会认为单有 `auto` 没有用处，因为你并不一定能拿到所有需要类型的值；但我们可以通过 `decltype` 拿到相关类型的值，然后再用 `::` 索引进去。比如上面那个类型的 `reference` 成员别名没法直接拿到，但你可以通过 `decltype(foo())::reference` 的方式得到。
+
+### Range 类型
+
+**C++20** 引入 Ranges 库之后，我们又多了一个写不出类型的玩意。比如说猜猜下面这个表达式的类型输出什么：
+
+```cpp
+namespace stdv = std::ranges::views;
+
+auto mystery = stdv::iota(1) 
+    | stdv::filter([](auto x) { return x % 2 == 1; })
+    | stdv::transform([](auto x) { return x * x; })
+    | stdv::take(42);
+
+void foo() {
+    std::cout << typeid(mystery).name() << '\n';
+}
+```
+
+揭晓答案：
+
+`NSt6ranges9take_viewINS_14transform_viewINS_11filter_viewINS_9iota_viewIiSt22unreachable_sentinel_tEEN7mysteryMUlT_E_EEEN7mysteryMUlS6_E0_EEEEE`。
+
+呃，搞错了（`gcc` 你能不能讲人话），让我们用 `clang` 再来一遍：
+
+报错了，好像 `clang` 对 **C++20** 的支持还比较局限（这都 2022 年了），看来只能求助于 **MSVC** 了：
+
+`class std::ranges::take_view<class std::ranges::transform_view<class std::ranges::filter_view<class std::ranges::iota_view<int,struct std::unreachable_sentinel_t>,class <lambda_1> >,class <lambda_2> > >`
+
+嗯，看起来可读多了，但还是不够清晰；让我手动简化一下：
+
+`stdv::take<stdv::transform<stdv::filter<stdv::iota<int, std::unreachable_sentinel_t>, lambda1>, lambda2>>`
+
+如果忽略掉两个 lambda，这其实就是一系列 views 的嵌套；我们从前到后一步步的操作，在最终的类型中体现为从内到外的一个个模板类型。显然，如果没有 `auto` 把它们全“沉默”掉，Ranges 库的使用可能会变为灾难。
+
+说了这么多，我们的重点在何处呢？现在考虑一个可能通过不同方式构造的类型（最简单的例子就是原帖中的 `std::optional`，但是由于其包装类型过于复杂我们决定让函数返回类型用 `auto` 占位。问题是，由于它可以通过两种方式构造（有数据的类型，或 `std::nullopt_t`），对于后一种情况编译器无从知晓它的类型（即使前面一种类型已经推断出来）。下面这几种写法都无法通过编译：
+
+```cpp
+namespace stdv = std::ranges::views;
+auto foo_1(auto rng) {
+    if (std::ranges::empty(rng)) {
+        return std::nullopt;
+    }
+    else {
+        return rng | stdv::filter([](auto x) { return x > 0; });
+    }
+}
+auto foo_2(auto rng) {
+    if (!std::ranges::empty(rng)) {
+        return rng | stdv::filter([](auto x) { return x > 0; });
+    }
+    else {
+        return std::nullopt;
+    }
+}
+auto foo_3(auto rng) {
+    if (!std::ranges::empty(rng)) {
+        return std::optional(rng | stdv::filter([](auto x) { return x > 0; }));
+    }
+    return std::nullopt;
+}
+auto foo_4(auto rng) -> std::optional<auto> {
+    // 和之前一样的写法
+}
+```
+
+其中第四种是一个很理想的形式，但它甚至不是合法的 **C++**（笑）。我们当然可以用后置类型来给编译器提示：
+
+```cpp
+auto foo_5(auto rng) -> std::optional<decltype(rng | stdv::filter([](auto x) { return x > 0; }))> {
+    // 和之前一样的写法
+}
+```
+
+但这样真的不划算。 另一个莫名其妙好用的方法是用三元运算符：
+
+```cpp
+auto foo_6(auto rng) {
+    return !std::ranges::empty(rng) ?
+        std::optional(rng | stdv::filter([](auto x) { return x > 0; })) :
+    	std::nullopt;
+}
+auto foo_7(auto rng) {
+    return std::ranges::empty(rng) ?
+        std::nullopt :
+    	std::optional(rng | stdv::filter([](auto x) { return x > 0; }));
+}
+```
+
+可以看到甚至调换顺序都没有任何问题。这个的原因似乎在于函数中 `return` 语句的数量：当只有一个语句时，强大的 `?:` 表达式找到了能让所有子表达式都成立的类型（这个类型一定是这些子表达式的类型之一），然后让其作为返回类型，毫无问题；当存在多个语句时，**C++** 不存在这样统一的机制，也即没办法从所有 `return` 语句中选择一个通用于所有表达式的类型，因此导致了错误。
+
+三元运算符虽好，但是可读性堪忧；我们显然没办法把数十行的代码写成这样的形式（**C++11** 的 `constexpr` 函数：是在叫我么），但显然 `foo_5` 的解决方法同样没法应对这种情况。
+
+原帖下面给出了另一种解决方法：
+
+```cpp
+auto foo_8(auto rng) {
+    auto foo_impl = [&rng] {
+        return rng | stdv::filter([](auto x) { return x > 0; });
+    };
+    using ReturnType = std::optional<decltype(foo_impl())>;
+    if (std::ranges::empty(rng)) {
+        return ReturnType(std::nullopt);
+    }
+    else {
+        return ReturnType(foo_impl());
+    }
+}
+```
+
+其原理很简单，就是将逻辑写在一个 lambda 里面，其中假设输入的是（主要）分支中的情形；然后将这个 lambda 的返回值套上 `std::optional`，这样就得到我们想要的返回类型了。对于更加复杂的情形（多个分支），我们可以使用相似的写法：
+
+```cpp
+auto foo(auto&&... input) {
+    auto foo_impl = [&input...] {
+        // 主分支的具体逻辑。这里的返回值必须是清晰的
+    };
+    using ReturnType = WrapperType<decltype(foo_impl())>;
+    if (/* 条件 1 */) {
+        // 分支 1
+        return ReturnType(/* 表达式 1 */);
+    }
+    // 多个分支
+    else (/* 条件 n */) {
+        // 分支 n
+        return ReturnType(/* 表达式 n */);
+    }
+}
+```
+
+这个方法相当有效，不过并非没有缺点。比如对于 `std::variant` ，只用一个主分支是不够的，我们需要将 *所有* 分支的类型都用 lambda 包装起来，然后再将 `std::variant<R1, R2, ..., Rn>` 作为其返回类型。
+
+
+
+## 用 Concept 限制函数参数（2022/04/15）
+
+对函数的静态约束有多种方式，可以用古老的 **SFINAE**，比如 `std::enable_if`，但是鉴于 **C++** 不支持函数模板偏特化，它并不算好用。也可以用 `constexpr if` 加上 [2022/03/02 笔记](#条件编译断言（2022/03/02）) 中提到的 `static_assert` 使用方法来限制。当然，最新潮的莫过于 `requires` 子句了：
+
+```cpp
+auto foo(auto x, auto y)
+    requires std::integral<decltype(x)> && std::is_same_v<decltype(y), double>;
+```
+
+这种情况未免过于简单；事实上我们可以写成下面的形式：
+
+```cpp
+auto foo(std::integral auto x, std::same_as<double> auto y);
+```
+
+这个说实话看起来有点怪（Concept TS 的时候不需要写这个多余的 `auto`），但确实已经很简洁了。如果比较复杂的情况，我们可以把 `requires` 子句写得更复杂一些：
+
+```cpp
+auto foo(auto x, auto y)
+    requires requires {
+    	std::integral<decltype(x)>;
+    	std::same_as<decltype(y), double>;
+    	{ x + y } -> std::convertible_to<double>;
+    	sizeof(x) > 4;
+	};
+```
+
+这个 `requires requires` 怎么看怎么别扭；但是别搞混了，前面一个是 `requires` 子句的关键字，后面一个则是 `requires` 表达式的关键字。**C++** 特别喜欢搞这种奇怪的重复，类似的还有 `explicit` 和 `noexcept`。此外，这个里面可能会多次用到 `decltype`，好不麻烦，然而 `requires` 表达式中不能声明别名。解决方案就是把函数变成真正的模板函数：
+
+```cpp
+template<typename T, typename U>
+	requires requires (T t, U u) {
+        std::integral<T>;
+        std::same_as<U, double>;
+        { t + u } -> std::convertible_to<double>;
+        sizeof(t) > 4;
+    }
+auto foo(T x, U y);
+```
+
+值得一提的是，函数模板的 `requires` 子句可以写在模板参数声明的后面，也可以写在函数参数声明的后面，两者是等价的。
+
+如果我们的要求是针对多个函数的，可以将其声明为 Concept：
+
+```cpp
+template<typename T, typename U>
+concept Foo = requires (T t, U u) {
+    std::integral<T>;
+    std::same_as<U, double>;
+    { t + u } -> std::convertible_to<double>;
+    sizeof(t) > 4;
+};
+
+auto foo_1(auto x, auto y)
+    requires Foo<decltype(x), decltype(y)>;
+auto foo_2(auto x, auto y)
+    requires Foo<decltype(x), decltype(y)>;
+```
+
+目前位置似乎没问题。考虑对一个成员函数作同样的要求，用同样的方式也可以达到限制；但是如果要求一个类有如此限制的成员函数，似乎有些棘手，其根本原因在于我们不方便在 `requires` 表达式中模拟函数调用：
+
+```cpp
+template<typename T>
+concept Foo = requires (T t) {
+    t.foo(std::declval<int>(), std::declval<double>());
+};
+```
+
+上面这个写法会限制 `t.foo` 通过 `int` 和 `double` 调用，但是这和我们的期望相差甚远。
+
+原推中给出的方式如下：
+
+```cpp
+template<auto Constraint>
+struct requires_impl {
+    template<typename T>
+    	requires (Constraint.template operator ()<T>())
+    operator T();
+};
+#define REQUIRES(...) requires_impl<[]<typename _> { return __VA_ARGS__; }>{}
+
+template<typename T>
+concept Foo = requires (T t) {
+    t.foo(REQUIRES(std::integral<_>), REQUIRES(std::same_as<double, _>));
+};
+struct A {
+    void foo(int, auto);
+};
+struct B {
+    void foo(int, double);
+};
+static_assert(Foo<A>);
+static_assert(Foo<B>);
+```
+
+这里的设计非常精妙，其定义一个被动接受模板参数的模板类并填充到 `requires` 子句中：
+
+```cpp
+t.foo(requires_impl<[]<typename _> { return std::integral<_>; }>{})
+```
+
+这句尝试用一个 `requires_impl` 对象调用 `t.foo`，其中会尝试隐式转换其变为 `t.foo` 的实际参数类型（比如说是 `int`），调用的是 `requires_impl<Constraint>::operator T()`。但在此处它对 `T` 的类型作出了限制，其必须满足 `Constraint`（实际上是一个返回对应 `requires` 子句或 `concept` 的闭包）要求，否则转换无法进行，这个调用就没法完成了。之所以采用闭包传递为非类型模板参数这样微妙的方式，是因为 **C++** 中的 `concept` 无法作为模板参数，但它可以作为 `bool` 类型的编译期表达式求值，因此问题依然可以解决。
+
+参考资料：[Twitter](https://twitter.com/krisjusiak/status/1514111796818423814)
+
+
+
+## 设计一个包装过的枚举类型（2022/04/20）
+
+**C++** 的枚举类型非常原始，在 **C++11** 之前它甚至不构成一个命名空间（这会污染命名空间）：
+
+```cpp
+enum Color {
+    Red, Green, Blue
+};
+Color c = Red;				// Red 直接暴露在明明空间作用域，这不是一个好的习惯
+```
+
+此外，我们通常需要手动写其和整数、字符串的转换：
+
+```cpp
+auto color2int(Color c) {
+    return static_cast<std::underlying_type<Color>>(c);
+}
+Color int2color(int i) {
+    return static_cast<Color>(i);
+}
+
+std::string color2str(Color c) {
+    switch (c) {
+        case Red: return "Red";
+        case Green: return "Green";
+        case Blue: return "Blue";
+        default: return "Error";
+    }
+}
+Color str2color(std::string_view sv) {
+    if (sv == "Red") {
+        return Red;
+    }
+    else if (sv == "Green") {
+        return Green;
+    }
+    else if (sv == "Blue") {
+        return Blue;
+    }
+}
+```
+
+说实话，这不是很复杂的任务，但是如果每次定义枚举的时候，这些函数都能自动生成出来就好了……这并非不可能！虽然现代 **C++** 极力排斥使用宏，但是其在文本生成中的作用依然不可忽视。本小节中我们就探索这样的一种可能性：
+
+```cpp
+ENUM(Enum, e1, e2 = init2, e3);
+```
+
+生成了类型安全且易用的枚举接口，随后可以如下使用：
+
+```cpp
+void foo() {
+    Enum e = Enum::e3;
+    std::cout << e.to_string();
+    e = Enum::from("e2");
+    std::cout << e.to_int();
+}
+```
+
+为了达成这样的目标，有几个重要的难点：如何从函数宏的参数列表中依次获取其字符串？如何处理其中可能存在的等号？等号右侧的常数表达式应该如何求值？以我个人的感觉，最后一个问题应当被极力简化，因为我不可能再写一个常数解析器，因此我只接受一个整数（或者可能也可以允许已经出现过的枚举量）。
+
+让我们将最晦涩的宏放在最后考虑，先写出其主要的框架：
+
+```cpp
+struct enum_name {
+    enum enum_name_impl {
+        // 枚举量在此列出
+    } value;
+    
+    explicit enum_name(enum_name_impl e) noexcept
+        : value(e) {}
+    
+    std::string to_string() const {
+        int length = sizeof(names) / sizeof(char const*);
+        for (int i = 0; i < length; ++i) {
+            if (value = values[i]) {
+                return names[i];
+            }
+        }
+    }
+    int to_int() const noexcept {
+        return static_cast<std::underlying_type<enum_name_impl>>(value);
+    }
+    static enum_name_impl from(std::string_view sv) {
+        int length = sizeof(names) / sizeof(char const*);
+        for (int i = 0; i < length; ++i) {
+            if (sv == names[i]) {
+                return static_cast<enum_name_impl>(i);
+            }
+        }
+        throw std::invalid_argument("No corresponding enumerator");
+    }
+private:
+    static enum_name_impl values = {
+        // 枚举量
+    };
+    static char const* names = {
+        // 枚举量对应的字符串
+    };
+};
+```
+
+上面用注释标记的三个地方中，第一个和第二个用宏实现非常简单，只需要 `__VA_ARGS__` 即可（注意这里我们先假设枚举定义中没有使用等号）：
+
+```cpp
+#define ENUM(EnumName, ...) 			\
+struct EnumName {						\
+	enum EnumName ## _impl {			\
+        __VA_ARGS__						\
+    } value;							\
+	static EnumName ## _impl values = { \
+		__VA_ARGS__						\
+	};									\
+};
+```
+
+第三个就需要一些技巧了。我们知道 `#` 用来将文本转化为 **C++** 的字符串字面量：
+
+```cpp
+#define PRINT(x) std::cout << #x << ": " << x
+void foo() {
+    int some_variable = 42;
+    PRINT(42);					// 输出 "some_variable: 42"
+}
+```
+
+现在的问题是怎样让这个操作同时作用于所有的函数宏参数。假想有一个神奇的宏 `MAP`，能将某个函数宏作用于所有宏参数，那么就可以像下面这样解决：
+
+```cpp
+#define STRINGIFY_ALL(...) MAP(STRINGIFY, __VA_ARGS__)
+#define STRINGIFY(x) #x
+```
+
+可惜这样的宏没有简单的实现方式；我们只能将所有情形写出来：
+
+```cpp
+#define MAP_1(MACRO, x) MACRO(x)
+#define MAP_2(MACRO, x, ...) MACRO(x) MAP_1(MACRO, __VA_ARGS__)
+#define MAP_3(MACRO, x, ...) MACRO(x) MAP_2(MACRO, __VA_ARGS__)
+// 通用的形式是：
+// #define MAP_n(MACRO, x, ...) MACRO(x) MAP_n-1(MACRO, __VA_ARGS__)
+```
+
+这个可以用一些脚本语言生成，其规模取决于我们想要处理的最长长度。为了确定调用哪个宏，我们还应该设计一个 `COUNT` 宏用于计算参数的个数：
+
+```cpp
+#define COUNT(...) COUNT_(__VA_ARGS__, ARGS)
+#define COUNT_(_1, _2, _3, _4, _5, ct, ...) ct
+#define ARGS 5, 4, 3, 2, 1, 0
+```
+
+这是一个很巧妙的实现；我们通过函数宏的参数将 `ARGS` 中正确的长度“推”向 `ct` 的位置；特别地，当 `__VA_ARGS__` 长度为 0 时，`ct` 对应的就是 `ARGS` 中的 0。上面最大的数字以我们需要处理的函数宏参数数量决定。
+
+将 `COUNT` 和 `MAP` 结合起来，就可以得到：
+
+```cpp
+#define MAP(MACRO, ...) MAP_ ## COUNT(__VA_ARGS__) (MACRO, __VA_ARGS__)
+```
+
+这样我们似乎就集齐了所有的拼图，一切都如预料中那样顺利……才怪！**C/C++** 的宏背负这么多骂名不是冤枉它的，如果使用上面这些看似正确的宏，我们会遇到例如：“`MAP_COUNT` 未在当前作用域中定义”的错误。这来自于宏的展开规则。我们在下一节中会仔细分析这一个“过时”的特性，现在我们将直接给出解决方案：
+
