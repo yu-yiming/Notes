@@ -311,7 +311,7 @@ int foo() {
 extern int input;
 int foo() {
     auto lambda = [] (auto in, auto&& f) {
-        return in == 0 ? 0 : f(std::abs(in) - 1) + in;
+        return in == 0 ? 0 : f(std::abs(in) - 1, f) + in;
     };
     return lambda(input, lambda);
 }
@@ -324,7 +324,7 @@ extern int input;
 int foo() {
     return [] (auto in) {
         auto lambda_impl = [] (auto in, auto&& f) -> int {
-            return in == 0 ? 0 : f(std::abs(in) - 1) + in;
+            return in == 0 ? 0 : f(std::abs(in) - 1, f) + in;
         };
         return lambda_impl(in, lambda_impl);
     } (input);
@@ -2390,3 +2390,251 @@ void foo() {
 
 这样我们似乎就集齐了所有的拼图，一切都如预料中那样顺利……才怪！**C/C++** 的宏背负这么多骂名不是冤枉它的，如果使用上面这些看似正确的宏，我们会遇到例如：“`MAP_COUNT` 未在当前作用域中定义”的错误。这来自于宏的展开规则。我们在下一节中会仔细分析这一个“过时”的特性，现在我们将直接给出解决方案：
 
+
+
+## 宏的展开规则（2022/04/28）（持续更新中）
+
+一直以来，**C/C++** 通过宏完成一些别扭的工作，比如条件编译、头文件 Guard、部分代码简化等。由于其原理非常简单粗暴，有些时候的效果也意外地好，因为可以超越语法的限制。比如一个需要跨越多版本的库，由于不确定用户使用的编译器是否支持 `constexpr`，就可以利用宏来省很多事：
+
+```cpp
+#ifdef __cpp_constexpr
+#   define CXX11_CONSTEXPR constexpr
+#else
+#   define CXX11_CONSTEXPR 
+#endif // ifdef __cpp_constexpr
+
+CXX11_CONSTEXPR int foo();
+```
+
+我们只需要一直使用宏 `CXX11_CONSTEXPR` 即可，不需要为支持和不支持 `constexpr` 的两种情形分别写一遍。事实上，这也是 **C++** 中的宏至今无法退休的重要原因之一。
+
+宏就是文本替换，那么文本替换有什么难的呢？当宏以类似变量声明，且定义中不存在其它宏的时候确实没有什么复杂的地方：
+
+```cpp
+#define FOO 42
+#define NS_ABC_BEGIN namespace abc {
+#define NS_ABC_END }
+
+NS_ABC_BEGIN
+int foo() {
+    return FOO;
+}
+NS_ABC_END
+```
+
+上面，我们只需将所有的宏换成它声明处的代码即可。
+
+现在，如果我们在变量宏的声明中用到的别的宏，会发现声明的顺序并无所谓：
+
+```cpp
+#define FOO BAR
+#define BAR BAZ
+#define BAZ 42
+
+int foo() {
+    return FOO;			// 首先展开为 BAR，然后展开为 BAZ，最后展开为 42
+}
+```
+
+只要在宏展开的地方，涉及到的宏有定义即可。因此我们可以做到不同环境相隔离的效果：
+
+```cpp
+#define FOO TEST + 42
+
+int foo() {
+#define TEST 123
+    return FOO;
+#undef TEST
+}
+
+int bar() {
+#define TEST 456
+    return FOO;
+#undef TEST
+}
+```
+
+接下来是函数形式的宏：
+
+```cpp
+#define DOUBLE(x) x, x
+
+auto foo() {
+    return std::pair(DOUBLE(42));
+}
+```
+
+它看起来虽然依然人畜无害，但是随带的问题非常多（这些问题也不限于函数宏）：
+
+- 声明处括号必须紧跟着宏名称，反例如 `#define DOUBLE (x) x, x` 在 `DOUBLE(42)` 处会展开为 `(x) x, x (42)`。
+
+- 需要注意运算符优先级。比如：
+
+  ```cpp
+  #define ADD(x, y) x + y
+  
+  void foo() {
+      std::cout << ADD(1, 2);			// 展开为 std::cout << 1 + 2，这里 + 优先级低于 <<，不符合预期。
+  }
+  ```
+
+- 需要注意重复求值，其可能会带来一些副作用。比如：
+
+  ```cpp
+  #define MIN(x, y) x > y ? y : x
+  
+  int bar(int);
+  auto foo() {
+      return std::pair(MIN(bar(42), 0));	// 展开为 bar(42) > 0 ? 0 : bar(42)，这个函数求值了两次。
+  }
+  ```
+
+- 多余的分号问题。比如：
+
+  ```cpp
+  #define DO_SOMETHING(x) { /* 一系列语句 */ }
+  #define DO_NOTHING
+  
+  void foo() {
+      if (true)
+          DO_SOMETHING(42);			// 展开为 { ... }; 这是两个语句，因此后面的 else 无法找到前面对应的 if 了。
+      else
+          DO_NOTHING;
+  }
+  ```
+
+上面提到的都是一些简单的问题，也比较好解决：函数宏的参数值可以通过 `auto` 语句“提取”出来，避免多次求值导致的副作用；出现参数的地方以及宏声明的最外层应该加上括号以避免运算优先级问题；时刻记住为 `if` 语句加上大括号，或者用 `do` 语句代替宏声明中的大括号。
+
+下面让我们正式进入复杂的情况。首先需要介绍几个重要的预处理工具：
+
+- `#` 可以将函数宏的参数转化为 **C++** 中的字符串字面量。
+- `##` 可以拼接两个字符序列。
+
+作为举例：
+
+```cpp
+#define STRINGIFY(x) #x
+#define CONCAT(x, n) x ## _ ## n
+
+void bar_1();
+void bar_2();
+void foo() {
+    std::cout << STRINGIFY(123);		// 展开为 #123，然后转换为 "123"
+    CONCAT(bar, 1)();					// 展开为 bar ## _ ## 1，然后转换为 bar_1
+    CONCAT(bar, 2)();					// 展开为 bar ## _ ## 2，然后转换为 bar_2
+}
+```
+
+紧跟而来的是这样的问题：`#` 能将宏参数变为字符串，这很有用；但如果我需要将宏展开的结果转变为字符串呢？比如：
+
+```cpp
+#define FOO(x) (x + 42)
+
+void foo() {
+    std::cout << STRINGIFY(FOO(0));		// 展开为 #FOO(0)，然后直接转换为 "FOO(0)"
+}
+```
+
+可见，当宏在某一层展开时遇到 `#` 时，会无条件将后面的东西变为字符串，而不会进一步展开了。为了解决这个问题，我们需要将 `#` 额外包装一层：
+
+```cpp
+#define STRINGIFY(x) STRINGIFY_(x)
+#define STRINGIFY_(x) #x
+#define FOO(x) (x + 42)
+
+void foo() {
+    std::cout << STRINGIFY(FOO(0));		// 展开为 STRINGIFY_((0 + 42)) -> #(0 + 42) -> "(0 + 42)"
+}
+```
+
+
+
+## **C++** 标准库中的锁（2022/04/29）
+
+**C++11** 起我们就可以写跨平台的并发程序了。本节主要概览一下标准库中的 **互斥锁（Mutual Exclusion Lock, Mutex）** 相关设施。并发编程中，我们为了避免数据竞争，需要为一些资源声明互斥锁：
+
+```cpp
+int g_count = 0;
+std::mutex g_mutex{};
+
+void inc(int id) {
+    g_mutex.lock();
+    ++g_count;
+    std::cout << "id: " << id << "; count: " << g_count << '\n';
+    g_mutex.unlock();
+}
+int main() {
+    std::thread t1(inc, 0);
+    std::thread t2(inc, 1);
+    t1.join();
+    t2.join();
+}
+```
+
+不过，`std::mutex` 的使用方式过于原始，这种成对出现的函数（`lock` 和 `unlock`）完全可以委托给 **RAII**。这便是 `std::lock_guard` 的作用：
+
+```cpp
+int g_count = 0;
+std::mutex g_mutex{};
+
+void inc(int id) {
+    std::lock_guard<std::mutex> const lock(g_mutex);
+    ++g_count;
+    std::cout << "id: " << id << "; count: " << g_count << '\n';
+}
+int main() {
+    std::thread t1(inc, 0);
+    std::thread t2(inc, 1);
+    t1.join();
+    t2.join();
+}
+```
+
+上面的 `std::lock_guard` 初始化时就会自动上锁，直到其生命周期结束后自动解锁。不过，考虑需要为多个资源同时上锁的情形，此时为了避免死锁，我们可能会写成下面的样子：
+
+```cpp
+struct Foo {
+    int data;
+    std::mutex m;
+};
+void foo(Foo& f1, Foo& f2) {
+    std::lock(f1.m, f2.m);
+    std::lock_guard<std::mutex> const lock_1(f1.m, std::adopt_lock);
+    std::lock_guard<std::mutex> const lock_2(f2.m, std::adopt_lock);
+    ++f1.data;
+    ++f2.data;
+}
+```
+
+**C++17** 起，标准库引入了更加先进的 `std::scoped_lock`，它可以同时为多个互斥锁上锁：
+
+```cpp
+void foo(Foo& f1, Foo& f2) {
+    std::scoped_lock lock(f1.m, f2.m);
+    ++f1.data;
+    ++f2.data;
+}
+```
+
+无论是 `std::lock_guard` 还是 `std::scoped_lock`，其接口都是绝对的极简：除了构造和析构函数以外，它们没有任何成员函数。它们本质上就是对 `std::mutex`（或其它类型的互斥锁）的直接装箱。相比之下，`std::unique_lock` 的功能要多样许多。
+
+
+
+## **C++** 的并发支持（2022/04/29）
+
+**C++11** 之前，并发并没有得到足够的关注（事实上早年间，并发也没有那么重要）。经过 **C++11**、**C++14**、**C++17** 以及 **C++20** 数个版本的迭代，现在已经得到了比较丰富的支持。让我们首先从其分组及各个组件的功能开始了解 **C++** 的并发支持。
+
+- **线程（Thread）**：线程是程序中可以并发执行的一个单元，其比 **进程（Process）** 要轻量，但线程之间的上下文切换依然比较耗费资源。线程之间不共享栈内存以及声明为 `thread_local` 的资源。**CPU** 本身也有线程的概念，称为 **硬件线程（Hardware Thread）**，其通常等同于 **CPU** 中核的个数（有时一个核可以执行两个硬件线程）。操作系统会将不同程序中的“虚拟线程”统筹安排到硬件线程中，并控制其占用哪一个硬件线程，且占用多久。我们能控制管理的线程，都是“虚拟线程”。**C++** 中通过 `std::thread` 来表示这样一个线程。
+  - 线程的创建：**C++** 中，我们创建的线程都对应一个函数调用。从线程创建开始，就会产生一个子线程，其和当前的父线程可以并发执行。
+  - 线程的 **合并（Join）** 与 **分离（Detach）**：父线程中可以通过 `join` 子线程来阻塞自己，等待直到这个子线程执行完毕。也可以通过 `detach` 子线程，让其和父线程分离，这样两者就会各顾各的执行并结束。除了主线程外的任一个线程都必须被合并或分离，两者选一，否则在该线程结束时（其对应 `std::thread` 对象析构时），会调用 `std::terminate`，这通常就是终止程序。
+  - **C++20** 新增的 `std::jthread` 会默认在析构时进行合并，除此之外和 `std::thread` 完全一致（因此我们也可以手动进行合并或分离）。
+- **原子操作（Atomic Operation）**：并发编程中，我们要时刻注意线程安全，避免 **数据竞争（Data Race）** 或 **竞争条件（Race Condition）** 等导致的未定义行为。一个简单的解决方案就是使用 **原子变量（Atomic Variable）**，其特征是所有操作都是不可分割的原子操作：不会存在读取到一半切换到另一个线程的情形。因此它的所有操作是线程安全的。**C++** 中通过 `std::atomic` 模板来表示这样一个结构。
+  - 原子类型要求是 `std::is_trivially_copyable` 的，也即它必须可以通过一次 `std::memcpy` 进行完全的复制，不能拥有指向动态资源的指针（比如 `std::string` 就不能是 `std::atomic` 的模板参数）。
+  - `std::atomic` 的实现通常是 **无锁的（Lock-free）**，也即不通过互斥锁（我们马上会介绍）实现原子操作，这会相比互斥锁更加轻量且顺序可控。**C++** 保证 `std::atomic_flag`（类似于 `std::atomic<bool>`）*一定* 是无锁的。我们可以用 `std::atomic_flag` 实现一个简单的互斥锁。
+  - **C++20** 为 `std::atomic` 和 `std::atomic_flag` 添加了 **等待（Wait）** 和 **通知（Notify）** 功能。它可以让当前线程等待原子变量产生变化，直到其它线程通知该线程为止。这和条件变量的行为比较类似（我们马上会介绍）。
+  - **C++20** 中 `std::atomic` 对 `std::shared_ptr` 进行了模板偏特化。
+  - **C++20** 中新增的 `std::atomic_ref` 类似于 `std::atomic` 对引用类型的模板偏特化。
+- **互斥锁（Mutual Exclusion Lock, Mutex）**：在存在数据竞争的代码块，我们可以通过对互斥锁进行 `lock` 来阻塞所有其它线程执行同样的一段代码，直到之前上锁的线程执行 `unlock` 为止。互斥锁除了较高的开销以外，最大的弱点在于潜在的 **死锁（Deadlock）** 情形，即一个线程对资源 A 上锁后需要资源 B 才能解锁，而另一个线程对资源 B 上锁后需要资源 A 才能解锁。此时两个互斥锁都无法释放，程序陷入僵局。
+  - `std::lock_guard` 对互斥锁的使用进行了优化，其通过 **RAII** 机制自动上锁和解锁。
+  - **C++17** 中新增的 `std::scoped_lock` 可以同时对多个互斥锁进行上锁，这可以有效避免死锁（因为所有资源都被一个线程拥有）。我们也可以用 `std::unique_lock` 以及 `std::lock` 函数达到同样的效果。
+- **条件变量（Conditional Variable）**：多个线程间相互沟通的媒介；当某个特定要求满足时，可以通过条件变量通知所有（或一个）其它的线程继续进行工作。常用于实现 **生产者-消费者（Producer-Consumer）** 模型。条件变量的缺点在于竞争条件。比如存在多个消费者时（也即有多个线程等待信号），系统可能会对多个线程发送信号；此时一些线程会更早地恢复工作，最终可能导致其它线程准备开始工作时，发现条件不符合。我们将这个现象称为 **虚假唤醒（Spurious Wakeup）**。这也是为什么我们会将条件变量的 `wait` 操作放在循环（而非 `if` 语句）中。
