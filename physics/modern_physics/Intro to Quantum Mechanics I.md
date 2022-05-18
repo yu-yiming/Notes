@@ -1,6 +1,6 @@
 # Intro to Quantum Mechanics I
 
-本篇是对应 *UIUC PHYS 486 Quantum Physics I* 的学习笔记，其中包括了波函数、希尔伯特空间、算符、自旋等知识。参考书籍是 *Introduction to Quantum Mechanics, 3rd Edition: David J. Griffiths*。
+本篇是对应 *UIUC PHYS 486 Quantum Physics I* 的学习笔记，其中包括了波函数、希尔伯特空间、算符、自旋，和双粒子系统等知识。参考书籍是 *Introduction to Quantum Mechanics, 3rd Edition: David J. Griffiths*。
 
 [TOC]
 
@@ -28,7 +28,7 @@ $$
 	i\hbar\frac{\partial \Psi}{\partial t} = -\frac{\hbar^2}{2m}\frac{\partial^2\Psi}{\partial x^2} + V\Psi
 \end{equation*} \tag{1.2} \label{schrodinger-equation}
 $$
-本章的主要内容就是探究波函数的意义，并和经典力学类似，从波函数逐渐得到量子力学中速度、动量以及动能等概念的定义。
+其中的 $\hbar$ 是一个在量子力学中无处不见的常量（大约是 $\epsilon_0$ 和 $\mu_0$ 在电动力学中的常见程度），**约化普朗克常量（Reduced Planck Constant）**，值约为 $1.053473\times 10^{-34}\ \text{J}\cdot\text{s}$。本章的主要内容就是探究波函数的意义，并和经典力学类似，从波函数逐渐得到量子力学中速度、动量以及动能等概念的定义。
 
 ### 波函数的统计理解
 
@@ -46,7 +46,7 @@ $$
 $$
 \frac{d}{dt}\int_{-\infty}^{+\infty} |\Psi(x, t)|^2\,dx = \int_{-\infty}^{+\infty}\frac{\partial}{\partial t}|\Psi(x, t)|^2\,dx = 0
 $$
-由 $|\Psi| = \Psi\Psi^*$，我们得到：
+由 $|\Psi| = \Psi^*\Psi$，我们得到：
 $$
 \begin{align*}
 	\frac{\partial }{\partial t}|\Psi|^2 = \frac{\partial}{\partial t}(\Psi^*\Psi) &= \Psi^*\frac{\partial \Psi}{\partial t} + \frac{\partial \Psi^*}{\partial t}\Psi \\
@@ -59,7 +59,7 @@ $$
 $$
 \frac{d}{dt}\int_{-\infty}^{+\infty}|\Psi(x, t)|^2\,dx = \frac{i\hbar}{2m}\left.\left(\Psi^*\frac{\partial \Psi}{\partial x} - \frac{\partial \Psi^*}{\partial x}\Psi\right)\right|_{-\infty}^{+\infty}
 $$
-这里我们可以简单地认为 $\Psi$ 和 $\Psi^*$ 在无穷远处一定是 $0$（否则它们不可能满足归一化条件），因此这个积分的结果就是 $0$。一些数学家可能会找到病态函数作为反例，不过那些情况在物理中不存在。至此我们就证明了归一化的波函数对于任一时刻都有效。
+这里我们可以简单地认为 $\Psi$ 和 $\Psi^*$ 在无穷远处一定是 $0$（否则它们不可能满足归一化条件），因此这个积分的结果就是 $0$。数学家可能会找到一些病态函数作为反例，不过那些情况在物理中不存在。至此我们就证明了归一化的波函数对于任一时刻都有效。
 
 波函数的出现为量子力学加入了很大的 **非决定性（Indeterminacy）**；即使我们得到了粒子的全部信息（即波函数 $\Psi$），也没法准确预测它的精确位置（尽管在进行实验测量时 *一定* 会得到精确的位置）。我们能得到的只有其统计学信息。自上世纪量子力学诞生以来，物理学家和哲学家对这种现象始终抱有迷惑，不知道是自然界的真相还是理论上的瑕疵。他们关于“测量粒子并发现它在点 $C$ ，那么在测量的前一刻（很短时间之前）它究竟在哪里”问题的合理解答大致有三种，让我们了解一下：
 
@@ -73,7 +73,7 @@ $$
 
 值得一提的是，量子力学假设的均是低速情形，也即忽略相对论效应；这也让它的理论显得不够完整。但批判量子力学的不足绝不是我们在此的原因：经典力学的局限性也不妨碍它在宏观低速条件下的简洁有效；同样地，量子力学在微观低速条件下可以准确描述粒子的运动，因此值得我们去思考与学习。作为拓展，**量子场论（Quantum Field Theory, QFT）** 将经典场论、量子力学、狭义相对论结合到一起，是更加“一统”的学说；但这超出本篇笔记涵盖的内容了。
 
-### 概率论
+### 概率论简介
 
 #### 离散变量
 
@@ -184,7 +184,7 @@ $$
 $$
 这里计算出来的值并不是某一时刻粒子所处的位置，而是此时刻这个粒子位置的期望值。换句话说，这是 *无数个* 处于 $\Psi$ 状态的粒子（即可以被这个波函数描述的粒子）在被观测后所在位置的平均值。注意，这和一个粒子被观测多次时位置的平均值是不同的：第一次观测后，粒子的波函数就会坍缩。此后观测的时间点如果相距非常小，我们会得到相同的位置。
 
-为了计算出这个期望值的变化率，我们可以对上面的式子求导，过程颇似于之前对归一化时间无关的证明，因此不表：
+为了计算出这个期望值的变化率，我们可以对上面的式子求导，过程颇似于之前对归一化时间无关的证明，因此不详细列出了：
 $$
 \begin{equation*}
 	\bracket{v} = \frac{d\bracket{x}}{dt} = -\frac{i\hbar}{2m}\int\left(\Psi^*\frac{\partial \Psi}{\partial x} - \frac{\partial \Psi^*}{\partial x}\Psi\right)\,dx = -\frac{i\hbar}{m}\int\Psi^*\frac{\partial \Psi}{\partial x}\,dx
@@ -207,18 +207,63 @@ $$
 \end{split} \tag{1.18}
 \end{align*}
 $$
-此时，方括号包括的是一个 **算符（Operator）**，它会将后面的函数转换为另一个函数。这些公式除了算符以外的部分是完全相同的。因此我们可以通过算符来表示量子力学中的物理量。这里，我们不加证明地给出一个数学公式（可以将其看作公理）：
+这里，方括号包括的是一个 **算符（Operator）**，它会将后面的函数转换为另一个函数。这些公式除了算符以外的部分是完全相同的。因此我们可以通过算符来表示量子力学中的物理量。这里，我们不加证明地给出一个数学公式（可以将其看作公理）：
 $$
 \begin{equation*}
 	\bracket{Q(x, p)} = \int\Psi^*\left[Q\left(x, -i\hbar\frac{\partial}{\partial x}\right)\right]\Psi\,dx
 \end{equation*} \tag{1.19}
 $$
-也即将其原始公式中的 $p$ 全部替换为 $-i\hbar\ (\partial/\partial x)$ 即可。举个例子就是动能：
+也即将其原始公式中的 $p$ 全部替换为 $-i\hbar\ (\partial/\partial x)$ 即可。举个例子就是动能，由 $T = p^2/2m$ 有：
 $$
 \begin{equation*}
 	\bracket{T} = -\frac{\hbar^2}{2m}\int\Psi^*\frac{\partial^2 \Psi}{\partial x^2}\,dx
 \end{equation*} \tag{1.20}
 $$
+
+最后让我们给出一个有趣的结论。回忆在经典力学中，力可以被定义为动量的变化率：
+$$
+\begin{equation*}
+	F = \frac{dp}{dt}
+\end{equation*}
+$$
+另一方面，力也是势能梯度的负数，因此我们在一维情况下有（实际上这就是 $(\ref{newton's-law})$ 的另一种形式）：
+$$
+\begin{equation*}
+	\frac{dp}{dt} = -\frac{\partial V}{\partial x}
+\end{equation*} \tag{1.21}
+$$
+接下来我们将证明这个公式在量子力学中对于期望值依然成立。左侧可以写为：
+$$
+\frac{d\langle p\rangle}{dt} = -i\hbar\frac{d}{dt}\int\Psi^*\frac{\partial \Psi}{\partial x}\,dx
+$$
+由于积分内不包含 $t$ 的积分，我们可以将 $\frac{d}{dt}$ 移动到积分号内。省略积分号和常数有：
+$$
+\begin{align*}
+	\frac{\partial}{\partial t}\left(\Psi^*\frac{\partial \Psi}{\partial x}\right)
+		&= \frac{\partial \Psi^*}{\partial t}\frac{\partial \Psi}{\partial x} + \Psi^*\frac{\partial}{\partial x}\frac{\partial \Psi}{\partial t} \\
+		&= -\frac{i}{\hbar}\left(-\frac{\hbar^2}{2m}\frac{\partial^2 \Psi^*}{\partial x^2} - V\Psi^*\right)\frac{\partial \Psi}{\partial x} + \Psi^*\frac{\partial}{\partial x}\left(-\frac{i}{\hbar}\right)\left(\frac{\hbar^2}{2m}\frac{\partial^2\Psi}{\partial x^2} + V\Psi\right) \\
+		&= -\frac{i}{\hbar}\left[-\frac{\hbar^2}{2m}\frac{\partial^2 \Psi^*}{\partial x^2}\frac{\partial \Psi}{\partial x} - V\Psi^*\frac{\partial \Psi}{\partial x} + \frac{\hbar^2}{2m}\Psi^*\frac{\partial^3 \Psi}{\partial x^3} + \frac{\partial V}{\partial x}\Psi^*\Psi + V\Psi^*\frac{\partial \Psi}{\partial x} \right] \\
+		&= \frac{i\hbar}{2m}\left(\Psi^*\frac{\partial \Psi}{\partial x^3} - \frac{\partial^2 \Psi^*}{\partial x^2}\frac{\partial \Psi}{\partial x}\right) - \frac{i}{\hbar}\Psi^*\Psi\frac{\partial V}{\partial x}
+\end{align*}
+$$
+对 $x$ 进行积分，可以得到：
+$$
+\begin{align*}
+	\frac{d\langle p \rangle}{dt}
+		&= \frac{\hbar^2}{2m}\int \left(\Psi^*\frac{\partial^3 \Psi}{\partial x^3} - \frac{\partial^2 \Psi^*}{\partial x^2}\frac{\partial \Psi}{\partial x}\right)\,dx - \int\left(\Psi^*\Psi\frac{\partial V}{\partial x}\right)\,dx \\
+		&= \frac{\hbar^2}{2m}\left[\left.\Psi^*\frac{\partial^2 \Psi}{\partial x^2}\right|_{-\infty}^\infty - \int \frac{\partial \Psi^*}{\partial x}\frac{\partial^2 \Psi}{\partial x^2}\,dx - \left.\frac{\partial^2\Psi^*}{\partial x^2}\frac{\partial \Psi}{\partial x}\right|_{-\infty}^{\infty} + \int \frac{\partial \Psi^*}{\partial x}\frac{\partial^2 \Psi}{\partial x^2}\,dx\right] - \int\Psi^*\frac{\partial V}{\partial x}\Psi\,dx \\
+		&= -\int\Psi^*\frac{\partial V}{\partial x}\Psi\,dx 
+\end{align*}
+$$
+其中我们用到了 $x \to \infty$ 时 $\Psi^*$ 与 $\frac{\partial \Psi^*}{\partial x}$ 均为零的性质。最后的结果和我们定义的算符形式一致，因此得到：
+$$
+\begin{equation*}
+	\frac{d\langle p \rangle}{dt} = \left\langle -\frac{\partial V}{\partial x} \right\rangle
+\end{equation*} \tag{1.22} \label{ehrenfest's-theorem}
+$$
+其称为 **埃伦菲斯特定理（Ehrenfest's Theorem）**。这也告诉了我们，牛顿第二定律中物理量的期望值在量子力学中依然满足同样的数学关系。
+
+
 
 ### 测不准原理
 
@@ -228,13 +273,13 @@ $$
 $$
 \begin{equation*}
 	p = \frac{h}{\lambda} = \frac{2\pi\hbar}{\lambda}
-\end{equation*} \tag{1.21}
+\end{equation*} \tag{1.23}
 $$
 因此前面描述的波长和动量相关；测出的波长越准确，得到的动量也就越准确。**测不准原理（The Uncertainty Principle）** 定量叙述如下：
 $$
 \begin{equation*}
 	\sigma_x\sigma_p \ge \frac{\hbar}{2}
-\end{equation*} \tag{1.22}
+\end{equation*} \tag{1.24}
 $$
 其中 $\sigma_x$ 和 $\sigma_p$ 分别是位置和动量分布的标准差。我们会在后续章节证明这个公式。
 
@@ -280,7 +325,7 @@ $$
 	\varphi(t) = e^{-iEt/\hbar}
 \end{equation*} \tag{2.6}
 $$
-这里我们省略了常数，这个常数会在 $\psi(x)$ 中补偿回来。第二个方程称为 **时间无关的薛定谔方程（Time-Independent Schrodinger Equation）**，我们需要其给出具体的势能函数 $V(x)$ 才能进一步求解。本章接下来的内容便是如何解不同设置下的时间无关的薛定谔方程。
+这里我们省略了常数，这个常数会在 $\psi(x)$ 中补偿回来。$(\ref{time-independent-schrodinger-equation})$ 称为 **时间无关的薛定谔方程（Time-Independent Schrodinger Equation）**，我们需要其给出具体的势能函数 $V(x)$ 才能进一步求解。本章接下来的内容便是如何解不同设置下的时间无关的薛定谔方程。
 
 首先，让我们回顾一下分离变量法。为什么我们用这种方式来解薛定谔方程？答案可以是：这是我们最简单的方法；不过更重要的是，通过这种方式得到的解有更好的性质。下面来分析一二：
 
@@ -302,7 +347,7 @@ $$
   $$
   \hat{H} = -\frac{\hbar^2}{2m}\frac{\partial^2}{\partial x^2} + V(x)
   $$
-  因此，我们得到了时间无关的薛定谔方程的最简形式：
+  因此，我们得到了时间无关的薛定谔方程的最简形式（熟悉线性代数的同学可能发现下面这种形式和特征值、特征矢量的相似性；的确如此，我们会在下一章着重介绍量子力学和线性代数的联系）：
   $$
   \begin{equation*}
   	\hat{H}\psi = E\psi
@@ -363,6 +408,26 @@ $$
 $$
 由于 $c_n$ 是与时间无关的常数，因此每一种能量的概率，以及总能量的期望值和时间都无关。这是 **能量守恒（Energy Conservation）** 在量子力学中的体现。
 
+最后，我们值得讨论一下 $E$ 和 $V$ 的大小关系。回忆时间无关的薛定谔方程 $(\ref{time-independent-schrodinger-equation})$ 可以等价写为：
+$$
+\begin{equation*}
+	\frac{d^2\psi}{dx^2} = \frac{2m}{\hbar^2}[V(x) - E]\psi
+\end{equation*} \tag{2.19}
+$$
+我们断言 $E \ge V_\text{min}$，即系统的 $E$ 一定大于 $V$ 的最小值。假设 $V(x) > E$ 始终成立，对上式两边同时乘一个 $\psi^*$ 后进行积分：
+$$
+\begin{align*}
+	\int \psi^*\frac{d^2\psi}{dx^2}\,dx
+		&= \left.\psi^*\frac{\partial \psi}{\partial x}\right|_{-\infty}^\infty - \int\frac{\partial \psi^*}{\partial x}\frac{\partial \psi}{\partial x}\,dx \\
+		&= -\int \left|-\frac{\partial \psi}{\partial x}\right|^2\,dx \\
+		&< 0 \\
+	\int \psi^*\frac{2m}{\hbar^2}[V(x) - E]\psi
+		&= \frac{2m}{\hbar}\int [V(x) - E]|\psi|^2\,dx \\
+		&> 0
+\end{align*}
+$$
+发现两边不可能相等。因此一定存在 $x$ 使得 $V(x) \le E$。
+
 ### 无限方井
 
 让我们考虑一种势能分布：
@@ -372,7 +437,7 @@ $$
 		0, & 0 \le x \le a \\
 		\infty & x < 0\ \text{或}\ x > a
 	\end{cases}
-\end{equation*} \tag{2.19}
+\end{equation*} \tag{2.20}
 $$
 这种情况下，除了 $x = 0$ 或 $x = a$ 两个地方，其余位置的粒子受力均为零，而两个边界处受力为无穷大。如果类比成经典力学中的情形，就是空间中完全光滑轨道上有两个完全弹性的障碍物，物体只会在两个障碍物之间运动。
 
@@ -380,13 +445,13 @@ $$
 $$
 \begin{equation*}
 	-\frac{\hbar^2}{2m}\frac{d^2\psi}{dx^2} = E\psi
-\end{equation*} \tag{2.20} \label{schrodinger-equation-of-infinite-square-well}
+\end{equation*} \tag{2.21} \label{schrodinger-equation-of-infinite-square-well}
 $$
 这是一个典型的二阶常微分方程，其通解是：
 $$
 \begin{equation*}
 	\psi(x) = A\sin kx + B\cos kx \qquad k = \frac{\sqrt{2mE}}{\hbar}
-\end{equation*} \tag{2.21}
+\end{equation*} \tag{2.22}
 $$
 为了确定上面的常数 $A, B$，我们需要给出一系列 **边界条件（Boundary Conditions）**。我们通常假定 $\psi$ 和 $d\psi/dx$ 是连续的，此处由于 $V$ 可能是 $\infty$，所以只有第一个条件是成立的。此时有：
 $$
@@ -396,13 +461,13 @@ $$
 $$
 \begin{equation*}
 	k_n = \frac{n\pi}{a} \quad n = 1, 2, 3, ...
-\end{equation*} \tag{2.22}
+\end{equation*} \tag{2.23}
 $$
 这样我们也能确定总能量：
 $$
 \begin{equation*}
 	E_n = \frac{\hbar^2k_n^2}{2m} = \frac{n^2\pi^2\hbar^2}{2ma^2}
-\end{equation*} \tag{2.23}
+\end{equation*} \tag{2.24}
 $$
 为了得到 $A$ 的确定值，我们需要对 $\psi$ 进行归一化：
 $$
@@ -412,7 +477,7 @@ $$
 $$
 \begin{equation*}
 	\psi_n(x) = \sqrt{\frac{2}{a}}\sin\left(\frac{n\pi x}{a}\right)
-\end{equation*}
+\end{equation*} \tag{2.25} \label{wave-function-of-infinite-square-well}
 $$
 下面是在 $n = 1, 2, 3$ 时的图像：
 
@@ -427,7 +492,7 @@ $$
 - 它们之间相互 **正交（Orthogonal）**，定义为：
   $$
   \begin{equation*}
-  	\int\psi_m(x)^*\psi_n(x)\,dx = 0 \qquad (m \ne n)
+  	\int\psi_m^*(x)\psi_n(x)\,dx = 0 \qquad (m \ne n)
   \end{equation*}
   $$
   证明如下：
@@ -441,9 +506,11 @@ $$
   	&= 0
   \end{align*}
   $$
-  当 $m = n$ 时，上面的积分会得到 $1$。因此我们可以将其记为：
+  当 $m = n$ 时，根据波函数的归一性上面的积分会得到 $1$。因此我们可以将一般情形的积分结果记为：
   $$
-  \int \psi_m(x)^*\psi_n(x)\,dx = \delta_{mn}
+  \begin{equation*}
+  	\int \psi_m^*(x)\psi_n(x)\,dx = \delta_{mn}
+  \end{equation*} \tag{2.26} \label{orthogonality-of-wave-functions}
   $$
   此处记号 $\delta_{mn}$ 是 **克罗内克函数**，定义为：
   $$
@@ -453,18 +520,20 @@ $$
   		0 & m \ne n \\
   		1 & m = n
   	\end{cases}
-  \end{equation*}
+  \end{equation*} \tag{2.27} \label{kronecker-delta}
   $$
-
+  
 - 它们是 **完备的（Complete）**，即任何函数 $f(x)$ 都可以表示为它们的线性和（我们不在本篇笔记中证明这一点）：
   $$
   \begin{equation*}
   	f(x) = \sum_{n=1}^\infty c_n\psi_n(x) = \sqrt{\frac{2}{a}}\sum_{n=1}^\infty c_n\sin\left(\frac{n\pi x}{a}\right)
-  \end{equation*}
+  \end{equation*} \tag{2.28}
   $$
-  这种表示方式被称为 $f(x)$ 的 **傅立叶级数（Fourier Series）**。这个性质也被称为 **狄利克雷定理（Dirichlet's Theorem）**。为了确定这里的常数 $c_n$，我们需要用到一个小技巧：
+  这种表示方式被称为 $f(x)$ 的 **傅立叶级数（Fourier Series）**。这个性质也被称为 **狄利克雷定理（Dirichlet's Theorem）**。为了确定这里的常数 $c_n$，我们需要用到一个小技巧（也称为 **傅里叶技巧（Fourier's Trick）**）：
   $$
-  \int\psi_m(x)^*f(x)\,dx = \sum_{n=1}^\infty c_n\int\psi_m(x)^*\psi_n(x)\,dx = \sum_{n=1}^\infty c_n\delta_{mn} = c_m
+  \begin{equation*}
+  	\int\psi_m^*(x)f(x)\,dx = \sum_{n=1}^\infty c_n\int\psi_m^*(x)\psi_n(x)\,dx = \sum_{n=1}^\infty c_n\delta_{mn} = c_m
+  \end{equation*} \tag{2.29} \label{fourier's-trick}
   $$
 
 上面这四个性质不仅对无限方井，对大多数的势能分布都满足。尤其是正交性和完备性非常有用，我们多数情况下会假设它们成立。
@@ -473,19 +542,19 @@ $$
 $$
 \begin{equation*}
 	\Psi_n(x, t) = \sqrt{\frac{2}{a}}\sin\left(\frac{n\pi x}{a}\right)\exp\left(-i\frac{n^2\pi^2\hbar}{2ma^2}t\right)
-\end{equation*}
+\end{equation*} \tag{2.30}
 $$
 所有状态叠加起来的通解（时间相关）则是：
 $$
 \begin{equation*}
 	\Psi(x, t) = \sum_{n=1}^\infty c_n\sqrt{\frac{2}{a}}\sin\left(\frac{n\pi x}{a}\right)\exp\left(-i\frac{n^2\pi^2\hbar}{2ma^2}t\right)
-\end{equation*}
+\end{equation*} \tag{2.31}
 $$
 为了得到 $c_n$，我们可以令 $t = 0$，然后根据正交性得到：
 $$
 \begin{equation*}
 	c_n = \sqrt{\frac{2}{a}}\int_0^a\sin\left(\frac{n\pi x}{a}\right)\Psi(x, 0)\,dx
-\end{equation*}
+\end{equation*} \tag{2.32}
 $$
 这里的 $c_n$ 满足模平方之和为 $1$，我们可以通过归一化条件得到该结论：
 $$
@@ -495,7 +564,7 @@ $$
 	&= \sum_{m=1}^\infty \sum_{n=1}^\infty c_m^*c_n\int\psi_m(x)^*\psi_n(x)\,dx \\
 	&= \sum_{m=1}^\infty \sum_{n=1}^\infty c_m^*c_n\delta_{mn} \\
 	&= \sum_{n=1}^\infty |c_n|^2
-\end{align*}
+\end{align*} \tag{2.33}
 $$
 同时能量的期望是：
 $$
@@ -505,12 +574,152 @@ $$
 	&= \int \left(\sum c_m\psi_m\right)^*\hat{H}\left(\sum c_n\psi_n\right)\,dx \\
 	&= \sum\sum c_m^*c_nE_n \int \psi_m^*\psi_n\,dx \\
 	&= \sum|c_n|^2E_n
-\end{align*}
+\end{align*} \tag{2.34}
+$$
+
+### 自由粒子
+
+这一节讨论没有任何约束的环境，即：
+$$
+V(x) = 0 \tag{2.35}
+$$
+此时薛定谔方程变为：
+$$
+-\frac{\hbar^2}{2m}\frac{d^2\psi}{dx^2} = E\psi \implies \frac{d^2\psi}{dx^2} = -k^2\psi \qquad \text{其中 $k = \frac{\sqrt{2mE}}{\hbar}$} \tag{2.36}
+$$
+其通解为（这里我们采用指数形式，其原因很快就会提到）：
+$$
+\begin{equation*}
+	\psi(x) = Ae^{ikx} + Be^{-ikx}
+\end{equation*} \tag{2.37}
+$$
+至此，一切和无限方井的情况相同，但现在我们没有任何边界条件，所以不需要确定 $A$ 和 $B$ 的值。时间相关的波函数解即是：
+$$
+\begin{equation*}
+	\Psi(x, t) = A^{ik\left(x - \frac{\hbar k}{2m}t\right)} + Be^{-ik\left(x + \frac{\hbar k}{2m}t\right)}
+\end{equation*} \tag{2.38}
+$$
+敏锐的同学可能已经发现，这分明是 **波方程（Wave Equation）** 的通解：
+$$
+\begin{equation*}
+	\frac{\partial^2 \Psi}{\partial t^2} = \frac{\hbar^2 k^2}{4m^2}\frac{\partial^2 \Psi}{\partial x^2}
+\end{equation*} \tag{2.39} \label{wave-equation}
+$$
+再对波函数进行简单分析，可以看出第一项是一个从左向右传播的波，第二项是从右向左传播的波，它们速度相同方向相反（大小即是 $\frac{\hbar k}{2m}$）。因此我们可以根据 $k$ 的值确定波函数（这里实际上就是通过让 $k$ 可以取负值，从而让两项合并到一项）：
+$$
+\begin{equation*}
+	\Psi_k(x, t) = Ae^{i\left(kx - \frac{\hbar k^2}{2m}t\right)}
+\end{equation*} \tag{2.40}
+$$
+这里的 $k$ 是任何满足下列的常数：
+$$
+\begin{equation*}
+	k = \pm \frac{\sqrt{2mE}}{\hbar}
+\end{equation*} \tag{2.41}
+$$
+根据德布罗意公式 $p = \frac{2\pi\hbar}{\lambda}$，我们可以计算出波的动量：
+$$
+\begin{equation*}
+	p = \hbar k
+\end{equation*} \tag{2.42}
+$$
+此前我们已经算出波的传递速度：
+$$
+\begin{equation*}
+	v_\text{quantum} = \frac{\hbar |k|}{2m} = \sqrt{\frac{E}{2m}}
+\end{equation*} \tag{2.43}
+$$
+我们注意到它和经典物理中速度的区别（通过动能公式 $E = \frac{1}{2}mv^2$ 得到）：
+$$
+\begin{equation*}
+	v_\text{classical} = \sqrt{\frac{2E}{m}} = 2v_\text{quantum}
+\end{equation*} \tag{2.44}
+$$
+这个差异究竟是为什么？此外，如果我们尝试对自由粒子的波函数归一化，会发现无法完成：
+$$
+\begin{equation*}
+	\int_{-\infty}^\infty \Psi_k^*\Psi_k\,dx = |A|^2\int_{-\infty}^\infty\,dx = +\infty
+\end{equation*} \tag{2.45}
+$$
+对此的解释是，$\Psi_k$ 无法代表自由粒子的一个合理状态：这和无限方井是不同的。我们需要将所有 $k$ 的情形都考虑在内才能得到合理的状态。由于 $k$ 不是离散的，我们需要求积分而非求和：
+$$
+\begin{equation*}
+	\Psi(x, t) = \frac{1}{\sqrt{2\pi}}\int_{-\infty}^{\infty}\phi(k)e^{i(kx - \frac{\hbar k^2}{2m}t)}\,dk
+\end{equation*} \tag{2.46} \label{wave-function-of-free-particle}
+$$
+上式中凭空出现的 $\frac{1}{\sqrt{2\pi}}\phi(k)$ 是用来对这个积分归一化的参数。为了算出这个 $\phi(k)$，我们只需要尝试将 $\Psi(x, 0)$ 归一化。根据 **普朗歇尔定理（Plancherel's Theorem）**，有：
+$$
+\begin{equation*}
+	f(x) = \frac{1}{\sqrt{2\pi}}\int_{-\infty}^\infty F(k)e^{ikx}\,dk \Longleftrightarrow F(k) = \frac{1}{\sqrt{2\pi}}\int_{-\infty}^\infty f(x)e^{-ikx}\,dx
+\end{equation*} \tag{2.47} \label{plancherel's-theorem}
+$$
+这里 $F(k)$ 是 $f(x)$ 的 **傅立叶变换（Fourier Transform）**，$f(x)$ 是 $F(k)$ 的 **逆傅立叶变换（Inverse Fourier Tranform）**。这样我们就得到了 $\phi(k)$ 的公式：
+$$
+\begin{equation*}
+	\phi(k) = \frac{1}{\sqrt{2\pi}}\int_{-\infty}^\infty \Psi(x, 0)e^{-ikx}\,dx
+\end{equation*} \tag{2.48}
+$$
+
+现在让我们尝试解释此前速度的悖论：为什么 $\Psi_k$ 传播的速度和波不同呢？实际上，$\Psi_k$ 本身就是一个“捏造”的状态，我们已经提到过它并不构成自由粒子系统中的合法状态，因此它的速度并不重要。现实中，一些波的轮廓会以 **波包（Wave Packet）** 的形式出现，它也像波一样传播，其速度被称为 **群速度（Group Velocity）**；而 $\Psi_k$ 本身，也就是组成波包的“小波”的速度称为 **相速度（Phase Velocity）**。下面这张图形象地展示了两者的构成：
+
+<img src="graphs/qm1_2-5.png" alt="Wave packet" style="zoom:67%;" />
+
+下面我们来证明，群速度正是之前通过动能公式计算出的，两倍于组速度的结果。我们首先将自由粒子的波函数通解写成一般的形式：
+$$
+\begin{equation*}
+	\Psi(x, t) = \frac{1}{2\pi}\int_{-\infty}^\infty \phi(k)e^{i(kx - \omega t)}
+\end{equation*} \tag{2.49}
+$$
+其中的 $\omega$ 代表波的频率，和 $k$ 的关系（称为 **色散关系（Dispersion Relation）**）是：
+$$
+\begin{equation*}
+	\omega = \frac{\hbar k^2}{2m}
+\end{equation*} \tag{2.50}
+$$
+不过下面的推导和这个特定的色散关系无关；我们的逻辑适用于所有的波包。现在假设 $\phi(k)$ 在 $k_0$ 处达到峰值，从上图中不难发现积分在除了 $k_0$ 附近的地方都可以被忽略。同时我们将 $\omega$ 写成泰勒展开的形式（并忽略第三项及以后的无穷小量）：
+$$
+\begin{equation*}
+	\omega(k) = \omega_0 + \omega_0'(k - k_0)
+\end{equation*} \tag{2.51}
+$$
+其中 $\omega_0 = \omega(k_0)$。最后让我们对原积分进行换元：$s = k - k_0$（这样我们就可以在 $k_0$ 周围进行积分了）：
+$$
+\begin{align*}
+	\Psi(x, t) &\approx \frac{1}{\sqrt{2\pi}}\int_{-\infty}^\infty \phi(s + k_0)e^{i[(s + k_0)x - (\omega_0 + \omega_0's)t]}\,ds \\
+	&= \frac{1}{\sqrt{2\pi}}e^{i(k_0x - \omega_0t)}\int_{-\infty}^\infty \phi(s + k_0)e^{is(x - \omega_0't)}\,ds
+\end{align*} \tag{2.52}
+$$
+可以看出我们从积分中提出了一个波，这就是波包中小波的近似形式，其速度是：
+$$
+\begin{equation*}
+	v_p = \frac{\omega}{k}
+\end{equation*} \tag{2.53}
+$$
+相应地，波包整体的传递性质由积分内的关于 $x - \omega_0't$ 的函数描述，因此组速度是：
+$$
+\begin{equation*}
+	v_g = \frac{d\omega}{dk}
+\end{equation*} \tag{2.54}
+$$
+对于自由粒子，其相速度和组速度分别是：
+$$
+\begin{align*}
+	v_p = \frac{\omega}{k} = \frac{\hbar k}{2m} \qquad 
+	v_g = \frac{d\omega}{dk} = \frac{\hbar k}{m}
+\end{align*} \tag{2.55}
+$$
+显然有：
+$$
+\begin{equation*}
+	v_g = 2v_p
+\end{equation*} \tag{2.56}
 $$
 
 ### 有限方井
 
-一个类似无限方井的设定是 **有限方井（Finite Square Well）**，其势能分布如下：
+#### $E < 0$  的情况
+
+ 一个类似无限方井的设定是 **有限方井（Finite Square Well）**，其势能分布如下：
 $$
 \begin{align*}
 	V(x) = 
@@ -518,15 +727,19 @@ $$
 		-V_0 & -a \le x \le a \\
 		0 & |x| > a
 	\end{cases}
-\end{align*}
+\end{align*} \tag{2.57}
 $$
-此处 $V_0$ 是某个常数。针对 $E < 0$ 或 $E > 0$，我们可以将问题分为 **约束状态（Bound State）**和 **分散状态（Scattering State）**。我们先研究前一种情形。当 $x < -a$ 时，$V(x) = 0$，此时有：
+此处 $V_0$ 是某个常数。对于 $E < 0$ 或 $E > 0$，我们发现结果有显著的区别。我们先研究前一种情形。当 $x < -a$ 时，$V(x) = 0$，此时有：
 $$
--\frac{\hbar^2}{2m}\frac{d^2\psi}{dx^2} = E\psi \implies \frac{d^2\psi}{dx^2} = \kappa^2\psi \quad \text{其中 $\kappa = \frac{\sqrt{-2mE}}{\hbar}$}
+\begin{equation*}
+	-\frac{\hbar^2}{2m}\frac{d^2\psi}{dx^2} = E\psi \implies \frac{d^2\psi}{dx^2} = \kappa^2\psi \quad \text{其中 $\kappa = \frac{\sqrt{-2mE}}{\hbar}$}
+\end{equation*} \tag{2.58}
 $$
 它的通解是：
 $$
-\psi(x) = Ae^{-\kappa x} + Be^{\kappa x}
+\begin{equation*}
+	\psi(x) = Ae^{-\kappa x} + Be^{\kappa x}
+\end{equation*} \tag{2.59}
 $$
 由于第一项会在 $x \to \infty$ 时无意义，得到 $A = 0$。所以当 $x < -a$ 时有：
 $$
@@ -538,134 +751,186 @@ $$
 $$
 在 $|x| \le a$ 时，$V(x) = -V_0$，此时有：
 $$
--\frac{\hbar^2}{2m}\frac{d^2\psi}{dx^2} = (V_0 + E)\psi \implies \frac{d^2\psi}{dx^2} = -l^2\psi \quad \text{其中 $l = \frac{\sqrt{2m(E + V_0)}}{\hbar}$}
+\begin{equation*}
+	-\frac{\hbar^2}{2m}\frac{d^2\psi}{dx^2} = (V_0 + E)\psi \implies \frac{d^2\psi}{dx^2} = -l^2\psi \quad \text{其中 $l = \frac{\sqrt{2m(E + V_0)}}{\hbar}$}
+\end{equation*} \tag{2.60}
 $$
 它的通解是：
 $$
-\psi(x) = D\sin(lx) + E\cos(lx)
+\begin{equation*}
+	\psi(x) = D\sin(lx) + F\cos(lx)
+\end{equation*} \tag{2.61}
 $$
 考虑 $V$ 的对称性，为了让 $\psi$ 和 $\frac{d\psi}{dx}$ 在 $\pm a$ 处连续，我们最终得到的应该是类似于下面的结果（注意 $x$ 的范围和前面使用的不太一样）：
 $$
 \psi(x) = 
 \begin{cases}
 	Ce^{-\kappa x} & x > a \\
-	E\cos(lx) & 0 < x < a \\
+	F\cos(lx) & 0 < x < a \\
 	\psi(-x) & x < 0
-\end{cases}
+\end{cases} \tag{2.62} \label{2.62}
 $$
 其中第二项取余弦而非正弦是因为它在 $x = 0$ 处的梯度是连续的。将边界条件代入，有：
 $$
 \begin{align*}
 \begin{cases}
-	Ce^{-\kappa a} = E\cos(la)  \\
-	-\kappa Ce^{-\kappa a} = -lE\sin(la)
+	Ce^{-\kappa a} = F\cos(la)  \\
+	-\kappa Ce^{-\kappa a} = -lF\sin(la)
 \end{cases}
 \implies
-\kappa = l\tan{la}
-\end{align*}
+\kappa = l\tan(la)
+\end{align*} \tag{2.63}
 $$
 回忆 $l$ 是一个和 $E$ 相关的变量，因此这个公式给出了所有可能的 $E$。为了得到更好的形式，记 $z = la$，$z_0 = \frac{a}{\hbar}\sqrt{2mV_0}$。由我们对 $\kappa$ 和 $l$ 的定义，有 $\kappa^2 + l^2 = \frac{2mV_0}{\hbar^2}$，也即 $\kappa^2 + l^2 = (\frac{z_0}{a})^2$，将 $l = \frac{z}{a}$ 代入后得到：
 $$
-\tan{z} = \sqrt{\left(\frac{z_0}{z}\right)^2 - 1}
+\begin{equation*}
+	\tan{z} = \sqrt{\left(\frac{z_0}{z}\right)^2 - 1}
+\end{equation*} \tag{2.64} \label{2.64}
 $$
 再次回顾上式中变量的含义：$z_0$ 是和问题设置有关的常量，$z$ 是和 $E$ 相关的量。下面是当 $z_0 = 8$ 时的示意图：
 
 <img src="graphs/qm1_2-2.png" alt="qm1_2-2" style="zoom:80%;" />
 
-可以看到，只有 $\tan{z} = \sqrt{(z_0/z)^2-1}$ 的地方，$z$ 对应的能量才是允许取的值。让我们针对 $z_0$ 的两种极端情形讨论有限方井的性质：
+可以看到，只有 $\tan{z} = \sqrt{(z_0/z)^2-1}$ 的地方，$z$ 对应的能量才是允许取的值（恕我们无法写出具体的解析解）。让我们针对 $z_0$ 的两种极端情形讨论有限方井的性质：
 
 - 深且宽的方井：当 $z_0$ 很大时，上图中的 $\sqrt{(z_0/z)^2-1}$ 图像会向上移动到较高的地方，此时它与 $z$ 轴的交点也会大幅向右移动。观察 $\tan{z}$ 的图像，可以发现它和 $\sqrt{(z_0/z)^2 - 1}$ 的交点会在大约 $z_n = n\pi/2$ 的位置，此时对应的能量是：
   $$
   \begin{equation*}
   	E_n + V_0 \approx \frac{n^2\pi^2\hbar^2}{2m(2a)^2} \quad \text{其中 $n$ 是奇数}
-  \end{equation*}
+  \end{equation*} \tag{2.65} \label{2.65}
   $$
   等式右侧这个形式我们应该比较熟悉：它完美对应了宽度为 $2a$ 的无限方井中允许取的能量里一半的情形。这也符合我们的预期：当方井深度无限加大时（$V_0 \to \infty$），它就类似于一个无限方井。
 
-- 浅且窄的方井：当 $z_0$ 变小时，能取得的状态会越来越少；当 $z_0 < \frac{\pi}{2}$ 时只有一个。有趣的事，无论 $z_0$ 多么小，始终至少有一个合法的状态。
+- 浅且窄的方井：当 $z_0$ 变小时，能取得的状态会越来越少；当 $z_0 < \frac{\pi}{2}$ 时只有一个。有趣的是，无论 $z_0$ 多么小，始终至少有一个合法的状态。
 
-现在研究 $E > 0$，即分散状态下的方井。此时对于 $x < -a$ 有：
+接下来，我们尝试将波函数 $(\ref{2.62})$ 归一化，即：
+$$
+\begin{align*}
+	\int |\psi|^2\,dx 
+		&= 2\left(\int_0^a|\psi|^2\,dx + \int_a^\infty |\psi|\,dx\right) \\
+		&= 2\left(|F|^2\int_0^a \cos^2(lx)\,dx + |C|^2\int_a^\infty e^{-2\kappa x}\,dx \right)  \\
+		&= 2\left[|F|^2\left(\left.\frac{x}{2} + \frac{\sin(2lx)}{4l}\right)\right|_0^a + |C|^2\left.\frac{e^{-2\kappa x}}{-2\kappa}\right|_a^\infty\right] \\
+		&= 2|F|^2\left(\frac{a}{2} + \frac{\sin(2la)}{4l}\right) + 2|C|^2\frac{e^{-2\kappa a}}{2\kappa}
+\end{align*}
+$$
+根据波函数在 $x = a$ 点的连续性，有：
+$$
+Ce^{-\kappa a} = F\cos(la) \implies C = F e^{\kappa a}\cos(la)
+$$
+代入之前没有完成的归一化算式：
+$$
+\begin{align*}
+	\int |\psi|^2\,dx
+		&= 2|F|^2\left(\frac{a}{2} + \frac{\sin(2la)}{4l}\right) + 2|F|^2e^{2\kappa a}\cos^2(la)\frac{e^{-2\kappa a}}{2\kappa} \\
+		&= |F|^2\left(a + \frac{\sin(2la)}{2l} + \frac{\cos^2(la)}{\kappa}\right) \\
+		&= |F|^2\left(a + \frac{2\sin(la)\cos(la)}{2l} + \frac{\cos^2(la)}{l\tan(la)}\right) \\
+		&= |F|^2\left(a + \frac{\sin^2(la) + \cos^2(la)}{l\tan(la)}\right) \\
+		&= |F|^2\left(a + \frac{1}{\kappa}\right) \\
+		&= 1
+\end{align*}
+$$
+因此我们得到：
+$$
+\begin{align*}
+	F = \frac{1}{\sqrt{a + \frac{1}{\kappa}}} \qquad C = \frac{e^{\kappa a}\cos(la)}{\sqrt{a + \frac{1}{\kappa}}}
+\end{align*} \tag{2.66}
+$$
+因此，有限方井的单个解便是：
 $$
 \begin{equation*}
-	\psi(x) = Ae^{ikx} + B^{-ikx} \qquad \text{其中 $k = \frac{\sqrt{2mE}}{\hbar}$}
-\end{equation*}
+	\Psi(x, t) = \frac{1}{\sqrt{a + \frac{1}{\kappa}}}e^{-iEt}
+	\begin{cases}
+		e^{\kappa(a - x)}\cos(la) & |x| > a \\
+		\cos(lx) & |x| < a
+	\end{cases}
+\end{equation*} \tag{2.67} \label{wave-function-of-finite-square-well}
+$$
+这里的 $\kappa$ 和 $l$ 都通过该状态下的能量决定：
+$$
+\begin{equation*}
+	\kappa = -\frac{\sqrt{-2mE}}{\hbar} \qquad l = \frac{\sqrt{2m(E + V_0)}}{\hbar}
+\end{equation*} \tag{2.68}
+$$
+而有效的状态可以从之前我们设的 $z$ 得到（回忆 $z$ 是方程 $(\ref{2.64})$ 的解）：
+$$
+\begin{equation*}
+	E = \frac{z^2\hbar^2}{2ma^2} - V_0
+\end{equation*} \tag{2.69}
+$$
+此前已经讨论过 $z_0$ 很大时它的近似结果 $(\ref{2.65})$。有限方井的通解需要将所有可能的状态加起来，这里不赘述了。
+
+#### $E > 0$ 的情况
+
+现在研究 $E > 0$ 的有限方井。此时对于 $x < -a$ 时，情况和自由粒子是完全一致的：
+$$
+\begin{equation*}
+	\psi(x) = Ae^{ikx} + Be^{-ikx} \qquad \text{其中 $k = \frac{\sqrt{2mE}}{\hbar}$}
+\end{equation*} \tag{2.70}
 $$
 
+对于 $-a < x < a$ 则有（下面的 $l$ 和我们此前的定义一致）：
+$$
+\begin{equation*}
+	\psi(x) = C\sin(lx) + D\cos(lx)
+\end{equation*} \tag{2.71}
+$$
+而 $x > a$ 时有和 $x < - a$ 类似的形式（下面的 $k$ 定义相同）：
+$$
+\psi(x) = Fe^{ikx} + Ge^{-ikx} \tag{2.72}
+$$
+我们可以仿照自由粒子的处理，将其写成波方程的解：
+$$
+\begin{equation*}
+	\Psi(x, t) = Ae^{ik(x - \frac{\hbar k}{2m}t)} + Be^{-ik(x + \frac{\hbar k}{2m}t)}
+\end{equation*} \tag{2.73}
+$$
+它可以视为两个相同频率的波的线性叠加，其中 $A$ 系数项描述了一个向 $\unit{x}$ 方向移动的 **入射波（Incident Wave）**，而 $B$ 系数项描述的是一个向 $-\unit{x}$ 方向移动的 **反射波（Reflected Wave）**。$A$ 和 $B$ 分别是它们的振幅，波的两个速度和自由粒子的情形一致。同样地，$x > a$ 时我们有：
+$$
+\begin{equation*}
+	\Psi(x, t) = Fe^{ik(x - \frac{\hbar k}{2m}t)} + Ge^{-ik(x + \frac{\hbar k}{2m}t)}
+\end{equation*} \tag{2.74}
+$$
+这里我们进行一个微妙的处理，让 $G = 0$，此时 $y$ 轴右侧仅有一个 $\unit{x}$ 方向的 **透射波（Transmitted Wave）**，振幅为 $F$。可以看到我们将有限方井在 $E > 0$ 时处理为波在介质间的传播现象：一束波从 $y$ 轴左侧向右方前进，然后一部分在方井边缘处反射回来，一部分透射过去。下面让我们根据边界条件，计算 $A$、$B$、$C$、$F$ 之间的关系。
 
-### 自由粒子
+首先波函数在 $x = \pm a$ 处连续：
+$$
+\begin{cases}
+	Ae^{-ika} + Be^{ika} &= -C\sin(la) + D\cos(la) \\
+	Fe^{ika} &= C\sin(la) + D\cos(la)
+\end{cases}
+$$
+然后波函数的梯度 $\frac{d\psi}{dx}$ 也应该在 $\pm a$ 处连续：
+$$
+\begin{cases}
+	ik(Ae^{-ika} - Be^{ika}) &= l[C\cos(la) + D\sin(la)] \\
+	ikFe^{ika} &= l[C\cos(la) - D\sin(la)]
+\end{cases}
+$$
+我们可以将 $A$、$B$、$C$、$D$ 都表示成 $F$ 的形式，其中：
+$$
+\begin{align*}
+	A &= \left[\cos(2la) - i\frac{k^2 + l^2}{2kl}\sin(2la)\right]e^{2ika}F \\
+	B &= i\frac{\sin(2la)}{2kl}(l^2 - k^2)F
+\end{align*} \tag{2.75}
+$$
+我们可以由此计算出 **反射系数（Reflection Coefficient）** 和 **透射系数（Transmission Coefficient）**：
+$$
+\begin{align*}
+	T^{-1} &= \frac{|A|^2}{|F|^2} = 1 + \frac{V_0}{4E(E + V_0)}\sin^2\left[\frac{2a}{\hbar}\sqrt{2m(E + V_0)}\right]  \\
+	R &= \frac{|B|^2}{|A|^2} = 1 - T
+\end{align*} \tag{2.76}
+$$
+上面我们将所有 $l$、$k$ 都替换成了原始的变量 $E$、$V_0$ 等。虽然结果依然很复杂，我们可以发现由于正弦函数的周期性，透射系数 $T$ 会在特定时候取最大值 $1$，此时即：
+$$
+\begin{equation*}
+	\frac{2a}{\hbar}\sqrt{2m(E + V_0)} = n\pi \implies E_n = \frac{n^2\pi^2\hbar^2}{2m(2a)^2} - V_0
+\end{equation*} \tag{2.77}
+$$
+这里的能量再次和无线方井中的一致（不过需要注意，$E_n$ 仅仅是使得波完美透射的能量，事实上任何 $E > 0$ 都是合法的）。下面是一个透射系数和能量 $E$ 的关系图：
 
-这一节讨论没有任何约束的环境，即：
-$$
-V(x) = 0
-$$
-此时薛定谔方程变为：
-$$
--\frac{\hbar^2}{2m}\frac{d^2\psi}{dx^2} = E\psi \implies \frac{d^2\psi}{dx^2} = -k^2\psi \qquad \text{其中 $k = \frac{\sqrt{2mE}}{\hbar}$}
-$$
-其通解为（值得一提的是，我们使用了指数形式而非三角函数形式，其原因很快就会说明）：
-$$
-\begin{equation*}
-	\psi(x) = Ae^{ikx} + Be^{-ikx}
-\end{equation*}
-$$
-至此，一切和无限方井的情况相同，但现在我们没有任何边界条件，所以不需要确定 $A$ 和 $B$ 的值。时间相关的波函数解即是：
-$$
-\begin{equation*}
-	\Psi(x, t) = A^{ik\left(x - \frac{\hbar k}{2m}t\right)} + Be^{-ik\left(x + \frac{\hbar k}{2m}\right)}
-\end{equation*}
-$$
-对这个方程进行简单分析，可以看出第一项是一个从左向右传播的波，第二项是从右向左传播的波，它们速度相同方向相反（大小和 $k$ 有关）。因此我们可以根据 $k$ 的值确定波函数：
-$$
-\begin{equation*}
-	\Psi_k(x, t) = Ae^{i\left(kx - \frac{\hbar k^2}{2m}t\right)}
-\end{equation*}
-$$
-这里的 $k$ 是任何满足下列的常数：
-$$
-\begin{equation*}
-	k = \pm \frac{\sqrt{2mE}}{\hbar}
-\end{equation*}
-$$
-根据德布罗意公式 $p = \frac{2\pi\hbar}{\lambda}$，我们可以计算出波的动量：
-$$
-\begin{equation*}
-	p = \hbar k
-\end{equation*}
-$$
-波的传递速度是（通过求波函数中 $x$ 和 $t$ 的系数比值得到）：
-$$
-\begin{equation*}
-	v_\text{quantum} = \frac{\hbar |k|}{2m} = \sqrt{\frac{E}{2m}}
-\end{equation*}
-$$
-我们注意到它和经典物理中速度的区别（通过动能公式 $E = \frac{1}{2}mv^2$ 得到）：
-$$
-\begin{equation*}
-	v_\text{classical} = \sqrt{\frac{2E}{m}} = 2v_\text{quantum}
-\end{equation*}
-$$
-这个差异究竟是为什么？此外，如果我们尝试对自由粒子的波函数归一化，会发现无法完成：
-$$
-\begin{equation*}
-	\int_{-\infty}^\infty \Psi_k\Psi_k\,dx = |A|^2\int_{-\infty}^\infty\,dx = +\infty
-\end{equation*}
-$$
-对此的解释是，$\Psi_k$ 无法代表自由粒子的一个合理状态：这和无限方井是不同的。我们需要将所有 $k$ 的情形都考虑在内才能得到合理的状态。由于 $k$ 不是离散的，我们需要求积分而非求和：
-$$
-\begin{equation*}
-	\Psi(x, t) = \frac{1}{\sqrt{2\pi}}\int_{-\infty}^{\infty}\phi(k)e^{i(kx - \frac{\hbar k^2}{2m}t)}\,dk
-\end{equation*}
-$$
-上式中凭空出现的 $\frac{1}{\sqrt{2\pi}}\phi(k)$ 是用来对这个积分归一化的参数。为了算出这个 $\phi(k)$，我们只需要尝试将 $\Psi(x, 0)$ 归一化。根据 **普朗歇尔定理（Plancherel's Theorem）**，有：
-$$
-f(x) = \frac{1}{\sqrt{2\pi}}\int_{-\infty}^\infty F(k)e^{ikx}\,dk \Longleftrightarrow F(k) = \frac{1}{\sqrt{2\pi}}\int_{-\infty}^\infty f(x)e^{-ikx}\,dx
-$$
-这里 $F(k)$ 是 $f(x)$ 的 **傅立叶变换（Fourier Transform）**，$f(x)$ 是 $F(k)$ 的 **逆傅立叶变换（Inverse Fourier Tranform）**。这样我们就得到了 $\phi(k)$ 的公式：
-$$
-\begin{equation*}
-	\phi(k) = \frac{1}{\sqrt{2\pi}}\int_{-\infty}^\infty \Psi(x, 0)e^{-ikx}\,dx
-\end{equation*}
-$$
+<img src="graphs/qm1_2-4.png" alt="Transmission coefficient and energy" style="zoom:67%;" />
+
+本章的最后，我们会再次回顾类似这样的两种不同情况，并探究其物理含义。
 
 
 
@@ -673,56 +938,80 @@ $$
 
 回忆在经典力学中，我们将满足力与位移成线性关系的运动称为简谐运动，可以用 **胡克定律（Hooke's Law）** 来描述：
 $$
-F = -kx = m\frac{d^2x}{dt}
+F = -kx = m\frac{d^2x}{dt} \tag{2.78}
 $$
 它的解是三角函数的线性组合：
 $$
-x(t) = A\sin(\omega t) + B\cos(\omega t)
+\begin{equation*}
+	x(t) = A\sin(\omega t) + B\cos(\omega t)
+\end{equation*} \tag{2.79}
 $$
-其中 $\omega$ 定义为：
+其中角频率 $\omega$ 定义为：
 $$
-\omega = \sqrt{\frac{k}{m}}
+\begin{equation*}
+	\omega = \sqrt{\frac{k}{m}}
+\end{equation*} \tag{2.80} \label{2.80}
 $$
-其势能和位移的平方成正比：
+势能和位移的平方成正比：
 $$
-V(x) = \frac{1}{2}kx^2
+V(x) = \frac{1}{2}kx^2 \tag{2.81}
 $$
 实际上，对于大多数运动，如果将其势能通过幂级数展开，在局部的一个最小值 $x = x_0$ 处有：
 $$
-V(x) = V(x_0) + V'(x_0)(x - x_0) + \frac{1}{2}V''(x_0)(x - x_0)^2 + \dots
+V(x) = V(x_0) + V'(x_0)(x - x_0) + \frac{1}{2}V''(x_0)(x - x_0)^2 + \dots \tag{2.82}
 $$
 由于势能的参照点是任选的，我们可以令 $V(x_0) = 0$。同时由于 $V'(x_0) = 0$，我们只需要考虑第三项，即：
 $$
-V(x) \approx \frac{1}{2}V''(x_0)(x - x_0)^2
+V(x) \approx \frac{1}{2}V''(x_0)(x - x_0)^2 \tag{2.83}
 $$
-此处只需设 $k = V''(x_0) \ge 0$，就可以得到一个近似的简谐振子了。这在经典力学中是非常常用的近似。量子力学中，我们也有类似的假设；当势能满足下面的等式时，其描述的就是一个简谐振子：
+此处只需设 $k = V''(x_0) \ge 0$，就可以得到一个近似的简谐振子了。这在经典力学中是非常常用的近似。量子力学中，我们也有类似的假设；当势能满足下面的等式时，其描述的就是一个简谐振子（不难发现其满足色散关系 $(\ref{2.80})$）：
 $$
-V(x) = \frac{1}{2}m\omega^2x^2
+\begin{equation*}
+	V(x) = \frac{1}{2}m\omega^2x^2
+\end{equation*} \tag{2.84}
 $$
 此时薛定谔方程变为：
 $$
--\frac{\hbar^2}{2m}\frac{d^2\psi}{dx^2} + \frac{1}{2}m\omega^2x^2\psi = E\psi
+\begin{equation*}
+	-\frac{\hbar^2}{2m}\frac{d^2\psi}{dx^2} + \frac{1}{2}m\omega^2x^2\psi = E\psi
+\end{equation*} \tag{2.85} \label{schrodinger-euqation-of-harmonic-oscillator}
 $$
 其中的势能项让这个常微分方程变成非齐次方程，因此我们需要做一次换元：
 $$
-\xi = \sqrt{\frac{m\omega}{\hbar}}x
+\xi = \sqrt{\frac{m\omega}{\hbar}}x \tag{2.86}
 $$
 这样就将原方程转化为：
 $$
-\frac{d^2\psi}{d\xi^2} = \left(\xi^2 - \frac{2E}{\hbar\omega}\right)\psi = (\xi^2 - K)\psi \qquad \text{其中 $K = \frac{2E}{\hbar\omega}$}
+\frac{d^2\psi}{d\xi^2} = \left(\xi^2 - \frac{2E}{\hbar\omega}\right)\psi = (\xi^2 - K)\psi \qquad \text{其中 $K = \frac{2E}{\hbar\omega}$} \tag{2.87}
 $$
 注意到当 $\xi$ 非常大（也即 $x$ 非常大）时，等式右侧约等于 $\xi^2\psi$，这就得到了一个近似的方程解：
 $$
-\psi(\xi) \approx h(\xi)e^{-\xi^2/2}
+\begin{equation*}
+	\psi(\xi) \approx Ae^{-\xi^2/2} + Be^{\xi^2/2}
+\end{equation*} \tag{2.88}
 $$
-注意，正常的通解应该包含一个 $e^{\xi^2/2}$ 项，不过它显然没法归一化，因此需要令其系数为零。为了求得 $h(\xi)$，让我们将 $\psi$ 的导数和二阶导数代换为 $h$ 的表达式：
+在 $\xi$ 很大时第二项显然会炸掉，因此有 $B = 0$，此外，我们希望能用一个相对简单的表达式 $h(\xi)$ 作为系数，得到一个精准的解：
+$$
+\begin{equation*}
+	\psi(\xi) = h(\xi)e^{-\xi^2/2}
+\end{equation*} \tag{2.89} \label{2.89}
+$$
+我知道这一步看起来很迷惑，但简单概括就是对于非齐次的常微分方程，我们通常可以通过一些模板得到其精确的级数解。这里我们需要找到满足方程 $\psi'' = \xi^2\psi$ 的特殊解，其一般形式就是 $(\ref{2.89})$ 这样的。为了求得 $h(\xi)$，让我们将 $\psi$ 的导数和二阶导数代换为 $h$ 的表达式：
 $$
 \frac{d\psi}{d\xi} = \left(\frac{dh}{d\xi} - \xi h\right)e^{-\xi^2/2} \\
 \frac{d^2\psi}{d\xi^2} = \left(\frac{d^2h}{d\xi^2} - 2\xi\frac{dh}{d\xi} + (\xi^2 - 1)h\right)e^{-\xi^2/2}
 $$
-我们假定 $h(\xi)$ 的形式是多项式：
+因此薛定谔方程 $(\ref{schrodinger-euqation-of-harmonic-oscillator})$ 就可以改写为：
 $$
-h(\xi) = a_0 + a_1\xi + a_2\xi^2 + \dots = \sum_{j=0}^\infty a_j\xi^j
+\begin{equation*}
+	\frac{d^2h}{d\xi^2} - 2\xi\frac{dh}{d\xi} + (K - 1)h = 0
+\end{equation*} \tag{2.90}
+$$
+可以看到我们成功将非齐次的微分方程变为齐次的了。接下来，我们假定 $h(\xi)$ 的形式是多项式：
+$$
+\begin{equation*}
+	h(\xi) = a_0 + a_1\xi + a_2\xi^2 + \dots = \sum_{j=0}^\infty a_j\xi^j 
+\end{equation*} \tag{2.91} \label{2.91}
 $$
 它的导数非常好求：
 $$
@@ -731,33 +1020,122 @@ $$
 $$
 现在将上面全部代入原方程中，得到：
 $$
-\sum_{j=0}^\infty [(j+1)(j+2)a_{j+2} - 2ja_j + (K - 1)a_j]\xi^j = 0
+\sum_{j=0}^\infty [(j+1)(j+2)a_{j+2} - 2ja_j + (K - 1)a_j]\xi^j = 0 \tag{2.92}
 $$
 为了保证对于任意 $\xi$ 都成立，级数中的系数一定是零，我们得到下面的递归关系：
 $$
-a_{j+2} = \frac{(2j + 1 - K)}{(j+1)(j+2)}a_j
+\begin{equation*}
+	a_{j+2} = \frac{(2j + 1 - K)}{(j+1)(j+2)}a_j
+\end{equation*} \tag{2.93}
 $$
-这样我们就可以通过两个常数 $a_0$ 和 $a_1$ 来推出所有其它系数。当 $j$ 很大时，上面这个关系约为：
+这样我们就可以通过两个常数 $a_0$ 和 $a_1$ 来推出所有其它系数。下面罗列了一些具体的递归关系：
 $$
-a_{j+2} \approx \frac{2}{j}a_j \implies a_j \approx \frac{C}{(j/2)!}
+\begin{align*}
+	a_2 &= \frac{1 - K}{2}a_0 & a_4 &= \frac{5 - K}{12}a_2 = \frac{(5 - K)(1 - K)}{24}a_0 & \dots \\
+	a_3 &= \frac{3 - K}{6}a_1 & a_5 &= \frac{7 - K}{20}a_3 = \frac{(7 - K)(3 - K)}{120}a_1 & \dots
+\end{align*}
+$$
+当 $j$ 很大时，上面这个关系约为：
+$$
+a_{j+2} \approx \frac{2}{j}a_j \implies a_j \approx \frac{C}{(j/2)!} \tag{2.94}
 $$
 需要注意的是，如果我们接纳所有 $j$，其结果是不可归一化的：
 $$
-h(\xi) \approx C\sum_j^\infty \frac{1}{(j/2)!}\xi^j \approx \sum_j^\infty \frac{1}{j!}\xi^{2j} \approx Ce^{\xi^2}
+h(\xi) \approx C\sum_j^\infty \frac{1}{(j/2)!}\xi^j \approx \sum_j^\infty \frac{1}{j!}\xi^{2j} \approx Ce^{\xi^2} \tag{2.95}
 $$
 因此我们需要 $a_j$ 在某一项之后“消失”，设此时 $j = n$，则从递推公式中不难推出：
 $$
 K = 2n + 1
 $$
-如果 $n$ 是偶数，我们还得要求 $a_0 = 0$；否则需要 $a_1 = 0$。最后，根据 $K$ 的定义我们可以得到不同 $n$ 下的能量：
+如果 $n$ 是偶数，我们还得要求 $a_1 = 0$ （这样才能使得奇数项的不会溢出）；否则需要 $a_0 = 0$。最后，根据 $K$ 的定义我们可以得到不同 $n$ 下的能量：
 $$
-E_n = \left(n + \frac{1}{2}\right)\hbar\omega
+\begin{equation*}
+	E_n = \left(n + \frac{1}{2}\right)\hbar\omega
+\end{equation*} \tag{2.96} \label{energy-of-harmonic-oscillator}
 $$
-同时我们可以将 $a_j$ 的递推公式变为：
+至此，我们惊奇地发现，简谐振子可能的能量是离散的；虽然薛定谔方程 $(\ref{schrodinger-euqation-of-harmonic-oscillator})$ 中看起来 $E$ 在任意情况下都有解，但是它们中的大多数都会导致波函数无法归一化。这听起来似乎非常精妙，我们可以观察两个和上面的能量稍微不同时波函数的图像来领会这一点：
+
+<img src="graphs/qm1_2-6.png" alt="image-20220510141445901" style="zoom:70%;" />
+
+上面是 $E = 0.49\hbar \omega$ 的情形，可以看到当 $|x|$ 变大时，$\psi(x)$ 也趋于无穷大。
+
+<img src="graphs/qm1_2-7.png" alt="image-20220510141632732" style="zoom:70%;" />
+
+上面则是 $E = 0.51\hbar \omega$ 的情形，当 $|x|$ 变大时，$\psi(x)$ 趋于负无穷大。与之相对地，当 $E$ 满足 $(\ref{energy-of-harmonic-oscillator})$ 时，波函数的图像是下面这样的：
+
+<img src="graphs/qm1_2-8.png" alt="image-20220510142204035" style="zoom:67%;" />
+
+可以看到 $|\psi_n(x)|^2$ 被精准地控制到了可以归一化的程度。
+
+下面让我们完成前面没有做完的事情，将简谐振子的波函数求出来。首先可以将 $a_j$ 的递推公式变为 $n$ 相关的式子：
 $$
 a_{j+2} = -\frac{2(n - j)}{(j+1)(j+2)}a_j
 $$
-最后，我们可以将简谐振子静止状态的通解写出：
+当 $n = 0$ 时，唯一存在的系数是 $a_0$，此时根据 $(\ref{2.91})$ 有：
+$$
+h_0(\xi) = a_0
+$$
+因此波函数是：
+$$
+\psi_0(\xi) = a_0e^{-\xi^2/2}
+$$
+让我们尝试对其归一化：
+$$
+\begin{align*}
+	\int |\psi_0(\xi)|^2\,dx
+		&= |a_0|^2 \int e^{-\xi^2}\sqrt{\frac{\hbar}{m\omega}}\,d\xi \\
+		&= \sqrt{\frac{\hbar}{m\omega}}|a_0|^2\int_{-\infty}^\infty e^{-\xi^2}\,d\xi \\
+		&= \sqrt{\frac{\hbar\pi}{m\omega}}|a_0|^2 \\
+		&= 1
+\end{align*}
+$$
+因此有：
+$$
+\begin{equation*}
+	a_0 = \left(\frac{m\omega}{\hbar \pi}\right)^{1/4}
+\end{equation*}
+$$
+所以基态的简谐振子，其波函数是：
+$$
+\begin{equation*}
+	\psi_0(x) = \left(\frac{m\omega}{\hbar\pi}\right)^{1/4}e^{-\tfrac{m\omega}{2\hbar}x^2}
+\end{equation*}
+$$
+当 $n = 1$ 时，唯一存在的系数是 $a_1$，我们和上面类似可以得到：
+$$
+h_1(\xi) = a_1\xi
+$$
+此时波函数就是：
+$$
+\begin{equation*}
+	\psi_1(\xi) = a_1\xi e^{-\xi^2/2}
+\end{equation*}
+$$
+对这个函数的归一化要复杂一些：
+$$
+\begin{align*}
+	\int |\psi_1(\xi)|^2\,dx
+		&= |a_1|^2\int \xi^2e^{-\xi^2}\sqrt{\frac{\hbar}{m\omega}}\,d\xi \\
+		&= \sqrt{\frac{\hbar}{m\omega}}|a_1|^2 \int \xi^2e^{-\xi^2}\,d\xi \\
+		&= \sqrt{\frac{\hbar}{m\omega}}|a_1|^2 \left(-\left.\frac{1}{2}\xi e^{-\xi^2}\right|_{-\infty}^\infty + \int_{-\infty}^\infty \frac{1}{2}e^{-\xi^2}\,d\xi\right) \\
+		&= \frac{1}{2}\sqrt{\frac{\hbar}{m\omega}}|a_1|^2 \int_{-\infty}^\infty e^{-\xi^2}\,d\xi \\
+		&= \frac{1}{2}\sqrt{\frac{\hbar\pi}{m\omega}}|a_1|^2 \\
+		&= 1
+\end{align*}
+$$
+因此有：
+$$
+\begin{equation*}
+	a_1 = \frac{1}{\sqrt{2}}\left(\frac{m\omega}{\hbar\pi}\right)^{1/4}
+\end{equation*}
+$$
+于是我们得到了第一激发态的简谐振子的波函数：
+$$
+\begin{align*}
+	\psi_1(x) &= \frac{1}{\sqrt{2}}\left(\frac{m\omega}{\hbar\pi}\right)^{1/4}\sqrt{\frac{m\omega}{\hbar}}xe^{-\tfrac{m\omega}{2\hbar}x^2}
+\end{align*}
+$$
+后面的每一项我们都可以像上面这样一个个算出来，但这里我就不展开说明其通用的推导方法了，这里直接给出简谐振子静止状态的通解：
 $$
 \psi_n(x) = \left(\frac{m\omega}{\pi\hbar}\right)^{1/4}\frac{1}{\sqrt{2^nn!}}H_n(\xi)e^{-\xi^2/2}
 $$
@@ -766,13 +1144,26 @@ $$
 H_n(\xi) = (-1)^ne^{\xi^2}\left(\frac{d}{d\xi}\right)^ne^{-\xi^2}
 $$
 
+其前几项如下列出：
+$$
+\begin{align*}
+	H_0(\xi) &= 1 \\
+	H_1(\xi) &= 2\xi \\
+	H_2(\xi) &= 4\xi^2 - 2 \\
+	H_3(\xi) &= 8\xi^3 - 12\xi \\
+	H_4(\xi) &= 16\xi^4 - 48\xi^2 + 12 \\
+	H_5(\xi) &= 32\xi^5 - 160\xi^3 + 120\xi
+\end{align*}
+$$
+
+
 ### Delta 函数势能
 
-截至此，我们已经遇到两大类薛定谔方程（根据不同势能分布），其一拥有离散的、可归一化的解，它们的线性组合是方程的通解；另一个拥有连续的、不可归一化的解，它们在全空间中的积分是方程的通解。这两者的区别有什么物理意义呢？
+截至此，我们已经遇到两大类薛定谔方程（根据不同势能分布），其一拥有离散的、可归一化的解，它们的线性组合是方程的通解（如无限方井、有限方井 $E < 0$ 的情形、简谐振子）；另一个拥有连续的、不可归一化的解（如自由粒子、有限方井 $E > 0$ 的情形），它们在全空间中的积分是方程的通解。这两者的区别有什么物理意义呢？
 
 在经典力学中，考虑一维的情形，我们可以通过小车和斜坡的模型构建简单的势能模型。当总能量超过两边的势能时，小车会向无穷远处运动；当总能量小于两边的势能时，小车会在两个 **转向点（Turning Point）** 中移动；当总能量大于一边的势能时，小车可能会经过更高势能一边的转向点，并向另一边的无穷远处移动。
 
-在量子力学中也有类似的结论。不过由于此时“小车”不再拥有确定的位置，它可以出现在任何能量大于势能的地方。因此，小车完全可能“穿过”斜坡到山坡另一侧的地方，我们称其为 **隧穿（Tunnelling）**。至于小车是否会跑到无穷远处，可以通过比较 $E$ 和 $V(\pm \infty)$ 确定。如果 $E$ 比两边都小，那么系统就处于 **束缚态（Bound State）**，否则处于 **散射态（Scattering State）**。
+在量子力学中也有类似的结论。不过由于此时“小车”不再拥有确定的位置，它可以出现在任何能量大于势能的地方。因此，小车完全可能“穿过”斜坡到山坡另一侧的地方，我们称其为 **隧穿（Tunnelling）**。至于小车是否会跑到无穷远处，可以通过比较 $E$ 和 $V(\pm \infty)$ 确定。如果 $E$ 比两边都小，那么系统就处于 **束缚态（Bound State）**，否则处于 **散射态（Scattering State）**。我们不难验证前面介绍过的这些情况都对应了束缚态和散射态的一种。
 
 定义 **狄拉克 Delta 函数（Dirac Delta Function）** 为在原点处无穷大，其余点均为零的函数，即：
 $$
@@ -898,6 +1289,8 @@ $$
 
 ### 希尔伯特空间
 
+#### 矢量的记号和性质
+
 量子理论中的两个核心概念是波函数和算符。系统的 **状态（State）**由波函数描述，而 **可观测量（Observable）**由算符描述。数学上，我们可以将波函数通过 **矢量（Vector）**表示，算符则可以抽象为 **线性变换（Linear Transformation）**。因此，**线性代数（Linear Algebra）**是量子力学的“自然语言”。
 
 不过量子力学有它自己的个性，比起我们已经熟悉的矢量形式，它选择使用下面这种记号：
@@ -911,9 +1304,119 @@ $$
 $$
 \langle \alpha | \beta \rangle = a_1^*b_1 + a_2^*b_2 + \dots + a_N^*b_N
 $$
+内积有一些重要的性质如下：
+
+- $\langle \alpha | \beta \rangle^* = \langle \beta | \alpha \rangle$。
+- $\langle \alpha | \alpha \rangle \ge 0$，且 $\langle \alpha | \alpha \rangle = 0 \Leftrightarrow |\alpha \rangle = 0$。
+- $\langle \alpha | (b | \beta \rangle + c | \gamma \rangle \rangle = b \langle \alpha | \beta \rangle + c \langle \alpha | \gamma \rangle$。
+
+矢量的 **范数（Norm）** 定义为它和自己的内积的平方根：
+$$
+\begin{equation*}
+	\norm{|\alpha\rangle} = \sqrt{\langle \alpha | \alpha \rangle}
+\end{equation*}
+$$
+不难发现它等同于向量的“长度” $|\mathbf{a}| = \sqrt{\sum a_i^2}$。范数为 $1$ 的矢量被称为 **归一化的（Normalized）** 矢量。
+
+若两个矢量的内积是零，就称他们相互 **正交（Orthogonal）**。一集两两相互正交的归一化矢量称为 **标准正交集（Orthonormal Set）**；如果它们构成矢量空间的基，就称其为 **标准正交基（Orthonormal Basis）**。作为例子，二维空间中如果设 $|x\rangle = (1, 0)$ 和 $|y\rangle = (0, 1)$，不难发现它们构成 $\mathbb{R}^2$ 的一组标准正交基。
+
+我们知道，矢量空间中任意变量 $\mathbf{a}$ 可以表示为一个标准正交基的线性组合：
+$$
+\begin{equation*}
+	\mathbf{a} = \sum_{i = 1}^n a_i\mathbf{b}_i \qquad \text{其中 $\mathbf{b}_i$ 组成矢量空间的标准正交基 $\mathbf{b}$}
+\end{equation*}
+$$
+此时 $\mathbf{a}$ 在每一个基矢量 $b_i$ 上的投影便是 $a_i$。我们不难发现：
+$$
+\begin{equation*}
+	\mathbf{a}\cdot\mathbf{b}_i = \sum_{j = 1}^n a_i(\mathbf{b_i}\cdot\mathbf{b}_j) = a_i
+\end{equation*}
+$$
+因此原向量可以写成下面的形式：
+$$
+\begin{equation*}
+	\mathbf{a} = \sum_{i = 1}^n (\mathbf{b}_i\cdot\mathbf{a})\mathbf{b}_i
+\end{equation*}
+$$
+对于新记号 $|\alpha \rangle$，我们也有类似的式子（假设标准正交基是 $|e_i\rangle$）：
+$$
+\begin{equation*}
+	|\alpha \rangle = \sum_{i = 1}^n \langle e_i | \alpha \rangle|e_i\rangle
+\end{equation*}
+$$
+其范数的平方即可以表示为：
+$$
+\begin{equation*}
+	\langle \alpha | \alpha \rangle = \sum_{i = 1}^n |\langle e_i | \alpha \rangle|^2
+\end{equation*}
+$$
+一个重要的不等式是 **施瓦尔兹不等式（Schwarz Inequality）**：
+$$
+\begin{equation*}
+	|\langle \alpha | \beta \rangle|^2 \le \langle \alpha | \alpha \rangle \langle \beta | \beta \rangle
+\end{equation*}
+$$
+为了证明这个公式，记：
+$$
+\begin{equation*}
+	|\gamma\rangle = |\beta\rangle - \frac{\langle \alpha | \beta \rangle}{\langle \alpha | \alpha \rangle}|\alpha \rangle
+\end{equation*}
+$$
+现在考虑 $\langle \gamma | \gamma \rangle$：
+$$
+\begin{align*}
+	\langle \gamma | \gamma \rangle
+		&= \sum_{i = 1}^n |\langle e_i | \gamma \rangle|^2 \\
+		&= \sum_{i = 1}^n |\langle e_i | \beta \rangle - \frac{\langle \alpha | \beta \rangle}{\langle \alpha | \alpha \rangle}\langle e_i | \alpha \rangle|^2 \\
+		&= \sum_{i = 1}^n|\langle e_i | \beta \rangle|^2 + \sum_{i = 1}^n\frac{|\langle \alpha | \beta \rangle|^2}{|\langle \alpha | \alpha \rangle|^2}|\langle e_i | \alpha \rangle |^2 - \sum_{i = 1}^n\langle e_i | \beta \rangle\frac{\langle \alpha | \beta \rangle}{\langle \alpha | \alpha \rangle}\langle e_i | \alpha \rangle - \sum_{i = 1}^n \frac{\langle \alpha | \beta \rangle}{\langle \alpha | \alpha \rangle}\langle e_i | \alpha \rangle\langle e_i | \beta \rangle \\
+		&= \langle \beta | \beta \rangle + \frac{\langle \alpha | \beta \rangle^2}{\langle \alpha | \alpha \rangle^2}\langle \alpha | \alpha \rangle - \frac{\langle \alpha | \beta \rangle}{\langle \alpha | \alpha \rangle}\langle \beta | \beta \rangle \\
+		&= \lackproof
+\end{align*}
+$$
+
+
+敏锐的同学可能会发现其和矢量分析中下面公式的相似性：
+$$
+\begin{equation*}
+	\cos\theta = \frac{\mathbf{a}\cdot\mathbf{b}}{|\mathbf{a}||\mathbf{b}|} \implies |\mathbf{a}\cdot\mathbf{b}| \le |\mathbf{a}||\mathbf{b}|
+\end{equation*}
+$$
+实际上，我们可以因此定义 $|\alpha\rangle$ 和 $|\beta \rangle$ 的夹角：
+$$
+\begin{equation*}
+	\cos\theta = \frac{\sqrt{|\langle \alpha | \beta \rangle|^2}}{\norm{| \alpha \rangle}\norm{|\beta \rangle}} \sqrt{\frac{|\langle \alpha | \beta \rangle|^2}{\langle \alpha | \alpha \rangle\langle \beta | \beta \rangle}}
+\end{equation*}
+$$
+其与实数域矢量的区别来源于 $\langle \alpha | \beta \rangle$ 可能含有复数。当 $\langle \alpha | \beta \rangle \in \mathbb{R}$ 时，上式会化为此前我们熟悉的形式。
+
+#### 矩阵的记号和性质
+
+我们知道，矩阵等价于矢量空间中的线性变换，对于任一个 $n\times n$ 的矩阵 $\hat{T}$（这里我使用了和算符一样的上标，因为我们很快就会看到，算符正是希尔伯特空间中的矢量）：
+$$
+\begin{equation*}
+	\hat{T}(a|\alpha \rangle + b|\beta \rangle) = a\left(\hat{T}|\alpha \rangle\right) + b\left(\hat{T}|\beta\rangle\right)
+\end{equation*}
+$$
+这也正是线性变换的定义。根据矩阵乘法的性质，我们知道：
+$$
+\begin{equation*}
+	\hat{T}|e_j\rangle = \sum_{i = 1}^n T_{ij}|e_i\rangle
+\end{equation*}
+$$
+因此对于任意的矢量，有：
+$$
+\begin{align*}
+	\hat{T}|\alpha \rangle
+		&= \sum_{j = 1}^n a_j\left(\hat{T}|e_j\rangle\right) \\
+		&= \sum_{j = 1}^n\sum_{i = 1}^n a_jT_{ij}|e_i\rangle \\
+		&= \sum_{i = 1}^n\left(\sum_{j = 1}^nT_{ij}a_j\right)|e_i\rangle
+\end{align*}
+$$
+
+
 矢量空间中的线性变换则（如前两章介绍过的）采用下面的记号：
 $$
-\ket{\alpha} = \hat{T}\ket{\alpha} \Leftrightarrow \mathbf{b} = T\mathbf{a} =
+\ket{\beta} = \hat{T}\ket{\alpha} \Leftrightarrow \mathbf{b} = T\mathbf{a} =
 \begin{pmatrix}
 	t_{11} & t_{12} & \dots & t_{1N} \\
 	t_{21} & t_{22} & \dots & t_{2N} \\
@@ -926,7 +1429,9 @@ $$
 $$
 不过，在无限维度矢量空间中，这种表示方式似乎有局限性，尤其是矢量的内积（无限和对应了积分）有可能不收敛；因此我们需要特别注意一些情况。
 
-理论上，所有关于 $x$ 的函数构成了一个矢量空间，但我们需要的仅仅是可以被归一化的函数空间，即：
+#### 波函数所在的矢量空间
+
+理论上，所有关于 $x$ 的函数构成了一个矢量空间，但我们在量子力学中需要的仅仅是可以被归一化的函数空间，即：
 $$
 \left\{\Psi \mid \int|\Psi|^2\,dx = 1\right\}
 $$
@@ -952,7 +1457,16 @@ $$
 $$
 \langle f|f \rangle = \int_a^b |f(x)|^2\,dx
 $$
-从物理角度来看，这个结果当且仅当 $f(x) = 0$ 时才为零（数学上我们可以构建仅在一系列特定点上不为零的病态函数，其积分也为零）。特别地，规定 $f = g$ 当且仅当 $\langle f - g|f - g\rangle = 0$。
+从物理角度来看，这个结果当且仅当 $f(x) = 0$ 时才为零（数学上我们可以构建仅在一系列特定点上不为零的病态函数，其积分也为零）。特别地，规定 $f = g$ 当且仅当 $\langle f - g|f - g\rangle = 0$，我们可以通过简单的代数证明这一点：
+$$
+\begin{align*}
+	\langle f - g|f - g \rangle
+		&= \int_a^b (f - g)^*(f - g)\,dx \\
+		&= \int_a^b (f^* - g^*)(f - g)\,dx \\
+		&= \int_a^b f^*f\,dx 
+\end{align*}
+$$
+
 
 如果一个函数和自身的内积为 $1$，我们就称其是 **归一化的（Normalized）**（这完全符合我们最开始的定义）；如果两个函数的内积为 $0$，我们就称其 **正交（Orthogonal）**；一集归一化函数 $\{f_n\}$ 如果两两正交，则称它们是 **标准正交的（Orthonormal）**，也即下面等式成立：
 $$
@@ -1107,7 +1621,7 @@ $$
 $$
 c(p) = \frac{1}{\sqrt{2\pi\hbar}}\int_{-\infty}^\infty e^{-ipx/\hbar}\,dx
 $$
-现在让我们回到德布罗意公式，现在可以知道，其描述的粒子（拥有确定动量的粒子）实际上不存在，但我们总可以选取一段范围内的动量形成的可归一化的 **波包（Wave Packet）** 来描述，这也是它们存在波长的原因。
+现在让我们回到德布罗意公式，现在可以知道，其描述的粒子（拥有确定动量的粒子）实际上不存在，但我们总可以选取一段范围内的动量形成的可归一化的波包来描述，这也是它们存在波长的原因。
 
 作为总结，动量算符的特征函数不在希尔伯特空间中，但它们的集合（一个区间）拥有某种角度而言的可归一化性质。事实上，所有连续的哈密顿算子（即拥有连续光谱），其对应的特征函数集都是狄拉克标准正交，且在积分意义上完备的。
 
@@ -1397,7 +1911,7 @@ $$
 
 #### 可对易性
 
-不同算符之间有一个重要的关系，即 **可对易性（Commutability）**。首先，让我们定义 **对易子（Commutator）**：
+算符之间有一个重要的关系，即 **可对易性（Commutability）**。首先，让我们定义 **对易子（Commutator）**：
 $$
 [\hat{A}, \hat{B}] = \hat{A}\hat{B} - \hat{B}\hat{A}
 $$
@@ -1528,7 +2042,7 @@ $$
 $$
 对任意复数 $z$，我们都有：
 $$
-|z|^2 = \mathscr{R}^2z + \mathscr{I}^2z \ge \mathscr{I}^2z = \left[\frac{1}{2i}(z - z^*)\right]^2
+|z|^2 = \Re^2z + \Im^2z \ge \Im^2z = \left[\frac{1}{2i}(z - z^*)\right]^2
 $$
 因此对于 $\langle f|g\rangle$：
 $$
@@ -1551,9 +2065,9 @@ $$
 $$
 因此两者的差是：
 $$
-\langle f|g\rangle - \langle g|f\rangle = \langle{\hat{A}\hat{B}}\rangle -  \langle\hat{B}\hat{A}\rangle = [\langle\hat{A}\hat{B}\rangle, \langle\hat{B}\hat{A}\rangle] = \langle[\hat{A}, \hat{B}]\rangle
+\langle f|g\rangle - \langle g|f\rangle = \langle{\hat{A}\hat{B}}\rangle -  \langle\hat{B}\hat{A}\rangle = \langle\hat{A}\hat{B} - \hat{B}\hat{A}\rangle = \langle[\hat{A}, \hat{B}]\rangle
 $$
-回忆其中的方括号是我们上节中引入的对易子。这样我们就得到了最终的结论：
+回忆其中的方括号是我们上节中引入的对易子记号。这样我们就得到了最终的结论：
 $$
 \sigma_A^2\sigma_B^2 \ge \left(\frac{1}{2i}\left\langle\left[\hat{A}, \hat{B}\right]\right\rangle\right)^2
 $$
@@ -1591,7 +2105,7 @@ $$
 $$
 \Delta t\Delta E \ge \frac{\hbar}{2}
 $$
-从狭义相对论角度来看，这两个测不准原理是高度一致的，因为位置和时间（$\mathbf{x}$ 和 $ct$）形成了位置-时间四元矢量；动量和能量（$\mathbf{p}$ 和 $E/c$）则形成了动量-能量四元矢量。不过本篇笔记并不涉及相对论（注意到薛定谔方程中 $x$ 和 $t$ 的迥异地位），因此这两个式子不能混为一谈。事实上，我们接下来要尝试推导能量-时间测不准原理，从中会发现它们是非常不同的。
+从狭义相对论角度来看，这两个测不准原理是高度一致的，因为位置和时间（$\mathbf{x}$ 和 $ct$）形成了位置-时间四元矢量；动量和能量（$\mathbf{p}$ 和 $E/c$）则形成了动量-能量四元矢量。不过本篇笔记并不涉及相对论（注意到薛定谔方程中 $x$ 和 $t$ 的是不平权的），因此这两个式子不能混为一谈。事实上，我们接下来要尝试推导能量-时间测不准原理，从中会发现它们是非常不同的。
 
 首先我们注意到，在非相对论的语境中，$t$ 和 $x$、$p$、$E$ 是完全不同的；我们可以测量某一时刻的其它物理量，但时间没有办法测量：它是一个独立存在的量。我们没有办法测量多次时间，然后取其标准差；反过来说，正是因为时间的变化，我们才能测量其它物理量并计算得到它们的标准差。
 
@@ -1625,6 +2139,107 @@ $$
 \Delta E\Delta t \ge \frac{\hbar}{2}
 $$
 可以看到，我们的 $\Delta t$，其物理意义是 $\langle Q\rangle$ 变化一个标准差 $\sigma_Q$ 所需的时间，因此它依赖于 $Q$ ，对于不同的可观测量会有不同的大小。当 $\Delta E$ 非常大的时候，说明 $Q$ 的变化非常迅速，也就是所需时间很小；否则 $Q$ 就是缓慢变化，其对应的时间就很长。
+
+广义埃伦菲斯特定理可以给出一些有趣的结论，让我们以 $Q = 1$、$Q = H$、$Q = x$ 和 $Q = p$ 为例，探索这个等式蕴含的道理：
+$$
+\begin{align*}
+	(Q = 1) \qquad &\left\{
+	\begin{split}
+		&
+        \begin{split}
+            \frac{d}{dt}\langle Q \rangle
+                &= \frac{d}{dt} \int \Psi^*(x, t)(1)\Psi(x, t)\,dx \\
+                &= \frac{d}{dt} \int |\Psi(x, t)|^2\,dx
+        \end{split} \\
+        &
+        \begin{split}
+            \frac{i}{\hbar}\left\langle\left[\hat{H}, \hat{Q}\right]\right\rangle + \left\langle \frac{\partial \hat{Q}}{\partial t}\right\rangle 
+				&= \frac{i}{\hbar}\int\Psi^*(x, t)[\hat{H}, 1]\Psi(x, t)\,dx + \int \Psi^*(x, t)\frac{\partial (1)}{\partial t}\Psi(x, t)\,dx \\
+				&= \frac{i}{\hbar}\int \Psi^*(x, t)(\hat{H} - \hat{H})\Psi(x, t)\,dx \\
+				&= 0
+        \end{split}
+	\end{split}
+	\right. \\
+	& \implies \frac{d}{dt} \int |\Psi(x, t)|^2\,dx = 0 \tag{*} \\
+	(Q = H) \qquad &\left\{
+	\begin{split}
+		&
+		\begin{split}
+            \frac{i}{\hbar}\left\langle\left[\hat{H}, \hat{Q}\right]\right\rangle + \left\langle \frac{\partial \hat{Q}}{\partial t} \right\rangle
+            	&= \frac{i}{\hbar}\int \Psi^*(x, t)[\hat{H}, \hat{H}]\Psi(x, t)\,dx + \int\Psi^*(x, t)\frac{\partial \hat{H}}{\partial t}\Psi(x, t)\,dx \\
+            	&= \int\Psi^*(x, t)\frac{\partial}{\partial t}\left(\frac{\hat{p}^2}{2m} + V(x)\right)\,\Psi(x, t)\,dx \\
+            	&= 0
+		\end{split}
+	\end{split}
+	\right. \\
+	& \implies \frac{d}{dt}\langle H \rangle = 0 \tag{**} \\
+	(Q = x) \qquad &\left\{
+	\begin{split}
+		&
+		\begin{split}
+			\frac{i}{\hbar}\left\langle\left[\hat{H}, \hat{Q}\right]\right\rangle + \left\langle \frac{\partial \hat{Q}}{\partial t} \right\rangle 
+				&= \frac{i}{\hbar}\int \Psi^*(x, t)[\hat{H}, \hat{x}]\Psi(x, t)\,dx + \int \Psi^*(x, t)\frac{\partial \hat{x}}{\partial t}\Psi(x, t)\,dx \\
+				&= \frac{i}{\hbar}\int \Psi^*(x, t)\left(\hat{H}x - x\hat{H}\right) \\
+				&= \frac{i}{\hbar}\int \Psi^*(x, t)\left[-\frac{1}{2m}(\hat{p}^2x - x\hat{p}^2) + Vx - xV\right]\Psi(x, t)\,dx \\
+				&= -\frac{i}{2m\hbar}\int \Psi^*(x, t)\left[\frac{\hbar}{i}\frac{\partial^2}{\partial x^2}(x\Psi(x, t)) - x\frac{\hbar}{i}\frac{\partial^2}{\partial x^2}\Psi(x, t)\right]\,dx \\
+			&= \frac{}{}
+		\end{split}
+	\end{split}
+	\right.
+\end{align*}
+$$
+
+
+
+### 简谐振子与算符
+
+这一节让我们再次回顾简谐振子，不过巧妙利用算符求解。回忆简谐振子的薛定谔方程：
+$$
+\begin{equation*}
+	-\frac{\hbar^2}{2m}\frac{d^2\psi}{dx^2} + \frac{1}{2}m\omega^2x^2 = E\psi
+\end{equation*}
+$$
+如果将其中的 $\frac{d}{dx}$ 用算符 $\hat{p}$ 代换，我们就得到：
+$$
+\frac{1}{2m}\left[\hat{p}^2 + (m\omega x)^2\right] = E\psi
+$$
+左边也应该是哈密顿算符，因此：
+$$
+\begin{equation*}
+	\hat{H} = \frac{1}{2m}\left[\hat{p}^2 + (m\omega x)^2\right]
+\end{equation*}
+$$
+为了进一步简化这个式子，我们可以尝试将等式右侧因式分解。参考复数域中 $a^2 + b^2 = (iu + v)(-iu + v)$，我们可以设出下面的两个算符：
+$$
+\begin{equation*}
+	\hat{a}_\pm = \frac{1}{\sqrt{2\hbar m\omega}}(\mp i\hat{p} + m\omega x)
+\end{equation*}
+$$
+其统称为 **阶梯算符（Ladder Operator）**，分别称为 **上升算符（Raising Operator）** 和 **下降算符（Lowering Operator）**。其命名的深意我们很快就会看到。
+
+细心的同学可能已经发现，$\hat{H} \ne \hat{a}_+\hat{a}_-$。这是因为 $\hat{p}$ 和 $\hat{x}$ 之间并不互易。特别地，有：
+$$
+\begin{align*}
+	\hat{a}_-\hat{a}_+ 
+		&= \frac{1}{2\hbar m\omega}(i\hat{p} + m\omega x)(-i\hat{p} + m\omega x) \\
+		&= \frac{1}{2\hbar m\omega}\left[\hat{p}^2 + (m\omega x)^2 - im\omega(x\hat{p} - \hat{p}x)\right] \\
+		&= \frac{1}{2\hbar m\omega}\left[\hat{p}^2 + (m\omega x)^2 - im\omega(i\hbar)\right] \\
+		&= \frac{1}{\hbar \omega}\hat{H} + \frac{1}{2}
+\end{align*}
+$$
+类似地我们可以得到：
+$$
+\begin{equation*}
+	\hat{a}_+\hat{a}_- = \frac{1}{\hbar\omega}\hat{H} - \frac{1}{2}
+\end{equation*}
+$$
+因此阶梯算符之间也不互易：
+$$
+\begin{equation*}
+	[\hat{a}_+, \hat{a}_-] = 1
+\end{equation*}
+$$
+
 
 
 
@@ -2183,7 +2798,7 @@ $$
 	-\frac{\hbar^2}{2m_e}\frac{d^2u}{dr^2} + \left[-\frac{e^2}{4\pi\epsilon_0}\frac{1}{r} + \frac{\hbar^2}{2m_e}\frac{\ell(\ell + 1)}{r^2}\right]u = Eu
 \end{equation*}
 $$
-我们将尝试用简谐振子的解析解法攻克这个方程。
+我们将尝试用简谐振子的解析解法攻克这个方程，不过由于这种情况的复杂性，过程会比较曲折。
 
 首先设：
 $$
@@ -2255,7 +2870,7 @@ $$
 $$
 u(\rho) = c_0\rho^{\ell + 1}e^\rho
 $$
-呃，有点尴尬，这在 $\rho \to \infty$（我们这几步的前提）时直接炸掉了。因此 $c_j$ 必须在某个地方开始归零。假设 $c_N$ 是第一个归零的系数，观察递推公式不难得到：
+呃，有点尴尬，这在 $\rho \to \infty$（我们这几步的前提）时直接炸掉了。因此 $c_j$ 必须在某个地方开始归零（和简谐振子的情况颇似）。假设 $c_N$ 是第一个归零的系数，观察递推公式不难得到：
 $$
 2(N + \ell) = \rho_0
 $$
@@ -2365,6 +2980,8 @@ $$
 
 
 
+
+
 ## 相同粒子的系统
 
 ### 两个粒子的系统
@@ -2434,7 +3051,7 @@ V(\mathbf{r}_1, \mathbf{r}_2) = \frac{1}{4\pi\epsilon_0}\left(-\frac{2e^2}{|\mat
 $$
 我们会在本章后续解决这个问题。
 
-### 玻色子和费米子
+#### 玻色子和费米子
 
 假设有两个没有相互作用的粒子，一个处于 $\psi_a(\mathbf{r}_1)$ 状态，另一个处于 $\psi_b(\mathbf{r}_2)$ 状态。和经典力学不同的是，任意时刻看到这两个状态时，我们无法确定是哪个粒子处于其中的某个状态，我们只能说这两个粒子分别处于其中的一个状态。因此下面这个公式描述了所有可能的情形：
 $$
@@ -2446,4 +3063,127 @@ $$
 $$
 \psi_-(\mathbf{r}_1, \mathbf{r}_2) = A[\psi_a(\mathbf{r}_1)\psi_a(\mathbf{r}_2) - \psi_a(\mathbf{r}_1)\psi_a(\mathbf{r}_2)] = 0
 $$
-此时就不存在任何波函数了。我们将这个效应称为 **泡利不相容原理（Pauli Exclusion Principle）**
+此时就不存在任何波函数了。我们将这个效应称为 **泡利不相容原理（Pauli Exclusion Principle）**。
+
+#### 粒子间的距离平方期望
+
+本节让我们根据已经介绍过的三种情况（可区分的粒子、玻色子和费米子）计算 $\langle (x_1 - x_2)^2 \rangle$。显然它可以拆为：
+$$
+\langle (x_1 - x_2)^2 \rangle = \langle x_1^2 \rangle + \langle x_2^2 \rangle - 2\langle x_1x_2 \rangle
+$$
+ 对于**可区分的粒子**，此时情况非常简单，因为我们可以将它们的波函数分为两个部分：
+$$
+\langle x_1^2 \rangle = \int x_1^2 |\psi_a(x_1)|^2\,dx_1\int |\psi_b(x_2)|^2\,dx_2 = \langle x^2 \rangle_a
+$$
+这里用到了单个粒子的期望和波函数的归一性。同样地，另一个粒子的距离平方期望是：
+$$
+\langle x_2^2 \rangle = \int |\psi_a(x_1)|^2\,dx_1 \int x_2^2 |\psi_b(x_2)|^2\,dx_2 = \langle x^2 \rangle_b
+$$
+同时：
+$$
+\langle x_1x_2 \rangle = \int x_1 |\psi_a(x_1)|^2\,dx_1 \int x_2 |\psi_b(x_2)|^2\,dx_2 = \langle x \rangle_a\langle x \rangle_b
+$$
+因此我们得到结果：
+$$
+\langle (x_1 - x_2)^2 \rangle = \langle x^2 \rangle_a + \langle x^2 \rangle_b - 2\langle x \rangle_a\langle x \rangle_b
+$$
+这个答案完全符合我们的期望，如果 $x_1$ 在 $\psi_b$ 状态，$x_2$ 在 $\psi_a$ 状态中，结果是完全一样的。
+
+对于**不可区分的粒子**，即玻色子或费米子，由于它们的波函数只相差一个正负号，我们下面一同计算：
+$$
+\begin{align*}
+	\langle x_1^2 \rangle 
+		&= \frac{1}{2}\bigg[
+			\int x_1^2 |\psi_a(x_1)|^2\,dx_1 \int |\psi_b(x_2)|^2\,dx_2 \\
+			&\phantom{xxx}+ \int |\psi_a(x_1)|^2\,dx_1 \int x_2^2 |\psi_b(x_2)|^2\,dx_2 \\
+			&\phantom{xxx}+ \int x_1^2 \psi_a^*(x_1)\psi_b(x_2)\,dx_1 \int \psi_b^*(x_2)\psi_a(x_1)\,dx_2 \\
+			&\phantom{xxx}+ \int x_1^2 \psi_b^*(x_1)\psi_a(x_1)\,dx_1 \int \psi_a^*(x_1)\psi_b(x_2)\,dx_2
+		\bigg] \\
+		&= \frac{1}{2}\left(\langle x^2 \rangle_a + \langle x^2 \rangle_b\right)
+\end{align*}
+$$
+这里用到了波函数的狄拉克标准正交性。对于另一个平方期望，其结果是一致的：
+$$
+\langle x_2^2 \rangle = \frac{1}{2}\left(\langle x^2 \rangle_a + \langle x^2 \rangle_b\right)
+$$
+两个位置乘积的期望要相对复杂一些：
+$$
+\begin{align*}
+	\langle x_1x_2 \rangle
+    	&= \frac{1}{2}\bigg[
+            \int x_1 |\psi_a(x_1)|^2\,dx_1 \int x_2 |\psi_b(x_2)|^2\,dx_2 \\
+            &\phantom{xxx}+ \int x_1 |\psi_b(x_1)|^2\,dx_1 \int x_2 |\psi_a(x_2)|^2\,dx_2 \\
+            &\phantom{xxx}\pm \int x_1 \psi_a^*(x_1)\psi_b(x_1)\,dx_1 \int x_2 \psi_b^*(x_2)\psi_a(x_2)\,dx_2 \\
+            &\phantom{xxx}\pm \int x_1 \psi_b^*(x_1)\psi_a(x_1)\,dx_1 \int x_2 \psi_a^*(x_2)\psi_b(x_2)\,dx_2
+		\bigg] \\
+		&= \frac{1}{2}\left(\langle x \rangle_a\langle x \rangle_b + \langle x \rangle_b\langle x \rangle_a \pm \langle x \rangle_{ab}\langle x \rangle_{ba} \pm \langle x \rangle_{ba} \langle x \rangle_{ab} \right) \\
+		&= \langle x \rangle_a \langle x \rangle_b + |\langle x \rangle_{ab}|^2
+\end{align*}
+$$
+其中 $\langle x \rangle_{ab}$ 是积分 $\int x \psi_a^*(x)\psi_b(x)\,dx$ 的简记。最后我们得到：
+$$
+\langle (x_1 - x_2)^2 \rangle_\pm = \langle x^2 \rangle_a + \langle x^2 \rangle_b - 2\langle x \rangle_a\langle x \rangle_b \mp 2|\langle x \rangle_{ab}|^2
+$$
+对比可区分粒子的情形相差了一个额外的项 $\mp 2|\langle x \rangle_{ab}|^2$。由此我们可以得出结论：相比可区分的两个粒子，玻色子之间的距离更小，而费米子之间的距离更大。仿佛有一种未知的力（我们称其为 **交换力（Exchange Force）**）让两个粒子相互吸引或排斥；不过这种力并不真实存在，它只是为了满足对称性而产生的一种几何现象。
+
+#### 自旋
+
+现在让我们考虑两个粒子系统中的自旋。假设两者分别处于 $|s_1\ m_1 \rangle$ 和 $|s_2\ m_2\rangle$ 状态，记整个系统的状态为 $|s_1 \ s_2\ m_1\ m_2\rangle$，此时有（回忆我们上一章的结论）：
+$$
+\begin{align*}
+	(S^1)^2 |s_1\ s_2\ m_1\ m_2 \rangle &= \hbar^2 s_1(s_1 + 1) |s_1\ s_2\ m_1\ m_2 \rangle \\
+	(S^2)^2 |s_1\ s_2\ m_1\ m_2 \rangle &= \hbar^2 s_2(s_2 + 1) |s_1\ s_2\ m_1\ m_2 \rangle \\
+	S_z^1 |s_1\ s_2\ m_1\ m_2 \rangle &= \hbar m_1 |s_1\ s_2\ m_1\ m_2 \rangle \\
+	S_z^2 |s_1\ s_2\ m_1\ m_2 \rangle &= \hbar m_2 |s_1\ s_2\ m_1\ m_2 \rangle
+\end{align*}
+$$
+考虑整个系统的角动量，有：
+$$
+\begin{align*}
+	S_z |s_1\ s_2\ m_1\ m_2 \rangle 
+		&= \hbar m |s_1\ s_2\ m_1\ m_2 \rangle \\
+		&= (S_z^1 + S_z^2) |s_1\ s_2\ m_1\ m_2 \rangle \\
+		&= \hbar(m_1 + m_2)
+\end{align*}
+$$
+因此有 $m = m_1 + m_2$。相比之下，$s$ 的取值会复杂很多，让我们先从一个 $1/2$ 自旋的双粒子系统开始，我们可以轻易地列出下面的四种情况：
+$$
+\begin{align*}
+	& |\uparrow \uparrow\,\rangle = \left|\frac{1}{2}\ \frac{1}{2}\ \frac{1}{2}\ \frac{1}{2}\right\rangle \qquad && m = 1 \\
+	& |\uparrow \downarrow\,\rangle = \left|\frac{1}{2}\ \frac{1}{2}\ \frac{1}{2}\ \frac{-1}{2}\right\rangle && m = 0 \\
+	& |\downarrow \uparrow\,\rangle = \left|\frac{1}{2}\ \frac{1}{2}\ \frac{-1}{2}\ \frac{1}{2}\right\rangle && m = 0 \\
+	& |\downarrow \downarrow\,\rangle = \left|\frac{1}{2}\ \frac{1}{2}\ \frac{-1}{2}\ \frac{-1}{2}\right\rangle && m = -1
+\end{align*}
+$$
+我们此前讨论过，$m$ 的取值应该是介于 $\pm s$ 之间的整数，每个值对应了一种状态，但这里有两种 $m = 0$ 的情况，应该如何考虑呢？我们可以尝试对 $|\uparrow\uparrow\rangle$ 使用下降算符：
+$$
+\begin{align*}
+	S_- |\uparrow \uparrow\,\rangle
+		&= \left(S_-^1|\uparrow\,\rangle\right)|\uparrow\,\rangle + |\uparrow\,\rangle\left(S_-^2|\uparrow\,\rangle\right) \\
+		&= \hbar|\downarrow\,\rangle |\uparrow\,\rangle + |\uparrow\,\rangle \hbar|\downarrow\,\rangle \\
+		&= \hbar(|\uparrow\downarrow\,\rangle + |\downarrow\uparrow\,\rangle)
+\end{align*}
+$$
+可见当 $s = 1$ 时，我们可以得到下面的三个状态：
+$$
+\left\{
+\begin{split}
+	&|1\ 1\rangle & &= |\uparrow\uparrow\,\rangle \\
+	&|1\ 0\rangle & &= \frac{1}{\sqrt{2}}(|\uparrow\downarrow\,\rangle + |\downarrow\uparrow\,\rangle) \\
+	&|1\ -1\rangle & &= |\downarrow\downarrow\,\rangle
+\end{split}
+\right\} \qquad s = 1
+$$
+对于 $s = 0$ 的情形，我们有：
+$$
+|0\ 0\rangle = \frac{1}{\sqrt{2}}(|\uparrow\downarrow\,\rangle - |\downarrow\uparrow\,\rangle) \qquad s = 0
+$$
+不难验证 $S_-|0\ 0\rangle = S_+|0\ 0\rangle = 0$。至此我们得到了 $1/2$ 自旋的双粒子系统总自旋可能是 $1$ 或 $0$，其由两个粒子所处的状态决定。敏锐的同学可能已经发现，$s = 1$ 的系统是对称的（即，交换两个粒子的自旋方向不改变结果），而 $s = 0$ 的系统是反对称的；然而考虑到系统整体的状态应该通过空间（借用波函数 $\psi$ 的记号）和方向（借用旋量 $\chi$ 的记号）同时描述，即：
+$$
+\psi(\mathbf{r}_1, \mathbf{r}_2)\chi(1, 2)
+$$
+且显然这个量应该是反对称的：
+$$
+\psi(\mathbf{r}_1, \mathbf{r}_2)\chi(1, 2) = -\psi(\mathbf{r}_2, \mathbf{r}_1)\chi(2, 1)
+$$
+因此 $s = 1$ 时的空间函数是反对称的，而 $s = 0$ 时的空间函数是对称的。
