@@ -2637,4 +2637,48 @@ void foo(Foo& f1, Foo& f2) {
 - **互斥锁（Mutual Exclusion Lock, Mutex）**：在存在数据竞争的代码块，我们可以通过对互斥锁进行 `lock` 来阻塞所有其它线程执行同样的一段代码，直到之前上锁的线程执行 `unlock` 为止。互斥锁除了较高的开销以外，最大的弱点在于潜在的 **死锁（Deadlock）** 情形，即一个线程对资源 A 上锁后需要资源 B 才能解锁，而另一个线程对资源 B 上锁后需要资源 A 才能解锁。此时两个互斥锁都无法释放，程序陷入僵局。
   - `std::lock_guard` 对互斥锁的使用进行了优化，其通过 **RAII** 机制自动上锁和解锁。
   - **C++17** 中新增的 `std::scoped_lock` 可以同时对多个互斥锁进行上锁，这可以有效避免死锁（因为所有资源都被一个线程拥有）。我们也可以用 `std::unique_lock` 以及 `std::lock` 函数达到同样的效果。
-- **条件变量（Conditional Variable）**：多个线程间相互沟通的媒介；当某个特定要求满足时，可以通过条件变量通知所有（或一个）其它的线程继续进行工作。常用于实现 **生产者-消费者（Producer-Consumer）** 模型。条件变量的缺点在于竞争条件。比如存在多个消费者时（也即有多个线程等待信号），系统可能会对多个线程发送信号；此时一些线程会更早地恢复工作，最终可能导致其它线程准备开始工作时，发现条件不符合。我们将这个现象称为 **虚假唤醒（Spurious Wakeup）**。这也是为什么我们会将条件变量的 `wait` 操作放在循环（而非 `if` 语句）中。
+- **条件变量（Conditional Variable）**：多个线程间相互沟通的媒介；当某个特定要求满足时，可以通过条件变量通知所有（或一个）其它的线程继续进行工作。常用于实现 **生产者-消费者（Producer-Consumer）** 模型。条件变量的缺点在于竞争条件。比如存在多个消费者时（也即有多个线程等待信号），系统可能会对多个线程发送信号；此时一些线程会更早地恢复工作，最终可能导致其它线程准备开始工作时，发现条件不符合。我们将这个现象称为 **虚假唤醒（Spurious Wakeup）**。这也是为什么我们会将条件变量的 `wait` 操作放在循环（而非 `if` 语句）中。**C++** 中通过 `std::conditional_variable` 来模拟条件变量。
+- **信号量（Semaphore）**：信号量和互斥锁略为相似，只不过它仅在同时访问的线程个数达到一定量后才会阻塞其它线程，且释放信号量的线程不一定是获取信号量的线程。**C++20** 后使用 `std::counting_semaphore` 来模拟信号量。特别地，只允许一个线程访问的信号量是 `std::binary_semaphore`，其等价于 `std::counting_semaphore<1>`。
+- **锁存器（Latch）**：锁存器用于同步多个线程。其初始化时设置一个数量，然后在 `wait` 处等待这个数量降到零。需要注意的是，我们需要手动调用 `count_down` 来让计数减少。由于 `count_down` 和 `wait` 常常先后调用，我们可以使用 `arrive_and_wait` 来一并完成两个调用。**C++20** 后使用 `std::latch` 来模拟锁存器。
+- **屏障（Barrier）**：`std::barrier` 和 `std::latch` 非常相似，不过它是可以重复利用的（后者在计数降到零之后就无法复原了）。
+- **异步任务（Asynchronous Task）**：线程的常见行为都是 **同步的（Synchronous）**，其体现于父线程会等待子线程完成任务，在等待期间父线程处于阻塞状态。相比使用线程，另一种基于任务的异步模型也相当好用，我们可以通过 `std::async` 函数来让某个函数通过异步调用。
+
+
+
+## 注意资源的所有权，即使它以句柄形式出现（2022/05/03）
+
+这句话本来是一句废话（尤其是这个“即使”加得毫无道理），但是显然我这两天忘记了这一点。资源出现的方式往往是指针或者智能指针，但在一些复古风格的 API 中，资源的句柄常常是一个整数。此时虽然它看起来人畜无害，可以随意的复制，但它本质上还是一个指针，因此要考虑所有权的问题。
+
+这次问题发生的起因是我写了一个 shader program 的包装类，里面的结构大概是这样的：
+
+```cpp
+class shader {
+    shader(char const* vertex_source, char const* fragment_source) {
+        m_program = glCreateProgram();
+        // 省略其它的细节
+    }
+    
+    ~shader() {
+        if (m_initialized) {
+            glDeleteProgram();
+        }
+    }
+    
+    shader() = default;
+    shader(shader const& other) = default;
+    shader& operator =(shader const& other) = default;
+private:
+    GLuint m_program;
+    bool m_initialized = false;
+};
+```
+
+眼尖的同学应该已经发现问题了。这里的 `m_program` 等同于一个指向资源的指针，并且通过 **RAII** 管理，因此每个 shader 都对其中的 `m_program` 有绝对的管理权。然而我把复制操作设计为默认行为，这就会导致多个 shader 对象同时对一份资源拥有所有权，而我也没有设置引用计数。这就是为什么我的 shader 始终不好用。我在一个函数中使用了下面的语句：
+
+```cpp
+m_shader = shader("shaders/vertex.glsl", "shaders/fragment.glsl");
+```
+
+之所以没有在 `m_shader` 初始化时直接构造完毕是因为我觉得 shader 理应可以热切换（虽然，可能用一个普通成员函数是更好的设计）。然后这里就出现了很典型的问题：等号右侧的 `shader` 临时对象在这一行之后立刻析构了，所以从两个文件编译链接而成的 shader 程序立刻就被删除了。
+
+解决方案很简单，要么将 `m_program` 通过 `std::unique_ptr` 代理储存，要么用 `std::shared_ptr`。我目前不认为后者是必要的（而且后者的 overhead 明显更大），因此决定使用前者。接下来就是实现移动操作，并每次移动后将被移动对象的 `m_initialized` 更新为 `false` 即可。
