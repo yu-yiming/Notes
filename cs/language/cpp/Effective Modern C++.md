@@ -2097,7 +2097,7 @@ if (fut.wait_for(0s) == std::future_status::deferred) {
     // 利用 wait 或 get 方法异步调用 f
 }
 else { // 未被推迟，则不可能死循环
-    while (fut.wait_for(100ms) != std::future_status::readY) {
+    while (fut.wait_for(100ms) != std::future_status::ready) {
         // 省略内容
     }
 }
