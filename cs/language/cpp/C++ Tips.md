@@ -2682,3 +2682,348 @@ m_shader = shader("shaders/vertex.glsl", "shaders/fragment.glsl");
 之所以没有在 `m_shader` 初始化时直接构造完毕是因为我觉得 shader 理应可以热切换（虽然，可能用一个普通成员函数是更好的设计）。然后这里就出现了很典型的问题：等号右侧的 `shader` 临时对象在这一行之后立刻析构了，所以从两个文件编译链接而成的 shader 程序立刻就被删除了。
 
 解决方案很简单，要么将 `m_program` 通过 `std::unique_ptr` 代理储存，要么用 `std::shared_ptr`。我目前不认为后者是必要的（而且后者的 overhead 明显更大），因此决定使用前者。接下来就是实现移动操作，并每次移动后将被移动对象的 `m_initialized` 更新为 `false` 即可。
+
+
+
+## **C++** 的冰山（2022/05/30）
+
+今天在 **Reddit** 看到了一个非常有趣的帖子，博主分享了它整理的有关 **C++** 的奇怪“特性”，截图如下：
+
+<img src="graphs/image-20220530152626105.png" alt="image-20220530152626105" style="zoom: 90%;" />
+
+我简单扫了一眼，发现真的提到了一些很有趣的东西。今天让我来将其中奥秘一一写出（有些其实我在此前的笔记中已经提到了）：
+
+- `0[arr]`：这是源于 **C** 的小把戏，因为对于内置的下标运算 `a[b]` 会被处理成 `*(a + b)`，因此这个表达式等价于 `arr[0]`。实际上，前者更接近于汇编语言中的表述习惯，即偏移量写在括号外面。
+
+- `#define private public`：这个在 debug 的时候可太好用了，只要在所有 `#include` 之前写上这个，所有成员都无处隐匿。这是因为 `#define` 是粗暴的文本替换，其先于文件编译进行，所以即使 `private` 是关键字也无妨。
+
+- `inline` 非 `inline`：这一点无论对于传统 **C++** 还是现代 **C++** 都成立。`inline` 的原始语义是函数内联，然而这仅仅是对编译器的建议，最终是否内联由编译器决定（即使没有声明 `inline` 的函数，编译器照样可以优化为内联）。此外，由于内联函数可能在多个编译单元存在（但必须全等），编译器会帮助删除所有多余的定义；因此 `inline` 衍生出在头文件中定义函数或变量（**C++17**）的作用（详细请看我[以前的笔记](# 函数)）。说实话，我感觉这个特性应该放在更深的地方。
+
+- **C++** 不是 **C** 的超集：实际上严格意义上来说从来都不是。比如 `class` 是一个合法的 **C** 变量名称，但 **C++** 中不能这样写。如果除去这些“无关紧要”的区别，**C++** 应该是 **C89** 的超集（虽然依然有较小的区别，比如默认声明整数类型、类作用域等，详见[这里](https://stackoverflow.com/questions/1201593/where-is-c-not-a-subset-of-c)），因为 **C99** 添加了不少相当实用有趣的特性，但当时 **C++98** 标准已出，从此两者分道扬镳。
+
+- 最烦人的语法分析：指臭名昭著的初始化问题。比如 `std::ifstream ifs(std::string(str))`，普通人能轻松看出这是对 `std::ifstream` 的初始化，并传入了一个临时构建的 `std::string` 对象。然而语法分析器无法判断这里究竟是前面所述的含义，抑或是下面这种理解：
+
+  ```cpp
+  std::ifstream ifs(std::string str);
+  ```
+
+  也即名为 `ifs` 的函数的声明。没错，括号在这里可以被理解为无作用的符号（源自 **C**）。如果加上同样源自 **C** 的类型退化，产生的效果会更加迷幻。考虑 `std::ifstream ifs(std::string())`，编译器会认为第一个括号内的是一个函数类型，其退化为函数指针类型 `std::string (*)()`，而非我们想要的临时空字符串 `std::string("")`。我们可以用 `static_cast` 或 **C++11** 引入的列表初始化解决这个问题。
+
+- `<iosfwd>`：这个我此前没听说过。似乎是因为 `<iostream>` 过于庞大，因此如果仅需要其中的函数和类型声明，只需要引入 `<iosfwd>` 头文件。某种程度上这也是对 **C++** 源自 **C** 的原始而臃肿的头文件机制的吐槽。
+
+- `protected abstract virtual base pure virtual private constructor`：大概是在吐槽 **C++** 在一些功能上过多的细化；当这些正交的功能组合在一起时，其必要性近乎为零。**C++** 的成员可以是 `public`、`protected` 和 `private` 中三选一，这个没什么问题；但继承时我们同样也可以选择 `public`、`protected` 和 `private` 中的一个，这里 `protected` 的作用就存疑了。同时，考虑到菱形继承的情形，**C++** 提供了 `virtual` 继承解决多次继承同一个成员变量的问题，但它是可以和继承访问修饰符一同使用的。这样，根据基类访问修饰符、派生类访问修饰符、继承访问修饰符、是否进行虚继承，组合起来就有 54 种可能性，而这还没有算上纯虚函数（此时就是 108 种可能性）。这个标题所描述的是下面的情景：
+
+  ```cpp
+  class Base {
+  private:
+      virtual ~Base() = 0;
+  };
+  class Derived : virtual protected Base {
+  private:
+      ~Derived() override {}
+  };
+  ```
+
+  这有什么特定作用呢，我不清楚。不过对比成员函数的重载情形，我突然觉得访问修饰符的复杂性没什么，因为基本上真的没有人去用这些奇怪的场景，且它也不容易犯错（但凡访问不到了直接就编译出错了）。至于成员函数的重载，让我简单列出几个：
+
+  ```cpp
+  struct Foo {
+      void foo(int x);
+      void foo(int& x) const&;
+      void foo(int const&& x) volatile&&;
+  };
+  ```
+
+  这里，对于函数本身和参数，我们分别可以添加 `&`、`&&` 限定符，或 `const`、`volatile` 修饰符。因此一共有 81 种可能性。但这些用法并非都是无用的（除了 `volatile` 真的没什么用）。
+
+- `-->` 运算符：就是 `while (x --> 0)` 这个梗。其本身就是 `--` 运算符返回的值通过 `>` 运算符和 `0` 进行比较。
+
+- 飞碟运算符 `<=>`：个人其实还挺喜欢这个运算符的；自 **C++20** 起，用这个运算符就可以自动生成所有比较运算符。同时，利用 `= default` 可以快速定义默认的比较关系：
+
+  ```cpp
+  struct Foo {
+      std::string str;
+      int i;
+      friend auto operator <=>(Foo const& f1, Foo const& f2) = default;	// 用字典顺序比较两个 Foo 对象
+  };
+  ```
+
+- `else if` 是一个谎言：因为 `else if` 就是 `else` 和 `if` 的组装：
+
+  ```cpp
+  void foo() {
+      if (true) {}
+      else if (false) {}
+      // 下面这个写法和上面是等价的
+      if (true) {}
+      else {
+          if (false) {}
+      }
+  }
+  ```
+
+  因此我们也可以写出 `else while` 和 `else for` 这样超现实的东西。
+
+- `digraphs`：比如 `<%` 等价于 `{`，这是为了照顾一些古董机器，上面没有现代键盘都有的一些符号。**C++17** 之前甚至还支持以 `??` 开头的 `triagraphs`（其在预编译期就替换为目标字符，因此会导致一些奇怪的麻烦）。现代计算机已经不需要它们了。
+
+- `std::vector<bool>` 不好用：这是因为标准库在 `std::vector<bool>` 这里耍小聪明，采用了类似位域的实现，因此 8 个元素才占用一个字节。这也就导致其一些行为和正常的容器不同。比如 `front`、`operator []` 等理应返回 `bool&` 的成员函数，其返回的是一个代理对象，行为类似于：
+
+  ```cpp
+  namespace std {
+  template<>
+  class vector<bool> {
+  public:
+      class reference {
+      public:
+          reference(std::vector<unsigned char>& data, std::size_t pos)
+              : m_data(data), m_pos(pos) {}
+          
+          reference operator =(bool other) {
+              std::size_t idx = m_pos / sizeof(unsigned char);
+              std::size_t offset = m_pos % sizeof(unsigned char);
+              if (other) {
+                  m_data[idx] |= 1 << offset;
+              }
+              else {
+                  m_data[idx] &= 1 << offset;
+              }
+          }
+          // 省略其它的成员函数
+      private:
+          std::vector<unsigned char>& m_data;
+          std::size_t m_pos;
+      };
+      
+      reference front() {
+          return { m_data, 0 };
+      }
+      // 省略其它的成员函数
+      
+  private:
+      std::vector<unsigned char> m_data;
+  };  
+  }
+  ```
+
+  注意到 `front` 返回的是一个类似引用的非引用类型。这导致下面这个对其它所有容器均有效的写法用在 `std::vector<bool>` 上会产生编译错误：
+
+  ```cpp
+  void foo() {
+      std::vector<bool> v{};
+      v.push_back(false);
+      auto& ref = v.front();		// 错误！不能将左值引用绑定在纯右值上
+  }
+  ```
+
+  如果要解决这个问题，只能使用 `auto&&` 或 `auto const&`（不过此时不能修改引用）。许多人干脆拒绝使用 `std::vector<bool>`。
+
+- 在无符号整数上使用负号：这不是 **UB**，就好像无符号整数类型的溢出也不是 **UB** 一样。我只能相信这能帮助程序员简便地写 `~x + 1`。
+
+- 模板的图灵完备性是一个意外：这简直可以称为 **C++** 最大谈资之一。早期的 **C++** 只是想做一个范型的实现，没曾想在编译期计算和函数式编程上越走越远。有一篇[论文](https://rtraba.files.wordpress.com/2015/05/cppturing.pdf)专门证明了 **C++** 模板的图灵完备性，其本质就是通过模板构建了一个图灵机。做得好哇。
+
+- 相似体字面量：这个没有听说过。读到[原文章](http://www.eelis.net/C++/analogliterals.xhtml)后顿感灵魂升华。简单来说，就是通过奇葩的运算符重载，使得用特定字符构建的一维、二维、三维图形的长度、面积、体积和它看起来的一模一样，这里举个例子让大家感受一下：
+
+  ```cpp
+  #include "analogliterals.hpp"
+  
+  auto const shape_1 = I-------I;		// 长度为 4（2n + 1 个 - 相当于长度 n）
+  auto const shape_2 = o---------o	// 长度为 5，宽度为 3
+      				 |         !
+      				 !         !
+      				 !         !
+      				 o---------o;
+  auto const shape_3 = o---------o	// 长度为 5，宽度为 3,高度为 4
+      				 |L         \
+      				 | L         \
+      				 |  L         \
+      				 |   o---------o
+      				 o   |         !
+      				  L  !         !
+      				   L !         !
+      					L!         !
+      					 o---------o;
+  assert(shape_3.volume() == shape_1 * shape_2.area());
+  ```
+
+- `zapcc` 编译器：没有听说过。经查询发现是一个 **Clang** 的重度改装，且大幅提升了编译速度（通过用内存来缓存编译信息）。
+
+- `std::move` 并没有真的移动：曾是 **C++** 小白的我以为移动语义整个就是魔法，且 `std::move` 更是编译器的魔法实现。如今从某种角度来看确实是这样。编译器把右值特别处理为移动的目标这一点确实是魔法，而 `std::move(arg)` 本身等价于 `static_cast<std::remove_reference_t<decltype(arg)>&&>(arg)`  这一点无论怎么看都确实是魔法实现。没错，`std::move` 只是一个类型转换，它将参数都变成可以被移动的右值。
+
+- `std::remove` 并没有真的移除：这一条和上一条放在一起有莫名的喜感。这一条的存在源于 **C++** 的 `remove-erase` 惯用法，参考下面的例子：
+
+  ```cpp
+  void foo() {
+      std::string s = "This is a sentence with extra spaces     ";
+      auto end = std::remove(s.begin(), s.end(), ' ');
+      std::erase(end, s.end());
+  }
+  ```
+
+  `std::remove` 仅将后面的元素移动（或拷贝）到前面，但是并没有真正释放掉后面（原来占用的）空间，我们不得不用 `std::erase`（这是 **C++20** 才支持的标准库算法，此前需要用容器中的 `erase` 成员函数）才能完成 `std::remove` 本应一同做到的事情。这个缺陷来源于 `std::remove` 本身的通用性：它接收的是两个迭代器，因此其对于容器类型一无所知；而移除容器的元素必须调用容器的成员函数，它无从下手。这就造就了 `std::remove` 没有真的移除元素的尴尬局面。
+
+- `<iostream>` 是一个错误：简单来说就是标准输入输出库的设计很糟糕。我对此了解不多，这里建议参考[这个问题](https://stackoverflow.com/questions/2753060/who-architected-designed-cs-iostreams-and-would-it-still-be-considered-wel)下面的讨论。流运算符 `<<` 看起来很新颖，但是实际使用时确实噪声太大了：
+
+  ```cpp
+  struct Person {
+      std::string name;
+      std::string origin;
+      int age;
+  };
+  void foo() {
+      extern Person p;
+      std::cout << "Hello, my name is " << p.name 
+          	  << ". I'm from " << p.origin 
+          	  << " and I'm " << p.age << "years old.";
+  }
+  ```
+
+  好在 `<format>` 库（**C++20**）将一切引到正轨上来了，其采用了和 **Python** （以及大多数现代高级语言）类似的格式化方式；溯其根源，还是 **C** 那一套格式化风格：
+
+  ```cpp
+  void foo() {
+  	extern Person p;
+      std::cout 
+          << std::format("Hello, my name is {}. I'm from {} and I'm {} years old", p.name, p.origin, p.age);
+  }
+  ```
+
+- `std::string` 的奇怪细节：现代的 `std::string` 采用了 **小对象优化（Small Object Optimization）**，因此它的实现类似于下面的样子（注意，我只是实现了一个以 `char` 为元素的字符串，标准库中的 `std::string` 是 `std::basic_string<char>` 的别名，情况可能会更加复杂：
+
+  ```cpp
+  class string {
+  public:
+      // 省略成员函数
+  private:
+      char* m_data;
+      std::size_t m_size;
+      std::size_t m_capacity;
+  };
+  ```
+
+  你也许会说，这有什么稀奇的，不是和 `std::vector` 基本一致么。它的奇特之处在于，当 `std::string` 的长度很小时，其本身就是一个字符串，我们可以简单理解为：
+
+  ```cpp
+  class string {
+  public:
+      // 省略成员函数
+  private:
+      union {
+          char m_small[24];
+          struct {
+              char* m_data;
+              std::size_t m_size;
+              std::size_t m_capacity;
+          } m_large;
+      };
+  };
+  ```
+
+  由于 **C++** 标准要求 `std::string` 必须以 `\0` 结尾，对于所有长度小于等于 23 的字符串都可以直接存在 `m_small` 中。这里值得特别讲解的是，如何判断一个 `std::string` 存在栈上还是在堆上。首先，为了在使用 `m_small` 时快速得到字符串的长度，我们应该借用 `m_capacity` 的最后一字节来存储字符串长度，但这样显然会减少我们能在 `m_small` 中存储的字符个数。一个巧妙的方法是，比起存储当前短字符串的长度，我们可以存储当前段字符串*剩余*的空间。当剩余空间为零时，其对应 23 个字符，而最后一位恰恰是 `\0`。
+
+- `T&&` 不是右值引用：这是因为进行类型推导的时候，会发生引用折叠。这里的引用可以理解为“转发引用”，其作为右值引用传入时可以再次通过 `std::forward<T>` 以右值引用形式传到别的函数中。
+
+- 右值引用是左值：没错，因为引用是左值。
+
+- 函数 `try` 代码块：指的是下面这种奇怪的形式：
+
+  ```cpp
+  int main() try {
+      throw 42;
+  }
+  catch (int i) {
+      std::cout << "Everything is " << i << '\n'; 
+  };
+  struct Base {};
+  struct Derived : Base {
+      Derived() try : Base() {} catch (...) {}
+  };
+  ```
+
+  大概有些函数天生就是要处理异常吧。**C++** 的异常应用非常微妙，我也用得很少，这里不多聊了。
+
+- `std::shared_ptr` 有设计缺陷：这点其实在 Scott Meyers 的 *Effective Modern C++* 里面有详细提到，这里简单说一下。一个是 `std::shared_ptr<T>(new T(...))` 的写法容易造成内存碎片，因此需要使用 `std::make_shared` 将引用计数和对象一起在堆上分配。但是这样会导致（为了避免循环引用而使用的）`std::weak_ptr` 指向这个控制块时，即使对象被释放，这段内存也无法立刻被系统回收（因为它只能和引用计数和弱引用计数一起释放，除非弱引用级数也归零，否则这段内存一直保留）。在对象大小非常庞大的时候可能会造成内存短缺问题。
+
+- 初始化矩阵：我查了一下，是下面这张图（来自[这篇博客](https://timur.audio/initialisation-in-c17-the-matrix)）：
+
+  <img src="graphs/init_in_cpp17_table.png" alt="img" style="zoom: 20%;" />
+
+  有关初始化我之前写了几篇笔记讨论过，这里就不多说了。简单而言，这是 **C++** 的头号屎山，而且越修越复杂。
+
+- `range-for` 循环有缺陷：自从 **C++*11** 引入 `range-for` 循环之后，其因语法的简洁性被大量使用。下面是（截至 **C++20**）它的等价形式：
+
+  ```cpp
+  for (<init-statment>; <decl> : <expr>) {
+      <loop-statement>;
+  }
+  {
+      <init-statement>;
+      auto&& range = <expr>;
+      auto&& begin = std::begin(range);
+      auto&& end = std::end(range);
+      for (; begin != end; ++begin) {
+          <decl> = *begin;
+          <loop-statement>;
+      }
+  }
+  ```
+
+  然而，其中有一个巨大的隐患，那就是 `auto&& range = <expr>;` 这句话。我们知道，这是一个转发引用，右侧可以是任意引用类型的返回值。当右侧返回一个纯右值时，左侧会以右值引用形式绑定并延长其生命周期，这是 **C++11** 引入的特性。然而，如果我们绑定的是某个临时对象的内部资源的引用，这个规则并不适用。我们可以先看一个简单的例子：
+
+  ```cpp
+  std::string foo() {
+      return "abc";
+  }
+  void bar() {
+      auto&& s = foo().c_str();
+      std::cout << s << '\n';		// UB
+  }
+  ```
+
+  这里面 `foo` 返回了一个临时对象，然而我们随机调用了它的 `c_str` 方法。此时虽然 `s` 成功绑定并延长了一个 `char const*` 的生命周期，但是过了这一行 `foo` 返回的字符串依然会被释放。**C++** 中一般不流行这样的代码风格，但在 `range-for` 循环中，为了加大代码的紧凑性和相关性，我们可能会写出下面这样的代码：
+
+  ```cpp
+  for (auto&& elem : temp_coll().temp_subrange()) {
+      // 省略内容
+  }
+  ```
+
+  这样问题就暴露出来了。有一些对此问题的提案（比如将 `range-for` 循环中初始化部分的所有临时变量都延长生命周期），不过都没有被通过。**C++20** 倒是可以给出一个折衷的解决方案：
+
+  ```cpp
+  for (auto&& coll = temp_coll(); auto&& elem : coll.temp_subrange()) {
+      // 省略内容
+  }
+  ```
+
+  但如果希望套更多层，我们就无能为力了。
+
+- `constexpr` 的含义并不是你想的那样：是的。当它修饰函数时，它的意思是说：这段代码可能可以在编译期执行。只有在修饰变量时它才会要求其能够进行常量初始化（这里我觉得它应该使用 **C++20** 才引入的 `consteval` ，或 `constinit` 才对）。同时，`constexpr` 变量一定是 `const` 的，但 `constexpr` 的成员函数不一定是 `const` 的（因此你可以修改成员变量的值），而 `constexpr` 的普通函数中根本没有 `const` 的说法。这听起来有点奇怪，仔细想想你会觉得非常微妙。这本质上意味着你可以让一个变量在编译期改变它的值，只不过它的行为一定是由输入唯一确定的。**C++20** 开始，甚至大多数标准库容器都是 `constexpr` 的，所谓的“堆分配”也可以是 `constexpr` 的，`virtual` 函数也可以是 `constexpr` 的。一切皆如虚幻，一切皆可编译期。到 **C++23** 为止，`constexpr` 函数解开了绝大多数其最初出现时的束缚，我甚至可以说：大多数函数都应该声明为 `constexpr`。至于它是否能胜任这一点，就要看你的输入了。
+
+- `const std::string bitand`：这个出现在这里纯属搞笑的，理应放在和 `digraphs` 同一层。其原理就是 `bitand` 会在预处理阶段替换成 `&`，故事结束。
+
+- 成吨的错误信息：[看这个链接](https://tgceec.tumblr.com/post/74534916370/results-of-the-grand-c-error-explosion?is_related_post=1)。即使是如今，**C++** 主流的三个编译器的报错信息依然不理想；长篇大论，答非所问是其主要特征。上面的链接中有人用两行 `#include` 产生了十亿量级的报错。
+
+- 模板元编程是令人迷惑的 **Haskell**：模板元编程和函数式编程的相似性令人震惊。其易于实现的惰性求值和天然的模式匹配机制让我们很容易写出一个纯函数式的模板元编程库。不过其局限性也是显然的，那就是它只能在编译期执行。
+
+- `herbceptions`：指的是 **C++** 大佬 Herb Sutter 有关 **C++** 异常究竟何去何从的[提案](https://open-std.org/JTC1/SC22/WG21/docs/papers/2019/p0709r4.pdf)。也可以同时参考 **C++** 之父有关异常的[讨论](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2019/p1947r0.pdf)。有关异常我会找时间好好学习大佬们的思想，并另起小节做笔记，这里就先略过了。
+
+- `operator ,`：非常炫酷的用法，但会造成不必要的迷惑性。举例是 `Boost.Assign`：
+
+  ```
+  std::vector<int> v;
+  v += 1, 2, 3, 4, 5;
+  ```
+
+  **C++20** 已经弃用了在 `operator []` 参数中使用 `operator ,` 重载的用法（因为要为多维度下标运算铺路）；事实上大多数情况下的 `operator ,` 的弊大于利（主要是没人会想到逗号这样无处不在的符号都能被重载）。
+
+- `std::optional` 是一个单子：没错。不仅如此，**C++23** 即将引入的 `std::expected` 也是单子。事实上，直到 **C++23** 之前，`std::optional` 都缺少单子应该有的操作，导致使用起来很不舒服。想要了解更多，可以去了解一下 **Haksell**，保证让你满载而归。
+
+- **C++0x** 用的是十六进制：这是在嘲讽 **C++0x** 拖到 2011 年才发布出来。有趣的是，此后未发布的 **C++** 标准都用类似的形式表示，比如 **C++1y**（**C++14**）、**C++1z**（**C++17**）、**C++2a**（**C++20**）等。
+
+- 
+
+
+
+
+
+参考资料：[Reddit](https://www.reddit.com/r/cpp/comments/v0t3jm/i_enjoy_the_weird_and_arcane_corners_of_c_so_i/)
