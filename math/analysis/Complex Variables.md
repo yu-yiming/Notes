@@ -343,7 +343,7 @@ $$
 $$
 一个引申的优雅结论是，如果令 $C_1$ 是上面所有这些圆的集合（并包括 $\rho = 1$，即 $p$ 和 $q$ 中垂线 $L$ 的情形），且令 $C_2$ 为所有圆心在 $L$ 上并经过 $p$，$q$ 两点的圆的集合，则对于任意 $c_1 \in C_1$ 和 $c_2 \in C_2$，两者均在其交点处垂直。为了简化讨论，让我们变换坐标系，令 $p$，$q$ 在实轴上且和原点距离相等。图示如下：
 
-<img src="graphs/Screenshot from 2022-05-20 21-55-57.png" alt="Screenshot from 2022-05-20 21-55-57" style="zoom:80%;" />
+<img src="graphs/Screenshot from 2022-05-20 21-55-57.png" alt="Screenshot from 2022-05-20 21-55-57" style="zoom:90%;" />
 
 此时我们可以将 $C_1$ 中的元素记为：
 $$
@@ -662,4 +662,153 @@ $$
 
 线积分在复变函数中有重要的地位；在介绍它之前，让我们先引入曲线的概念。
 
-一条 **曲线（Curve）** $\gamma(t)$ 是在实轴区间 $[a, b]$ 上定义的复值函数 $\gamma : \mathbb{R} \to \mathbb{C}$。如果对于任意 $a \le t_1 < t_2 < b$ 都有 $\gamma(t_1) \ne \gamma(t_2)$，我们称该曲线是 **简单的（Simple）**。此外，若 $\gamma(a) = \gamma(b)$，则该曲线是 **闭合的（Closed）**。
+一条 **曲线（Curve）** $\gamma(t)$ 是在实轴区间 $[a, b]$ 上定义的复值函数 $\gamma : \mathbb{R} \to \mathbb{C}$。如果对于任意 $a \le t_1 < t_2 < b$ 都有 $\gamma(t_1) \ne \gamma(t_2)$，我们称该曲线是 **简单的（Simple）**。此外，若 $\gamma(a) = \gamma(b)$，则该曲线是 **闭合的（Closed）**。当曲线同时为简单且闭合时，著名的  **Jordan 曲线定理（Jordan Curve Theorem）** 声明其补集是两个不相交集的并，分别称为该曲线的 **内部（Inside）** 和 **外部（Outside）**。我们这里不给出它的证明。
+
+我们可以将 $\gamma(t)$ 写成实部和虚部的和：$\gamma(t) = x(t) + iy(t)$，其中 $x(t)$ 和 $y(t)$ 都是实变函数。当两者都在 $t_0$ 处可导时，我们便称 $\gamma(t)$ 在这一点可导。如果 $\gamma(t)$ 在某个区间可导且 $\gamma'(t)$ 连续，则称其 **光滑的（Smooth）**。如果一条连续曲线由有限个光滑子曲线组成，我们称其为 **分段光滑的（Piecewise Smooth）**。
+
+下面举一个参数化曲线的例子：
+
+![image-20220606101248286](graphs/image-20220606101248286.png)
+
+其由两个不完整的同心圆以及边缘处的连线组成。外部圆的半径为 $R$，内部圆的半径则为 $\epsilon$。“缺口”处角度为 $\delta$。两个圆的方程很容易写出，只需要控制 $\theta$ 的取值e范围即可；从 $B$ 到 $C$、从 $A$ 到 $D$ 的线段则需要引入参数 $t$。需要注意的是，上图中箭头方向提示了参数增加的方向，因此总结得到的参数方程如下：
+$$
+\gamma: z = 
+\begin{cases}
+	Re^{i\theta} & \delta \le \theta \le 2\pi - \delta \\
+	te^{i(2\pi - \delta)} & R \ge t \ge \epsilon \\
+	\epsilon e^{i\theta} & 2\pi - \delta \ge \theta \ge \delta \\
+	te^{i\delta} & \epsilon \le t \le R
+\end{cases}
+$$
+现在让我们考虑一段曲线上的线积分。设 $\gamma(t) = x(t) + iy(t)，且 $ $f(z)= u(x, y) + iv(x, y)$。则在 $[a, b]$ 区间上的线积分是：
+$$
+\begin{align*}
+	\int_\gamma f(z)\,dz
+	&=\int_{t = a}^b u(x(t), y(t)) + iv(x(t), y(t))\left(\frac{dx}{dt} + i\frac{dy}{dt}\right)\,dt \\
+	&= \int_{t = a}^b \left(u\frac{dx}{dt} - v\frac{dy}{dt}\right) + i\left(u\frac{dy}{dt} + v\frac{dx}{dt}	\right)\,dt \\
+	&= \int_\gamma (u\,dx - v\,dy) + i\int_\gamma (v\,dx + u\,dy) \\
+	&= \int_\gamma (u + iv)\,dx + i\int_\gamma (u + iv)\,dy
+\end{align*}
+$$
+现在，设函数 $P(x, y)$、$Q(x, y)$ 及且其一阶偏导数均连续，则
+
+
+
+## 解析函数
+
+### 解析函数与谐函数
+
+在定义域 $D$ 上的复变函数 $f(z)$ 在 $z_0$ 处 **可微（Differentiable）**，如果下面的极限存在：
+$$
+\lim_{z\to z_0}\frac{f(z) - f(z_0)}{z - z_0} = \lim_{h\to 0}\frac{f(z_0 + h) - f(z_0)}{h}
+$$
+ 如果该函数在 $D$ 上处处可微，则称其为 **解析函数（Analytic Function）**。当 $D = \mathbb{C}$ 时，它也被称为 **整函数（Entire Function）**。值得一提的是，上面的极限并不指定 $z \to z_0$ 及 $h \to 0$ 的路径；只需满足 $|z - z_0| \to 0$ 及 $|h| \to 0$ 即可。
+
+举例来说，$f(z) = z^n$ 在 $n = 1, 2, \dots$ 时是整函数且 $f'(z) = nz^{n-1}$：
+
+$$
+\begin{align*}
+	(z_0 + h)^n - z_0^n 
+		&= nz_0^{n-1}h + \frac{n(n-1)}{2}z_0^{n-2}h^2 + \dots + h^n \\
+		&= h(nz_0^{n-1} + \frac{n(n-1)}{2}z_0^{n-2}h + \dots + h^{n-1}) \\
+	\lim_{h\to 0}\frac{(z_0 + h)^n - z_0^n}{h}
+		&= \lim_{h\to 0} \left[nz_0^{n-1} + \frac{n(n-1)}{2}z_0^{n-2} + \dots h^{n-1}\right] \\
+		&= nz_0^{n-1}
+\end{align*}
+$$
+另外一个重要的整函数是指数函数 $e^x$：
+$$
+\begin{align*}
+	e^{z_0 + h} - e^{z_0}
+		&= e^{z_0}(e^{h} - 1) \\
+	\lim_{h\to 0} \frac{e^{z_0 + h} - e^{z_0}}{h}
+		&= \lim_{h\to 0}e^{z_0}\frac{e^h - 1}{h} \\
+		&= e^{z_0}\lim_{h\to 0}\frac{e^h - 1}{h}
+\end{align*}
+$$
+设 $h = u + iv$，则：
+$$
+\begin{align*}
+	e^h - 1 - h 
+		&= e^u\cos{v} + ie^u\sin{v} - 1 - (u + iv) \\
+		&= (e^u\cos{v} - 1 - u) + i(e^u\sin{v} - v) \\
+		&= [e^u(\cos{v} - 1) + e^u - 1 - u] + i[e^u(\sin{v} - v) + v(e^u - 1)]
+\end{align*}
+$$
+因此：
+$$
+\begin{align*}
+	\left|\frac{e^h - 1}{h} - 1\right|
+		&= \left|\frac{e^h - 1 - h}{h}\right| \\
+		&\le e^u\left|\frac{1 - \cos{v}}{h}\right| + \left|\frac{e^u - 1 - u}{h}\right| + e^u\left|\frac{\sin{v} - v}{h}\right| + \left|\frac{v(e^u - 1)}{h}\right| \\
+		&\le e^u\left|\frac{1 - \cos{v}}{v}\right| + \left|\frac{e^u - 1 - u}{u}\right| + e^u\left|\frac{\sin{v} - v}{v}\right| + \left|\frac{v(e^u - 1)}{u}\right|
+\end{align*}
+$$
+显然，不等式右侧在 $|h| \to 0$，即 $u, v \to 0$ 时也趋近于 $0$。这样我们就得到：
+$$
+\lim_{h\to 0}\frac{e^{z_0 + h} - e^{z_0}}{h} = e^{z_0}
+$$
+故指数函数是整函数，且导数为其本身。
+
+两个解析函数在定义域的交集上之和/积都依然是解析函数。解析函数 $g$ 的值域落在解析函数 $f$ 的作用域上时，两者的复合 $f \circ g$ 也是解析函数。因此，所有只包含幂函数、指数函数、三角函数的复变函数都是整函数（回忆三角函数的指数形式）。
+
+函数的可微性可以推导出连续性。
+
+#### 柯西-黎曼方程组
+
+若 $f = u + iv$ 在 $D$ 上是解析的，则在 $D$ 上有：
+$$
+\frac{\partial u}{\partial x} = \frac{\partial v}{\partial y} \qquad \frac{\partial u}{\partial y} = -\frac{\partial v}{\partial x}
+$$
+上面的式子就是 **柯西-黎曼方程组（Cauchy-Riemann Equations）**。其证明并不复杂。我们只需在求 $f$ 的导数时，先沿着和实轴平行的方向求导：
+$$
+\begin{align*}
+	f'(z_0) 
+		&= \lim_{h\to 0}\left[\frac{u(x_0 + h), y_0) - u(x_0, y_0)}{h} + i\frac{v(x_0 +h, y_0) - v(x_0, y_0)}{h}\right] \\
+		&= \frac{\partial u}{\partial x}(x_0, y_0) + i\frac{\partial v}{\partial x}(x_0, y_0) 
+\end{align*}
+$$
+随后，我们沿着虚轴方向求导：
+$$
+\begin{align*}
+	f'(z_0) &= \lim_{k\to 0}\left[\frac{u(x_0, y_0 + k) - u(x_0, y_0)}{ik} + i\frac{v(x_0, y_0 + k) - v(x_0, y_0)}{ik}\right] \\
+	&= \frac{1}{i}\frac{\partial u}{\partial y}(x_0, y_0) + \frac{\partial v}{\partial y}(x_0, y_0)
+\end{align*}
+$$
+为了让实部和虚部的结果对应，我们不难得到之前的方程组。
+
+利用柯西-黎曼方程组，我们可以通过解析函数的实部或虚部得到另一部分。举例来说，对于 $u(x, y) = x^3 - 3xy^2$，不难得到 $\partial_x v = 6xy$，$\partial_y v = 3x^2 - 3y^2$，因此 $v(x, y) = 3x^2y - y^3 + c$。不过，显然不是所有的函数 $u(x, y)$ 都能作为解析函数的实部或虚部。如果 $u$ 是 $D$ 上的解析函数 $f$ 的实部，则它满足 **拉普拉斯方程（Laplace's Equation）**：
+$$
+\begin{align*}
+	\Delta u
+		&= \frac{\partial^2 u}{\partial x^2} + \frac{\partial^2 u}{\partial y^2} \\
+		&= \frac{\partial}{\partial x}\left(\frac{\partial u}{\partial x}\right) + \frac{\partial}{\partial y}\left(\frac{\partial u}{\partial y}\right) \\
+		&= \frac{\partial }{\partial x}\left(\frac{\partial v}{\partial y}\right) + \frac{\partial }{\partial y}\left(-\frac{\partial v}{\partial x}\right) \\
+		& = 0
+\end{align*}
+$$
+这样的函数被称为 $D$ 上的 **调和函数（Harmonic Function）**。类似地，能够成为解析函数的虚部的函数，也能成为拉普拉斯方程的解，因此也是调和*函数。
+
+对于调和函数 $u$，如果另一个谐函数 $v$ 和它满足柯西-黎曼方程组，就称它为前者的 **调和共轭（Harmonic Conjugate）**。如果 $v_1$、$v_2$ 是 $u$ 的调和共轭，不难发现：
+$$
+\frac{\partial }{\partial y}(v_1 - v_2) = \frac{\partial u}{\partial x} - \frac{\partial u}{\partial x} = 0 \\
+\frac{\partial }{\partial x}(v_1 - v_2) = -\frac{\partial u}{\partial y} + \frac{\partial u}{\partial y} = 0
+$$
+因此它们相差一个常数。
+
+现在我们已经认识到函数的解析性使得柯西-黎曼方程组成立。实际上反过来的情况下，即满足该方程组的函数在特定条件下亦能组成解析函数。下面是相关的定理：
+
+> **定理**：如果在一个圆盘 $\Omega$ 上各处 $u$、$v$ 以及其一阶偏导数均连续，则若 $\Omega$ 的中心 $z_0$ 处 $u$、$v$ 满足柯西-黎曼方程组，则 $f$ 在 $z_0$ 处可微。
+
+以上面的定理为基础再做拓展，便有：
+
+> **定理**：如果 $f(z) = u(x, y) + iv(x, y)$ 在 $D$ 上满足柯西-黎曼方程组且 $u$、$v$ 在 $D$ 上可微，则 $f$ 是 $D$ 上的解析
+
+#### 流与场
+
+物理学中，有两个概念可以通过解析函数设立出来；本节中我们将给出它们的性质。
+
+### 幂级数
+
+
+
