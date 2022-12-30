@@ -242,17 +242,17 @@ M = (Q, \Sigma, \delta, q_0, A)
 $$
 其中：
 
-- $Q$ 是 **DFA** 的所有内部状态的集合。
-- $\Sigma$ 是 **DFA** 可以接受的字符集。
-- $\delta$ 是 **DFA** 的转换函数，可以记为 $\delta : Q \times \Sigma \to Q$。
-- $q_0 \in Q$ 是 **DFA** 的初始状态。
-- $A \subseteq Q$ 是 **DFA** 的接受状态。
+- $Q = \{q_0, q_1,\dots,q_k\}$ 是 DFA 的所有内部状态的集合。
+- $\Sigma$ 是 DFA 可以接受的字符集。
+- $\delta$ 是 DFA 的转换函数，可以记为 $\delta : Q \times \Sigma \to Q$。
+- $q_0 \in Q$ 是 DFA 的初始状态。
+- $A \subseteq Q$ 是 DFA 的接受状态。
 
-对于一个字符串 $w = w_0w_1...w_n \in \Sigma^*$，其在 **DFA** 中的接受路径如下：
+对于一个字符串 $w = w_1...w_n \in \Sigma^*$，其在 DFA 中的接受路径如下：
 $$
-q_0 \overset{w_1}{\longrightarrow} q_1 = \delta(q_0, w_1) \overset{w_2}{\longrightarrow} \dots \overset{w_n}{\longrightarrow} q_n = \delta(q_{n-1}, w_n) \in A
+q_0 \overset{w_1}{\longrightarrow} q_1' = \delta(q_0, w_1) \overset{w_2}{\longrightarrow} \dots \overset{w_n}{\longrightarrow} q_n' = \delta(q_{n-1}', w_n) \in A
 $$
-此时我们称这个 **DFA** **接受（Accept）** 了字符串 $w$；如果最后的状态 $q_n \notin A$，我们称这个 **DFA** **拒绝（Reject）** 了 $w$。**DFA** 的转换函数可以通过有向图来表示，其中每一个结点表示一个内部状态，每条边代表一个转换方式。下面是一个图例：
+（这里并不要求 $q_i \ne q_j$，$i, j \in 0, 1, \dots, n$）此时我们称这个 DFA **接受（Accept）** 了字符串 $w$；如果最后的状态 $q_n' \notin A$，我们称这个 DFA **拒绝（Reject）** 了 $w$。DFA 的转换函数可以通过有向图来表示，其中每一个结点表示一个内部状态，每条边代表一个转换方式。下面是一个图例：
 
 ```mermaid
 graph LR
@@ -262,15 +262,15 @@ graph LR
     q1((q1)) --0--> q1((q1))
 ```
 
-这个 **DFA** 的字符集是 $\{0, 1\}$，并有两个状态，$q_0$ 和 $q_1$，其转换函数为：
+这个 DFA 的字符集是 $\{0, 1\}$，并有两个状态，$q_0$ 和 $q_1$，其转换函数为：
 $$
 \delta(q_0, 0) = q_1 \qquad \delta(q_0, 1) = q_0 \qquad \delta(q_1, 0) = q_1, \qquad \delta(q_1, 1) = q_0
 $$
-其初始状态为 $q_0$，可接受状态集 $A = \{q_1\}$。**DFA** 能接受的字符串集形成了一个语言：
+其初始状态为 $q_0$，可接受状态集 $A = \{q_1\}$。DFA 能接受的字符串集形成了一个语言：
 $$
 L(M) = \{w \in \Sigma^* \mid \delta^*(q_0, w) \in A\}
 $$
-其中 $\delta^*$ 是一个辅助的转换函数，其通过一个字符串将 **DFA** 从一个状态转换为另一个状态，正式定义为：
+其中 $\delta^*$ 是一个辅助的转换函数，其通过一个字符串将 DFA 从一个状态转换为另一个状态，正式定义为：
 $$
 \begin{align*}
 	\delta^*(q, w) = \begin{cases}
@@ -279,7 +279,7 @@ $$
 	\end{cases}
 \end{align*}
 $$
-以上面画出来的 **DFA** 为例，我们不难发现接受的语言都是以 $0$ 结尾的字符串，即：
+以上面画出来的 DFA 为例，我们不难发现接受的语言都是以 $0$ 结尾的字符串，即：
 $$
 L(M)  = \{w0 \mid w \in \Sigma^*\}
 $$
