@@ -10,6 +10,7 @@
 $$
 \newcommand{is}[0]{\qquad\Leftrightarrow\qquad} \nonumber
 \newcommand{deq}[0]{\operatorname{\dot{=}}}
+\newcommand{interp}[3]{{#1}^{\mathbf{#2}}[\mathbf{#3}]}
 $$
 
 ## 朴素逻辑
@@ -888,7 +889,7 @@ $$
 $$
 从有序对，我们可以定义多元的有序组，比如三元组可以写成 $((a, b), c)$，它是 $(A \times B)\times C$ 的元素。
 
-> 记号：习惯上会将 $((a, b), c)$ 简写为 $(a, b, c)$。
+> 记号：习惯上会将 $((a, b), c)$ 简写为 $(a, b, c)$。类似地，$(\dots((a_1, a_2), a_3)\dots, a_n)$ 可以简写成 $(a_1, \dots, a_n)$。我们将这种结构称为 **元组（Tuple）**。元组通常用粗体的字母表示，如 $\mathbf{a}$，$\mathbf{v}$ 等。
 
 一个集合对自身的笛卡尔积 $A\times A$ 会被记为 $A^2$。我们可以用递归的方式定义一个集合的 **笛卡尔幂（Cartesian Power）**：
 $$
@@ -903,7 +904,7 @@ $$
 >
 > 同时，将 $(a, b, c)$ 作为 $((a, b), c)$ 而非 $(a, (b, c))$ 的简写看起来只是定义上的偏颇。但事实上这和笛卡尔幂的定义也是相互照应的（注意到 $A^{k+1} = A^k \times A$ 中将前面 $k$ 个元素和最后一个分割开来；由于二元运算符一般都是左结合的，这样定义让诸如 $A\times B \times C$ 的元素 $(a, b, c)$ 的具体含义更加符合直观。
 
-
+关于多元组，我们采用下标的形式得到元组中的某个元素。比如 $\mathbf{a}_i$ 表示 $\mathbf{a}$ 中的第 $i$ 个元素。
 
 
 
@@ -921,11 +922,11 @@ $$
 $$
  可以看到，通过创建一个不对称的元素集，我们反映了有序对中”有序“的本质。
 
-> 讨论：再一次地，定义 $(a, b)$ 为 $\{\{a\}, \{a, b \}\}$ 而非 $\{\{b\}, \{a, b\}\}$ 只是一个选择而已。
+> 讨论：再一次地，定义 $(a, b)$ 为 $\{\{a\}, \{a, b \}\}$ 而非 $\{\{b\}, \{a, b\}\}$ 只是一个选择而已。此外，从这个定义来看，元组中的元素并非其集合论定义中的元素，因为显然 $(a, b)$ 的元素是 $\{a\}$ 和 $\{a, b\}$ 而非 $a$ 和 $b$。后面我会用 **成员（Memeber）** 来表示这个定义下的元组“元素”。
 
 #### 字符串
 
-给定一个有限集 $\Sigma$，称为 **字母表（Alphabet）**；在 $\Sigma$ 上定义的 **拼接（Concatenation）** 操作是对笛卡尔积的一个简写：
+给定一个有限集 $\Sigma$，称为 **字母表（Alphabet）**；在 $\Sigma$ 上定义的 **拼接（Concatenation）** 操作是对笛卡尔积（即元组）的一个简写：
 $$
 \forall a_i \in \Sigma, a_1\dots a_n \equiv (a_1, \dots, a_n)
 $$
@@ -936,8 +937,6 @@ $$
 \end{equation}
 $$
 定义 **字符串（String）** 为 $\Sigma^*$ 的元素。特别地，称 $\epsilon$ 为 **空字符串（Empty String）**。
-
-> 习惯：当我们将字符串写成 $(a_1, \dots, a_n)$ 的形式时，也会将它称为 **n 元组（n-ary Tuple）**。比如 $(1, 2)$ 是一个二元组。
 
 > 记号：通常情况下我们谈论的字符串都是有限的（尤其是在计算理论中，因为计算机无法处理无限的信息），但在一些语境中，也会出现“无限字符串”的应用。其所在的集合记为 $\Sigma^\omega$。
 
@@ -1008,7 +1007,9 @@ $$
 
 如果某个集合上定义了特定的x序关系，我们就称它是一个相应的x序集。比如 $\mathbb{R}$ 上可以定义全序关系 $\mathcal{R}_\le$，因此 $\mathbb{R}$ 是一个全序集。偏序集的子集一定也是偏序集。
 
-对于一个偏序集 $A$ 和其子集 $S$，若存在 $u \in A$ 对任意 $x \in S$ 都满足 $x \le u$，则称 $u$ 是 $A$ 的一个 **上界（Upper Bound）**。如果某个 $A$ 的上界 $v$ 满足对任意上界 $u$ 都有 $v \le u$，则称其为 $A$ 的 **上确界（Least Upper Bound）**，用 $\sup{A}$ 表示。类似地，我们可以定义 **下界（Lower Bound）** 和 **下确界（Greatest Lower Bound）** $\inf{A}$。不难证明上确界和下确界总是唯一的。如果
+对于一个偏序集 $A$ 和其子集 $S$，若存在 $u \in A$ 对任意 $x \in S$ 都满足 $x \le u$，则称 $u$ 是 $A$ 的一个 **上界（Upper Bound）**。如果某个 $A$ 的上界 $v$ 满足对任意上界 $u$ 都有 $v \le u$，则称其为 $A$ 的 **上确界（Least Upper Bound）**，用 $\sup{A}$ 表示。类似地，我们可以定义 **下界（Lower Bound）** 和 **下确界（Greatest Lower Bound）** $\inf{A}$。不难证明上确界和下确界总是唯一的。
+
+如果某个全序集中的每个非空子集都有一个在该序关系下的最大元素，则称其是一个 **良序集（Well-Ordered Set）**。
 
 #### 函数
 
@@ -1261,7 +1262,7 @@ $$
 
 #### 可数集与可数选择公理
 
-本节让我们介绍集合的一些重要性质，在有了函数的定义之后谈论这些会方便许多。首先，集合的 **大小（Size）** 是一个非常显然的性质，比如 $\{a, b, c\}$ 的大小显然是 $3$，而 $\mathbb{N}$ 的大小是无穷大。不过，同样大小为无穷大的集合，如 $\mathbb{Z}$ 和 $\mathbb{R}$ 之间，是否存在大小的相对关系呢？
+本节让我们介绍集合的一些重要性质，在有了函数的定义之后谈论这些会方便许多。首先，集合的 **大小（Size）** 是一个非常显然的性质，它表示集合中元素的个数。比如 $\{a, b, c\}$ 的大小显然是 $3$，而 $\mathbb{N}$ 的大小是无穷大。不过，同样大小为无穷大的集合，如 $\mathbb{Z}$ 和 $\mathbb{R}$ 之间，是否存在大小的相对关系呢？
 
 > 记号：集合 $A$ 的大小记为 $|A|$。
 
@@ -1303,7 +1304,7 @@ $$
 	\mathcal{A} = \bigcup_{i=1}^\infty A_i
 \end{equation*}
 $$
-让我们用上面的公理证明这个命题：可以找到满射 $m_i: \mathbb{N} \to \bigcup\mathcal{A}$，使得 $m(i) = a_{ij} \in A_i$。这样，我们就可以将 $\bigcup\mathcal{A}$ 中所有元素表示成 $f(i, j)$ 的形式，这和此前的 $\mathbb{N}^2$ 是一样的。
+让我们用上面的公理证明这个命题：可以找到满射 $m_i: \mathbb{N} \to \bigcup\mathcal{A}$，使得 $m_i(j) = a_{ij} \in A_i$。注意到 $m_i$ 本身也可以看作 $m: \mathbb{N} \to \mathcal{M}$，其中 $\mathcal{M} = \{m_i \mid i \in \mathbb{N}\}$。 这样，我们就可以将 $\bigcup\mathcal{A}$ 中所有元素表示成 $m(i, j)$ 的形式，这和此前的 $\mathbb{N}^2$ 是一样的。
 
 #### 不可数集与集合势
 
@@ -1332,11 +1333,9 @@ $$
 > $$
 > 由于 $\mathbb{B}^\omega$ 是不可数的，显然 $\mathbb{P}(\mathbb{N})$ 也不可数。
 
-从前面的内容可以看到，无限集之间也存在“大小”的差异，这样就引出了“势”的概念。两个集合定义为 **等势的（Equinumerous）**，若能在它们之间建立一个双射。显然，有限集之间等势当且仅当两者大小相同；可数的无限集之间是等势的。
+从前面的内容可以看到，无限集之间也存在“大小”的差异，这样就引出了“势”的概念。两个集合定义为 **等势的（Equinumerous）**，若能在它们之间建立一个双射。显然，有限集之间等势当且仅当两者大小相同；可数的无限集之间是等势的。记为 $A \approx B$。
 
-> 记号：若 $A$ 和 $B$ 等势，则记 $A \approx B$。
-
-**等势（Equinumerosity）** 关系是一个等价关系，这是显而易见的。既然能定义和集合势相关的等价关系，那么自然也有序关系：如果存在单射 $f: A \to B$，则称 $A$ 不大于 $B$，记为 $A \preceq B$；如果 $A$ 不大于 $B$ 且两者不等势，则称 $A$ 小于 $B$，记为 $A \prec B$。
+**等势（Equinumerosity）** 关系是一个等价关系，我们会在下一节中证明这一点。既然能定义和集合势相关的等价关系，那么自然也有序关系：如果存在单射 $f: A \to B$，则称 $A$ 不大于 $B$，记为 $A \preceq B$；如果 $A$ 不大于 $B$ 且两者不等势，则称 $A$ 小于 $B$，记为 $A \prec B$。
 
 集合论中用 **势（Cardinality）** 来表示集合势的大小；为了不和集合大小 $|\cdot|$ 搞混，让我们用 $\operatorname{card}A$ 来表示集合 $A$ 的势。根据我们此前的定义有 $\operatorname{card}{A} \le \operatorname{card}{B} \Leftrightarrow A \preceq B$。对于有限集，令 $\operatorname{card}{A} = |A|$。对于无限集，显然 $\operatorname{card}{\mathbb{N}}$ 是一个很重要的势，我们用记号 $\aleph_0$ 来表示它。根据此前的例子，我们也知道 $\operatorname{card}{\mathbb{R}} \ne \aleph_0$，我们将其记为 $\aleph_1$。那么如何找到其它可能的势呢？让我们先了解一个关键的定理。
 
@@ -1352,6 +1351,28 @@ $$
 因此，从满足 $\operatorname{card}(A) = \aleph_1$ 的集合 $A$ 出发，不停地取当前集合的幂集，我们会得到越来越大的集合。
 
 > 讨论：有一个非常吸引人的猜测：究竟存不存在某个可能的集合势 $\gimel$ 使得 $\aleph_0 < \gimel < \aleph_1$？如果记 $\beth_0 = \aleph_0$，$\beth_{i+1} = 2^{\beth_i}$，那么是否有 $\beth_1 = 2^{\beth_0}$？更一般化地，对于任意的 $\beth_i$，是否存在 $\gimel$ 令 $\beth_i < \gimel < \beth_{i+1}$？认为不存在这样的集合势的假说被称为 **连续统假设（Continuum Hypothesis）**。狭义的连续统假设相当于说明 $\aleph_1 = \beth_1$。
+
+#### 基数
+
+集合论中，有一套代数体系来研究集合的势，那就是 **基数（Cardinal Number）**。基数可以通过等势关系定义：基数是等势关系的等价类。
+
+> 记号：我们用斜体的小写希腊字母表示基数，如 $\alpha$、$\beta$ 等。为了方便地表示某个集合的基数，让我们记集合 $A$ 的基数为 $\mathscr{c}(A)$。
+
+有两个重要的基数，$\aleph_0 = \mathscr{c}(\mathbb{N})$ 和 $\mathfrak{c} = \mathscr{c}(\mathbb{R})$。
+
+基数中可以定义全序关系 $\le$ 为 $\mathscr{c}(A) \le \mathscr{c}(B) \Leftrightarrow A \preceq B$。
+
+可以在基数集上定义算术运算。定义加法 $+$ 为 $\mathscr{c}(A) + \mathscr{c}(B) = \mathscr{c}(A\cup B)$，其中 $A\cap B = \emptyset$。基数加法有下面的性质：
+
+* $\alpha + \beta = \beta + \alpha$。
+* 若 $\alpha \le \beta$ 且 $\beta \ge \aleph_0$，则 $\alpha + \beta = \beta$。
+
+基数的乘法 $\times$ 定义为 $\mathscr{c}(A) \times \mathscr{c}(B) = \mathscr{c}(A\times B)$。它有下面的性质：
+
+* $\alpha\times\beta = \beta\times\alpha$。
+* 若 $\alpha\le\beta$、$\alpha\ne 0$ 且 $\beta \ge \aleph_0$，则 $\alpha\times\beta = \beta$。
+
+基数的幂 $\cdot^\cdot$ 定义为 $\mathscr{c}(A)^{\mathscr{c}(B)} = \mathscr{c}(\{f: A \to B\})$。特别地，对于 $A$ 的幂集 $2^A$，其基数恰好是 $\mathscr{c}(2^A) = 2^{\mathscr{c}(A)}$.
 
 
 
@@ -1470,12 +1491,14 @@ $$
 
 ### 一阶逻辑语言
 
+#### 语言和解释
+
 有了 $\sigma$-结构的铺垫，现在我们可以正式地定义 FOL 语言的构成了。下面我们将默认记 $\sigma$ 为 FOL 的 $\sigma$-结构。
 
 FOL 的字母表 $\Sigma_\sigma$ 是所有在 $\sigma$ 中出现的符号（常数、函数和关系的符号）以及下面列出的符号：
 
 - 逻辑符号 $\deq$、$\lnot$、$\land$、$\lor$、$\to$、$\forall$、$\exists$。
-- 标点符号 $($ 与 $)$。
+- 标点符号 $($ 和 $)$ 和 $.$。
 - 变量符号 $\mathscr{v}_0, \mathscr{v}_1, \dots$。
 
 > 讨论：我们使用 $\deq$ 表示 FOL 中的同一式，这是为了和元语言中的“相等”符号 $=$ 混淆。举例来说，$\mathscr{p} \deq \mathscr{q}$ 是一个 FOL 的式子，而 $\mathscr{p} = \mathscr{q}$ 说明了 $\mathscr{p}$ 和 $\mathscr{q}$ 完全相同。
@@ -1490,17 +1513,275 @@ FOL 的字母表 $\Sigma_\sigma$ 是所有在 $\sigma$ 中出现的符号（常�
 
 > 举例：设 $x, y, z \in \mathfrak{V}$。则 $x + y\times z \in \mathscr{T}(\sigma_\text{ring})$。注意到这里的 $+$ 和 $\times$ 都是 $\mathscr{F}(\sigma_\text{ring})$ 的元素。
 
+> 记号：一些比较微妙的符号，比如幂运算 $\cdot^\cdot$，严格地来说应该显式出现在 $\sigma$-项当中，比如 $x^y$ 应该写成 $x\cdot^\cdot y$。此外，由于运算符并不在 FOL 的描述范围内，一些习惯中会将所有的运算符写成前缀或后缀的形式，或函数调用，比如 $1+2\times 3^4$ 的正式写法是：
+> $$
+> \begin{equation*}
+> 	+(1, \times(2, \cdot^\cdot(3, 4)))
+> \end{equation*}
+> $$
+> 不过，它的可读性非常有限，因此我们还是采用一直以来用的格式。此外，对于多次连续调用的函数 $f \in \mathscr{F}(\sigma)$，我们还是沿用幂的缩写形式，即：
+> $$
+> \begin{equation}
+> 	f^n(\mathscr{t}) \equiv \underset{\text{$n$ 次嵌套}}{f(\dots f(\mathscr{t})\dots)}
+> \end{equation}
+> $$
+> 最后，对于 $\sigma$ 中的变量，我一般会用结尾的几个小写拉丁字母，如 $x, y, z$ 表示。
+
+定义 **$\sigma$-公式（$\sigma$-Formula）** 为满足下面规则的式子：
+
+1. $\mathscr{s} \deq \mathscr{t}$，其中 $\mathscr{s}$ 和 $\mathscr{t}$ 是项。
+2. $\mathcal{R}(\mathscr{t}_1, \dots, \mathscr{t}_n)$，其中 $\mathcal{R} \in \mathscr{R}_n(\sigma)$，且 $\mathscr{t}_1, \dots, \mathscr{t}_n$ 是项。
+3. $\lnot(\psi)$、$(\psi)\land(\phi)$、$(\psi)\lor(\phi)$、$(\psi)\to(\phi)$，其中 $\psi$ 和 $\phi$ 是公式。
+4. $\forall \mathscr{v}. \psi$ 和 $\exists \mathscr{v}. \phi$，其中 $\mathscr{v}$ 是变量，$\psi$ 和 $\phi$ 是公式。
+
+这里面的 1 和 2 也被称为 **原子式（Atomic Formula）**，而 4 之外的合称为 **无量词式（Quantifier Free Formula）**。
+
+> 记号：量词式中的标点符号 $.$ 其实并不是必须的，因为根据 3 的括号规则，任何公式都不可能存在歧义。这里为了美观会加上 $.$。
+
+> 举例：下面列出的式子都是 $\sigma$-公式：
+>
+> * $(\lnot(x))\land(y)$。
+> * $\forall x. (x\dot{=}y)\lor(\mathcal{R}(x, y))$。
+>
+> 下面列出的则不是（虽然可能合理）：
+>
+> * $x\land y$。
+> * $\lnot x\land y\deq z$。
+
+注意到虽然原子式中出现的关系和函数都有相应的元数，但我们完全可以将其声明为更多元数的函数：
+$$
+\begin{equation*}
+	f'(u_1, \dots, u_m) = f(v_1, \dots, v_n), \qquad \{v_i\} \subseteq \{u_i\}
+\end{equation*}
+$$
+一种常用的扩展是将其变成接受所有变量空间中的变量。这引出了扩展公式的概念。
+
+如果 $\mathscr{t}$ 是一个项，设 $\mathbf{v} = (v_1, \dots, v_n)$ 是所有变量空间中变量组成的 $n$ 元组，称 $\mathscr{t}[\mathbf{v}]$ 为一个 **扩展 $\sigma$-项（Extended $\sigma$-Term）** 若 $\mathscr{t}$ 中出现了所有 $\mathbf{v}$ 中的变量。我们用 $\mathscr{T}_\text{ext}(\sigma)$ 来表示所有扩展 $\sigma$-项组成的集合。对于结构 $\mathbf{A}$，$\mathscr{t}[\mathbf{v}]$ 在其中的 **解释（Interpretation）** 为函数 $\mathscr{t}^\mathbf{A}[\mathbf{v}]: A^{|\mathbf{v}|}\to A$，其定义如下：
+
+* 若 $\mathscr{t} = \text{c} \in \mathscr{C}(\sigma)$，则 $\mathscr{t}^\mathbf{A}[\mathbf{v}](\mathbf{a}) = \text{c}$。
+* 若 $\mathscr{t} = \mathbf{v}_i \in \mathfrak{V}$，则 $\mathscr{t}^\mathbf{A}[\mathbf{v}](\mathbf{a}) = \mathbf{a}_i$。
+* 若 $\mathscr{t} = f(\mathscr{t}_1, \dots, \mathscr{t}_n)$，其中 $f \in \mathscr{F}(\sigma)$ 而 $\mathscr{t}_1, \dots, \mathscr{t}_n$ 是 $\sigma$-项，则 $\mathscr{t}^\mathbf{A}[\mathbf{v}](\mathbf{a}) = f^\mathbf{A}(\mathscr{t}_1^\mathbf{A}[\mathbf{v}](\mathbf{a}), \dots, \mathscr{t}_n^\mathbf{A}[\mathbf{v}](\mathbf{a}))$。
+
+> 举例：考虑 $\mathbf{A} \equiv (\mathbb{Z}, e^\mathbf{A}, \circ^\mathbf{A})$、$\mathbf{B} \equiv (\mathbb{Z}, e^\mathbf{B}, \circ^\mathbf{B})$，其中 $e^\mathbf{A} \equiv 0$ 而 $\circ^\mathbf{A} \equiv +$，而 $e^\mathbf{B} \equiv 1$ 而 $\circ^\mathbf{B} \equiv \times$。此时对于项 $t = (v_1\circ e)\circ v_2$，在 $\mathbf{A}$ 中的解释为 $(v_1, v_2) \mapsto(v_1 + 0) + v_2$，而在 $\mathbf{B}$ 中的解释为 $(v_1, v_2) \mapsto (v_1\times 1)\times v_2$。
+
+扩展公式集的基数和公式集的基数相同，即 $\operatorname{card} \mathscr{T}_\text{ext}(\sigma) = \operatorname{card} \mathscr{T}(\sigma) = \max\{\aleph_0, \sigma\}$。
+
+类似地，我们也可以将结构 $\mathbf{A}$ 上扩展公式的解释定义为关系 $\varphi^\mathbf{A}[\mathbf{v}] \subseteq A^{|\mathbf{v}|}$，其定义如下：
+
+* 若 $\varphi = \mathscr{s} \deq \mathscr{t}$，则 $\varphi^\mathbf{A}[\mathbf{v}](\mathbf{a})$ 成立当且仅当 $\mathscr{s}^\mathbf{A}[\mathbf{v}](\mathbf{a})  = \mathscr{t}^\mathbf{A}[\mathbf{v}](\mathbf{a})$ 成立。
+* 若 $\varphi = \mathcal{R}(\mathscr{t}_1, \dots, \mathscr{t}_n)$，则 $\interp{\varphi}{A}{v}(\mathbf{a})$ 成立当且仅当 $\mathcal{R}^\mathbf{A}(\interp{t_1}{A}{v}(\mathbf{a}), \dots, \interp{t_n}{A}{v}(\mathbf{a}))$ 成立。
+* 若 $\varphi = \lnot\psi$，则 $\interp{\phi}{A}{v}(\mathbf{a})$ 成立当且仅当 $\interp{\psi}{A}{v}(\mathbf{a})$ 不成立。
+* 若 $\varphi = \psi\land\theta$，则 $\interp{\phi}{A}{v}(\mathbf{a})$ 成立当且仅当 $\interp{\psi}{A}{v}(\mathbf{a})$ 和 $\interp{\theta}{A}{v}(\mathbf{a})$ 同时成立。
+* 若 $\varphi = \psi\lor\theta$，则 $\interp{\phi}{A}{v}(\mathbf{a})$ 成立当且仅当 $\interp{\psi}{A}{v}(\mathbf{a})$ 或 $\interp{\theta}{A}{v}(\mathbf{a})$ 至少一个成立。
+* 若 $\varphi = \forall x.\psi(\mathbf{v}, y)$，其中 $y$ 不是 $\mathbf{v}$ 的成员，且 $\psi[\mathbf{v}, u]$ 是一个扩展公式，那么 $\interp{\varphi}{A}{v}(\mathbf{a})$ 成立当且仅当对任意 $b \in A$，$\varphi[\mathbf{v}, y](\mathbf{a}, b)$ 都成立。
+* 若 $\varphi = \exists x.\psi(\mathbf{v}, y)$，其中 $y$ 不是 $\mathbf{v}$ 的成员，且 $\psi[\mathbf{v}, u]$ 是一个扩展公式，那么 $\interp{\varphi}{A}{v}(\mathbf{a})$ 成立当且仅当存在 $b \in A$ 令 $\varphi[\mathbf{v}, y](\mathbf{a}, b)$ 成立。
+
+如果 $\interp{\varphi}{A}{v}(\mathbf{a})$ 成立，我们称 $\mathbf{A}$ **满足（Satisfy）** $\interp{\varphi}{}{v}(\mathbf{a})$，记作 $\mathbf{A} \models \interp{\varphi}{}{v}(\mathbf{a})$。特别地，如果 $\mathbf{v} = \emptyset$，则 $\mathbf{A}\models \varphi$ 是一个零元关系，即常数。因此它或者为真，或者为假。这里我们称 $\varphi$ 在 $\mathbf{A}$ 中为真。
+
+> 习惯：至此，我们已经熟悉了扩展项和扩展公式，下面我们将默认变量集 $\mathfrak{V}$ 是确定的，此时我们直接将扩展项写成 $\mathscr{t}(\mathbf{a})$，扩展公式写成 $\varphi(\mathbf{a})$。此外，我们不会再使用“拓展”这个词汇，除非出现歧义。
+
+> 举例：
+>
+> * 考虑 $\sigma_\text{arith}$-公式 $\varphi \equiv S(S(0)) \deq v_0$，有 $\mathbf{N} \equiv (\mathbb{N}, 0, S, +, \times)\models \varphi[v_0](2)$。也可以简单写成 $\mathbf{N} \models S^2(0) \deq 2$。
+> * $\mathbf{R} \models \exists y. (a\deq y\times y)$ 对任意非负 $a \in \mathbb{R}$ 都成立。
+
+对于两个结构 $\mathbf{A}$ 和 $\mathbf{B}$，若 $h: \mathbf{A}\to\mathbf{B}$ 是一个 **同态（Homomorphism）**，则对于任意项 $\mathscr{t}(\mathbf{v})$ 和 $\mathbf{a} \in A^{|\mathbf{v}|}$，我们有：
+$$
+\begin{equation}
+	h(\mathscr{t}^\mathbf{A}(\mathbf{a})) = \mathscr{t}^\mathbf{B}(h(\mathbf{a}))
+\end{equation}
+$$
+以及：
+$$
+\begin{equation}
+	\mathbf{A} \models \varphi(\mathbf{a}) \is \mathbf{B} \models \varphi(h(\mathbf{a}))
+\end{equation}
+$$
+最后，一个结构满足某个公式当且仅当其约减满足这个公式，即：
+$$
+\begin{equation}
+	\mathbf{A} \models \varphi(\mathbf{a}) \is \mathbf{A}|_{\sigma'} \models \varphi(\mathbf{a})
+\end{equation}
+$$
+
+#### 可定义性
+
+本节让我们从任意的结构出发，探索其能张成的整个空间。
+
+若 $\mathbf{A}$ 是一个结构而 $P\subseteq A$，则称 $S \subseteq M^n$ 为 **$P$-可定义的（$P$-Definable）**，若存在某个公式 $\varphi(\mathbf{x}, \mathbf{y})$，其中 $|\mathbf{y}| = n$ 且存在 $\mathbf{p} \in P^{|\mathbf{x}|}$ 满足 $S = \{\mathbf{a} \in A^n \mid \mathbf{A} \models \varphi(\mathbf{p}, \mathbf{a}) \}$。特别地，如果 $P = \emptyset$，则称 $S$ 是 $0$-可定义的。
+
+> 讨论：某种程度上，0-可定义的应该称为 $\emptyset$-可定义的，因为 $P$ 这里就是空集。
+
+> 习惯：我们也会称某个元素 $\mathbf{a} \in A^n$ 是 $P$-可定义的，若其单元素集 $\{\mathbf{a}\}$ 是 $P$-可定义的。类似地，某个函数 $f: D^n \to A$ 是 $P$-可定义的，若其等价图 $\{(\mathbf{a}, b) \in D^n\times A \mid f(\mathbf{a}) = b\}$ 是 $P$-可定义的。
+
+> 记号：我们将 $A^n$ 的所有 $P$-可定义集组成的族记为 $\mathcal{D}_n^\mathbf{A}(P)$；这个族的并记为 $\mathcal{D}^\mathbf{A}(P)$。
+
+$\operatorname{card}\mathcal{D}^\mathbf{A}(P)$ 的基数不超过 $\max\{\aleph_0, \sigma, |P|\}$。 
+
+> 举例：
+>
+> * $\mathbf{R} \equiv (\mathbb{R}, 0, 1, +, \times)$ 中，所有正数都是 $0$-可定义的，考虑 $\varphi_{>0}(x) \equiv \lnot(x\deq 0)\land \exists y. (x \deq y^2)$。类似地，我们也可以 $0$-定义所有的负数。
+> * $(\mathbb{Q}, <)$ 中的正数是不可定义的。
+> * $\mathbf{C} \equiv (\mathbb{C}, 0, 1, +, \times)$ 中，$\{\sqrt{2}, -\sqrt{2}\}$ 是 $0$-可定义的，考虑 $\varphi(z) \equiv z^2 \deq 2$，其中 $2 \equiv 1 + 1$。
+> * $\mathbf{N} \equiv (\mathbb{N}, 0, S, +, \times)$ 可以定义的所有集合称为 **算术的（Arithmetical）**。
+> * 图 $\mathbf{G} \equiv (V, E)$ 中，所有距离不超过 $2$ 的结点集合是 $0$-可定义的，考虑 $\varphi(x, y) \equiv (x, y) \in E \lor \exists z. ((x, z) \in E \land (z, y) \in E)$。不过，所有连通的结点集是不可定义的。
+
+对于集合 $A$ 和 $P \subseteq A$，称一个集族 $\mathcal{S} \subseteq \bigcup_{n\ge 1}\mathcal{P}(A^n)$ 为 **$P$-构造封闭（$P$-Constructively Closed）**，若满足下面列出的条件。记 $\mathcal{S}_n \equiv \mathcal{S}\cap \mathcal{P}(A^n)$：
+
+* （布尔代数）：每个 $\mathcal{S}_n$ 都是布尔代数，即包含 $\emptyset$ 且 $A^n$ 在补集和有限并中封闭。
+* （对称）：每个 $\mathcal{S}_n$ 都是对称的，即其坐标在置换操作中封闭。
+* （投影）：$\mathcal{S}_{n+1}$ 中任意集合的前 $n$ 个成员构成的投影在 $\mathcal{S}_n$ 中。
+* （提升）：$\mathcal{S}_n$ 中任意集合和 $A$ 的笛卡尔积都在 $\mathcal{S}_{n+1}$ 中。
+* （$P$-纤维）：对任意 $p \in P$，它在 $\mathcal{S}_{n+1}$ 中的纤维都是 $\mathcal{S}_n$ 的元素。
+
+$\mathcal{D}^\mathbf{A}(P)$ 是包含 $\{\text{c}^\mathbf{A}\}$、$f^\mathbf{A}$ 的等价图以及所有 $\mathcal{R}^\mathbf{A}$（对所有的 $\text{c} \in \mathscr{C}(\sigma)$、$f \in \mathscr{F}(\sigma)$ 和 $\mathcal{R} \in \mathscr{R}(\sigma)$）的最小的 $P$-构造封闭的子集。
+
+#### 理论、模型和公理化
+
+我们称一集 $\sigma$-句子为一个 **$\sigma$-理论（$\sigma$-Theory）**，称理论 $T$ 中的每个句子为 **公理（Axiom）**。如果某个非空的 $\sigma$-结构 $\mathbf{M}$ 满足理论 $T$ 中的每个公理，则称这个结构是一 $T$ 的一个 **$\sigma$-模型（$\sigma$-Model）**，记为 $\mathbf{M}\models T$。所有 $T$ 的 $\sigma$-模型构成一个集族 $\mathcal{M}_\sigma(T)$。对于一集 $\sigma$-结构 $\mathcal{C}$，若其对理论 $T$ 满足 $\mathcal{C} = \mathcal{M}_\sigma(T)$，则称 $T$ 是 $\mathcal{C}$ 的一个 **公理化（Axiomatization）**。如果 $\mathcal{C}$ 存在公理化，则称其 **可公理化（Axiomatizable）** 的。如果某个 $\sigma$-理论 $S$ 是另一个理论 $T$ 的所有模型的公理化，即 $S = \mathcal{M}_\sigma(T)$，则称 $S$ 是 $T$ 的公理化。
+
+> 举例：
+>
+> * 对任意签名 $\sigma$ 和 $n \in \mathbb{N}^+$，集族 $\mathcal{C}_{\le n}$ 描述了所有不超过 $n$ 个元素的 $\sigma$-结构，其公理如下：
+>   $$
+>   \begin{equation*}
+>   	\varphi_{\le n} \equiv \exists x_1\dots\exists x_n\forall y. \bigvee_{i=1}^n y\deq x_i
+>   \end{equation*}
+>   $$
+>   另一方面，$\mathcal{C}_{\ge n}$ 的公理如下：
+>   $$
+>   \begin{equation*}
+>   	\varphi_{\ge n} \equiv \exists x_1\dots\exists x_n \bigwedge_{1\le i < j \le n}x_i \deq x_j
+>   \end{equation*}
+>   $$
+>   因此，所有恰好有 $n$ 个元素的 $\sigma$-结构可以通过公理 $\varphi_{=n} \equiv \varphi_{\le n}\land \varphi{\ge n}$ 公理化得到。
+>
+> * 对任意签名 $\sigma$，集族 $\mathcal{C}_\infty$ 由所有无限 $\sigma$-结构组成，其可以通过下面的理论公理化：
+>   $$
+>   \begin{equation}
+>   	T_\infty \equiv \{\varphi_{\ge n} \mid n \in \mathbb{N}^+\}
+>   \end{equation}
+>   $$
+>
+> * 无向简单图中，存在两个公理：
+>
+>   * （无向）：$\forall x\forall y. ((x, y) \in E \to (y, x) \in E)$。
+>   * （无自环）：$\forall x. \lnot((x, x) \in E)$。
+>
+>   下面我们提到的图都是无向简单图。
+>   
+> * 偏序结构 $\sigma_\text{partial} \equiv (\le)$ 可以通过下面的公理描述：
+>
+>   * （自反性）：$\forall x. x \le x$。
+>   * （反对称性）：$\forall x\forall y. (x\le y \land y \le x \to x \deq y)$。
+>   * （传递性）：$\forall x\forall y\forall z. (x \le y \land y \le z \to x \le z)$。
+>
+> * 群 $\sigma_\text{group} = (0, +, \cdot^{-1})$ 可以通过下面的公理描述：
+>
+>   * （结合性）：$\forall x\forall y\forall z. ((x+y)+z\deq x+(y+z))$。
+>   * （单位元）：$\forall x. (0 + x \deq x + 0 \deq x)$。
+>   * （逆元）：$\forall x\exists y. (x + y \deq y + x \deq 0)$。
+>
+>
+
+需要注意，并不是所有结构都可以通过 FOL 公理化的，比如连通集、循环群等。
+
+给定一个结构 $\mathbf{A}$，记 $\text{Th}(\mathbf{A})$ 为所有可以被 $\mathbf{A}$ 满足的公理集。判断某个公理是否属于 $\text{Th}(\mathbf{A})$ 有时相当困难（比如哥德巴赫猜想），因此如果能找到结构的更简单的公理化是最好的。考虑由 $\sigma_\text{arithmetic} = (0, S, +, \times)$ 建成的 **皮亚诺代数公理（Peano Arithmetic, PA）**
+
+* $\forall x. (\lnot S(x) \deq 0)$。
+
+* $\forall x\forall y. (S(x) \deq S(y) \to x \deq y)$。
+
+* $\forall x. (x + 0 \deq x)$。
+
+* $\forall x\forall y. (S(x + y) \deq x + S(y))$。
+
+* $\forall x. (x \times 0 \deq 0)$。
+
+* $\forall x\forall y. (x\times S(y) \deq x\times y + x)$。
+
+* （归纳公理模式）：对任意 $\sigma_\text{arithmetic}$-公式 $\varphi(x, \mathbf{y})$，其中 $x \in \mathfrak{V}$ 而 $\mathbf{y} \in \mathfrak{V}^n$，下面是一个公理：
+  $$
+  \left( \varphi(0, \mathbf{y}) \land \forall x. (\varphi(x, \mathbf{y}) \to \varphi(S(x), \mathbf{y})) \right) \to \forall x. \varphi(x, \mathbf{y})
+  $$
+
+其中最后一个称为 **公理模式（Axiom Schema）**，因为它包含了无穷多个公理（对于任意公式都能写出以其为模版的一个公式）。显然，自然数结构 $\mathbf{N} \equiv (\mathbb{N}, 0, S, +, \times) \models \text{PA}$。不过后面我们会提到，$\text{PA}$ 不能公理化 $\text{Th}(\mathbf{N})$。
+
+这里让我们也给出 Zermelo-Fraenkel 集合论（ZFC）的所有公理，它基于集合结构 $\sigma_\text{set} = (\in)$：
+
+* （外延性公理）：$\forall x\forall y. (\forall z. (z \in x \leftrightarrow z \in y) \to x \deq y)$。
+
+* （规律性公理）：$\forall x. ((\exists a. a \in x) \to \exists y. (y \in x \land \lnot \exists z. (z \in y \land z \in x)))$。
+
+* （规定公理模式）：$\forall z\forall w_1\dots\forall w_n\exists y\exists x. (x \in y \leftrightarrow (x \in z \land \varphi(x, w_1, \dots, w_n, z)))$。
+
+* （配对公理）：$\forall x\forall y\exists z. (x \in z \land y \in z)$。
+
+* （并公理）：$\forall \mathcal{F}\exists z\forall y\forall x. (x \in y \land y \in \mathcal{F} \to x \in z)$，其中 $\mathcal{F}$ 是一个集族。
+
+* （替换公理模式）：
+  $$
+  \forall w_1\dots\forall w_n\forall z. (\forall x. (x \in z \to \exists!y. \varphi(x, y, w_1, \dots, w_n, z))) \to \exists s\forall y. (y \in s \leftrightarrow \exists x \in z \varphi(x, y, w_1, \dots, w_n, z))
+  $$
+
+* （无限公理）：令 $S(x) \equiv x \cup \{w\}$。
+  $$
+  \exists x. (\exists e. (\forall z. \lnot(z \in e) \land e \in x) \land \forall y. (y \in x \to S(y) \in x))
+  $$
+
+* （幂集公理）：需要子集的定义 $y \subseteq x \Leftrightarrow \forall z. (z \in y \to z \in x)$，则 $\forall x\exists y\forall z. (z \subseteq x \to z \in y)$。
+
+* （良序公理）：$\forall x\exists r. (\text{$r$ 是 $x$ 上的一个良序关系})$。良序公理、选择公理和 Zorn 引理三者是等价的。
+
+这便是我们期盼已久的集合论的正式定义，下面做一个简单的讨论。
+
 > 讨论：
 
-## 一阶逻辑
+#### 蕴含、一致性和完备性
 
-本章中我们将再次介绍一阶逻辑（FOL）。不过这次，我们将利用朴素集合论的知识，严谨且详细地叙述所有概念的定义。
+如果 $T$ 的每个模型都满足一个 $\sigma$-句子 $\varphi$，即 $\forall \mathbf{M}\models T. (\mathbf{M}\models \varphi)$，则称 $T$ 满足 $\varphi$，记作 $T \models \varphi$。
 
+一个 $\sigma$-理论 $T$ 称为：
 
+* **可满足（Satisfiable）** 的，若其拥有一个模型。
+* **语义上 $\sigma$-完备（Semantically $\sigma$-Complete）** 的，若对任意 $\sigma$-句子 $\varphi$，都有 $T \models \varphi$ 或 $\lnot (T \models \varphi)$。如果一个理论 $T$ 的超集是 $\sigma$-完备的，则也称其为 $T$ 的语义完备化。
 
+为了方便之后的讨论，记 $\top$ 为 $\forall x.(x \deq x)$ 的简写，而 $\bot \equiv \lnot \top$。显然，在 $T$ 中下面的三个命题是等价的：
 
+* $T$ 是可满足的。
+* $\lnot (T \models \bot)$。
+* 存在 $\sigma$-句子 $\varphi$ 使得 $\lnot (T \models \varphi)$。
 
+如果两个结构 $\mathbf{A}$ 和 $\mathbf{B}$ 满足 $\text{Th}(\mathbf{A})$ 和 $\text{Th}(\mathbf{B})$，则称两者是 **基本等价（Elementarily Equivalent）** 的。语义完备性也可以定义为，对任何结构 $\mathbf{A}$、$\mathbf{B}$ 若满足 $\mathbf{A} \models T$ 且 $\mathbf{B} \models T$，则两者基本等价。
 
+称一个理论为 **最大 $\sigma$-完备（Maximally Complete）** 的，若对任意 $\sigma$-句子 $\varphi \in T$，或者 $\varphi \in T$，或者 $\lnot \varphi \in T$（当且仅当 $T$ 不可满足时才同时成立）。称 $T$ 的某个最大完备的超集为 $T$ 的最大完备化。
 
+观察到，对任意结构 $\mathbf{M}$，$\text{Th}(\mathbf{M})$ 总是可满足且最大完备的；同时，所有可满足的理论都有一个可满足的最大完备化。
 
+#### 基本性
 
+对于两个有包含关系的结构 $\mathbf{A} \subseteq \mathbf{B}$，我们会对它们同时满足或不满足的公式感兴趣。实际上，对于任意无量词的公式 $\varphi$ 和变量元组 $\mathbf{a}$，都有：
+$$
+\begin{equation}
+	\mathbf{A} \models \varphi(\mathbf{a}) \is \mathbf{B} \models \varphi(\mathbf{a})
+\end{equation}
+$$
+如果一个 $\sigma$-公式中所有的量词都是 $\forall$，则称其为一个 **全称（Universal）** 的；类似地，如果其中所有量词都是 $\exists$，则称其为 **存在（Existential）** 的。对于量词公式 $\varphi$：
+
+* 如果 $\varphi$ 是全称的，则 $\mathbf{B} \models \varphi(\mathbf{a}) \Rightarrow \mathbf{A} \models \varphi(\mathbf{a})$。
+* 如果 $\varphi$ 是存在的，则 $\mathbf{A} \models \varphi(\mathbf{a}) \Rightarrow \mathbf{B} \models \varphi(\mathbf{a})$。
+
+设 $\mathbf{A}$ 和 $\mathbf{B}$ 是 $\sigma$-结构，对于同态 $h: \mathbf{A} \to \mathbf{B}$。如果任何公式 $\varphi(\mathbf{v})$ 和元组 $\mathbf{a} \in A^{|\mathbf{v}|}$，都有：
+$$
+\begin{equation}
+	\mathbf{A} \models \varphi(\mathbf{A}) \is \mathbf{B} \models \varphi(h(\mathbf{a}))
+\end{equation}
+$$
+则称 $h$ 是一个 **基本嵌入（Elementary Embedding）**，记作 $h: \mathbf{A} \hookrightarrow_e \mathbf{B}$。如果存在一个从 $\mathbf{A}$ 到 $\mathbf{B}$ 的基本嵌入，则称 $\mathbf{A}$ 可以基本嵌入 $\mathbf{B}$，记作 $\mathbf{A} \hookrightarrow_e \mathbf{B}$。特别地，如果 $\mathbf{A}$ 到 $\mathbf{B}$ 的包含映射 $x_\mathbf{A} \mapsto x_\mathbf{B}$ 是一个基本嵌入，则称 $\mathbf{A}$ 是 **基本（Elementary）** 的，记作 $\mathbf{A} \preceq \mathbf{B}$。注意到任意基本子结构都和该结构基本等价。
+
+Tarski-Vaught 测试：$\mathbf{A}$ 是 $\mathbf{B}$ 的基本结构当且仅当 $\mathbf{A} \subseteq \mathbf{B}$ 且对任意公式 $\varphi(\mathbf{x}, y)$ 和 $\mathbf{a} \in A^{|\mathbf{x}|}$：
+$$
+\begin{equation}
+	\mathbf{B} \models \exists y. \varphi(\mathbf{a}, y) \is \exists a' \in A. (\mathbf{B} \models \varphi(\mathbf{a}, a'))
+\end{equation}
+$$
